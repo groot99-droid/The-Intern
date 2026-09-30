@@ -74,6 +74,50 @@ export function pickTransition(branch, fromLetter, destLetter, nextSceneId) {
   return (isSwap && branch.transitionsSwap?.[nextSceneId]) || branch.transitions[nextSceneId];
 }
 
+// Render-flip transitions. Transitions are per BRANCH, not per choice (Doc 1
+// §1.2: the sequence never forks, only the render does), and no swap clips
+// were ever generated -- so on a flip pickTransition()'s fallback walked the
+// player into the WRONG room: RUN at S2 (conformance -2, S3 renders H) played
+// the compliant curtain walk and then landed at the locked glass doors, which
+// read as "the video is assigned to the wrong choice".
+//
+// Most clips are black-joins (assets/MANIFEST.csv: "two 3s halves pinned to
+// solid black" -- the room being left, black, the room being entered).
+// `transitionsSplit[next]` (seconds, data/scenes.json) marks that midpoint,
+// so a flip can be composed out of real footage and never shows the wrong
+// room. Returns an ordered list of steps for playTransitionPlan():
+//   both branches split   [0,split] of this clip, then [split,end] of the other branch's clip
+//   only this branch      [0,split] of this clip, then the destination room's IMG_IN still
+//   only the other        [split,end] of the other branch's clip
+//   neither               the destination room's IMG_IN still
+// S0's X clip is branchless by construction (MANIFEST: "ends on the reception
+// interior so the hand-off into S1_C/H_VID still matches") and plays whole.
+// A real transitionsSwap clip, once one exists, still wins over all of this.
+export function planTransition({ branch, otherBranch = null, fromLetter, destLetter, nextSceneId, destImgIn = null }) {
+  const plain = pickTransition(branch, fromLetter, destLetter, nextSceneId);
+  const landsIn = fromLetter === 'X' ? 'C' : fromLetter;
+  const isSwap = destLetter !== landsIn;
+  if (!isSwap || fromLetter === 'X' || branch.transitionsSwap?.[nextSceneId]) return [{ file: plain }];
+
+  const leaveAt = branch.transitionsSplit?.[nextSceneId];
+  const arriveAt = otherBranch?.transitionsSplit?.[nextSceneId];
+  const arrivalClip = otherBranch?.transitions?.[nextSceneId];
+  const steps = [];
+  // `timeupdate` ticks every ~250ms, so a stopAt lands a little late: stop
+  // SPLIT_LEAD_S before the midpoint (still inside the pinned black) rather
+  // than risk the first frames of the wrong room's arrival half.
+  if (Number.isFinite(leaveAt) && leaveAt > 0) steps.push({ file: plain, stopAt: Math.max(0.1, leaveAt - SPLIT_LEAD_S) });
+  if (Number.isFinite(arriveAt) && arriveAt > 0 && arrivalClip) steps.push({ file: arrivalClip, startAt: arriveAt });
+  else if (destImgIn) steps.push({ still: destImgIn });
+  return steps;
+}
+
+// How long a flip's still-cut holds before the destination room's own clip
+// crossfades in (planTransition's `still` step). Long enough to read as a
+// cut to a new place, short enough not to read as a stall.
+export const FLIP_STILL_HOLD_MS = 1200;
+export const SPLIT_LEAD_S = 0.12;
+
 // Which sequence entry the choice follows. Default: the last one. S8-H sets
 // `choiceAfterEntry: 0` so DIVE / SWIM FOR THE PILLARS is asked underwater
 // (where Doc 1 §5 puts it) and the store clip plays as the consequence,
@@ -132,6 +176,35 @@ export function createRouter({ manifest, endings, state, mount, onEnding, audio 
   async function leaveScene() {
     clearCaptions();
     if (audio) audio.stopOneShots({ ms: 300 }); // e.g. the receptionist line must not run into the next room
+  }
+
+  // Plays a planTransition() step list: clips (whole or a sub-range) and
+  // still-cuts, in order, bailing between steps like everything else here.
+  async function playTransitionPlan(steps) {
+    for (const step of steps) {
+      if (gone()) return;
+      if (step.still) {
+        renderer.primeStill(step.still);
+        await new Promise((resolve) => setTimeout(resolve, FLIP_STILL_HOLD_MS));
+      } else {
+        await renderer.playTransition(step.file, { startAt: step.startAt || 0, stopAt: step.stopAt ?? null });
+      }
+    }
+  }
+
+  // planTransition() inputs for leaving the current scene toward nextSceneId.
+  function transitionPlanTo(scene, branch, branchLetter, nextSceneId) {
+    const destLetter = peekRenderFor(state);
+    const oppositeLetter = branchLetter === 'C' ? 'H' : branchLetter === 'H' ? 'C' : null;
+    const nextScene = manifest.scenes[nextSceneId];
+    return planTransition({
+      branch,
+      otherBranch: oppositeLetter ? scene.branches[oppositeLetter] : null,
+      fromLetter: branchLetter,
+      destLetter,
+      nextSceneId,
+      destImgIn: nextScene?.branches?.[destLetter]?.imgIn || null
+    });
   }
 
   async function playScene(sceneId) {
@@ -286,15 +359,13 @@ export function createRouter({ manifest, endings, state, mount, onEnding, audio 
         return jumpToEnding(ending);
       }
 
-      const transitionFile = pickTransition(branch, branchLetter, peekRenderFor(state), chosen.next);
-      await renderer.playTransition(transitionFile);
+      await playTransitionPlan(transitionPlanTo(scene, branch, branchLetter, chosen.next));
       if (gone()) return;
       return playScene(chosen.next);
     }
 
     // S0: no choice, single auto-advance (Doc 1 §4, "n/a").
-    const transitionFile = pickTransition(branch, branchLetter, peekRenderFor(state), branch.next);
-    await renderer.playTransition(transitionFile);
+    await playTransitionPlan(transitionPlanTo(scene, branch, branchLetter, branch.next));
     if (gone()) return;
     return playScene(branch.next);
   }
