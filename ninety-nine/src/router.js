@@ -2,9 +2,8 @@
 // the render does (Doc 1 §1.2). This module owns scene sequencing, mini-game
 // mount lifecycle, and ending resolution.
 //
-// Audio wiring (drone advance, ambience crossfade, ducking) is added in
-// Phase 2 by editing this file -- Phase 1 deliberately has zero audio calls
-// so the state machine can be verified in isolation first (Doc 4 §10).
+// Audio wiring (drone advance, ambience crossfade, ducking, music bed) lives
+// here too, added in Phase 2 by editing this file.
 
 import { renderFor, peekRenderFor, resolveEnding, commitChoice, fracture, seedRenderFromIntake } from './state.js';
 import { createRenderer } from './renderer.js';
@@ -12,6 +11,8 @@ import { createChoiceUI } from './choice.js';
 import { createApplicationUI } from './application.js';
 import { createPreloader } from './preload.js';
 import { createFractureOverlay } from './fracture.js';
+import { stringFor } from './text.js';
+import { createWalkLauncher } from './walk/launcher.js';
 
 // Mini-game modules (Doc 3) don't exist until Phase 4/5. This fallback lets
 // the skeleton run standalone: if the module 404s, the "mini-game" completes
@@ -43,6 +44,7 @@ async function mountMinigameOrFallback(spec, container, stateSnapshot, sceneAsse
     });
   } catch (err) {
     console.warn(`router: minigame "${spec.module}" not available yet, using pass-through`, err);
+    registerInstance(null); // a mount() that threw must not leave a half-live instance registered for bail.js
     return { friction: 0, dwell: 0, flags: [] };
   }
 }
@@ -72,16 +74,68 @@ export function pickTransition(branch, fromLetter, destLetter, nextSceneId) {
   return (isSwap && branch.transitionsSwap?.[nextSceneId]) || branch.transitions[nextSceneId];
 }
 
-export function createRouter({ manifest, endings, state, mount, onEnding, audio = null, sfx = null }) {
+// Which sequence entry the choice follows. Default: the last one. S8-H sets
+// `choiceAfterEntry: 0` so DIVE / SWIM FOR THE PILLARS is asked underwater
+// (where Doc 1 §5 puts it) and the store clip plays as the consequence,
+// instead of the choice appearing over the store's frozen last frame.
+export function choiceEntryIndex(branch) {
+  const n = branch.sequence.length;
+  const i = Number.isInteger(branch.choiceAfterEntry) ? branch.choiceAfterEntry : n - 1;
+  return Math.min(n - 1, Math.max(0, i));
+}
+
+export function createRouter({ manifest, endings, state, mount, onEnding, audio = null, sfx = null, library = null, rooms = null }) {
   const renderer = createRenderer(mount.scene);
   const choiceUI = createChoiceUI(mount.choice);
   const preloader = createPreloader(manifest, endings);
   const fractureOverlay = createFractureOverlay(mount.scene);
+  const walk = createWalkLauncher({ mount, rooms, audio, sfx, renderer });
   let currentMinigameSpec = null;
   let currentMinigameInstance = null; // exposed for bail.js (Phase 6)
   let bailedOut = false;
+  let captionTimers = [];
+  let captionEl = null;
+
+  // Receptionist lines etc. (text/system.json) shown as on-screen cards
+  // alongside the recorded voice -- Doc 1 §5 S2's "Ninety-nine." / "Shaun."
+  // never actually appeared anywhere before.
+  function scheduleCaptions(captions) {
+    clearCaptions();
+    if (!captions || !library) return;
+    for (const cap of captions) {
+      const text = cap.text || stringFor(library, cap.textKey);
+      captionTimers.push(setTimeout(() => {
+        if (bailedOut) return;
+        captionEl = document.createElement('div');
+        captionEl.className = `scene-caption ${cap.className || ''}`.trim();
+        captionEl.textContent = text;
+        mount.choice.appendChild(captionEl);
+        const el = captionEl;
+        captionTimers.push(setTimeout(() => { el.classList.add('scene-caption-out'); }, (cap.holdMs || 2500)));
+        captionTimers.push(setTimeout(() => { el.remove(); }, (cap.holdMs || 2500) + 700));
+      }, cap.atMs || 0));
+    }
+  }
+  function clearCaptions() {
+    for (const t of captionTimers) clearTimeout(t);
+    captionTimers = [];
+    for (const el of mount.choice.querySelectorAll('.scene-caption')) el.remove();
+    captionEl = null;
+  }
+
+  // Every await in playScene() is followed by this check: bail() used to
+  // only stop the chain if it fired inside a mini-game, so an exit during a
+  // video, choice or transition let the whole spine keep playing (and the
+  // audio keep firing) underneath the ending card.
+  const gone = () => bailedOut;
+
+  async function leaveScene() {
+    clearCaptions();
+    if (audio) audio.stopOneShots({ ms: 300 }); // e.g. the receptionist line must not run into the next room
+  }
 
   async function playScene(sceneId) {
+    if (gone()) return;
     const scene = manifest.scenes[sceneId];
     const branchLetter = sceneId === 'S0' ? 'X' : renderFor(state);
     const branch = scene.branches[branchLetter];
@@ -113,8 +167,16 @@ export function createRouter({ manifest, endings, state, mount, onEnding, audio 
       if (sceneId === 'S0') {
         const applicationUI = createApplicationUI(mount.choice);
         const { answers, refusals } = await applicationUI.present({
-          onSubmitGesture: () => { if (audio) audio.initOnGesture(); }
+          onSubmitGesture: () => {
+            if (!audio) return;
+            audio.initOnGesture();
+            // Apartment room tone under the countdown (Doc 1 §5 S0: "the
+            // apartment is room tone only"); the street bed takes over on
+            // the commute cut below.
+            audio.playAmbience(branch.ambience);
+          }
         });
+        if (gone()) return;
         // Doc 4 §6.4's intake -> MG-07 payoff reads state.formAnswers. This
         // form is now the only place they're collected (MG-01 is gone), so
         // MG-07's review at S8 shows exactly what was handed over at S0.
@@ -123,6 +185,7 @@ export function createRouter({ manifest, endings, state, mount, onEnding, audio 
         seedRenderFromIntake(state, refusals);
       } else {
         await choiceUI.presentSingle(branch.preGesture.label);
+        if (gone()) return;
         if (audio) audio.initOnGesture();
       }
     }
@@ -131,6 +194,9 @@ export function createRouter({ manifest, endings, state, mount, onEnding, audio 
       audio.advanceScene(state.sceneIndex); // Doc 4 §7.1 detune ramp
       const firstAmbience = branch.ambience !== undefined ? branch.ambience : (branch.ambienceSequence && branch.ambienceSequence[0]);
       audio.playAmbience(firstAmbience); // Doc 4 §7.2, null = carry over previous bed (Doc 1 §5 S2)
+      // Music bed: per-branch override, else per-scene, else none (fades out).
+      const music = branch.music !== undefined ? branch.music : (scene.music !== undefined ? scene.music : null);
+      audio.setMusic(music, branchLetter === 'X' ? 'C' : branchLetter);
     }
 
     // Branch-entry one-shots (sfx.js's real-file/synthesized cues), e.g. the
@@ -140,6 +206,7 @@ export function createRouter({ manifest, endings, state, mount, onEnding, audio 
     if (sfx && branch.sfxCue) {
       for (const cue of Array.isArray(branch.sfxCue) ? branch.sfxCue : [branch.sfxCue]) sfx.play(cue);
     }
+    scheduleCaptions(branch.captions);
 
     // Doc 4 §5.2: fracture overlay, driven by current friction/dissonance.
     // No opposite branch exists for S0 (X only).
@@ -149,16 +216,26 @@ export function createRouter({ manifest, endings, state, mount, onEnding, audio 
 
     const dwellStart = performance.now();
     let autoChoiceKey = null;
+    let chosenKey = null;
+    const choiceAt = branch.choice ? choiceEntryIndex(branch) : -1;
+    const roomId = walk.roomFor(sceneId, branchLetter);
 
     for (let i = 0; i < branch.sequence.length; i++) {
       const entry = branch.sequence[i];
-      await renderer.playEntry(entry, branchLetter);
 
-      // S8's two-entry sequences pair a second ambience bed with the second
-      // clip (mailroom->boardroom, dive->store). Doc 1 §5 S8 / README.
-      if (i > 0 && audio && branch.ambienceSequence && branch.ambienceSequence[i]) {
-        audio.playAmbience(branch.ambienceSequence[i]);
-      }
+      // Bed changes land ON the cut (renderer's onStart), not after the
+      // clip has finished: S8's second bed used to start only once the
+      // store/boardroom clip had already ended.
+      const bedForEntry = i > 0 && branch.ambienceSequence ? branch.ambienceSequence[i] : null;
+      const secondary = i === 0 && branch.ambienceSecondary ? branch.ambienceSecondary.file : null;
+      const onStart = () => {
+        if (!audio) return;
+        if (bedForEntry) audio.playAmbience(bedForEntry);
+        if (secondary) audio.playAmbience(secondary);
+      };
+
+      await renderer.playEntry(entry, branchLetter, { onStart });
+      if (gone()) return;
 
       if (entry.mount === 'minigame') {
         currentMinigameSpec = branch.minigame;
@@ -167,7 +244,7 @@ export function createRouter({ manifest, endings, state, mount, onEnding, audio 
         const services = { audio, sfx }; // Doc 4 §6.3: mini-games request nodes from audio.js, never create their own AudioContext
         const payload = await mountMinigameOrFallback(branch.minigame, mount.minigame, snapshot, sceneAssets, services, (inst) => { currentMinigameInstance = inst; });
         currentMinigameSpec = null;
-        if (bailedOut) return; // Doc 4 §9: bail fired mid-minigame -- stop this chain, jumpToEnding already ran
+        if (gone()) return; // Doc 4 §9: bail fired mid-minigame -- stop this chain, jumpToEnding already ran
 
         state.friction = Math.min(8, state.friction + Math.min(1, Math.max(0, payload.friction || 0)));
         for (const flag of payload.flags || []) state.flags.add(flag);
@@ -179,35 +256,46 @@ export function createRouter({ manifest, endings, state, mount, onEnding, audio 
           autoChoiceKey = payload.autoChoice;
         }
       }
+
+      if (i === choiceAt) {
+        // Third, unscored affordance: walk the room (src/walk/). Only offered
+        // where data/rooms.json has a room for this scene+render.
+        const extra = roomId ? { label: 'WALK THE ROOM', run: () => walk.enter(roomId, { state }) } : null;
+        chosenKey = autoChoiceKey || await choiceUI.present(branch.choice, { extra });
+        if (gone()) return;
+        const chosen = branch.choice[chosenKey];
+        const polarity = chosenKey === 'succumb' ? 1 : -1;
+        commitChoice(state, polarity);
+        if (chosen.setFlag) state.flags.add(chosen.setFlag);
+        if (chosen.sfxCue && sfx) sfx.play(chosen.sfxCue); // e.g. S4-C's paper handoff, S5-C's CRT wake
+      }
     }
 
+    state.dwell[state.sceneIndex] = (performance.now() - dwellStart) / 1000;
+    await leaveScene();
+
     if (branch.choice) {
-      const chosenKey = autoChoiceKey || await choiceUI.present(branch.choice);
       const chosen = branch.choice[chosenKey];
-      const polarity = chosenKey === 'succumb' ? 1 : -1;
-      commitChoice(state, polarity);
-      if (chosen.setFlag) state.flags.add(chosen.setFlag);
-      if (chosen.sfxCue && sfx) sfx.play(chosen.sfxCue); // e.g. S4-C's paper handoff, S5-C's CRT wake
-
-      state.dwell[state.sceneIndex] = (performance.now() - dwellStart) / 1000;
-
       if (chosen.next === 'E') {
         const ending = resolveEnding(state);
         const transitionFile = branch.endingTransitions[ending];
         await renderer.playTransition(transitionFile);
+        if (gone()) return;
         await playEndingVisual(ending);
+        if (gone()) return;
         return jumpToEnding(ending);
       }
 
       const transitionFile = pickTransition(branch, branchLetter, peekRenderFor(state), chosen.next);
       await renderer.playTransition(transitionFile);
+      if (gone()) return;
       return playScene(chosen.next);
     }
 
     // S0: no choice, single auto-advance (Doc 1 §4, "n/a").
-    state.dwell[state.sceneIndex] = (performance.now() - dwellStart) / 1000;
     const transitionFile = pickTransition(branch, branchLetter, peekRenderFor(state), branch.next);
     await renderer.playTransition(transitionFile);
+    if (gone()) return;
     return playScene(branch.next);
   }
 
@@ -221,6 +309,7 @@ export function createRouter({ manifest, endings, state, mount, onEnding, audio 
   async function playEndingVisual(endingId) {
     const ending = endings[endingId];
     if (!ending) return;
+    if (audio) audio.setMusic(null); // the bed goes before the card; the drone runs to it (C7)
     if (ending.video) {
       await renderer.playTransition(ending.video);
     } else if (ending.imgOut) {
@@ -231,9 +320,13 @@ export function createRouter({ manifest, endings, state, mount, onEnding, audio 
   }
 
   function jumpToEnding(endingId) {
+    walk.abort();
+    clearCaptions();
     renderer.destroy();
     fractureOverlay.destroy();
     choiceUI.clear();
+    mount.minigame.replaceChildren();
+    if (audio) audio.fadeOutForEnding();
     onEnding(endingId, state);
     return endingId;
   }
@@ -249,6 +342,7 @@ export function createRouter({ manifest, endings, state, mount, onEnding, audio 
       currentMinigameInstance = null;
       mount.minigame.replaceChildren();
     }
+    mount.choice.replaceChildren(); // an exit during the S0 form used to leave the form running
     jumpToEnding('PENDING');
   }
 
@@ -260,6 +354,7 @@ export function createRouter({ manifest, endings, state, mount, onEnding, audio 
     bail,
     getCurrentMinigame() {
       return currentMinigameSpec;
-    }
+    },
+    isWalking() { return walk.isActive(); }
   };
 }

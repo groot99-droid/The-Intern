@@ -28,3 +28,6 @@ This note summarizes *by scene* rather than one bit per file — see [[ninety-ni
 - Pipeline/method: [[docs/Design Docs|docs/02_GENERATION_HIGGSFIELD.md]]
 - The 3 pilot stills these were also used as Blender modeling reference for: [[blender/refs/Reference Images|blender/refs/]]
 - Raw SFX sources: [[sfx-raw/Raw SFX Library|sfx-raw/]]
+
+## Revisions
+- [[ninety-nine/assets/Asset Revisions|Asset Revisions]] — what this pass re-cut/restored and what still needs regenerating.

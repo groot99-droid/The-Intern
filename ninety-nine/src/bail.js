@@ -23,7 +23,11 @@ export function initBail(router) {
   affordance.addEventListener('click', () => router.bail());
 
   document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape') router.bail();
+    // While the 3D walk layer holds the pointer lock, Escape is the
+    // browser's own "release the mouse" key (and Chrome swallows it under
+    // lock anyway) -- it must not read as the fire exit. The walk layer's
+    // own LEAVE button is the way out of the room; EXIT stays clickable.
+    if (e.key === 'Escape' && !document.body.classList.contains('walking')) router.bail();
   });
 
   let touchTimer = null;

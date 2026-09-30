@@ -34,7 +34,9 @@ Also: Doc 1 names the prologue `S0_C_*`; Doc 2 and these files use `S0_X_*`.
 - **Endings**: each SE_*_VID ends on a still hold; extend on the last frame for the 4 s pre-card hold.
   The "100" slip and all cards are engine text; slips in stills are blank quads.
 - **Audio**: no stem contains the 48 Hz drone (engine oscillator). Beds are peak-normalised to -3 dBFS,
-  loudness intentionally unmatched per scene (see MANIFEST). Loop seams measured ≤ 0.023 on ±1 scale.
+  loudness intentionally unmatched per scene (see MANIFEST) -- the engine trims each bed toward -18 LUFS
+  and each one-shot toward -8 dBFS peak at play time (src/audio.js), so the files stay as delivered.
+  Loop seams measured ≤ 0.023 on ±1 scale.
 - **Text rule**: no generated lettering anywhere. ENTER sign = blank green housing; S0 monitor page = grey
   placeholder bars; S7 indicator = non-numeric segment pattern.
 

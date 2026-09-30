@@ -10,7 +10,8 @@
 // with one pre-filled tile apiece, which meant every player submitted an
 // identical form and the answers could not mean anything. (The cut before
 // that was free typing, judged "boring".) The ten-question set is gone
-// entirely, along with MG-01, which scenes.json never actually mounted.
+// entirely; the MG-01 slot at S1 is now mg01-stack (THE TRAY), which
+// scenes.json does mount -- this form is the intake, that is the tray.
 //
 // What the answers do: two or more NOT WILLING answers seed the hostile
 // render, which is what finally makes S1-H/S2-H reachable. The seed is
