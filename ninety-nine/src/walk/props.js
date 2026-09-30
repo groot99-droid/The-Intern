@@ -11,6 +11,7 @@
 // list. NPC figures never blink and never look up (C5): they are static.
 
 import * as THREE from '../../vendor/three/three.module.js';
+import { applyWorldUV } from './materials.js';
 
 function box(mats, slot, w, h, d, x = 0, y = 0, z = 0, opts = {}) {
   const geo = new THREE.BoxGeometry(w, h, d);
@@ -178,7 +179,10 @@ const BUILDERS = {
     const g = new THREE.Group();
     const suit = o.suit || 'lp_suit';
     g.add(box(mats, suit, 0.44, 0.6, 0.24, 0, 0.9, 0));
-    g.add(box(mats, o.face === 'blur' ? 'lp_grey' : 'lp_skin', 0.22, 0.24, 0.22, 0, 1.52, 0));
+    g.add(box(mats, suit, 0.56, 0.1, 0.26, 0, 1.44, 0)); // shoulders
+    g.add(box(mats, 'lp_skin', 0.1, 0.06, 0.1, 0, 1.5, 0)); // neck
+    g.add(box(mats, o.face === 'blur' ? 'lp_grey' : 'lp_skin', 0.22, 0.24, 0.22, 0, 1.56, 0));
+    g.add(box(mats, 'lp_dark', 0.24, 0.08, 0.24, 0, 1.78, 0)); // hair
     for (const s of [-1, 1]) {
       g.add(box(mats, suit, 0.12, 0.58, 0.12, s * 0.3, 0.92, 0));
       g.add(box(mats, 'lp_skin', 0.1, 0.12, 0.1, s * 0.3, 0.8, 0)); // low-poly hands (C6)
@@ -188,16 +192,44 @@ const BUILDERS = {
     if (o.seated) { g.position.y = -0.45; }
     return g;
   },
-  // Rusted low-poly car (add_car_details): body, cabin, four wheel boxes.
+  // Rusted low-poly car (add_car_details): body, hood and trunk decks,
+  // cabin with a glass band, bumpers, 8-sided wheels, lit tail lights.
+  // `hero` adds the rust panel and an open driver's door (S5-H's fifth
+  // car, "door open, key in the ignition"). Nothing here is textured (C1).
   car(mats, o) {
     const g = new THREE.Group();
     const m = o.mat || 'lp_car';
     const L = o.len || 4.4, W = o.w || 1.8;
-    g.add(box(mats, m, W, 0.55, L, 0, 0.3, 0, { collide: true }));
-    g.add(box(mats, m, W - 0.3, 0.5, L * 0.45, 0, 0.85, -L * 0.05));
-    g.add(box(mats, 'lp_glass', W - 0.36, 0.3, L * 0.45 + 0.02, 0, 0.95, -L * 0.05));
-    for (const [x, z] of [[-W / 2, L * 0.32], [W / 2, L * 0.32], [-W / 2, -L * 0.32], [W / 2, -L * 0.32]]) g.add(box(mats, 'lp_black', 0.2, 0.6, 0.6, x, 0, z));
-    if (o.hero) g.add(box(mats, 'lp_rust', W * 0.6, 0.12, L * 0.3, 0.1, 0.85, L * 0.15)); // one rust panel
+    const sill = 0.32; // underbody clearance
+    g.add(box(mats, m, W, 0.5, L * 0.98, 0, sill, 0, { collide: true }));            // body tub
+    g.add(box(mats, m, W - 0.1, 0.16, L * 0.3, 0, sill + 0.5, L * 0.32));              // hood
+    g.add(box(mats, m, W - 0.1, 0.2, L * 0.24, 0, sill + 0.5, -L * 0.36));             // trunk deck
+    g.add(box(mats, m, W - 0.28, 0.14, L * 0.44, 0, sill + 0.5 + 0.44, -L * 0.03));    // roof
+    g.add(box(mats, 'lp_glass', W - 0.34, 0.34, L * 0.44 + 0.02, 0, sill + 0.5 + 0.1, -L * 0.03)); // glass band
+    for (const s of [-1, 1]) g.add(box(mats, 'lp_dark', 0.03, 0.34, L * 0.44, s * (W / 2 - 0.16), sill + 0.5 + 0.1, -L * 0.03)); // pillars
+    g.add(box(mats, 'lp_chrome', W + 0.04, 0.12, 0.1, 0, sill - 0.02, L / 2 - 0.02));   // bumpers
+    g.add(box(mats, 'lp_chrome', W + 0.04, 0.12, 0.1, 0, sill - 0.02, -L / 2 + 0.02));
+    for (const s of [-1, 1]) {
+      g.add(box(mats, 'lp_taillight', 0.28, 0.1, 0.03, s * (W / 2 - 0.25), sill + 0.3, -L / 2 - 0.005));
+      g.add(box(mats, 'lp_headlight', 0.24, 0.12, 0.03, s * (W / 2 - 0.25), sill + 0.28, L / 2 - 0.005));
+      g.add(box(mats, 'lp_dark', 0.06, 0.05, 0.16, s * (W / 2 + 0.02), sill + 0.62, L * 0.12)); // mirrors
+    }
+    for (const [x, z] of [[-W / 2 + 0.08, L * 0.32], [W / 2 - 0.08, L * 0.32], [-W / 2 + 0.08, -L * 0.32], [W / 2 - 0.08, -L * 0.32]]) {
+      const wheel = cylinder(mats, 'lp_black', 0.32, 0.22, x, 0, z, 8);
+      wheel.rotation.z = Math.PI / 2; wheel.position.y = 0.32;
+      g.add(wheel);
+      const hub = cylinder(mats, 'lp_grey', 0.14, 0.24, x, 0, z, 8);
+      hub.rotation.z = Math.PI / 2; hub.position.y = 0.32;
+      g.add(hub);
+      g.add(box(mats, m, 0.1, 0.36, 0.8, x + (x < 0 ? 0.02 : -0.02), sill + 0.2, z)); // arch
+    }
+    if (o.hero) {
+      g.add(box(mats, 'lp_rust', W * 0.5, 0.1, L * 0.3, 0.12, sill + 0.55, L * 0.15)); // one rust panel
+      const door = box(mats, m, 0.05, 0.62, L * 0.22, 0, sill + 0.1, 0);
+      door.position.set(W / 2 + L * 0.09, sill + 0.41, -L * 0.02);
+      door.rotation.y = -Math.PI / 3; // hanging open
+      g.add(door);
+    }
     return g;
   },
   // Elevator button panel: 66 unlabelled buttons, one lit (motif 6).
@@ -270,24 +302,84 @@ const BUILDERS = {
     g.add(d);
     return g;
   },
-  // Structural column: photoreal (building-owned) unless mat is lp_*.
+  // Structural column: photoreal (building-owned) unless mat is lp_*. A
+  // plinth and a cap so it meets floor and ceiling like poured concrete,
+  // and an optional painted band (`band`, `bandH`) low down the way the
+  // garage's columns carry the bay colour.
   pillar(mats, o) {
     const g = new THREE.Group();
     const m = o.mat || 'concrete';
-    const p = box(mats, m, o.w || 0.6, o.h || 3.2, o.w || 0.6, 0, 0, 0, { collide: true });
+    const w = o.w || 0.6, h = o.h || 3.2;
+    const p = box(mats, m, w, h, w, 0, 0, 0, { collide: true });
+    applyWorldUV(p.geometry, o.tile || 1.5);
     g.add(p);
+    const plinth = box(mats, m, w + 0.12, 0.12, w + 0.12, 0, 0, 0, { castShadow: false });
+    applyWorldUV(plinth.geometry, o.tile || 1.5);
+    g.add(plinth);
+    if (o.cap !== false) {
+      const cap = box(mats, m, w + 0.3, 0.3, w + 0.3, 0, h - 0.3, 0, { castShadow: false });
+      applyWorldUV(cap.geometry, o.tile || 1.5);
+      g.add(cap);
+    }
+    if (o.band) {
+      const band = box(mats, o.band, w + 0.02, o.bandH || 1.0, w + 0.02, 0, 0.12, 0, { castShadow: false });
+      applyWorldUV(band.geometry, 1.5);
+      g.add(band);
+    }
     return g;
   },
-  // Ceiling fluorescent panel (emissive box) -- the building's light (C1).
+  // Ceiling fluorescent: recessed housing, lit diffuser, a soft additive
+  // glow plate hanging just under it -- the building's light (C1).
   fluoro(mats, o) {
     const g = new THREE.Group();
-    g.add(box(mats, 'lp_fluoro', o.w || 1.2, 0.06, o.d || 0.3, 0, 0, 0, { castShadow: false }));
+    const w = o.w || 1.2, d = o.d || 0.3;
+    g.add(box(mats, 'lp_grey', w + 0.08, 0.05, d + 0.08, 0, 0.02, 0, { castShadow: false }));
+    g.add(box(mats, 'lp_fluoro', w, 0.04, d, 0, 0, 0, { castShadow: false }));
+    const glow = new THREE.Mesh(new THREE.PlaneGeometry(w * 1.6, d * 2.6), mats.get('glow_fluoro'));
+    glow.rotation.x = Math.PI / 2; glow.position.y = -0.06;
+    g.add(glow);
     return g;
   },
-  // Sodium fixture (garage): orange emissive block.
+  // Sodium fixture (garage): a hooded housing on a stem, the orange tube,
+  // and a glow plate. `flicker` is read by room.js's light pass.
   sodium(mats) {
     const g = new THREE.Group();
-    g.add(box(mats, 'lp_sodium', 0.5, 0.12, 0.2, 0, 0, 0, { castShadow: false }));
+    g.add(box(mats, 'lp_dark', 0.06, 0.25, 0.06, 0, 0.12, 0, { castShadow: false }));      // stem
+    g.add(box(mats, 'lp_dark', 0.7, 0.1, 0.32, 0, 0.02, 0, { castShadow: false }));        // hood
+    g.add(box(mats, 'lp_sodium', 0.56, 0.06, 0.16, 0, -0.03, 0, { castShadow: false }));   // tube
+    const glow = new THREE.Mesh(new THREE.PlaneGeometry(1.3, 0.7), mats.get('glow_sodium'));
+    glow.rotation.x = Math.PI / 2; glow.position.y = -0.08;
+    g.add(glow);
+    return g;
+  },
+  // Pendant bulb (the run's ceiling lamps): cord, shade, bulb, glow.
+  pendant(mats, o) {
+    const g = new THREE.Group();
+    const drop = o.drop || 0.6;
+    g.add(box(mats, 'lp_black', 0.02, drop, 0.02, 0, -drop, 0, { castShadow: false }));
+    const shade = cylinder(mats, 'lp_dark', 0.22, 0.16, 0, -drop - 0.16, 0, 10);
+    g.add(shade);
+    g.add(box(mats, 'lp_fluoro', 0.1, 0.08, 0.1, 0, -drop - 0.2, 0, { castShadow: false }));
+    const glow = new THREE.Mesh(new THREE.PlaneGeometry(0.9, 0.9), mats.get('glow_fluoro'));
+    glow.rotation.x = Math.PI / 2; glow.position.y = -drop - 0.25;
+    g.add(glow);
+    return g;
+  },
+  // Wall-mounted signage plate: a blank painted rectangle (the garage's
+  // red bay markers). Wordless (canon: no legible text in the world).
+  wallplate(mats, o) {
+    const g = new THREE.Group();
+    g.add(box(mats, o.mat || 'lp_red', o.w || 1.2, o.h || 0.5, 0.03, 0, 0, 0, { castShadow: false }));
+    return g;
+  },
+  // Exposed services along a ceiling: a run of pipe / cable tray.
+  pipe(mats, o) {
+    const g = new THREE.Group();
+    const len = o.len || 6, r = o.r || 0.08;
+    const pipe = cylinder(mats, o.mat || 'lp_grey', r, len, 0, 0, 0, 8);
+    pipe.rotation.z = Math.PI / 2; pipe.position.y = 0;
+    g.add(pipe);
+    for (let x = -len / 2 + 0.5; x < len / 2; x += 2.0) g.add(box(mats, 'lp_dark', 0.06, 0.25, 0.06, x, 0, 0, { castShadow: false }));
     return g;
   },
   // Floor emblem: the V&A monogram as a gold disc set in the marble.

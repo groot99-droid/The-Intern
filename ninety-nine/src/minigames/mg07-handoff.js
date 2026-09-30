@@ -133,8 +133,20 @@ function mountModeH(container, state, onComplete, tracked, services) {
   dwell.start();
   let resolved = false;
 
+  // The mini-game layer is pointer-events:none (style.css); only its
+  // children take input, so the press has to land on a full-layer zone,
+  // not on the layer -- the same defect MG-05 H had ("hold does nothing").
+  // The zone also draws the descent: it darkens with depth and pulses with
+  // the air left, so holding visibly does something from the first tick.
+  const zone = el('div', 'mg07-breath-zone');
   const hud = el('div', 'mg07-breath-hint', 'HOLD TO DESCEND');
-  container.appendChild(hud);
+  zone.appendChild(hud);
+  container.appendChild(zone);
+  const paint = () => {
+    zone.style.setProperty('--depth', depth.toFixed(3));
+    zone.style.setProperty('--air', air.toFixed(3));
+    zone.classList.toggle('mg07-descending', holding && !resolved);
+  };
 
   let depth = 0; // 0..1
   let air = 1; // 0..1
@@ -161,6 +173,7 @@ function mountModeH(container, state, onComplete, tracked, services) {
     if (holding) {
       depth = Math.min(1, depth + DEPTH_RATE);
       air = Math.max(0, air - AIR_DRAIN_RATE);
+      paint();
       if (services && services.audio) {
         // Progressive occlusion as depth increases (Doc 3: "the drone
         // becomes progressively more occluded" -- real ducking, Doc 4 §7.3).
@@ -176,32 +189,34 @@ function mountModeH(container, state, onComplete, tracked, services) {
       }
     } else {
       air = Math.min(1, air + AIR_RECOVER_RATE);
+      paint();
     }
   }, 100);
 
-  tracked.on(container, 'pointerdown', () => {
-    holding = true;
-  });
-  tracked.on(window, 'pointerup', () => {
+  function release() {
     if (holding && depth > 0) {
       releaseCount++;
       depth = 0; // Doc 3: "Release: you surface. You lose all depth."
       if (services && services.audio) services.audio.restoreDrone({ ms: 800 });
     }
     holding = false;
+    paint();
+  }
+  tracked.on(zone, 'pointerdown', (e) => {
+    if (e.button !== undefined && e.button !== 0) return;
+    e.preventDefault();
+    holding = true;
+    paint();
   });
+  tracked.on(window, 'pointerup', release);
+  tracked.on(window, 'pointercancel', release);
+  tracked.on(window, 'blur', release);
+  tracked.on(zone, 'contextmenu', (e) => e.preventDefault());
   tracked.on(window, 'keydown', (e) => {
-    if (e.code === 'Space') holding = true;
+    if (e.code === 'Space' && !e.repeat) { e.preventDefault(); holding = true; paint(); }
   });
   tracked.on(window, 'keyup', (e) => {
-    if (e.code === 'Space') {
-      if (holding && depth > 0) {
-        releaseCount++;
-        depth = 0;
-        if (services && services.audio) services.audio.restoreDrone({ ms: 800 });
-      }
-      holding = false;
-    }
+    if (e.code === 'Space') release();
   });
 
   hardTimeout(tracked, HARD_CAP_SECONDS, finish);

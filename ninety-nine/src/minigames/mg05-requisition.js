@@ -20,7 +20,10 @@ import { defineMinigame, createFrictionAccumulator, createDwellTimer, createTrac
 
 const REJECT_KEYS = ['flag.reject.1', 'flag.reject.2', 'flag.reject.3', 'flag.reject.4'];
 const REVERSION_DELAY_MS = 9000;
-const STANDING_STILL_TIMEOUT_S = 90; // Doc 3 MG-05 mode H
+const SLUMP_AT_MS = 90000;   // Doc 3 MG-05 mode H: never ran -> camera slumps at 90s
+const SLUMP_HOLD_MS = 4000;  // ...and the bay ends shortly after
+const SPENT_CUT_MS = 1500;   // depletion: the frozen loop, then the cut to the dead-flat still
+const SPENT_HOLD_MS = 7000;  // total silence before the choice (Doc 3 says ten; shortened, see mountModeH)
 const HARD_CAP_TIMEOUT_S = 200; // safety net above the documented "up to 3 minutes"
 
 let textLibraryPromise = null;
@@ -207,20 +210,43 @@ function mountModeC(container, state, onComplete, sceneAssets, tracked, services
   return { dispose() { cancelled = true; } };
 }
 
-function mountModeH(container, state, onComplete, sceneAssets, tracked) {
+function mountModeH(container, state, onComplete, sceneAssets, tracked, services) {
   const dwell = createDwellTimer();
   dwell.start();
+  const scene = services && services.scene ? services.scene : null;
+  const sfx = services && services.sfx ? services.sfx : null;
 
+  // The mini-game layer itself is pointer-events:none (style.css) so the
+  // choice buttons underneath stay clickable between mini-games -- only
+  // its CHILDREN take input. The old build listened on the layer, so a
+  // press landed nowhere unless it hit the 0.9rem hint text: "hold to run
+  // does nothing, the video just loops". A full-layer zone is the child
+  // that takes the press now (Doc 3 MG-05 H: "press and hold anywhere").
+  const zone = el('div', 'mg05-run-zone');
   const hud = el('div', 'mg05-run-hint', 'HOLD TO RUN');
-  container.appendChild(hud);
+  // Doc 3 accessibility: "hold-to-run has a toggle-to-run alternative.
+  // Stamina is unaffected."
+  const toggleBtn = el('button', 'mg05-run-toggle', 'TOGGLE RUN');
+  toggleBtn.type = 'button';
+  zone.append(hud, toggleBtn);
+  container.appendChild(zone);
 
   let resolved = false;
-  let stamina = 1.0;
-  let holding = false;
+  let spent = false;       // stamina hit zero: the silence before the edge
+  let stamina = 1.0;       // invisible to the player (Doc 3) -- the world shows it, not a bar
+  let holding = false;     // pointer or key currently down
+  let toggled = false;     // toggle-to-run alternative
+  let wasRunning = false;
   let everHeld = false;
   let restCount = 0;
-  const DRAIN_PER_TICK = 1 / (45 * 10); // ~45s continuous run to depletion, 100ms ticks
-  const RECOVER_PER_TICK = DRAIN_PER_TICK * 0.5;
+  let stillMs = 0;         // never-ran clock (90s camera slump)
+  let footAcc = 0;
+  let breathAcc = 0;
+  const TICK_MS = 100;
+  const DRAIN_PER_TICK = 1 / (45 * 10); // ~45s continuous run to depletion (Doc 3)
+  const RECOVER_PER_TICK = DRAIN_PER_TICK * 0.5; // resting makes the corridor longer
+
+  const running = () => !spent && (holding || toggled);
 
   function finish() {
     if (resolved) return;
@@ -233,46 +259,136 @@ function mountModeH(container, state, onComplete, sceneAssets, tracked) {
     onComplete({ friction, dwell: dwell.elapsedSeconds(), flags: [] });
   }
 
-  const tickId = tracked.setInterval(() => {
-    if (resolved) return;
-    if (holding) {
+  // The garage only moves while he runs. Standing still freezes the loop
+  // on its frame; running plays it, fast at first and dragging as stamina
+  // goes, with footfalls and breathing that slow and deepen with it (Doc 3
+  // MG-05 H audio). Nothing here touches the drone (C7).
+  function onRunStart() {
+    if (everHeld) restCount++; // a rest just ended
+    everHeld = true;
+    stillMs = 0;
+    footAcc = 0; breathAcc = 0;
+    zone.classList.add('mg05-running');
+    if (scene) { scene.resume(); scene.setEffect && scene.setEffect('run-bob', true); }
+  }
+  function onRunStop() {
+    zone.classList.remove('mg05-running');
+    if (scene) { scene.pause(); scene.setEffect && scene.setEffect('run-bob', false); }
+  }
+
+  function deplete() {
+    if (spent || resolved) return;
+    spent = true;
+    if (wasRunning) { wasRunning = false; onRunStop(); }
+    holding = false; toggled = false;
+    zone.classList.remove('mg05-running');
+    zone.classList.add('mg05-spent');
+    hud.textContent = '';
+    toggleBtn.hidden = true;
+    if (scene) {
+      scene.setRate(1);
+      scene.setEffect && scene.setEffect('run-bob', false);
+      scene.setEffect && scene.setEffect('slump', false);
+    }
+    // Doc 3: "At depletion, ten full seconds of nothing but the drone and
+    // the wet room tone of the pool below, before the edge is revealed."
+    // The loop is left on its frame for a breath, then cuts to the
+    // dead-flat IMG_OUT (MANIFEST: "engine holds on S6_H_IMG_OUT for the
+    // silence") and the choice arrives only after the hold.
+    tracked.setTimeout(() => {
+      if (resolved) return;
+      if (scene && sceneAssets && sceneAssets.imgOut) scene.showStill(sceneAssets.imgOut);
+    }, SPENT_CUT_MS);
+    tracked.setTimeout(finish, SPENT_HOLD_MS);
+  }
+
+  tracked.setInterval(() => {
+    if (resolved || spent) return;
+    const run = running();
+    if (run && !wasRunning) onRunStart();
+    if (!run && wasRunning) onRunStop();
+    wasRunning = run;
+
+    if (run) {
       stamina = Math.max(0, stamina - DRAIN_PER_TICK);
-      if (stamina <= 0) {
-        finish();
+      const fatigue = 1 - stamina;
+      zone.style.setProperty('--fatigue', fatigue.toFixed(3));
+      if (scene) scene.setRate(0.7 + stamina * 0.6); // 1.3x fresh -> 0.7x spent
+      footAcc += TICK_MS;
+      breathAcc += TICK_MS;
+      const stride = 360 + fatigue * 340;   // ms per footfall: quick, then dragging
+      const breath = 1100 + fatigue * 1300; // ms per breath: even, then heaving
+      if (footAcc >= stride) {
+        footAcc -= stride;
+        if (sfx) sfx.play('footstep', { filterHz: 820 - fatigue * 320, gain: 0.16 + fatigue * 0.06 });
       }
+      if (breathAcc >= breath) {
+        breathAcc -= breath;
+        if (sfx) sfx.play('breath', { filterHz: 900 - fatigue * 500, durationMs: 260 + fatigue * 360, gain: 0.06 + fatigue * 0.1 });
+      }
+      if (stamina <= 0) deplete();
     } else if (everHeld) {
       stamina = Math.min(1, stamina + RECOVER_PER_TICK);
+      zone.style.setProperty('--fatigue', (1 - stamina).toFixed(3));
+    } else {
+      // Doc 3: "Never ran at all, just stood still: after 90 seconds the
+      // camera slumps, stamina drains from standing, and the bay ends."
+      stillMs += TICK_MS;
+      if (stillMs >= SLUMP_AT_MS && !zone.classList.contains('mg05-slump')) {
+        zone.classList.add('mg05-slump');
+        if (scene && scene.setEffect) scene.setEffect('slump', true);
+        tracked.setTimeout(deplete, SLUMP_HOLD_MS);
+      }
     }
-  }, 100);
+  }, TICK_MS);
 
-  tracked.on(container, 'pointerdown', () => {
-    if (!everHeld) everHeld = true;
-    else if (!holding) restCount++; // a rest just ended, about to hold again
+  // Input. pointerdown on the zone, released by ANY pointerup/cancel or a
+  // window blur, so a finger that slides off or a tab switch never leaves
+  // him running with nothing held.
+  tracked.on(zone, 'pointerdown', (e) => {
+    if (e.button !== undefined && e.button !== 0) return;
+    if (e.target === toggleBtn) return;
+    e.preventDefault();
     holding = true;
   });
-  tracked.on(window, 'pointerup', () => {
-    holding = false;
-  });
+  tracked.on(window, 'pointerup', () => { holding = false; });
+  tracked.on(window, 'pointercancel', () => { holding = false; });
+  tracked.on(window, 'blur', () => { holding = false; });
+  tracked.on(zone, 'contextmenu', (e) => e.preventDefault());
   tracked.on(window, 'keydown', (e) => {
-    if (e.code === 'Space' && !holding) {
-      if (!everHeld) everHeld = true;
-      else restCount++;
-      holding = true;
-    }
+    if (e.repeat) return;
+    if (e.code === 'Space' || e.code === 'KeyW' || e.code === 'ArrowUp') { e.preventDefault(); holding = true; }
   });
   tracked.on(window, 'keyup', (e) => {
-    if (e.code === 'Space') holding = false;
+    if (e.code === 'Space' || e.code === 'KeyW' || e.code === 'ArrowUp') holding = false;
+  });
+  tracked.on(toggleBtn, 'pointerdown', (e) => e.stopPropagation());
+  tracked.on(toggleBtn, 'click', (e) => {
+    e.stopPropagation();
+    if (spent) return;
+    toggled = !toggled;
+    toggleBtn.classList.toggle('mg05-run-toggle-on', toggled);
+    toggleBtn.textContent = toggled ? 'STOP RUNNING' : 'TOGGLE RUN';
   });
 
-  // Doc 3 MG-05 mode H: "Never ran at all, just stood still: after 90
-  // seconds the camera slumps, stamina drains from standing, and the bay
-  // ends." friction 1.0.
-  hardTimeout(tracked, STANDING_STILL_TIMEOUT_S, () => {
-    if (!everHeld) finish();
-  });
+  // Nothing moves until he does: the loop the router left playing is
+  // frozen on its frame, the way a held frame reads as "waiting".
+  if (scene) scene.pause();
+
   hardTimeout(tracked, HARD_CAP_TIMEOUT_S, finish);
 
-  return { dispose() {} }; // tracked.disposeAll() (called by unmount below) covers everything here
+  return {
+    dispose() {
+      // Runs from unmount(): the router resets the rate; the effects and
+      // the paused loop are ours to undo (a bail mid-run must not leave the
+      // scene layer bobbing).
+      if (scene) {
+        scene.setEffect && scene.setEffect('run-bob', false);
+        scene.setEffect && scene.setEffect('slump', false);
+        if (!spent) scene.resume();
+      }
+    }
+  };
 }
 
 export default function createMg05(mode) {
@@ -286,7 +402,7 @@ export default function createMg05(mode) {
       tracked = createTrackedListeners();
       const result = mode === 'C'
         ? mountModeC(container, state, onComplete, sceneAssets, tracked, services)
-        : mountModeH(container, state, onComplete, sceneAssets, tracked);
+        : mountModeH(container, state, onComplete, sceneAssets, tracked, services);
       disposeFn = result && result.dispose;
     },
     unmount() {
