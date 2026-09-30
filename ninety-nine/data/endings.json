@@ -1,0 +1,45 @@
+{
+  "_comment": "Doc 1 §2.4 resolveEnding() output maps here. Doc 1 §6.4 for card text (textKey resolved via text.js against /text/endings.json). C4 is deliberately broken only on these cards -- 'you' appears exactly once per card.",
+  "ASSIMILATION": {
+    "id": "SE_ASSIM",
+    "video": "SE_ASSIM_VID.mp4",
+    "imgIn": "SE_ASSIM_IMG_IN.png",
+    "imgOut": "SE_ASSIM_IMG_OUT.png",
+    "holdSeconds": 4,
+    "textKey": "ending.assimilation",
+    "flagOverlays": [
+      {
+        "flag": "NEVER_SAT",
+        "status": "TODO_NO_ASSET",
+        "note": "Doc 1 §2.5: if NEVER_SAT, there is no chair for him at all in the boardroom pull-back, and he remains standing. No chair-removed plate or patch asset was generated (README 'Not generated' list). Mechanism below is wired and testable; overlay rect is a disabled placeholder pending a real asset -- do not guess pixel coordinates against an uninspected video frame.",
+        "overlay": { "enabled": false, "shape": "rect", "x": 0, "y": 0, "w": 0, "h": 0, "style": "matte-fill" }
+      }
+    ]
+  },
+  "EXPULSION": {
+    "id": "SE_EXPUL",
+    "video": "SE_EXPUL_VID.mp4",
+    "imgIn": "SE_EXPUL_IMG_IN.png",
+    "imgOut": "SE_EXPUL_IMG_OUT.png",
+    "holdSeconds": 4,
+    "textKey": "ending.expulsion",
+    "flagOverlays": []
+  },
+  "PENDING": {
+    "id": "SE_PEND",
+    "video": "SE_PEND_VID.mp4",
+    "imgIn": "SE_PEND_IMG_IN.png",
+    "imgOut": "SE_PEND_IMG_OUT.png",
+    "holdSeconds": 4,
+    "textKey": "ending.pending",
+    "flagOverlays": []
+  },
+  "RETAINED": {
+    "_note": "Added post-launch (Doc 1 §9.1). Only one still was generated for this ending -- no video, no separate IN frame -- so it renders as a static hold on imgOut rather than the video-then-freeze pattern the other three use. renderer/router treat a missing `video` as 'still-only'.",
+    "id": "SE_RETAINED",
+    "imgOut": "SE_RETAINED_IMG_OUT.png",
+    "holdSeconds": 4,
+    "textKey": "ending.retained",
+    "flagOverlays": []
+  }
+}

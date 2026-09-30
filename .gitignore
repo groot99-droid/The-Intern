@@ -1,0 +1,12 @@
+# Blender autosaves / backups
+*.blend1
+*.blend2
+# Python
+__pycache__/
+*.pyc
+# Obsidian per-machine UI state
+.obsidian/workspace.json
+# OS junk
+Thumbs.db
+desktop.ini
+.DS_Store

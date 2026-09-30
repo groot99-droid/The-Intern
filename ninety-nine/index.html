@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>NINETY-NINE</title>
+  <link rel="stylesheet" href="./style.css" />
+</head>
+<body>
+  <div id="stage">
+    <div id="scene-layer">
+      <video id="video-a" class="scene-video" muted playsinline></video>
+      <video id="video-b" class="scene-video" muted playsinline></video>
+      <img id="still-img" class="scene-still" hidden alt="" />
+    </div>
+    <div id="minigame-layer"></div>
+    <div id="choice-layer"></div>
+    <div id="ending-card" hidden></div>
+    <div id="boot-error" hidden></div>
+  </div>
+  <script type="module" src="./src/main.js"></script>
+</body>
+</html>

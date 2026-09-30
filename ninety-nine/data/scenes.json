@@ -1,0 +1,325 @@
+{
+  "_comment": "Single source of truth linking Doc 1 logic, Doc 2 filenames, and Doc 3 minigame IDs. Doc 4 §15. Flags COUNTED_DOOR (MG-02 mode H) and EARLY_EXIT (bail.js) are NOT set here -- they come from minigame onComplete().flags or the global bail-out, not from scene choices.",
+  "spineOrder": ["S0", "S1", "S2", "S3", "S4", "S5", "S6", "S7", "S8"],
+  "scenes": {
+    "S0": {
+      "id": "S0",
+      "name": "THE UPLOAD",
+      "branches": {
+        "X": {
+          "preGesture": {
+            "_note": "Doc 1 §5 S0 Beat 1: 'He clicks SUBMIT.' This is also the one browser-mandated user gesture the whole game needs (Doc 4 §7.4) -- AudioContext is created here and nowhere else. Styled as the crude Web 1.0 portal button, not a generic UI control.",
+            "label": "SUBMIT"
+          },
+          "sequence": [
+            { "file": "S0_X_VID.mp4", "type": "video", "loop": false, "mount": null }
+          ],
+          "ambience": "S0_X_AMB.wav",
+          "ambienceSecondary": { "file": "S0_X_AMB_STREET.wav", "fadeInAtBeat": "commute" },
+          "imgIn": "S0_X_IMG_IN.png",
+          "imgOut": "S0_X_IMG_OUT.png",
+          "minigame": null,
+          "next": "S1",
+          "transitions": { "S1": "S0_X_TRN_S1.mp4" }
+        }
+      }
+    },
+    "S1": {
+      "id": "S1",
+      "name": "THE WAITING ROOM",
+      "branches": {
+        "C": {
+          "sequence": [
+            { "file": "S1_C_VID.mp4", "type": "video", "loop": true, "mount": "minigame" }
+          ],
+          "ambience": "S1_C_AMB.wav",
+          "imgIn": "S1_C_IMG_IN.png",
+          "imgOut": "S1_C_IMG_OUT.png",
+          "minigame": { "module": "mg01-stack", "mode": "C" },
+          "choice": {
+            "succumb": { "label": "TAKE A SEAT", "next": "S2" },
+            "resist":  { "label": "STAY STANDING", "next": "S2", "setFlag": "NEVER_SAT" }
+          },
+          "transitions": { "S2": "S1_C_TRN_S2.mp4" }
+        },
+        "H": {
+          "sequence": [
+            { "file": "S1_H_VID.mp4", "type": "video", "loop": true, "mount": "minigame" }
+          ],
+          "ambience": "S1_H_AMB.wav",
+          "imgIn": "S1_H_IMG_IN.png",
+          "imgOut": "S1_H_IMG_OUT.png",
+          "minigame": { "module": "mg01-stack", "mode": "H" },
+          "choice": {
+            "succumb": { "label": "TAKE A SEAT", "next": "S2" },
+            "resist":  { "label": "STAY STANDING", "next": "S2", "setFlag": "NEVER_SAT" }
+          },
+          "transitions": { "S2": "S1_H_TRN_S2.mp4" }
+        }
+      }
+    },
+    "S2": {
+      "id": "S2",
+      "name": "THE CALL",
+      "branches": {
+        "C": {
+          "sequence": [
+            { "file": "S2_C_VID.mp4", "type": "video", "loop": false, "mount": null }
+          ],
+          "sfxCue": ["speaker-click", "receptionist-voice"],
+          "ambience": null,
+          "imgIn": "S2_C_IMG_IN.png",
+          "imgOut": "S2_C_IMG_OUT.png",
+          "minigame": null,
+          "flipbookFallback": { "module": "flipbook", "imgIn": "S2_C_IMG_IN.png", "imgOut": "S2_C_IMG_OUT.png", "steps": 4, "active": false },
+          "choice": {
+            "succumb": { "label": "STAND", "next": "S3" },
+            "resist":  { "label": "RUN", "next": "S3" }
+          },
+          "transitions": { "S3": "S2_C_TRN_S3.mp4" }
+        },
+        "H": {
+          "sequence": [
+            { "file": "S2_H_VID.mp4", "type": "video", "loop": false, "mount": null }
+          ],
+          "sfxCue": ["speaker-hiss", "receptionist-voice"],
+          "ambience": null,
+          "imgIn": "S2_H_IMG_IN.png",
+          "imgOut": "S2_H_IMG_OUT.png",
+          "minigame": null,
+          "flipbookFallback": { "module": "flipbook", "imgIn": "S2_H_IMG_IN.png", "imgOut": "S2_H_IMG_OUT.png", "steps": 4, "active": false },
+          "choice": {
+            "succumb": { "label": "STAND", "next": "S3" },
+            "resist":  { "label": "RUN", "next": "S3" }
+          },
+          "transitions": { "S3": "S2_H_TRN_S3.mp4" }
+        }
+      }
+    },
+    "S3": {
+      "id": "S3",
+      "name": "THE THRESHOLD",
+      "branches": {
+        "C": {
+          "sequence": [
+            { "file": "S3_C_VID.mp4", "type": "video", "loop": true, "mount": "minigame" }
+          ],
+          "sfxCue": "curtain-rustle",
+          "ambience": "S3_C_AMB.wav",
+          "imgIn": "S3_C_IMG_IN.png",
+          "imgOut": "S3_C_IMG_OUT.png",
+          "minigame": { "module": "mg02-scan", "mode": "C" },
+          "choice": {
+            "succumb": { "label": "PART THE CURTAIN", "next": "S4" },
+            "resist":  { "label": "TRY THE DOOR", "next": "S4" }
+          },
+          "transitions": { "S4": "S3_C_TRN_S4.mp4" }
+        },
+        "H": {
+          "sequence": [
+            { "file": "S3_H_VID.mp4", "type": "video", "loop": true, "mount": "minigame" }
+          ],
+          "ambience": "S3_H_AMB.wav",
+          "imgIn": "S3_H_IMG_IN.png",
+          "imgOut": "S3_H_IMG_OUT.png",
+          "minigame": { "module": "mg02-scan", "mode": "H" },
+          "choice": {
+            "succumb": { "label": "PART THE CURTAIN", "next": "S4" },
+            "resist":  { "label": "TRY THE DOOR", "next": "S4" }
+          },
+          "transitions": { "S4": "S3_H_TRN_S4.mp4" }
+        }
+      }
+    },
+    "S4": {
+      "id": "S4",
+      "name": "THE FLOOR",
+      "branches": {
+        "C": {
+          "sequence": [
+            { "file": "S4_C_VID_PLATE.mp4", "type": "video", "loop": true, "mount": "minigame" }
+          ],
+          "ambience": "S4_C_AMB.wav",
+          "imgIn": "S4_C_IMG_IN.png",
+          "imgOut": "S4_C_IMG_OUT.png",
+          "npcSprite": {
+            "_note": "S4_C_VID (Kling walk cycle) was rejected per MANIFEST.csv; manager is composited as an engine billboard over the figure-free S4_C_VID_PLATE.mp4 dolly. Rects are approximate normalized crop boxes (0-1, origin top-left) read off the stills; tune in-browser during Phase 3.",
+            "far":  { "file": "S4_C_IMG_IN.png",  "rect": { "x": 0.42, "y": 0.24, "w": 0.14, "h": 0.58 } },
+            "near": { "file": "S4_C_IMG_OUT.png", "rect": { "x": 0.28, "y": 0.05, "w": 0.46, "h": 0.95 } }
+          },
+          "minigame": { "module": "mg03-corridor", "mode": "C" },
+          "choice": {
+            "succumb": { "label": "TAKE THE PAPERS", "next": "S5", "sfxCue": "paper-handoff" },
+            "resist":  { "label": "TAKE THE SIDE DOOR", "next": "S5" }
+          },
+          "transitions": { "S5": "S4_C_TRN_S5.mp4" }
+        },
+        "H": {
+          "sequence": [
+            { "file": "S4_H_VID.mp4", "type": "video", "loop": true, "mount": "minigame" }
+          ],
+          "ambience": "S4_H_AMB.wav",
+          "sfxOneShot": "S4_H_SFX_FOOTSTEPS.wav",
+          "imgIn": "S4_H_IMG_IN.png",
+          "imgOut": "S4_H_IMG_OUT.png",
+          "minigame": { "module": "mg03-corridor", "mode": "H" },
+          "choice": {
+            "succumb": { "label": "TAKE THE PAPERS", "next": "S5" },
+            "resist":  { "label": "TAKE THE SIDE DOOR", "next": "S5" }
+          },
+          "transitions": { "S5": "S4_H_TRN_S5.mp4" }
+        }
+      }
+    },
+    "S5": {
+      "id": "S5",
+      "name": "THE DESK / THE GARAGE",
+      "branches": {
+        "C": {
+          "sequence": [
+            { "file": "S5_C_VID.mp4", "type": "video", "loop": true, "mount": "minigame" }
+          ],
+          "ambience": "S5_C_AMB.wav",
+          "imgIn": "S5_C_IMG_IN.png",
+          "imgOut": "S5_C_IMG_OUT.png",
+          "minigame": { "module": "mg04-stapler", "mode": "C" },
+          "choice": {
+            "succumb": { "label": "STAPLE", "next": "S6" },
+            "resist":  { "label": "WAKE THE TERMINAL", "next": "S6", "setFlag": "SAW_HARLOWE", "sfxCue": "crt-degauss" }
+          },
+          "transitions": { "S6": "S5_C_TRN_S6.mp4" }
+        },
+        "H": {
+          "sequence": [
+            { "file": "S5_H_VID.mp4", "type": "video", "loop": true, "mount": "minigame" }
+          ],
+          "sfxCue": "car-alarm",
+          "ambience": "S5_H_AMB.wav",
+          "imgIn": "S5_H_IMG_IN.png",
+          "imgOut": "S5_H_IMG_OUT.png",
+          "minigame": { "module": "mg04-stapler", "mode": "H" },
+          "choice": {
+            "succumb": { "label": "REST", "next": "S6" },
+            "resist":  { "label": "TAKE THE SIDE DOOR", "next": "S6" }
+          },
+          "transitions": { "S6": "S5_H_TRN_S6.mp4" }
+        }
+      }
+    },
+    "S6": {
+      "id": "S6",
+      "name": "THE REQUISITION / THE RUN",
+      "branches": {
+        "C": {
+          "sequence": [
+            { "file": "S6_C_IMG_IN.png", "type": "still", "mount": "minigame" }
+          ],
+          "ambience": "S6_C_AMB.wav",
+          "imgIn": "S6_C_IMG_IN.png",
+          "imgOut": "S6_C_IMG_OUT.png",
+          "screenRect": {
+            "_note": "Green-screen monitor region on S6_C_IMG_IN.png (byte-identical to IMG_OUT per MANIFEST.csv). Normalized (0-1, origin top-left), approximate -- tune in-browser Phase 3/4.",
+            "x": 0.37, "y": 0.25, "w": 0.28, "h": 0.36
+          },
+          "minigame": { "module": "mg05-requisition", "mode": "C" },
+          "choice": {
+            "succumb": { "label": "ORDER", "next": "S7" },
+            "resist":  { "label": "FLAG", "next": "S7" }
+          },
+          "transitions": { "S7": "S6_C_TRN_S7.mp4" }
+        },
+        "H": {
+          "sequence": [
+            { "file": "S6_H_VID.mp4", "type": "video", "loop": true, "mount": "minigame" }
+          ],
+          "ambience": "S6_H_AMB.wav",
+          "imgIn": "S6_H_IMG_IN.png",
+          "imgOut": "S6_H_IMG_OUT.png",
+          "minigame": { "module": "mg05-requisition", "mode": "H" },
+          "choice": {
+            "succumb": { "label": "PUSH ON", "next": "S7" },
+            "resist":  { "label": "STOP", "next": "S7" }
+          },
+          "transitions": { "S7": "S6_H_TRN_S7.mp4" }
+        }
+      }
+    },
+    "S7": {
+      "id": "S7",
+      "name": "THE DESCENT",
+      "branches": {
+        "C": {
+          "sequence": [
+            { "file": "S7_C_VID.mp4", "type": "video", "loop": true, "mount": "minigame" }
+          ],
+          "ambience": "S7_C_AMB.wav",
+          "imgIn": "S7_C_IMG_IN.png",
+          "imgOut": "S7_C_IMG_OUT.png",
+          "minigame": { "module": "mg06-panel", "mode": "C" },
+          "choice": {
+            "succumb": { "label": "DESCEND", "next": "S8" },
+            "resist":  { "label": "REFUSE", "next": "S8" }
+          },
+          "transitions": { "S8": "S7_C_TRN_S8.mp4" }
+        },
+        "H": {
+          "sequence": [
+            { "file": "S7_H_VID.mp4", "type": "video", "loop": true, "mount": "minigame" }
+          ],
+          "ambience": "S7_H_AMB.wav",
+          "imgIn": "S7_H_IMG_IN.png",
+          "imgOut": "S7_H_IMG_OUT.png",
+          "minigame": { "module": "mg06-panel", "mode": "H" },
+          "choice": {
+            "succumb": { "label": "JUMP", "next": "S8" },
+            "resist":  { "label": "TURN BACK", "next": "S8" }
+          },
+          "transitions": { "S8": "S7_H_TRN_S8.mp4" }
+        }
+      }
+    },
+    "S8": {
+      "id": "S8",
+      "name": "THE DELIVERY / THE DIVE",
+      "branches": {
+        "C": {
+          "sequence": [
+            { "file": "S8_C_VID.mp4", "type": "video", "loop": false, "mount": null },
+            { "file": "S8_C_VID_BOARDROOM.mp4", "type": "video", "loop": true, "mount": "minigame" }
+          ],
+          "ambienceSequence": ["S8_C_AMB.wav", "S8_C_AMB_BOARDROOM.wav"],
+          "imgIn": "S8_C_IMG_IN.png",
+          "imgOut": "S8_C_IMG_OUT.png",
+          "minigame": { "module": "mg07-handoff", "mode": "C" },
+          "choice": {
+            "succumb": { "label": "DELIVER", "next": "E" },
+            "resist":  { "label": "OPEN THE BOX", "next": "E", "setFlag": "OPENED_BOX" }
+          },
+          "endingTransitions": {
+            "ASSIMILATION": "S8_C_TRN_SE_ASSIM.mp4",
+            "PENDING": "S8_C_TRN_SE_PEND.mp4",
+            "RETAINED": "S8_C_TRN_SE_ASSIM.mp4"
+          }
+        },
+        "H": {
+          "sequence": [
+            { "file": "S8_H_VID.mp4", "type": "video", "loop": true, "mount": "minigame" },
+            { "file": "S8_H_VID_STORE.mp4", "type": "video", "loop": false, "mount": null }
+          ],
+          "ambienceSequence": ["S8_H_AMB.wav", "S8_H_AMB_STORE.wav"],
+          "imgIn": "S8_H_IMG_IN.png",
+          "imgOut": "S8_H_IMG_OUT.png",
+          "minigame": { "module": "mg07-handoff", "mode": "H" },
+          "choice": {
+            "succumb": { "label": "DIVE", "next": "E" },
+            "resist":  { "label": "SWIM FOR THE PILLARS", "next": "E" }
+          },
+          "endingTransitions": {
+            "EXPULSION": "S8_H_TRN_SE_EXPUL.mp4",
+            "PENDING": "S8_H_TRN_SE_PEND.mp4"
+          }
+        }
+      }
+    }
+  }
+}

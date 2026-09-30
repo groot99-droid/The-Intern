@@ -1,0 +1,112 @@
+file,class,path,seconds,width,height,sample_rate,channels,bits,bytes,sha256_16,in_s1_scheme,qc,note
+S0_X_IMG_IN.png,img,/assets/img/S0_X_IMG_IN.png,,2688,1520,,,,5376824,40f94c8aba0d390e,True,pass,Doc 1 calls the prologue S0_C_*; Doc 2 (and these files) use S0_X_*
+S0_X_IMG_OUT.png,img,/assets/img/S0_X_IMG_OUT.png,,2688,1520,,,,6201033,035774f67b419af5,True,pass,Doc 1 calls the prologue S0_C_*; Doc 2 (and these files) use S0_X_*
+S1_C_IMG_IN.png,img,/assets/img/S1_C_IMG_IN.png,,1920,1080,,,,2011016,2585c76eb9a88723,True,pending,"blender re-skin (Track B1, export_game_assets.py)"
+S1_C_IMG_OUT.png,img,/assets/img/S1_C_IMG_OUT.png,,1920,1080,,,,2010602,ebd5742b5f864913,True,pending,"blender re-skin (Track B1, export_game_assets.py)"
+S1_H_IMG_IN.png,img,/assets/img/S1_H_IMG_IN.png,,2688,1520,,,,6065960,408a3587099c0923,True,pass,
+S1_H_IMG_OUT.png,img,/assets/img/S1_H_IMG_OUT.png,,2688,1520,,,,6454424,d120aa7b4189673d,True,pass,
+S2_C_IMG_IN.png,img,/assets/img/S2_C_IMG_IN.png,,2688,1520,,,,4809471,8796800929dc2d6f,True,pass,
+S2_C_IMG_OUT.png,img,/assets/img/S2_C_IMG_OUT.png,,2688,1520,,,,5351635,30d50ef011e53a7e,True,pass,
+S2_H_IMG_IN.png,img,/assets/img/S2_H_IMG_IN.png,,2688,1520,,,,5789220,a91d837bc8ef88be,True,pass,
+S2_H_IMG_OUT.png,img,/assets/img/S2_H_IMG_OUT.png,,2688,1520,,,,5206301,506cc8d2c04952ec,True,pass,
+S3_C_IMG_IN.png,img,/assets/img/S3_C_IMG_IN.png,,2688,1520,,,,4685723,5bf9a7ce01af89a8,True,pass,
+S3_C_IMG_OUT.png,img,/assets/img/S3_C_IMG_OUT.png,,2688,1520,,,,5245176,2e1af9c941076e6b,True,pass,
+S3_H_IMG_IN.png,img,/assets/img/S3_H_IMG_IN.png,,2688,1520,,,,6004163,da24271a67d78a30,True,pass,
+S3_H_IMG_OUT.png,img,/assets/img/S3_H_IMG_OUT.png,,2688,1520,,,,6442733,1449500b4c8b91e0,True,pass,
+S4_C_IMG_IN.png,img,/assets/img/S4_C_IMG_IN.png,,2688,1520,,,,5584283,e7e7cda4b974524d,True,pass,also the sprite source for the manager at distance
+S4_C_IMG_OUT.png,img,/assets/img/S4_C_IMG_OUT.png,,2688,1520,,,,5667396,ec0721c5818978ed,True,pass,also the sprite source for the manager close-up
+S4_C_PLATE_IN.png,img,/assets/img/S4_C_PLATE_IN.png,,2688,1520,,,,6455385,4958acdd72c7f614,False,pass,fallback: figure-free room plate for in-engine sprite path (outside S1 scheme)
+S4_C_PLATE_OUT.png,img,/assets/img/S4_C_PLATE_OUT.png,,2688,1520,,,,5745601,cf0dbc46f8991328,False,pass,fallback: figure-free dolly end frame (outside S1 scheme)
+S4_H_IMG_IN.png,img,/assets/img/S4_H_IMG_IN.png,,2688,1520,,,,5508019,c49deb0acde11f02,True,pass,
+S4_H_IMG_OUT.png,img,/assets/img/S4_H_IMG_OUT.png,,2688,1520,,,,5629317,66bcb7f00a181106,True,pass,
+S5_C_IMG_IN.png,img,/assets/img/S5_C_IMG_IN.png,,2688,1520,,,,5463362,ed46507a2c2c2e19,True,pass,
+S5_C_IMG_OUT.png,img,/assets/img/S5_C_IMG_OUT.png,,2688,1520,,,,5765185,dd65aa9bc281e8bd,True,pass,
+S5_H_IMG_IN.png,img,/assets/img/S5_H_IMG_IN.png,,2688,1520,,,,5724173,c4a9c714f118e75d,True,pass,
+S5_H_IMG_OUT.png,img,/assets/img/S5_H_IMG_OUT.png,,2688,1520,,,,5949721,3c1a4ec2f3f78884,True,pass,
+S6_C_IMG_IN.png,img,/assets/img/S6_C_IMG_IN.png,,2688,1520,,,,5227863,45009053bc2b64eb,True,pass,surround plate: flat #00FF00 screen for live UI; photoreal glow spill baked into bezel/desk/hands
+S6_C_IMG_OUT.png,img,/assets/img/S6_C_IMG_OUT.png,,2688,1520,,,,5227863,45009053bc2b64eb,True,pass,"byte copy of S6_C_IMG_IN (green-screen plate; UI rendered live, MG-05)"
+S6_H_IMG_IN.png,img,/assets/img/S6_H_IMG_IN.png,,2688,1520,,,,4836789,ec0b13478dbe8975,True,pass,
+S6_H_IMG_OUT.png,img,/assets/img/S6_H_IMG_OUT.png,,2688,1520,,,,5712753,4f079eda5e241517,True,pass,
+S7_C_IMG_IN.png,img,/assets/img/S7_C_IMG_IN.png,,2688,1520,,,,6125913,3e06fba7edf91f2d,True,pass,
+S7_C_IMG_OUT.png,img,/assets/img/S7_C_IMG_OUT.png,,2688,1520,,,,6561347,88040e12806e25d3,True,pass,
+S7_H_IMG_IN.png,img,/assets/img/S7_H_IMG_IN.png,,2688,1520,,,,5589293,9584748f61f9d77f,True,pass,
+S7_H_IMG_OUT.png,img,/assets/img/S7_H_IMG_OUT.png,,2688,1520,,,,5415155,481d4cc2526c3ba9,True,pass,
+S8_C_IMG_IN.png,img,/assets/img/S8_C_IMG_IN.png,,2688,1520,,,,5228555,7b5550fa04ff42a4,True,pass,
+S8_C_IMG_OUT.png,img,/assets/img/S8_C_IMG_OUT.png,,2688,1520,,,,5723411,bdbdf6c2bd456da7,True,pass,
+S8_H_IMG_IN.png,img,/assets/img/S8_H_IMG_IN.png,,2688,1520,,,,5570780,e252ea7000758a0c,True,pass,
+S8_H_IMG_OUT.png,img,/assets/img/S8_H_IMG_OUT.png,,2688,1520,,,,4515162,9b8bef55393f6fd5,True,pass,
+SE_ASSIM_IMG_IN.png,img,/assets/img/SE_ASSIM_IMG_IN.png,,2688,1520,,,,5578068,bf5533c2b679cddf,True,pass,
+SE_ASSIM_IMG_OUT.png,img,/assets/img/SE_ASSIM_IMG_OUT.png,,2688,1520,,,,5930045,04950865685bd406,True,pass,
+SE_EXPUL_IMG_IN.png,img,/assets/img/SE_EXPUL_IMG_IN.png,,2688,1520,,,,5202615,f1bb7ef035c77706,True,pass,
+SE_EXPUL_IMG_OUT.png,img,/assets/img/SE_EXPUL_IMG_OUT.png,,2688,1520,,,,5831872,c611d7eb7ede810f,True,pass,
+SE_PEND_IMG_IN.png,img,/assets/img/SE_PEND_IMG_IN.png,,2688,1520,,,,6206533,3db202c1fa2786af,True,pass,v1 lacked the curtained doorway; re-cut from OUT frame
+SE_PEND_IMG_OUT.png,img,/assets/img/SE_PEND_IMG_OUT.png,,2688,1520,,,,6303453,348244acc7d780ba,True,pass,
+S0_X_TRN_S1.mp4,vid,/assets/vid/S0_X_TRN_S1.mp4,12.08,1912,1080,,,,16474997,fa9e92ea926f8987,True,pass,"re-cut post-delivery, third time: back to reversed-then-forward (interior->street->interior) to fix the continuity break the reverse-only cut caused -- this clip's job is the hand-off into S1_C/H_VID.mp4, which opens on the reception interior, so it must END there; reverse-only (interior->street) ended on the street instead, a jarring instant-relocation cut. Reverse-then-forward keeps a real reverse in the clip while ending on the correct frame again. Built directly from the true pristine original (12170919 bytes/70d503767cf8eace, itself never recovered byte-identical after the first edit), so this is the same single-generation-loss render as the very first edit made to this file this session, not a re-derivation from an intermediate cut. Doc 1 calls the prologue S0_C_*; Doc 2 (and these files) use S0_X_*"
+S0_X_VID.mp4,vid,/assets/vid/S0_X_VID.mp4,8.0,1912,1080,,,,6044275,f59ab6a24ab2beb7,True,pass,"re-cut post-delivery, twice: first to reversed-then-forward (16.08s/ebdb4c21438be18c), then per follow-up request to reverse-only, no forward half (this row) -- effect is subtle since the source shot has very little camera movement to begin with (near-static wide street shot). Original single-direction forward cut was 8.042s/43a429f83124e279, never recovered byte-identical (same caveat as S0_X_TRN_S1.mp4's revert). Doc 1 calls the prologue S0_C_*; Doc 2 (and these files) use S0_X_*"
+S1_C_TRN_S2.mp4,vid,/assets/vid/S1_C_TRN_S2.mp4,4.042,1912,1080,,,,8340595,e81be580dd9f1321,True,pass,
+S1_C_VID.mp4,vid,/assets/vid/S1_C_VID.mp4,3.75,1280,720,,,,461594,748a7f2c3130062b,True,pending,"blender re-skin (Track B1, export_game_assets.py)"
+S1_H_TRN_S2.mp4,vid,/assets/vid/S1_H_TRN_S2.mp4,4.042,1912,1080,,,,11033879,748b7565b218edcd,True,pass,
+S1_H_VID.mp4,vid,/assets/vid/S1_H_VID.mp4,8.042,1912,1080,,,,6763114,f1fff40d66884dcb,True,pass,
+S2_C_TRN_S3.mp4,vid,/assets/vid/S2_C_TRN_S3.mp4,6.084,1920,1080,,,,7242856,ebd25cb5279dd2b9,True,pass,"black-join: two 3s halves pinned to solid black, stitched (6s)"
+S2_C_VID.mp4,vid,/assets/vid/S2_C_VID.mp4,3.042,1912,1080,,,,1499428,3dc61858021488bb,True,pass,jaw moves in one discrete snap rather than four steps; flipbook fallback available from IMG_IN/IMG_OUT
+S2_H_TRN_S3.mp4,vid,/assets/vid/S2_H_TRN_S3.mp4,6.084,1920,1080,,,,6288442,9acea86e092cb1b0,True,pass,black-join (6s)
+S2_H_VID.mp4,vid,/assets/vid/S2_H_VID.mp4,3.042,1912,1080,,,,2659456,90447a0b83823cda,True,pass,
+S3_C_TRN_S4.mp4,vid,/assets/vid/S3_C_TRN_S4.mp4,4.042,1912,1080,,,,8649915,54058e242721ad77,True,pass,
+S3_C_VID.mp4,vid,/assets/vid/S3_C_VID.mp4,6.042,1912,1080,,,,3823675,585cc60b01e46d33,True,pass,
+S3_H_TRN_S4.mp4,vid,/assets/vid/S3_H_TRN_S4.mp4,6.084,1920,1080,,,,5451279,760003e7cdb3319a,True,pass,black-join (6s)
+S3_H_VID.mp4,vid,/assets/vid/S3_H_VID.mp4,6.042,1912,1080,,,,3224570,22426fb0afc8bb2b,True,pass,
+S4_C_TRN_S5.mp4,vid,/assets/vid/S4_C_TRN_S5.mp4,4.042,1912,1080,,,,9797756,fe5c62b43b3b52fc,True,pass,
+S4_C_VID_PLATE.mp4,vid,/assets/vid/S4_C_VID_PLATE.mp4,3.042,1912,1080,,,,3777608,8a99c81a489265ed,False,pass,fallback: figure-free 3s dolly; manager translates as an engine sprite (outside S1 scheme). S4_C_VID (Kling walk cycle) rejected
+S4_H_TRN_S5.mp4,vid,/assets/vid/S4_H_TRN_S5.mp4,6.084,1920,1080,,,,6921118,594c4fdef06e5168,True,pass,black-join (6s)
+S4_H_VID.mp4,vid,/assets/vid/S4_H_VID.mp4,6.042,1912,1080,,,,11544218,0c0d0f36b18250df,True,pass,
+S5_C_TRN_S6.mp4,vid,/assets/vid/S5_C_TRN_S6.mp4,6.084,1920,1080,,,,3472612,7d9b8f3d5b5c6400,True,pass,black-join (6s)
+S5_C_VID.mp4,vid,/assets/vid/S5_C_VID.mp4,4.042,1912,1080,,,,2343558,e8386c37a0cde90a,True,pass,
+S5_H_TRN_S6.mp4,vid,/assets/vid/S5_H_TRN_S6.mp4,6.084,1920,1080,,,,4364477,d7cd638a082bd46e,True,pass,black-join (6s)
+S5_H_VID.mp4,vid,/assets/vid/S5_H_VID.mp4,7.042,1912,1080,,,,15638496,001a54cce77d783c,True,pass,
+S6_C_TRN_S7.mp4,vid,/assets/vid/S6_C_TRN_S7.mp4,6.084,1920,1080,,,,4572257,53f77c515e797b81,True,pass,black-join (6s)
+S6_H_TRN_S7.mp4,vid,/assets/vid/S6_H_TRN_S7.mp4,4.042,1912,1080,,,,9998625,7fd1915414aa5208,True,pass,
+S6_H_VID.mp4,vid,/assets/vid/S6_H_VID.mp4,12.042,1912,1080,,,,21584550,753e1f6f4e098136,True,pass,accepted with subtle water ripple after the stop; engine holds on S6_H_IMG_OUT for the 9s silence (dead-flat water)
+S7_C_TRN_S8.mp4,vid,/assets/vid/S7_C_TRN_S8.mp4,4.042,1912,1080,,,,9039532,79d9de85c8f02ecd,True,pass,
+S7_C_VID.mp4,vid,/assets/vid/S7_C_VID.mp4,6.042,1912,1080,,,,6245041,cb331e9052bdf618,True,pass,
+S7_H_TRN_S8.mp4,vid,/assets/vid/S7_H_TRN_S8.mp4,4.042,1912,1080,,,,8548537,831161ed3d3e71c6,True,pass,
+S7_H_VID.mp4,vid,/assets/vid/S7_H_VID.mp4,6.042,1912,1080,,,,9732101,3c4a4c3d3a3acb93,True,pass,
+S8_C_TRN_SE_ASSIM.mp4,vid,/assets/vid/S8_C_TRN_SE_ASSIM.mp4,6.084,1920,1080,,,,4359232,f103d44d7519ddd6,True,pass,black-join (6s); shares its dim-out half with S8_C_TRN_SE_PEND
+S8_C_TRN_SE_PEND.mp4,vid,/assets/vid/S8_C_TRN_SE_PEND.mp4,6.084,1920,1080,,,,4436261,f9da46cc8f405299,True,pass,black-join (6s); shares its light-up half with S8_H_TRN_SE_PEND
+S8_C_VID.mp4,vid,/assets/vid/S8_C_VID.mp4,5.042,1912,1080,,,,2846551,306e802911295d38,True,pass,mailroom clip (5s)
+S8_C_VID_BOARDROOM.mp4,vid,/assets/vid/S8_C_VID_BOARDROOM.mp4,8.042,1912,1080,,,,9846733,a8b6daee608fbb45,False,pass,"second S8_C clip, boardroom (8s) (outside S1 scheme)"
+S8_H_TRN_SE_EXPUL.mp4,vid,/assets/vid/S8_H_TRN_SE_EXPUL.mp4,4.042,1912,1080,,,,5370264,f1b12c1472603dd1,True,pass,
+S8_H_TRN_SE_PEND.mp4,vid,/assets/vid/S8_H_TRN_SE_PEND.mp4,6.084,1920,1080,,,,4179982,4d36cd5ee42b06af,True,pass,black-join (6s)
+S8_H_VID.mp4,vid,/assets/vid/S8_H_VID.mp4,8.042,1912,1080,,,,10558440,3c913839a9bec9eb,True,pass,dive clip (8s)
+S8_H_VID_STORE.mp4,vid,/assets/vid/S8_H_VID_STORE.mp4,6.042,1912,1080,,,,2653422,d54f1fe0650ea31a,False,pass,"second S8_H clip, convenience store (6s) (outside S1 scheme)"
+SE_ASSIM_VID.mp4,vid,/assets/vid/SE_ASSIM_VID.mp4,8.042,1912,1080,,,,14353190,c0b00a5ad9029c7e,True,pass,
+SE_EXPUL_VID.mp4,vid,/assets/vid/SE_EXPUL_VID.mp4,8.042,1912,1080,,,,3836229,ab08e65b0d60cf31,True,pass,
+SE_PEND_VID.mp4,vid,/assets/vid/SE_PEND_VID.mp4,8.042,1912,1080,,,,4638207,7874243f0d3d669a,True,pass,
+S0_X_AMB.wav,aud,/assets/aud/S0_X_AMB.wav,30.0,,,48000,2,24,8640044,5ed9efe7dde3057c,True,pass,Doc 1 calls the prologue S0_C_*; Doc 2 (and these files) use S0_X_*
+S0_X_AMB_STREET.wav,aud,/assets/aud/S0_X_AMB_STREET.wav,30.0,,,48000,2,24,8640044,5801dce374a2e6c1,False,pass,second S0 bed (street) (outside S1 scheme); Doc 1 calls the prologue S0_C_*; Doc 2 (and these files) use S0_X_*
+S1_C_AMB.wav,aud,/assets/aud/S1_C_AMB.wav,30.0,,,48000,2,24,8640044,23558b140218ceeb,True,pass,
+S1_H_AMB.wav,aud,/assets/aud/S1_H_AMB.wav,30.0,,,48000,2,24,8640044,f5f928f59f469733,True,pass,"derived: S1_C_AMB resampled to 80% speed+pitch, re-looped, mixed over generated dispenser/paper bed"
+S3_C_AMB.wav,aud,/assets/aud/S3_C_AMB.wav,30.0,,,48000,2,24,8640044,f16d5087f582c9cf,True,pass,
+S3_H_AMB.wav,aud,/assets/aud/S3_H_AMB.wav,30.0,,,48000,2,24,8640044,9132b5c47ae7087b,True,pass,
+S4_C_AMB.wav,aud,/assets/aud/S4_C_AMB.wav,30.0,,,48000,2,24,8640044,fdbac9d404a7d335,True,pass,
+S4_H_AMB.wav,aud,/assets/aud/S4_H_AMB.wav,30.0,,,48000,2,24,8640044,53ba5b794e3347ac,True,pass,"generated bed + placed distant footsteps (5 at ~6.8s, 3 at ~15.2s)"
+S4_H_SFX_FOOTSTEPS.wav,aud,/assets/aud/S4_H_SFX_FOOTSTEPS.wav,8.0,,,48000,2,16,1536044,270f7010549391c2,False,pass,"one-shot, 8s, raw generator level (not normalised); engine-triggered"
+S5_C_AMB.wav,aud,/assets/aud/S5_C_AMB.wav,30.0,,,48000,2,24,8640044,0b803002e79facfd,True,pass,
+S5_H_AMB.wav,aud,/assets/aud/S5_H_AMB.wav,30.0,,,48000,2,24,8640044,c0605ec1395f0bc4,True,pass,procedurally synthesised ballast buzz + concrete modes + reverb over S6_H air bed (3 generations rejected: rain / whisper artifact / engine)
+S6_C_AMB.wav,aud,/assets/aud/S6_C_AMB.wav,30.0,,,48000,2,24,8640044,005b40c6fa3ec497,True,pass,
+S6_H_AMB.wav,aud,/assets/aud/S6_H_AMB.wav,30.0,,,48000,2,24,8640044,df459d829a70cc35,True,pass,event-free bed; breathing/footfalls belong to S6_H_SFX one-shots
+S7_C_AMB.wav,aud,/assets/aud/S7_C_AMB.wav,30.0,,,48000,2,24,8640044,425dac8d9a7975f1,True,pass,
+S7_H_AMB.wav,aud,/assets/aud/S7_H_AMB.wav,30.0,,,48000,2,24,8640044,b7a84d16837bac12,True,pass,
+S8_C_AMB.wav,aud,/assets/aud/S8_C_AMB.wav,30.0,,,48000,2,24,8640044,57b8d27bbd672bb6,True,pass,
+S8_C_AMB_BOARDROOM.wav,aud,/assets/aud/S8_C_AMB_BOARDROOM.wav,30.0,,,48000,2,24,8640044,dcfeaa4d1f49da23,False,pass,second S8_C bed (outside S1 scheme)
+S8_H_AMB.wav,aud,/assets/aud/S8_H_AMB.wav,30.0,,,48000,2,24,8640044,e352abe3ed39ee70,True,pass,
+S8_H_AMB_STORE.wav,aud,/assets/aud/S8_H_AMB_STORE.wav,30.0,,,48000,2,24,8640044,b026e00a8fbe97fa,False,pass,second S8_H bed (outside S1 scheme)
+S2_C_SFX_SPEAKER.wav,aud,/assets/aud/S2_C_SFX_SPEAKER.wav,1.0,,,48000,2,16,192044,6b3d288d6c00261c,False,pass,"library SFX, not Higgsfield-generated; source SFX/PA Speaker Switching on.wav; not present in FINAL_NINETY-NINE_aud source folder"
+S2_H_SFX_SPEAKER.wav,aud,/assets/aud/S2_H_SFX_SPEAKER.wav,3.0,,,48000,2,16,576044,d1960a774539b5f8,False,pass,"library SFX, not Higgsfield-generated; source SFX/small ceiling PA speaker switching.wav; not present in FINAL_NINETY-NINE_aud source folder"
+S2_X_SFX_RECEPTIONIST.wav,aud,/assets/aud/S2_X_SFX_RECEPTIONIST.wav,15.38,,,48000,2,16,2953004,58a3bf037de7f709,False,pass,"library SFX, not Higgsfield-generated; source SFX/woman's voice.wav; not present in FINAL_NINETY-NINE_aud source folder"
+S3_C_SFX_CURTAIN.wav,aud,/assets/aud/S3_C_SFX_CURTAIN.wav,4.5,,,48000,2,16,864044,a50cf00bdf6faf62,False,pass,"library SFX, not Higgsfield-generated; source SFX/Velvet Theatre Curtain.wav; not present in FINAL_NINETY-NINE_aud source folder"
+S3_H_SFX_DOOR.wav,aud,/assets/aud/S3_H_SFX_DOOR.wav,3.0,,,48000,2,16,576044,141ad8520b6123e4,False,pass,"library SFX, not Higgsfield-generated; source SFX/metal push bar on a locked commercial glass door.wav; not present in FINAL_NINETY-NINE_aud source folder"
+S4_C_SFX_PAPERS.wav,aud,/assets/aud/S4_C_SFX_PAPERS.wav,3.5,,,48000,2,16,672044,11b684543eba4424,False,pass,"library SFX, not Higgsfield-generated; source SFX/thick stack of crisp paper sheets being handed over.wav; not present in FINAL_NINETY-NINE_aud source folder"
+S5_C_SFX_CRT_ON.wav,aud,/assets/aud/S5_C_SFX_CRT_ON.wav,4.5,,,48000,2,16,864044,5629c0c4d6b6fe36,False,pass,"library SFX, not Higgsfield-generated; source SFX/old CRT monitor powering on.wav; not present in FINAL_NINETY-NINE_aud source folder"
+S5_C_SFX_STAPLER.wav,aud,/assets/aud/S5_C_SFX_STAPLER.wav,2.5,,,48000,2,16,480044,8ef0c3e76afe7a7c,False,pass,"library SFX, not Higgsfield-generated; source SFX/heavy steel office stapler slammed down.wav; not present in FINAL_NINETY-NINE_aud source folder"
+S5_H_SFX_CARALARM.wav,aud,/assets/aud/S5_H_SFX_CARALARM.wav,6.0,,,48000,2,16,1152044,915380837d724c7f,False,pass,"library SFX, not Higgsfield-generated; source SFX/Car Alarm.wav; not present in FINAL_NINETY-NINE_aud source folder"
+S6_C_SFX_KEYBOARD.wav,aud,/assets/aud/S6_C_SFX_KEYBOARD.wav,1.0,,,48000,2,16,192044,135d1e565802344b,False,pass,"library SFX, not Higgsfield-generated; source SFX/keyboard key press on.wav; not present in FINAL_NINETY-NINE_aud source folder"
