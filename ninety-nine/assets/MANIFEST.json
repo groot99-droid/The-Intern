@@ -45,7 +45,7 @@
   "sha256_16": "0cf09e4b3b164d54",
   "in_s1_scheme": true,
   "qc": "pass",
-  "note": ""
+  "note": "AI original restored from assets/_retired_ai/ (tools/stage_assets.py --restore): the 1920x1080 / 1280x720 Blender re-skin (Track B1) that had been staged over it was a flat grey blockout, the only non-photoreal still in the run, and never passed QC"
  },
  {
   "file": "S1_C_IMG_OUT.png",
@@ -61,7 +61,7 @@
   "sha256_16": "0cf09e4b3b164d54",
   "in_s1_scheme": true,
   "qc": "pass",
-  "note": "byte copy of S1_C_IMG_IN (doc 2.1 loop trick)"
+  "note": "AI original restored from assets/_retired_ai/ (tools/stage_assets.py --restore): the 1920x1080 / 1280x720 Blender re-skin (Track B1) that had been staged over it was a flat grey blockout, the only non-photoreal still in the run, and never passed QC"
  },
  {
   "file": "S1_H_IMG_IN.png",
@@ -681,27 +681,27 @@
   "sample_rate": "",
   "channels": "",
   "bits": "",
-  "bytes": 12170919,
-  "sha256_16": "70d503767cf8eace",
+  "bytes": 7497366,
+  "sha256_16": "54bb883b36ed0bd9",
   "in_s1_scheme": true,
   "qc": "pass",
-  "note": "Doc 1 calls the prologue S0_C_*; Doc 2 (and these files) use S0_X_*"
+  "note": "forward-only re-cut (street->doors->reception interior): the reversed-then-forward palindrome shipped earlier played backwards before it played forwards, which read as a bug in play. Cut from the forward half of that 12.08s palindrome (frames 145-289), one further generation of loss. Ends on the reception interior so the hand-off into S1_C/H_VID.mp4 still matches. Doc 1 calls the prologue S0_C_*; Doc 2 (and these files) use S0_X_*"
  },
  {
   "file": "S0_X_VID.mp4",
   "class": "vid",
   "path": "/assets/vid/S0_X_VID.mp4",
-  "seconds": 8.042,
+  "seconds": 8.0,
   "width": 1912,
   "height": 1080,
   "sample_rate": "",
   "channels": "",
   "bits": "",
-  "bytes": 13080161,
-  "sha256_16": "43a429f83124e279",
+  "bytes": 6603564,
+  "sha256_16": "a56460088654e222",
   "in_s1_scheme": true,
   "qc": "pass",
-  "note": "Doc 1 calls the prologue S0_C_*; Doc 2 (and these files) use S0_X_*"
+  "note": "forward-only re-cut: the reverse-only cut shipped earlier ran the street push-in backwards; un-reversed here so the shot pushes toward the tower and ends on the frame S0_X_TRN_S1.mp4 opens with. Doc 1 calls the prologue S0_C_*; Doc 2 (and these files) use S0_X_*"
  },
  {
   "file": "S1_C_TRN_S2.mp4",
@@ -733,7 +733,7 @@
   "sha256_16": "504e3f59335cb519",
   "in_s1_scheme": true,
   "qc": "pass",
-  "note": "same-frame loop; first/last frame differ by 0.86/255 mean"
+  "note": "AI original restored from assets/_retired_ai/ (tools/stage_assets.py --restore): the 1920x1080 / 1280x720 Blender re-skin (Track B1) that had been staged over it was a flat grey blockout, the only non-photoreal still in the run, and never passed QC"
  },
  {
   "file": "S1_H_TRN_S2.mp4",

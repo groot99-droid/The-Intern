@@ -551,3 +551,102 @@ html, body {
   font-size: 0.9rem;
   letter-spacing: 0.1em;
 }
+
+/* Receptionist / system lines shown as on-screen cards while the recorded
+   voice plays (router.js scheduleCaptions). Doc 1 §5 S2's "Ninety-nine." /
+   "Shaun." never appeared on screen before. */
+.scene-caption {
+  position: absolute;
+  bottom: 22%;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 0.5rem 1.2rem;
+  background: rgba(0,0,0,0.55);
+  color: #e8e2d0;
+  font-family: 'Courier New', monospace;
+  font-size: 1.1rem;
+  letter-spacing: 0.08em;
+  pointer-events: none;
+  animation: caption-in 500ms ease-out;
+  transition: opacity 600ms linear;
+}
+.scene-caption-out { opacity: 0; }
+@keyframes caption-in { from { opacity: 0; transform: translate(-50%, 6px); } to { opacity: 1; transform: translateX(-50%); } }
+
+/* Third affordance: WALK THE ROOM (src/walk/). Hidden, not removed, while
+   the room is up so the two real choices come back exactly as they were. */
+.choice-ui-hidden { display: none; }
+.choice-btn-walk { border-style: dashed; opacity: 0.8; }
+.choice-btn-walk:hover { opacity: 1; }
+
+/* 3D walk layer. The canvas renders at a third of the viewport (PS1 fill
+   rate) and is scaled up with nearest-neighbour sampling; the video layer
+   underneath is paused while this is up. */
+#walk-layer {
+  position: absolute;
+  inset: 0;
+  z-index: 5;
+  background: #000;
+  overflow: hidden;
+  touch-action: none;
+}
+#walk-layer canvas {
+  width: 100% !important;
+  height: 100% !important;
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
+  display: block;
+}
+.walk-hud {
+  position: absolute;
+  left: 0; right: 0; bottom: 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  padding: 1rem 1.25rem 3rem;
+  pointer-events: none;
+  font-family: 'Courier New', monospace;
+  color: #cfc9b8;
+  font-size: 0.75rem;
+  letter-spacing: 0.08em;
+}
+.walk-hud > * { pointer-events: auto; }
+.walk-hint { opacity: 0.6; max-width: 40ch; }
+.walk-leave {
+  background: rgba(0,0,0,0.6);
+  border: 1px solid #888;
+  color: #eee;
+  font-family: inherit;
+  font-size: 0.85rem;
+  letter-spacing: 0.08em;
+  padding: 0.6rem 1.2rem;
+  cursor: pointer;
+}
+.walk-leave:hover { background: rgba(255,255,255,0.1); }
+.walk-title {
+  position: absolute;
+  top: 1.25rem; left: 50%;
+  transform: translateX(-50%);
+  font-family: 'Courier New', monospace;
+  font-size: 0.75rem;
+  letter-spacing: 0.2em;
+  color: #cfc9b8;
+  opacity: 0.55;
+  pointer-events: none;
+}
+.walk-joystick {
+  position: absolute;
+  left: 2rem; bottom: 6rem;
+  width: 120px; height: 120px;
+  border-radius: 50%;
+  border: 1px solid rgba(255,255,255,0.25);
+  background: rgba(0,0,0,0.25);
+  pointer-events: none;
+}
+.walk-joystick .knob {
+  position: absolute;
+  left: 40px; top: 40px;
+  width: 40px; height: 40px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.35);
+}

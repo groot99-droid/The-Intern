@@ -58,10 +58,13 @@ async function boot() {
     throw new Error('DEBUG_RESUME must be false in any build.');
   }
 
-  const [manifest, endings, library] = await Promise.all([
+  const [manifest, endings, library, rooms] = await Promise.all([
     loadJSON('./data/scenes.json'),
     loadJSON('./data/endings.json'),
-    loadTextLibrary('./text')
+    loadTextLibrary('./text'),
+    // Walkable 3D rooms (src/walk/). Optional: a missing/failed rooms.json
+    // just means no WALK THE ROOM button anywhere.
+    loadJSON('./data/rooms.json').catch((e) => { console.warn('main.js: rooms.json unavailable, walk mode off', e); return null; })
   ]);
 
   const state = createState();
@@ -71,7 +74,8 @@ async function boot() {
   const mount = {
     scene: document.getElementById('scene-layer'),
     choice: document.getElementById('choice-layer'),
-    minigame: document.getElementById('minigame-layer')
+    minigame: document.getElementById('minigame-layer'),
+    walk: document.getElementById('walk-layer')
   };
 
   const router = createRouter({
@@ -81,12 +85,14 @@ async function boot() {
     mount,
     audio,
     sfx,
+    library,
+    rooms,
     onEnding(endingId) {
       renderEndingCard(endingId, state, library);
     }
   });
 
-  window.__NINETY_NINE__ = { state, router, manifest, endings, library, audio }; // dev inspection only
+  window.__NINETY_NINE__ = { state, router, manifest, endings, library, audio, rooms }; // dev inspection only
 
   initBail(router);
   initSoundToggle(audio);

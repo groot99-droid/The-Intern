@@ -1,10 +1,12 @@
 {
   "_comment": "Single source of truth linking Doc 1 logic, Doc 2 filenames, and Doc 3 minigame IDs. Doc 4 §15. Flags COUNTED_DOOR (MG-02 mode H) and EARLY_EXIT (bail.js) are NOT set here -- they come from minigame onComplete().flags or the global bail-out, not from scene choices.",
   "spineOrder": ["S0", "S1", "S2", "S3", "S4", "S5", "S6", "S7", "S8"],
+  "_musicNote": "`music` (scene-level, or a per-branch override): 'muzak' | 'pad' | 'deep' | 'water' | {file} | null. Generated live by src/music.js on audio.js's music bus -- no licensed tracks. See the music.js header.",
   "scenes": {
     "S0": {
       "id": "S0",
       "name": "THE UPLOAD",
+      "music": null,
       "branches": {
         "X": {
           "preGesture": {
@@ -15,7 +17,7 @@
             { "file": "S0_X_VID.mp4", "type": "video", "loop": false, "mount": null }
           ],
           "ambience": "S0_X_AMB.wav",
-          "ambienceSecondary": { "file": "S0_X_AMB_STREET.wav", "fadeInAtBeat": "commute" },
+          "ambienceSecondary": { "file": "S0_X_AMB_STREET.wav", "fadeInAtBeat": "commute", "_note": "Crossfades in on the commute cut (router.js: renderer onStart for sequence entry 0). The apartment bed above plays under the form/countdown from the SUBMIT gesture. Was declared but never played." },
           "imgIn": "S0_X_IMG_IN.png",
           "imgOut": "S0_X_IMG_OUT.png",
           "minigame": null,
@@ -27,6 +29,7 @@
     "S1": {
       "id": "S1",
       "name": "THE WAITING ROOM",
+      "music": "muzak",
       "branches": {
         "C": {
           "sequence": [
@@ -61,12 +64,14 @@
     "S2": {
       "id": "S2",
       "name": "THE CALL",
+      "music": "muzak",
       "branches": {
         "C": {
           "sequence": [
             { "file": "S2_C_VID.mp4", "type": "video", "loop": false, "mount": null }
           ],
           "sfxCue": ["speaker-click", "receptionist-voice"],
+          "captions": [{ "textKey": "call.compliant", "atMs": 900, "holdMs": 2600, "className": "scene-caption-receptionist" }],
           "ambience": null,
           "imgIn": "S2_C_IMG_IN.png",
           "imgOut": "S2_C_IMG_OUT.png",
@@ -83,6 +88,7 @@
             { "file": "S2_H_VID.mp4", "type": "video", "loop": false, "mount": null }
           ],
           "sfxCue": ["speaker-hiss", "receptionist-voice"],
+          "captions": [{ "textKey": "call.hostile", "atMs": 1400, "holdMs": 2600, "className": "scene-caption-receptionist" }],
           "ambience": null,
           "imgIn": "S2_H_IMG_IN.png",
           "imgOut": "S2_H_IMG_OUT.png",
@@ -99,6 +105,7 @@
     "S3": {
       "id": "S3",
       "name": "THE THRESHOLD",
+      "music": "pad",
       "branches": {
         "C": {
           "sequence": [
@@ -134,6 +141,7 @@
     "S4": {
       "id": "S4",
       "name": "THE FLOOR",
+      "music": "pad",
       "branches": {
         "C": {
           "sequence": [
@@ -174,6 +182,7 @@
     "S5": {
       "id": "S5",
       "name": "THE DESK / THE GARAGE",
+      "music": "pad",
       "branches": {
         "C": {
           "sequence": [
@@ -209,6 +218,7 @@
     "S6": {
       "id": "S6",
       "name": "THE REQUISITION / THE RUN",
+      "music": "pad",
       "branches": {
         "C": {
           "sequence": [
@@ -229,6 +239,7 @@
           "transitions": { "S7": "S6_C_TRN_S7.mp4" }
         },
         "H": {
+          "music": "water",
           "sequence": [
             { "file": "S6_H_VID.mp4", "type": "video", "loop": true, "mount": "minigame" }
           ],
@@ -247,6 +258,7 @@
     "S7": {
       "id": "S7",
       "name": "THE DESCENT",
+      "music": "deep",
       "branches": {
         "C": {
           "sequence": [
@@ -263,6 +275,7 @@
           "transitions": { "S8": "S7_C_TRN_S8.mp4" }
         },
         "H": {
+          "music": "water",
           "sequence": [
             { "file": "S7_H_VID.mp4", "type": "video", "loop": true, "mount": "minigame" }
           ],
@@ -281,6 +294,7 @@
     "S8": {
       "id": "S8",
       "name": "THE DELIVERY / THE DIVE",
+      "music": "deep",
       "branches": {
         "C": {
           "sequence": [
@@ -302,6 +316,9 @@
           }
         },
         "H": {
+          "music": "water",
+          "choiceAfterEntry": 0,
+          "_choiceNote": "DIVE / SWIM FOR THE PILLARS is asked underwater, after entry 0 (Doc 1 §5 S8-H); S8_H_VID_STORE then plays as the consequence before the ending transition. Absent = after the last entry (router.js choiceEntryIndex).",
           "sequence": [
             { "file": "S8_H_VID.mp4", "type": "video", "loop": true, "mount": "minigame" },
             { "file": "S8_H_VID_STORE.mp4", "type": "video", "loop": false, "mount": null }

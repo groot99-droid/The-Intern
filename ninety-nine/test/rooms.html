@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>NINETY-NINE — room preview</title>
+  <link rel="stylesheet" href="../style.css" />
+  <style>
+    #picker { position: fixed; top: 0.75rem; left: 0.75rem; z-index: 20; font-family: 'Courier New', monospace; font-size: 0.75rem; }
+    #picker select, #picker button { font-family: inherit; background: #111; color: #eee; border: 1px solid #666; padding: 0.3rem; }
+  </style>
+</head>
+<body>
+  <div id="stage"><div id="walk-layer" hidden></div></div>
+  <div id="picker"><select id="room"></select> <button id="go" type="button">ENTER</button></div>
+  <script type="module">
+    // Dev-only: walk any room from data/rooms.json without playing to it.
+    // Same modules the game uses (src/walk/), so what you see here is what
+    // WALK THE ROOM shows. Query: ?room=S4_C jumps straight in.
+    import { createWalk } from '../src/walk/walk.js';
+    const rooms = await fetch('../data/rooms.json').then((r) => r.json());
+    const select = document.getElementById('room');
+    for (const key of Object.keys(rooms.rooms)) select.append(new Option(key, key));
+    const walk = createWalk(document.getElementById('walk-layer'), {});
+    function resolve(key) {
+      const rec = rooms.rooms[key];
+      return rec.alias ? { ...rooms.rooms[rec.alias], ...rec, id: key } : { ...rec, id: key };
+    }
+    async function enter(key) {
+      select.value = key;
+      document.body.classList.add('walking');
+      await walk.enter(resolve(key));
+      document.body.classList.remove('walking');
+    }
+    document.getElementById('go').addEventListener('click', () => enter(select.value));
+    window.__ROOMS__ = { walk, enter, rooms };
+    const q = new URLSearchParams(location.search).get('room');
+    if (q && rooms.rooms[q]) enter(q);
+  </script>
+</body>
+</html>

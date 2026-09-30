@@ -102,6 +102,9 @@ const CUES = {
   'curtain-rustle': (ctx, bus) => noiseBurst(ctx, bus, { durationMs: 350, filterHz: 1200, filterType: 'lowpass', gain: 0.15 }),
   'paper-handoff': (ctx, bus) => noiseBurst(ctx, bus, { durationMs: 300, filterHz: 2500, filterType: 'highpass', gain: 0.15 }),
   'keyboard-press': (ctx, bus) => toneClick(ctx, bus, { freq: 1800, durationMs: 12, gain: 0.15, type: 'square' }),
+  // Walk mode (src/walk/): one soft footfall per stride, surface-tinted via
+  // opts.filterHz (marble rings higher than carpet). Always synthesized.
+  'footstep': (ctx, bus, opts = {}) => noiseBurst(ctx, bus, { durationMs: 70, filterHz: opts.filterHz || 700, filterType: 'bandpass', gain: opts.gain || 0.12 }),
   // Deliberately silent with no real file: see the header comment. Exists
   // so branch.sfxCue entries can reference it without an "unknown cue" log.
   'receptionist-voice': () => {}
@@ -136,7 +139,9 @@ export function createSfx(audio) {
 
       const realFile = REAL_FILES[name];
       if (realFile && audio.playOneShot) {
-        audio.playOneShot(realFile);
+        // opts (e.g. MG-02 H's per-push `gain`) used to be dropped on this
+        // path, so "each push fractionally quieter" never happened.
+        audio.playOneShot(realFile, opts || {});
         return;
       }
 

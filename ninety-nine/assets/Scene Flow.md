@@ -12,7 +12,7 @@ Per scene/branch: `IMG_IN` and `IMG_OUT` are Kling's start/end frame pair that `
 
 ## S0 — THE UPLOAD (no branch)
 [[S0_X_IMG_IN.png]] → [[S0_X_VID.mp4]] → [[S0_X_IMG_OUT.png]] → [[S0_X_TRN_S1.mp4]] → **S1**
-Ambience: [[S0_X_AMB.wav]], joined mid-scene by [[S0_X_AMB_STREET.wav]] (the commute beat)
+Ambience: [[S0_X_AMB.wav]] under the form/countdown, crossfading to [[S0_X_AMB_STREET.wav]] on the commute cut. Both prologue clips play forward only (see [[ninety-nine/assets/Asset Revisions|Asset Revisions]] for the reversed cuts they replace).
 
 ## S1 — THE WAITING ROOM
 - **C**: [[S1_C_IMG_IN.png]] → [[S1_C_VID.mp4]] (loops) → [[S1_C_IMG_OUT.png]] → [[S1_C_TRN_S2.mp4]] → **S2** · amb [[S1_C_AMB.wav]] · choice TAKE A SEAT / STAY STANDING (sets `NEVER_SAT`)
@@ -44,12 +44,14 @@ Ambience: [[S0_X_AMB.wav]], joined mid-scene by [[S0_X_AMB_STREET.wav]] (the com
 - **H**: [[S7_H_IMG_IN.png]] → [[S7_H_VID.mp4]] (MG-06 THE EDGE) → [[S7_H_IMG_OUT.png]] → [[S7_H_TRN_S8.mp4]] → **S8** · amb [[S7_H_AMB.wav]]
 
 ## S8 — THE DELIVERY / THE DIVE
-- **C**: [[S8_C_IMG_IN.png]] → [[S8_C_VID.mp4]] → [[S8_C_VID_BOARDROOM.mp4]] (MG-07 THE HANDOFF) → [[S8_C_IMG_OUT.png]] · amb [[S8_C_AMB.wav]] then [[S8_C_AMB_BOARDROOM.wav]] → branches to ending:
-  - DELIVER → [[S8_C_TRN_SE_ASSIM.mp4]] → **ASSIMILATION** (or **RETAINED**, same transition clip)
-  - OPEN THE BOX (sets `OPENED_BOX`) → [[S8_C_TRN_SE_PEND.mp4]] → **PENDING REVIEW**
-- **H**: [[S8_H_IMG_IN.png]] → [[S8_H_VID.mp4]] (MG-07 THE BREATH) → [[S8_H_VID_STORE.mp4]] → [[S8_H_IMG_OUT.png]] · amb [[S8_H_AMB.wav]] then [[S8_H_AMB_STORE.wav]] → branches to ending:
-  - DIVE → [[S8_H_TRN_SE_EXPUL.mp4]] → **EXPULSION**
-  - SWIM FOR THE PILLARS → [[S8_H_TRN_SE_PEND.mp4]] → **PENDING REVIEW**
+- **C**: [[S8_C_IMG_IN.png]] → [[S8_C_VID.mp4]] → [[S8_C_VID_BOARDROOM.mp4]] (MG-07 THE HANDOFF; choice DELIVER / OPEN THE BOX, sets `OPENED_BOX`) → [[S8_C_IMG_OUT.png]] · amb [[S8_C_AMB.wav]] then [[S8_C_AMB_BOARDROOM.wav]] (the bed change lands on the cut) → ending transition:
+  - **ASSIMILATION** or **RETAINED** → [[S8_C_TRN_SE_ASSIM.mp4]]
+  - **PENDING REVIEW** → [[S8_C_TRN_SE_PEND.mp4]]
+- **H**: [[S8_H_IMG_IN.png]] → [[S8_H_VID.mp4]] (MG-07 THE BREATH; choice DIVE / SWIM FOR THE PILLARS is asked here, underwater) → [[S8_H_VID_STORE.mp4]] (the consequence) → [[S8_H_IMG_OUT.png]] · amb [[S8_H_AMB.wav]] then [[S8_H_AMB_STORE.wav]] → ending transition:
+  - **EXPULSION** → [[S8_H_TRN_SE_EXPUL.mp4]]
+  - **PENDING REVIEW** → [[S8_H_TRN_SE_PEND.mp4]]
+
+The ending is `resolveEnding()` in [[ninety-nine/src/state.js|state.js]] (conformance / dissonance / flags), never the button pressed: OPEN THE BOX on a high-conformance run is **RETAINED** through the ASSIMILATION clip, and PENDING is reachable from both branches.
 
 ## Endings
 - **ASSIMILATION**: [[SE_ASSIM_IMG_IN.png]] → [[SE_ASSIM_VID.mp4]] → [[SE_ASSIM_IMG_OUT.png]] (4s hold)
@@ -57,4 +59,4 @@ Ambience: [[S0_X_AMB.wav]], joined mid-scene by [[S0_X_AMB_STREET.wav]] (the com
 - **PENDING REVIEW**: [[SE_PEND_IMG_IN.png]] → [[SE_PEND_VID.mp4]] → [[SE_PEND_IMG_OUT.png]] (4s hold)
 - **RETAINED** (post-launch addition; still-only, no video/IN frame): [[SE_RETAINED_IMG_OUT.png]] (static 4s hold)
 
-Driven by [[ninety-nine/src/Source Code|router.js]]; SFX one-shots trace back to raw sources in [[sfx-raw/Raw SFX Library|sfx-raw/]].
+Driven by [[ninety-nine/src/Source Code|router.js]]; SFX one-shots trace back to raw sources in [[sfx-raw/Raw SFX Library|sfx-raw/]]. The music bed under all of it is generated live by [[ninety-nine/src/music.js|music.js]] (muzak in S1–S2, pads from S3, deeper from S7, `water` under the pool renders) -- no audio file. Every scene from S1 on also has a walkable 3D room ([[ninety-nine/src/walk/Walk Mode|walk/]], [[ninety-nine/data/rooms.json|data/rooms.json]]) offered as WALK THE ROOM beside the two choices.

@@ -54,8 +54,9 @@ A file/folder named e.g. `S5_H` is always "the parking garage," `S4_C` is always
 ## Workflow
 
 - Run the game: `.claude/launch.json` → `ninety-nine` config (`python ninety-nine/tools/dev_server.py 8000`). Plain `python -m http.server` won't work (no-cache headers + HTTP Range support are required — see [[ninety-nine/App Overview|App Overview]]).
-- Run tests: open `ninety-nine/test/index.html` through that same dev server (fetches are same-origin). No Node/CI on this machine — see [[ninety-nine/test/Tests|Tests]].
-- No git repo yet in this folder.
+- Run tests: open `ninety-nine/test/index.html` through that same dev server (fetches are same-origin). No Node/CI on this machine — see [[ninety-nine/test/Tests|Tests]]. Preview a walkable room without playing to it: `ninety-nine/test/rooms.html?room=S5_H`.
+- Walkable rooms are data: edit `ninety-nine/tools/build_rooms.py` and re-run it, never `data/rooms.json` by hand.
+- Music is generated (`ninety-nine/src/music.js`), not a file — nothing under `assets/aud` is music, and nothing there needs a licence.
 
 ## Docs-as-vault
 
