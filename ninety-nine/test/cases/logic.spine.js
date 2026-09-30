@@ -3,7 +3,7 @@
 // beyond what the harness provides, buildable in Phase 1.
 
 import { createState, commitChoice, resolveEnding, renderFor, peekRenderFor, seedRenderFromIntake, DEBUG_RESUME } from '../../src/state.js';
-import { pickTransition } from '../../src/router.js';
+import { pickTransition, planTransition, SPLIT_LEAD_S } from '../../src/router.js';
 import { runCase, assertEqual, assert } from '../harness.js';
 
 function runPath(bits) {
@@ -143,6 +143,77 @@ export async function run() {
     };
     assertEqual(pickTransition(s0, 'X', 'C', 'S1'), 'S0_X_TRN_S1.mp4');
     assertEqual(pickTransition(s0, 'X', 'H', 'S1'), 'S0_X_TRN_S1_H.mp4');
+  });
+
+  await runCase('Flip transitions: same render / real swap clip / S0 -> whole plain clip', () => {
+    const branch = { transitions: { S3: 'S2_C_TRN_S3.mp4' }, transitionsSplit: { S3: 3.04 } };
+    const other = { transitions: { S3: 'S2_H_TRN_S3.mp4' }, transitionsSplit: { S3: 3.04 } };
+    // No flip: the plain clip, whole, split or not.
+    assertEqual(JSON.stringify(planTransition({ branch, otherBranch: other, fromLetter: 'C', destLetter: 'C', nextSceneId: 'S3', destImgIn: 'S3_C_IMG_IN.png' })), JSON.stringify([{ file: 'S2_C_TRN_S3.mp4' }]));
+    // A real swap clip wins over any composition.
+    const swapped = { ...branch, transitionsSwap: { S3: 'S2_C_TRN_S3_H.mp4' } };
+    assertEqual(JSON.stringify(planTransition({ branch: swapped, otherBranch: other, fromLetter: 'C', destLetter: 'H', nextSceneId: 'S3', destImgIn: 'S3_H_IMG_IN.png' })), JSON.stringify([{ file: 'S2_C_TRN_S3_H.mp4' }]));
+    // S0's X clip is branchless: the H seed plays it whole (MANIFEST: the
+    // hand-off into S1_C/H_VID matches either way).
+    const s0 = { transitions: { S1: 'S0_X_TRN_S1.mp4' } };
+    assertEqual(JSON.stringify(planTransition({ branch: s0, fromLetter: 'X', destLetter: 'H', nextSceneId: 'S1', destImgIn: 'S1_H_IMG_IN.png' })), JSON.stringify([{ file: 'S0_X_TRN_S1.mp4' }]));
+  });
+
+  await runCase('Flip transitions: black-join halves compose so the wrong room is never shown', () => {
+    const split = { transitions: { S3: 'S2_C_TRN_S3.mp4' }, transitionsSplit: { S3: 3.04 } };
+    const otherSplit = { transitions: { S3: 'S2_H_TRN_S3.mp4' }, transitionsSplit: { S3: 3.04 } };
+    const plain = { transitions: { S5: 'S4_C_TRN_S5.mp4' } };
+    const otherPlain = { transitions: { S5: 'S4_H_TRN_S5.mp4' }, transitionsSplit: { S5: 3.04 } };
+    const stopAt = 3.04 - SPLIT_LEAD_S;
+    // Both sides split (S2 -> S3, C -> H): leave C, arrive H, all real footage.
+    assertEqual(JSON.stringify(planTransition({ branch: split, otherBranch: otherSplit, fromLetter: 'C', destLetter: 'H', nextSceneId: 'S3', destImgIn: 'S3_H_IMG_IN.png' })),
+      JSON.stringify([{ file: 'S2_C_TRN_S3.mp4', stopAt }, { file: 'S2_H_TRN_S3.mp4', startAt: 3.04 }]));
+    // Only this side split (S4 -> S5, H -> C: the C clip is a continuous walk): leave H, then the C still.
+    assertEqual(JSON.stringify(planTransition({ branch: otherPlain, otherBranch: plain, fromLetter: 'H', destLetter: 'C', nextSceneId: 'S5', destImgIn: 'S5_C_IMG_IN.png' })),
+      JSON.stringify([{ file: 'S4_H_TRN_S5.mp4', stopAt }, { still: 'S5_C_IMG_IN.png' }]));
+    // Only the other side split (S4 -> S5, C -> H): skip the C walk into the wrong room, arrive via the H clip's second half.
+    assertEqual(JSON.stringify(planTransition({ branch: plain, otherBranch: otherPlain, fromLetter: 'C', destLetter: 'H', nextSceneId: 'S5', destImgIn: 'S5_H_IMG_IN.png' })),
+      JSON.stringify([{ file: 'S4_H_TRN_S5.mp4', startAt: 3.04 }]));
+    // Neither split: a still-cut to the destination room.
+    assertEqual(JSON.stringify(planTransition({ branch: plain, otherBranch: { transitions: { S5: 'X.mp4' } }, fromLetter: 'C', destLetter: 'H', nextSceneId: 'S5', destImgIn: 'S5_H_IMG_IN.png' })),
+      JSON.stringify([{ still: 'S5_H_IMG_IN.png' }]));
+  });
+
+  await runCase('Flip transitions: every edge that can flip is covered by real data/scenes.json entries', async () => {
+    // Which spine edges can flip at all, per renderFor()'s +/-2 threshold and
+    // the S0 seed: S0->S1 (H seed), S2->S3, S4->S5, S6->S7. Nothing else.
+    const manifest = await (await fetch('../../data/scenes.json')).json();
+    const edges = new Set();
+    for (const seed of ['C', 'H']) {
+      for (let mask = 0; mask < 256; mask++) {
+        const state = createState();
+        seedRenderFromIntake(state, seed === 'H' ? 2 : 0);
+        let prev = 'X';
+        for (let i = 0; i < 8; i++) {
+          const r = renderFor(state);
+          const landsIn = prev === 'X' ? 'C' : prev;
+          if (r !== landsIn) edges.add(`S${i}->S${i + 1}`);
+          commitChoice(state, mask & (1 << i) ? 1 : -1);
+          prev = r;
+        }
+      }
+    }
+    assertEqual([...edges].sort().join(','), 'S0->S1,S2->S3,S4->S5,S6->S7');
+    // On each flippable edge past S0, the plan must never end with the plain
+    // clip of the departing branch playing to its end (that is the wrong room).
+    for (const edge of ['S2->S3', 'S4->S5', 'S6->S7']) {
+      const [from, to] = edge.split('->');
+      const scene = manifest.scenes[from];
+      for (const [letter, dest] of [['C', 'H'], ['H', 'C']]) {
+        const steps = planTransition({ branch: scene.branches[letter], otherBranch: scene.branches[dest], fromLetter: letter, destLetter: dest, nextSceneId: to, destImgIn: manifest.scenes[to].branches[dest].imgIn });
+        assert(steps.length > 0, `${edge} ${letter}->${dest}: empty plan`);
+        for (const step of steps) {
+          if (step.file === scene.branches[letter].transitions[to]) assert(step.stopAt !== undefined, `${edge} ${letter}->${dest}: departing clip would play into the wrong room`);
+        }
+        const last = steps[steps.length - 1];
+        assert(last.still === manifest.scenes[to].branches[dest].imgIn || last.file === scene.branches[dest].transitions[to], `${edge} ${letter}->${dest}: must end in the destination render`);
+      }
+    }
   });
 
   await runCase('S0 intake seed: 2+ refusals reach S1_H and hold it through S2', () => {

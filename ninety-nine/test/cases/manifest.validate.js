@@ -177,6 +177,18 @@ export async function run() {
     }
   });
 
+  await runCase('Assertion 10 (extension): every transitionsSplit entry names a plain transitions key with a positive black-join midpoint', () => {
+    for (const [sceneId, scene] of Object.entries(manifest.scenes)) {
+      for (const [letter, branch] of Object.entries(scene.branches)) {
+        if (!branch.transitionsSplit) continue;
+        for (const [target, seconds] of Object.entries(branch.transitionsSplit)) {
+          assert(branch.transitions && target in branch.transitions, `${sceneId}.${letter}: transitionsSplit.${target} has no transitions.${target} clip to split`);
+          assert(Number.isFinite(seconds) && seconds > 0.5 && seconds < 10, `${sceneId}.${letter}.transitionsSplit.${target}: implausible midpoint ${seconds}`);
+        }
+      }
+    }
+  });
+
   await runCase('Assertion 8 (extension): every real SFX file (sfx.js REAL_SFX_FILES) exists in /assets/aud', async () => {
     const missing = [];
     const results = await Promise.all(
