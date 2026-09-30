@@ -105,6 +105,10 @@ const CUES = {
   // Walk mode (src/walk/): one soft footfall per stride, surface-tinted via
   // opts.filterHz (marble rings higher than carpet). Always synthesized.
   'footstep': (ctx, bus, opts = {}) => noiseBurst(ctx, bus, { durationMs: 70, filterHz: opts.filterHz || 700, filterType: 'bandpass', gain: opts.gain || 0.12 }),
+  // MG-05 H's breathing: a soft low-passed exhale that MG-05 lengthens and
+  // deepens (filterHz down, durationMs up) as stamina drains. Synthesized;
+  // the delivered S6_H bed is deliberately event-free (MANIFEST).
+  'breath': (ctx, bus, opts = {}) => noiseBurst(ctx, bus, { durationMs: opts.durationMs || 300, filterHz: opts.filterHz || 800, filterType: 'lowpass', gain: opts.gain || 0.08 }),
   // Deliberately silent with no real file: see the header comment. Exists
   // so branch.sfxCue entries can reference it without an "unknown cue" log.
   'receptionist-voice': () => {}

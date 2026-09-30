@@ -28,6 +28,7 @@ export function createControls(camera, domElement, getCollidables) {
   let dragLooking = false;
   let lastPointerType = 'mouse';
   let moved = 0; // metres walked this frame (footstep cadence)
+  let eyeOffset = 0; // head-bob (walk.js), added on top of EYE_HEIGHT wherever the floor sets y
 
   const euler = new THREE.Euler(0, 0, 0, 'YXZ');
   const raycaster = new THREE.Raycaster();
@@ -103,7 +104,7 @@ export function createControls(camera, domElement, getCollidables) {
     if (len > 1) moveVec.divideScalar(len);
     moveVec.multiplyScalar(MOVE_SPEED * delta);
     const { walls } = getCollidables();
-    const rayY = camera.position.y - EYE_HEIGHT + 1.0;
+    const rayY = camera.position.y - EYE_HEIGHT - eyeOffset + 1.0;
     let dx = 0, dz = 0;
     if (Math.abs(moveVec.x) > 0) {
       rayOrigin.set(camera.position.x, rayY, camera.position.z);
@@ -123,12 +124,18 @@ export function createControls(camera, domElement, getCollidables) {
   function followFloor() {
     const { floors } = getCollidables();
     if (!floors || floors.length === 0) return;
-    const feetY = camera.position.y - EYE_HEIGHT;
+    const feetY = camera.position.y - EYE_HEIGHT - eyeOffset;
     rayOrigin.set(camera.position.x, feetY + STEP_UP, camera.position.z);
     raycaster.set(rayOrigin, DOWN);
     raycaster.far = STEP_UP + STEP_DOWN;
     const hits = raycaster.intersectObjects(floors, false);
-    if (hits.length > 0) camera.position.y = hits[0].point.y + EYE_HEIGHT;
+    if (hits.length > 0) camera.position.y = hits[0].point.y + EYE_HEIGHT + eyeOffset;
+  }
+  // Smoothed toward `target` so the bob eases in and out with the stride
+  // instead of snapping when a key is released.
+  function setEyeOffset(target, delta) {
+    const k = Math.min(1, (delta || 0.016) * 10);
+    eyeOffset += (target - eyeOffset) * k;
   }
 
   function update(delta) {
@@ -182,7 +189,7 @@ export function createControls(camera, domElement, getCollidables) {
   }
 
   return {
-    update, setLook, setMoveAxis, teleport, release, dispose, rotateRadians,
+    update, setLook, setMoveAxis, teleport, release, dispose, rotateRadians, setEyeOffset,
     movedThisFrame: () => moved,
     isPointerLocked: () => pointerLocked,
     state: () => ({ position: camera.position.toArray(), yaw, pitch })

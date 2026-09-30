@@ -42,6 +42,8 @@ export function createRenderer(container) {
   let hidden = videoB;
   let loopToken = 0; // bumps whenever a new clip starts; stale soft-loop handlers check it
   let destroyed = false;
+  let playbackRate = 1; // mini-games may slow/speed the room (MG-05 H's run); carried across soft-loop re-arms
+  let held = false; // pause() was called and resume() hasn't: a soft-loop re-arm landing in between must not restart motion
 
   function hideStill() {
     stillImg.classList.remove('visible');
@@ -50,34 +52,69 @@ export function createRenderer(container) {
 
   // Resolves { el, token } once `file` is the visible layer, or null if a
   // newer crossfade (or destroy()) superseded this one at any await.
-  async function crossfadeToVideo(file, { onStart, startAt = 0 } = {}) {
+  // A load failure worth reacting to: aborted, network, decode. Not
+  // MEDIA_ERR_SRC_NOT_SUPPORTED (4) -- a browser that cannot play the codec
+  // will not be helped by a reload, and the pre-existing behaviour (play()
+  // rejects, the hard fallback deadline releases the wait) stays for it.
+  const isRetryableError = (el) => !!(el.error && el.error.code !== 4);
+
+  // Wait for `el` to be playable, or to fail. Resolves 'ready' | 'error'
+  // | 'timeout' -- the timeout keeps a slow-but-fine load from blocking the
+  // whole game (canplaythrough is not prompt everywhere).
+  function waitPlayable(el, ms) {
+    return new Promise((resolve) => {
+      let settled = false;
+      let timer = null;
+      const done = (how) => {
+        if (settled) return;
+        settled = true;
+        el.removeEventListener('canplaythrough', onReady);
+        el.removeEventListener('error', onError);
+        if (timer !== null) clearTimeout(timer);
+        resolve(how);
+      };
+      const onReady = () => done('ready');
+      const onError = () => { if (isRetryableError(el)) done('error'); };
+      if (el.readyState >= 4) { done('ready'); return; }
+      el.addEventListener('canplaythrough', onReady, { once: true });
+      el.addEventListener('error', onError, { once: true });
+      timer = setTimeout(() => done('timeout'), ms);
+    });
+  }
+
+  async function crossfadeToVideo(file, { onStart, startAt = 0, rearm = false, fallbackStill = null } = {}) {
     // Doc 4 §8.2 cold start: if a still (e.g. S0's IMG_IN) is already up as
     // a stopgap, keep it visible through the load wait below and only swap
     // to video once it's actually ready to play -- not before.
     const myToken = ++loopToken;
+    if (!rearm) held = false; // a new clip (entry or transition) always moves; only a soft-loop re-arm inherits a hold
     hidden.loop = false; // never native-loop (see header)
     hidden.muted = true; // defensive; Doc 4 §8.3 strips audio from every source file anyway
     hidden.src = `./assets/vid/${file}`;
     hidden.load();
 
-    await new Promise((resolve) => {
-      let settled = false;
-      const onReady = () => {
-        if (settled) return;
-        settled = true;
-        hidden.removeEventListener('canplaythrough', onReady);
-        resolve();
-      };
-      hidden.addEventListener('canplaythrough', onReady, { once: true });
-      // Some browsers/containers don't fire canplaythrough promptly; don't
-      // block the whole game on it.
-      setTimeout(onReady, 2500);
-    });
+    let how = await waitPlayable(hidden, 2500);
     if (myToken !== loopToken || destroyed) return null; // superseded while loading
+    if (how === 'error') {
+      // A network/decode failure on the clip (the "failed connection" a
+      // dropped range request or a stalled host produces). One reload,
+      // then give up on the clip rather than sit black for 11 s: the room's
+      // own still stands in and the router carries on.
+      console.warn(`renderer.js: ${file} failed to load (${hidden.error && hidden.error.code}), retrying once`);
+      hidden.load();
+      how = await waitPlayable(hidden, 4000);
+      if (myToken !== loopToken || destroyed) return null;
+      if (how === 'error') {
+        console.warn(`renderer.js: ${file} failed twice; standing in with ${fallbackStill || 'nothing'}`);
+        if (fallbackStill) showStill(fallbackStill);
+        return null;
+      }
+    }
 
     if (startAt > 0) {
       try { hidden.currentTime = startAt; } catch (e) { /* metadata not ready: play from 0 */ }
     }
+    hidden.playbackRate = playbackRate;
     try {
       await hidden.play();
     } catch (e) {
@@ -86,6 +123,10 @@ export function createRenderer(container) {
     // play() can sit pending on a slow load; a newer crossfade may have
     // re-pointed this same idle element at its own file in the meantime.
     if (myToken !== loopToken || destroyed) return null;
+    // A hold (MG-05 H releasing inside a re-arm's 400ms) freezes the
+    // incoming frame too, otherwise the room keeps moving after the hand
+    // comes off.
+    if (held) hidden.pause();
 
     hideStill();
     hidden.classList.add('visible');
@@ -114,7 +155,7 @@ export function createRenderer(container) {
       if (el.duration - el.currentTime <= SOFT_LOOP_LEAD_S) {
         rearmed = true;
         el.removeEventListener('timeupdate', onTime);
-        crossfadeToVideo(file).then((res) => {
+        crossfadeToVideo(file, { rearm: true }).then((res) => {
           if (res) armSoftLoop(res.el, file, res.token);
         });
       }
@@ -124,6 +165,7 @@ export function createRenderer(container) {
 
   function showStill(file) {
     loopToken++; // cancels any soft loop in flight
+    held = false;
     videoA.pause(); // a flip's still-cut must not leave the old room looping (hidden) underneath
     videoB.pause();
     videoA.classList.remove('visible');
@@ -150,6 +192,7 @@ export function createRenderer(container) {
         settled = true;
         videoEl.removeEventListener('ended', onEnded);
         videoEl.removeEventListener('emptied', onEmptied);
+        videoEl.removeEventListener('error', onError);
         videoEl.removeEventListener('timeupdate', onTime);
         clearTimeout(retryTimer);
         clearTimeout(fallbackTimer);
@@ -159,8 +202,10 @@ export function createRenderer(container) {
       const onEnded = () => finish();
       // The source was replaced underneath us (only a newer crossfade or
       // destroy() can do that): `ended` will never come, so release now
-      // instead of sitting out the fallback deadline below.
+      // instead of sitting out the fallback deadline below. Same for a
+      // mid-clip network/decode error.
       const onEmptied = () => finish();
+      const onError = () => { if (isRetryableError(videoEl)) finish(); };
       const onTime = () => {
         if (stopAt !== null && videoEl.currentTime >= stopAt) {
           videoEl.pause();
@@ -169,6 +214,7 @@ export function createRenderer(container) {
       };
       videoEl.addEventListener('ended', onEnded, { once: true });
       videoEl.addEventListener('emptied', onEmptied, { once: true });
+      videoEl.addEventListener('error', onError, { once: true });
       if (stopAt !== null) videoEl.addEventListener('timeupdate', onTime);
 
       const retryTimer = setTimeout(() => {
@@ -197,14 +243,15 @@ export function createRenderer(container) {
 
     // opts.onStart fires the moment the clip becomes the visible layer
     // (router.js uses it to land a bed change on the cut, not after it).
-    async playEntry(entry, _branchLetter, { onStart } = {}) {
+    // opts.fallbackStill: shown instead if the clip cannot load (twice).
+    async playEntry(entry, _branchLetter, { onStart, fallbackStill = null } = {}) {
       if (entry.type === 'still') {
         showStill(entry.file);
         if (onStart) onStart();
         return; // stills have no "ended" -- caller (router) controls advancement
       }
-      const res = await crossfadeToVideo(entry.file, { onStart });
-      if (!res) return;
+      const res = await crossfadeToVideo(entry.file, { onStart, fallbackStill });
+      if (!res) { if (onStart && stillImg.src && !stillImg.hidden) onStart(); return; }
       if (entry.loop) {
         armSoftLoop(res.el, entry.file, res.token);
         return; // looping video "never ends" -- router controls advancement
@@ -215,16 +262,28 @@ export function createRenderer(container) {
     // startAt/stopAt (seconds) play a sub-range: router.js's flip
     // transitions use the departure half [0, split] of one black-join clip
     // and the arrival half [split, end] of another.
-    async playTransition(file, { onStart, startAt = 0, stopAt = null } = {}) {
-      const res = await crossfadeToVideo(file, { onStart, startAt });
+    async playTransition(file, { onStart, startAt = 0, stopAt = null, fallbackStill = null } = {}) {
+      const res = await crossfadeToVideo(file, { onStart, startAt, fallbackStill });
       if (!res) return;
       await waitForEnded(res.el, { stopAt });
     },
 
     // Freeze whatever is playing on its current frame (used while the 3D
-    // walk layer is up, so the video isn't burning decode time underneath).
-    pause() { active.pause(); },
-    resume() { if (active.src && active.currentTime < active.duration) active.play().catch(() => {}); },
+    // walk layer is up, so the video isn't burning decode time underneath;
+    // and by MG-05 H, where the garage only moves while the player runs).
+    pause() { held = true; active.pause(); hidden.pause(); },
+    resume() { held = false; if (active.src && active.currentTime < active.duration) active.play().catch(() => {}); },
+    isPaused() { return active.paused; },
+
+    // Playback speed of the visible clip (and of every clip that follows
+    // until reset): MG-05 H's run slows as stamina drains. Clamped so the
+    // soft-loop's 0.9s media lead always stays longer than the 400ms
+    // wall-clock crossfade (at 0.5x the lead is 1.8s; at 2x it is 0.45s).
+    setPlaybackRate(rate) {
+      playbackRate = Math.min(2, Math.max(0.5, Number.isFinite(rate) ? rate : 1));
+      videoA.playbackRate = playbackRate;
+      videoB.playbackRate = playbackRate;
+    },
 
     destroy() {
       destroyed = true;

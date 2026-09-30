@@ -16,9 +16,20 @@
     "wall": 2.0,
     "ceiling": 2.0
    },
+   "skirt": {
+    "mat": "marble",
+    "h": 0.14,
+    "t": 0.03,
+    "tile": 2.5
+   },
+   "cornice": {
+    "mat": "plaster_dark",
+    "h": 0.28,
+    "t": 0.08
+   },
    "ambient": {
     "color": "#fff4e0",
-    "intensity": 0.35
+    "intensity": 0.22
    },
    "sun": {
     "from": [
@@ -27,7 +38,7 @@
      7.5
     ],
     "color": "#fff1dc",
-    "intensity": 0.9
+    "intensity": 0.7
    },
    "lights": [
     {
@@ -38,8 +49,9 @@
       -1.5
      ],
      "color": "#ffe9c8",
-     "intensity": 28,
-     "distance": 16
+     "intensity": 22,
+     "distance": 16,
+     "flicker": 0
     },
     {
      "type": "point",
@@ -49,8 +61,9 @@
       -1.5
      ],
      "color": "#ffe9c8",
-     "intensity": 28,
-     "distance": 16
+     "intensity": 22,
+     "distance": 16,
+     "flicker": 0
     },
     {
      "type": "point",
@@ -60,7 +73,7 @@
       3.5
      ],
      "color": "#ffe9c8",
-     "intensity": 18,
+     "intensity": 16,
      "distance": 16
     }
    ],
@@ -69,6 +82,8 @@
     "near": 10,
     "far": 36
    },
+   "exposure": 1.0,
+   "vignette": 0.6,
    "spawn": [
     0,
     4.6,
@@ -199,6 +214,36 @@
       1.7
      ],
      "rot": -90
+    },
+    {
+     "type": "fluoro",
+     "pos": [
+      -3.5,
+      4.14,
+      -1.5
+     ],
+     "w": 1.4,
+     "d": 0.4
+    },
+    {
+     "type": "fluoro",
+     "pos": [
+      3.5,
+      4.14,
+      -1.5
+     ],
+     "w": 1.4,
+     "d": 0.4
+    },
+    {
+     "type": "fluoro",
+     "pos": [
+      0,
+      4.14,
+      3.5
+     ],
+     "w": 1.4,
+     "d": 0.4
     }
    ],
    "footstep": {
@@ -222,9 +267,20 @@
     "wall": 2.0,
     "ceiling": 2.0
    },
+   "skirt": {
+    "mat": "marble",
+    "h": 0.14,
+    "t": 0.03,
+    "tile": 2.5
+   },
+   "cornice": {
+    "mat": "plaster_blown",
+    "h": 0.28,
+    "t": 0.08
+   },
    "ambient": {
     "color": "#fff4e0",
-    "intensity": 0.9
+    "intensity": 0.55
    },
    "sun": {
     "from": [
@@ -233,7 +289,7 @@
      7.5
     ],
     "color": "#fff1dc",
-    "intensity": 1.2
+    "intensity": 0.9
    },
    "lights": [
     {
@@ -244,8 +300,9 @@
       -1.5
      ],
      "color": "#ffe9c8",
-     "intensity": 70,
-     "distance": 16
+     "intensity": 42,
+     "distance": 16,
+     "flicker": 0.25
     },
     {
      "type": "point",
@@ -255,8 +312,9 @@
       -1.5
      ],
      "color": "#ffe9c8",
-     "intensity": 70,
-     "distance": 16
+     "intensity": 42,
+     "distance": 16,
+     "flicker": 0.25
     },
     {
      "type": "point",
@@ -266,15 +324,17 @@
       3.5
      ],
      "color": "#ffe9c8",
-     "intensity": 50,
+     "intensity": 34,
      "distance": 16
     }
    ],
    "fog": {
-    "color": "#f2ede2",
-    "near": 6,
-    "far": 30
+    "color": "#e9e3d6",
+    "near": 8,
+    "far": 34
    },
+   "exposure": 1.05,
+   "vignette": 0.35,
    "spawn": [
     0,
     4.6,
@@ -729,6 +789,36 @@
       -4.033
      ],
      "rot": 355.4
+    },
+    {
+     "type": "fluoro",
+     "pos": [
+      -3.5,
+      4.14,
+      -1.5
+     ],
+     "w": 1.4,
+     "d": 0.4
+    },
+    {
+     "type": "fluoro",
+     "pos": [
+      3.5,
+      4.14,
+      -1.5
+     ],
+     "w": 1.4,
+     "d": 0.4
+    },
+    {
+     "type": "fluoro",
+     "pos": [
+      0,
+      4.14,
+      3.5
+     ],
+     "w": 1.4,
+     "d": 0.4
     }
    ],
    "footstep": {
@@ -762,9 +852,20 @@
     "wall": 2.0,
     "ceiling": 2.0
    },
+   "skirt": {
+    "mat": "marble",
+    "h": 0.12,
+    "t": 0.03,
+    "tile": 2.5
+   },
+   "cornice": {
+    "mat": "plaster_dark",
+    "h": 0.22,
+    "t": 0.06
+   },
    "ambient": {
     "color": "#ffe6d0",
-    "intensity": 0.3
+    "intensity": 0.22
    },
    "sun": {
     "from": [
@@ -890,6 +991,17 @@
     "wall": 2.0,
     "ceiling": 2.0
    },
+   "skirt": {
+    "mat": "marble",
+    "h": 0.14,
+    "t": 0.03,
+    "tile": 2.5
+   },
+   "cornice": {
+    "mat": "plaster_dark",
+    "h": 0.28,
+    "t": 0.08
+   },
    "ambient": {
     "color": "#fff4e0",
     "intensity": 0.3
@@ -901,7 +1013,7 @@
      7.5
     ],
     "color": "#fff1dc",
-    "intensity": 0.9
+    "intensity": 0.7
    },
    "lights": [
     {
@@ -912,8 +1024,9 @@
       -1.5
      ],
      "color": "#ffe9c8",
-     "intensity": 28,
-     "distance": 16
+     "intensity": 22,
+     "distance": 16,
+     "flicker": 0
     },
     {
      "type": "point",
@@ -923,8 +1036,9 @@
       -1.5
      ],
      "color": "#ffe9c8",
-     "intensity": 28,
-     "distance": 16
+     "intensity": 22,
+     "distance": 16,
+     "flicker": 0
     },
     {
      "type": "point",
@@ -934,7 +1048,7 @@
       3.5
      ],
      "color": "#ffe9c8",
-     "intensity": 18,
+     "intensity": 16,
      "distance": 16
     },
     {
@@ -954,6 +1068,8 @@
     "near": 8,
     "far": 30
    },
+   "exposure": 1.0,
+   "vignette": 0.6,
    "spawn": [
     0,
     1.5,
@@ -1086,6 +1202,36 @@
      "rot": -90
     },
     {
+     "type": "fluoro",
+     "pos": [
+      -3.5,
+      4.14,
+      -1.5
+     ],
+     "w": 1.4,
+     "d": 0.4
+    },
+    {
+     "type": "fluoro",
+     "pos": [
+      3.5,
+      4.14,
+      -1.5
+     ],
+     "w": 1.4,
+     "d": 0.4
+    },
+    {
+     "type": "fluoro",
+     "pos": [
+      0,
+      4.14,
+      3.5
+     ],
+     "w": 1.4,
+     "d": 0.4
+    },
+    {
      "type": "glassdoors",
      "pos": [
       0,
@@ -1136,9 +1282,14 @@
     "wall": 2.0,
     "ceiling": 1.2
    },
+   "skirt": {
+    "mat": "plaster_dark",
+    "h": 0.1,
+    "t": 0.02
+   },
    "ambient": {
     "color": "#e8ecff",
-    "intensity": 0.45
+    "intensity": 0.2
    },
    "sun": {
     "from": [
@@ -1147,7 +1298,7 @@
      22.0
     ],
     "color": "#f4f6ff",
-    "intensity": 0.8
+    "intensity": 0.4
    },
    "lights": [
     {
@@ -1158,8 +1309,9 @@
       -12
      ],
      "color": "#eef2ff",
-     "intensity": 26,
-     "distance": 14
+     "intensity": 11,
+     "distance": 14,
+     "flicker": 0
     },
     {
      "type": "point",
@@ -1169,8 +1321,9 @@
       -4
      ],
      "color": "#eef2ff",
-     "intensity": 26,
-     "distance": 14
+     "intensity": 11,
+     "distance": 14,
+     "flicker": 0
     },
     {
      "type": "point",
@@ -1180,8 +1333,9 @@
       4
      ],
      "color": "#eef2ff",
-     "intensity": 26,
-     "distance": 14
+     "intensity": 11,
+     "distance": 14,
+     "flicker": 0
     },
     {
      "type": "point",
@@ -1191,8 +1345,9 @@
       12
      ],
      "color": "#eef2ff",
-     "intensity": 26,
-     "distance": 14
+     "intensity": 11,
+     "distance": 14,
+     "flicker": 0
     },
     {
      "type": "point",
@@ -1202,8 +1357,9 @@
       -12
      ],
      "color": "#eef2ff",
-     "intensity": 26,
-     "distance": 14
+     "intensity": 11,
+     "distance": 14,
+     "flicker": 0
     },
     {
      "type": "point",
@@ -1213,8 +1369,9 @@
       -4
      ],
      "color": "#eef2ff",
-     "intensity": 26,
-     "distance": 14
+     "intensity": 11,
+     "distance": 14,
+     "flicker": 0
     },
     {
      "type": "point",
@@ -1224,8 +1381,9 @@
       4
      ],
      "color": "#eef2ff",
-     "intensity": 26,
-     "distance": 14
+     "intensity": 11,
+     "distance": 14,
+     "flicker": 0
     },
     {
      "type": "point",
@@ -1235,8 +1393,9 @@
       12
      ],
      "color": "#eef2ff",
-     "intensity": 26,
-     "distance": 14
+     "intensity": 11,
+     "distance": 14,
+     "flicker": 0
     },
     {
      "type": "point",
@@ -1246,8 +1405,9 @@
       -12
      ],
      "color": "#eef2ff",
-     "intensity": 26,
-     "distance": 14
+     "intensity": 11,
+     "distance": 14,
+     "flicker": 0
     },
     {
      "type": "point",
@@ -1257,8 +1417,9 @@
       -4
      ],
      "color": "#eef2ff",
-     "intensity": 26,
-     "distance": 14
+     "intensity": 11,
+     "distance": 14,
+     "flicker": 0
     },
     {
      "type": "point",
@@ -1268,8 +1429,9 @@
       4
      ],
      "color": "#eef2ff",
-     "intensity": 26,
-     "distance": 14
+     "intensity": 11,
+     "distance": 14,
+     "flicker": 0.12
     },
     {
      "type": "point",
@@ -1279,15 +1441,18 @@
       12
      ],
      "color": "#eef2ff",
-     "intensity": 26,
-     "distance": 14
+     "intensity": 11,
+     "distance": 14,
+     "flicker": 0
     }
    ],
    "fog": {
-    "color": "#c9ccc6",
-    "near": 10,
-    "far": 40
+    "color": "#b4b7b1",
+    "near": 12,
+    "far": 46
    },
+   "exposure": 1.0,
+   "vignette": 0.45,
    "spawn": [
     0,
     15.5,
@@ -5930,9 +6095,15 @@
     "wall": 1.6,
     "ceiling": 2.0
    },
+   "skirt": {
+    "mat": "paint_green",
+    "h": 1.2,
+    "t": 0.02,
+    "tile": 1.6
+   },
    "ambient": {
     "color": "#dfe6dc",
-    "intensity": 0.2
+    "intensity": 0.14
    },
    "sun": {
     "from": [
@@ -5952,8 +6123,9 @@
       -15
      ],
      "color": "#dfe6dc",
-     "intensity": 9,
-     "distance": 9
+     "intensity": 7,
+     "distance": 9,
+     "flicker": 0
     },
     {
      "type": "point",
@@ -5963,8 +6135,9 @@
       -10
      ],
      "color": "#dfe6dc",
-     "intensity": 9,
-     "distance": 9
+     "intensity": 7,
+     "distance": 9,
+     "flicker": 0
     },
     {
      "type": "point",
@@ -5974,8 +6147,9 @@
       -5
      ],
      "color": "#dfe6dc",
-     "intensity": 9,
-     "distance": 9
+     "intensity": 7,
+     "distance": 9,
+     "flicker": 0.3
     },
     {
      "type": "point",
@@ -5985,8 +6159,9 @@
       0
      ],
      "color": "#dfe6dc",
-     "intensity": 9,
-     "distance": 9
+     "intensity": 7,
+     "distance": 9,
+     "flicker": 0
     },
     {
      "type": "point",
@@ -5996,8 +6171,9 @@
       5
      ],
      "color": "#dfe6dc",
-     "intensity": 9,
-     "distance": 9
+     "intensity": 7,
+     "distance": 9,
+     "flicker": 0
     },
     {
      "type": "point",
@@ -6007,8 +6183,9 @@
       10
      ],
      "color": "#dfe6dc",
-     "intensity": 9,
-     "distance": 9
+     "intensity": 7,
+     "distance": 9,
+     "flicker": 0.3
     },
     {
      "type": "point",
@@ -6018,8 +6195,9 @@
       15
      ],
      "color": "#dfe6dc",
-     "intensity": 9,
-     "distance": 9
+     "intensity": 7,
+     "distance": 9,
+     "flicker": 0
     }
    ],
    "fog": {
@@ -6314,6 +6492,144 @@
       8.2
      ],
      "rot": -90
+    },
+    {
+     "type": "pipe",
+     "pos": [
+      0.95,
+      2.78,
+      -15
+     ],
+     "rot": 90,
+     "len": 6.0,
+     "r": 0.09
+    },
+    {
+     "type": "pipe",
+     "pos": [
+      -0.85,
+      2.7,
+      -15
+     ],
+     "rot": 90,
+     "len": 6.0,
+     "r": 0.05,
+     "mat": "lp_dark"
+    },
+    {
+     "type": "pipe",
+     "pos": [
+      0.95,
+      2.78,
+      -9
+     ],
+     "rot": 90,
+     "len": 6.0,
+     "r": 0.09
+    },
+    {
+     "type": "pipe",
+     "pos": [
+      -0.85,
+      2.7,
+      -9
+     ],
+     "rot": 90,
+     "len": 6.0,
+     "r": 0.05,
+     "mat": "lp_dark"
+    },
+    {
+     "type": "pipe",
+     "pos": [
+      0.95,
+      2.78,
+      -3
+     ],
+     "rot": 90,
+     "len": 6.0,
+     "r": 0.09
+    },
+    {
+     "type": "pipe",
+     "pos": [
+      -0.85,
+      2.7,
+      -3
+     ],
+     "rot": 90,
+     "len": 6.0,
+     "r": 0.05,
+     "mat": "lp_dark"
+    },
+    {
+     "type": "pipe",
+     "pos": [
+      0.95,
+      2.78,
+      3
+     ],
+     "rot": 90,
+     "len": 6.0,
+     "r": 0.09
+    },
+    {
+     "type": "pipe",
+     "pos": [
+      -0.85,
+      2.7,
+      3
+     ],
+     "rot": 90,
+     "len": 6.0,
+     "r": 0.05,
+     "mat": "lp_dark"
+    },
+    {
+     "type": "pipe",
+     "pos": [
+      0.95,
+      2.78,
+      9
+     ],
+     "rot": 90,
+     "len": 6.0,
+     "r": 0.09
+    },
+    {
+     "type": "pipe",
+     "pos": [
+      -0.85,
+      2.7,
+      9
+     ],
+     "rot": 90,
+     "len": 6.0,
+     "r": 0.05,
+     "mat": "lp_dark"
+    },
+    {
+     "type": "pipe",
+     "pos": [
+      0.95,
+      2.78,
+      15
+     ],
+     "rot": 90,
+     "len": 6.0,
+     "r": 0.09
+    },
+    {
+     "type": "pipe",
+     "pos": [
+      -0.85,
+      2.7,
+      15
+     ],
+     "rot": 90,
+     "len": 6.0,
+     "r": 0.05,
+     "mat": "lp_dark"
     }
    ],
    "footstep": {
@@ -6375,6 +6691,7 @@
     "near": 3,
     "far": 16
    },
+   "vignette": 0.75,
    "spawn": [
     0,
     3.2,
@@ -6456,7 +6773,7 @@
    "name": "THE GARAGE",
    "size": [
     32.0,
-    3.2,
+    3.4,
     44.0
    ],
    "floor": "garage_floor",
@@ -6467,9 +6784,24 @@
     "wall": 2.5,
     "ceiling": 2.5
    },
+   "skirt": {
+    "mat": "paint_green",
+    "h": 1.1,
+    "t": 0.02,
+    "tile": 2.5
+   },
+   "beams": {
+    "axis": "x",
+    "every": 8.0,
+    "offset": 4.0,
+    "w": 0.7,
+    "h": 0.7,
+    "mat": "concrete",
+    "tile": 2.5
+   },
    "ambient": {
     "color": "#ffb060",
-    "intensity": 0.18
+    "intensity": 0.24
    },
    "sun": {
     "from": [
@@ -6485,96 +6817,167 @@
      "type": "point",
      "pos": [
       -8,
-      2.8000000000000003,
-      -16
+      2.25,
+      -14.0
      ],
      "color": "#ffa040",
-     "intensity": 30,
-     "distance": 18
+     "intensity": 42,
+     "distance": 22,
+     "flicker": 0.12
     },
     {
      "type": "point",
      "pos": [
       -8,
-      2.8000000000000003,
-      -4
+      2.25,
+      -6.0
      ],
      "color": "#ffa040",
-     "intensity": 30,
-     "distance": 18
+     "intensity": 42,
+     "distance": 22,
+     "flicker": 0.35
     },
     {
      "type": "point",
      "pos": [
       -8,
-      2.8000000000000003,
-      8
+      2.25,
+      2.0
      ],
      "color": "#ffa040",
-     "intensity": 30,
-     "distance": 18
+     "intensity": 42,
+     "distance": 22,
+     "flicker": 0.12
     },
     {
      "type": "point",
      "pos": [
       -8,
-      2.8000000000000003,
-      20
+      2.25,
+      10.0
      ],
      "color": "#ffa040",
-     "intensity": 30,
-     "distance": 18
+     "intensity": 42,
+     "distance": 22,
+     "flicker": 0.35
+    },
+    {
+     "type": "point",
+     "pos": [
+      -8,
+      2.25,
+      18.0
+     ],
+     "color": "#ffa040",
+     "intensity": 42,
+     "distance": 22,
+     "flicker": 0.12
     },
     {
      "type": "point",
      "pos": [
       8,
-      2.8000000000000003,
-      -16
+      2.25,
+      -14.0
      ],
      "color": "#ffa040",
-     "intensity": 30,
-     "distance": 18
+     "intensity": 42,
+     "distance": 22,
+     "flicker": 0.12
     },
     {
      "type": "point",
      "pos": [
       8,
-      2.8000000000000003,
-      -4
+      2.25,
+      -6.0
      ],
      "color": "#ffa040",
-     "intensity": 30,
-     "distance": 18
+     "intensity": 42,
+     "distance": 22,
+     "flicker": 0.35
     },
     {
      "type": "point",
      "pos": [
       8,
-      2.8000000000000003,
-      8
+      2.25,
+      2.0
      ],
      "color": "#ffa040",
-     "intensity": 30,
-     "distance": 18
+     "intensity": 42,
+     "distance": 22,
+     "flicker": 0.12
     },
     {
      "type": "point",
      "pos": [
       8,
-      2.8000000000000003,
-      20
+      2.25,
+      10.0
      ],
      "color": "#ffa040",
-     "intensity": 30,
-     "distance": 18
+     "intensity": 42,
+     "distance": 22,
+     "flicker": 0.35
+    },
+    {
+     "type": "point",
+     "pos": [
+      8,
+      2.25,
+      18.0
+     ],
+     "color": "#ffa040",
+     "intensity": 42,
+     "distance": 22,
+     "flicker": 0.12
+    },
+    {
+     "type": "point",
+     "pos": [
+      0,
+      2.25,
+      -14.0
+     ],
+     "color": "#ffb060",
+     "intensity": 24,
+     "distance": 18,
+     "flicker": 0.2
+    },
+    {
+     "type": "point",
+     "pos": [
+      0,
+      2.25,
+      2.0
+     ],
+     "color": "#ffb060",
+     "intensity": 24,
+     "distance": 18,
+     "flicker": 0.2
+    },
+    {
+     "type": "point",
+     "pos": [
+      0,
+      2.25,
+      18.0
+     ],
+     "color": "#ffb060",
+     "intensity": 24,
+     "distance": 18,
+     "flicker": 0.2
     }
    ],
    "fog": {
-    "color": "#120c06",
+    "color": "#160f08",
     "near": 8,
-    "far": 42
+    "far": 48
    },
+   "exposure": 1.25,
+   "vignette": 0.55,
+   "grain": 0.025,
    "spawn": [
     0,
     19.0,
@@ -6586,306 +6989,546 @@
      "pos": [
       -12,
       0,
-      -18
+      -18.0
      ],
      "w": 0.7,
-     "h": 3.2
+     "h": 3.4,
+     "band": "paint_green",
+     "bandH": 1.1,
+     "tile": 1.5
     },
     {
      "type": "pillar",
      "pos": [
       -12,
       0,
-      -10
+      -10.0
      ],
      "w": 0.7,
-     "h": 3.2
+     "h": 3.4,
+     "band": "paint_green",
+     "bandH": 1.1,
+     "tile": 1.5
     },
     {
      "type": "pillar",
      "pos": [
       -12,
       0,
-      -2
+      -2.0
      ],
      "w": 0.7,
-     "h": 3.2
+     "h": 3.4,
+     "band": "paint_green",
+     "bandH": 1.1,
+     "tile": 1.5
     },
     {
      "type": "pillar",
      "pos": [
       -12,
       0,
-      6
+      6.0
      ],
      "w": 0.7,
-     "h": 3.2
+     "h": 3.4,
+     "band": "paint_green",
+     "bandH": 1.1,
+     "tile": 1.5
     },
     {
      "type": "pillar",
      "pos": [
       -12,
       0,
-      14
+      14.0
      ],
      "w": 0.7,
-     "h": 3.2
+     "h": 3.4,
+     "band": "paint_green",
+     "bandH": 1.1,
+     "tile": 1.5
     },
     {
      "type": "pillar",
      "pos": [
       -4,
       0,
-      -18
+      -18.0
      ],
      "w": 0.7,
-     "h": 3.2
+     "h": 3.4,
+     "band": "paint_green",
+     "bandH": 1.1,
+     "tile": 1.5
     },
     {
      "type": "pillar",
      "pos": [
       -4,
       0,
-      -10
+      -10.0
      ],
      "w": 0.7,
-     "h": 3.2
+     "h": 3.4,
+     "band": "paint_green",
+     "bandH": 1.1,
+     "tile": 1.5
     },
     {
      "type": "pillar",
      "pos": [
       -4,
       0,
-      -2
+      -2.0
      ],
      "w": 0.7,
-     "h": 3.2
+     "h": 3.4,
+     "band": "paint_green",
+     "bandH": 1.1,
+     "tile": 1.5
     },
     {
      "type": "pillar",
      "pos": [
       -4,
       0,
-      6
+      6.0
      ],
      "w": 0.7,
-     "h": 3.2
+     "h": 3.4,
+     "band": "paint_green",
+     "bandH": 1.1,
+     "tile": 1.5
     },
     {
      "type": "pillar",
      "pos": [
       -4,
       0,
-      14
+      14.0
      ],
      "w": 0.7,
-     "h": 3.2
+     "h": 3.4,
+     "band": "paint_green",
+     "bandH": 1.1,
+     "tile": 1.5
     },
     {
      "type": "pillar",
      "pos": [
       4,
       0,
-      -18
+      -18.0
      ],
      "w": 0.7,
-     "h": 3.2
+     "h": 3.4,
+     "band": "paint_green",
+     "bandH": 1.1,
+     "tile": 1.5
     },
     {
      "type": "pillar",
      "pos": [
       4,
       0,
-      -10
+      -10.0
      ],
      "w": 0.7,
-     "h": 3.2
+     "h": 3.4,
+     "band": "paint_green",
+     "bandH": 1.1,
+     "tile": 1.5
     },
     {
      "type": "pillar",
      "pos": [
       4,
       0,
-      -2
+      -2.0
      ],
      "w": 0.7,
-     "h": 3.2
+     "h": 3.4,
+     "band": "paint_green",
+     "bandH": 1.1,
+     "tile": 1.5
     },
     {
      "type": "pillar",
      "pos": [
       4,
       0,
-      6
+      6.0
      ],
      "w": 0.7,
-     "h": 3.2
+     "h": 3.4,
+     "band": "paint_green",
+     "bandH": 1.1,
+     "tile": 1.5
     },
     {
      "type": "pillar",
      "pos": [
       4,
       0,
-      14
+      14.0
      ],
      "w": 0.7,
-     "h": 3.2
+     "h": 3.4,
+     "band": "paint_green",
+     "bandH": 1.1,
+     "tile": 1.5
     },
     {
      "type": "pillar",
      "pos": [
       12,
       0,
-      -18
+      -18.0
      ],
      "w": 0.7,
-     "h": 3.2
+     "h": 3.4,
+     "band": "paint_green",
+     "bandH": 1.1,
+     "tile": 1.5
     },
     {
      "type": "pillar",
      "pos": [
       12,
       0,
-      -10
+      -10.0
      ],
      "w": 0.7,
-     "h": 3.2
+     "h": 3.4,
+     "band": "paint_green",
+     "bandH": 1.1,
+     "tile": 1.5
     },
     {
      "type": "pillar",
      "pos": [
       12,
       0,
-      -2
+      -2.0
      ],
      "w": 0.7,
-     "h": 3.2
+     "h": 3.4,
+     "band": "paint_green",
+     "bandH": 1.1,
+     "tile": 1.5
     },
     {
      "type": "pillar",
      "pos": [
       12,
       0,
-      6
+      6.0
      ],
      "w": 0.7,
-     "h": 3.2
+     "h": 3.4,
+     "band": "paint_green",
+     "bandH": 1.1,
+     "tile": 1.5
     },
     {
      "type": "pillar",
      "pos": [
       12,
       0,
-      14
+      14.0
      ],
      "w": 0.7,
-     "h": 3.2
+     "h": 3.4,
+     "band": "paint_green",
+     "bandH": 1.1,
+     "tile": 1.5
     },
     {
      "type": "sodium",
      "pos": [
       -8,
-      3.08,
-      -16
+      2.66,
+      -14.0
      ]
     },
     {
      "type": "sodium",
      "pos": [
       -8,
-      3.08,
-      -4
+      2.66,
+      -6.0
      ]
     },
     {
      "type": "sodium",
      "pos": [
       -8,
-      3.08,
-      8
+      2.66,
+      2.0
      ]
     },
     {
      "type": "sodium",
      "pos": [
       -8,
-      3.08,
-      20
+      2.66,
+      10.0
+     ]
+    },
+    {
+     "type": "sodium",
+     "pos": [
+      -8,
+      2.66,
+      18.0
      ]
     },
     {
      "type": "sodium",
      "pos": [
       8,
-      3.08,
-      -16
+      2.66,
+      -14.0
      ]
     },
     {
      "type": "sodium",
      "pos": [
       8,
-      3.08,
-      -4
+      2.66,
+      -6.0
      ]
     },
     {
      "type": "sodium",
      "pos": [
       8,
-      3.08,
-      8
+      2.66,
+      2.0
      ]
     },
     {
      "type": "sodium",
      "pos": [
       8,
-      3.08,
-      20
+      2.66,
+      10.0
      ]
+    },
+    {
+     "type": "sodium",
+     "pos": [
+      8,
+      2.66,
+      18.0
+     ]
+    },
+    {
+     "type": "sodium",
+     "pos": [
+      0,
+      2.66,
+      -14.0
+     ]
+    },
+    {
+     "type": "sodium",
+     "pos": [
+      0,
+      2.66,
+      2.0
+     ]
+    },
+    {
+     "type": "sodium",
+     "pos": [
+      0,
+      2.66,
+      18.0
+     ]
+    },
+    {
+     "type": "wallplate",
+     "pos": [
+      -11.64,
+      1.9,
+      -18.0
+     ],
+     "rot": 90,
+     "w": 1.1,
+     "h": 0.5
+    },
+    {
+     "type": "wallplate",
+     "pos": [
+      -11.64,
+      1.9,
+      -2.0
+     ],
+     "rot": 90,
+     "w": 1.1,
+     "h": 0.5
+    },
+    {
+     "type": "wallplate",
+     "pos": [
+      -11.64,
+      1.9,
+      14.0
+     ],
+     "rot": 90,
+     "w": 1.1,
+     "h": 0.5
+    },
+    {
+     "type": "wallplate",
+     "pos": [
+      11.64,
+      1.9,
+      -18.0
+     ],
+     "rot": -90,
+     "w": 1.1,
+     "h": 0.5
+    },
+    {
+     "type": "wallplate",
+     "pos": [
+      11.64,
+      1.9,
+      -2.0
+     ],
+     "rot": -90,
+     "w": 1.1,
+     "h": 0.5
+    },
+    {
+     "type": "wallplate",
+     "pos": [
+      11.64,
+      1.9,
+      14.0
+     ],
+     "rot": -90,
+     "w": 1.1,
+     "h": 0.5
     },
     {
      "type": "car",
      "pos": [
-      -5.0,
+      -12.6,
       0,
-      6.0
+      -14.0
      ],
+     "rot": 1.9,
      "mat": "lp_car",
+     "len": 3.94,
+     "w": 1.71,
      "hero": true
     },
     {
      "type": "car",
      "pos": [
-      5.5,
+      7.4,
       0,
-      -2.0
+      2.0
      ],
-     "rot": 8,
+     "rot": 1.0,
      "mat": "lp_car2",
+     "len": 4.74,
+     "w": 1.66,
      "hero": false
     },
     {
      "type": "car",
      "pos": [
-      -6.0,
+      7.4,
       0,
-      -9.0
+      -14.0
      ],
-     "rot": -6,
+     "rot": -5.8,
      "mat": "lp_car3",
+     "len": 4.54,
+     "w": 1.76,
      "hero": false
     },
     {
      "type": "car",
      "pos": [
-      9.0,
+      12.6,
+      0,
+      -6.0
+     ],
+     "rot": 3.7,
+     "mat": "lp_car4",
+     "len": 4.31,
+     "w": 1.73,
+     "hero": false
+    },
+    {
+     "type": "car",
+     "pos": [
+      7.4,
       0,
       10.0
      ],
-     "rot": 3,
-     "mat": "lp_car4",
+     "rot": -5.5,
+     "mat": "lp_car5",
+     "len": 4.83,
+     "w": 1.73,
+     "hero": false
+    },
+    {
+     "type": "car",
+     "pos": [
+      7.4,
+      0,
+      -6.0
+     ],
+     "rot": 181.7,
+     "mat": "lp_car6",
+     "len": 4.14,
+     "w": 1.69,
+     "hero": false
+    },
+    {
+     "type": "car",
+     "pos": [
+      -7.4,
+      0,
+      -6.0
+     ],
+     "rot": -3.9,
+     "mat": "lp_car",
+     "len": 4.45,
+     "w": 1.76,
+     "hero": false
+    },
+    {
+     "type": "car",
+     "pos": [
+      7.4,
+      0,
+      18.0
+     ],
+     "rot": 181.9,
+     "mat": "lp_car2",
+     "len": 4.73,
+     "w": 1.83,
+     "hero": false
+    },
+    {
+     "type": "car",
+     "pos": [
+      -12.6,
+      0,
+      18.0
+     ],
+     "rot": 181.2,
+     "mat": "lp_car3",
+     "len": 4.64,
+     "w": 1.75,
      "hero": false
     },
     {
@@ -6978,6 +7621,7 @@
     "near": 3,
     "far": 16
    },
+   "vignette": 0.75,
    "spawn": [
     0,
     3.2,
@@ -7059,7 +7703,7 @@
    "name": "THE EDGE",
    "size": [
     32.0,
-    3.2,
+    3.4,
     24.0
    ],
    "floor": "garage_floor",
@@ -7070,81 +7714,152 @@
     "wall": 2.5,
     "ceiling": 2.5
    },
+   "skirt": {
+    "mat": "paint_green",
+    "h": 1.1,
+    "t": 0.02,
+    "tile": 2.5
+   },
+   "beams": {
+    "axis": "x",
+    "every": 8.0,
+    "offset": 4.0,
+    "w": 0.7,
+    "h": 0.7,
+    "mat": "concrete",
+    "tile": 2.5
+   },
    "ambient": {
-    "color": "#5fb0c0",
-    "intensity": 0.22
+    "color": "#5f9aa8",
+    "intensity": 0.14
    },
    "sun": {
     "from": [
-     3.0,
-     5.0,
+     2.0,
+     6.0,
      13.200000000000001
     ],
     "color": "#ffb86a",
-    "intensity": 0.6
+    "intensity": 0.25
    },
    "lights": [
     {
      "type": "point",
      "pos": [
       -8,
-      2.8000000000000003,
-      -6
+      2.25,
+      -4.0
      ],
      "color": "#ffa040",
-     "intensity": 30,
-     "distance": 18
+     "intensity": 18.9,
+     "distance": 22,
+     "flicker": 0.12
     },
     {
      "type": "point",
      "pos": [
       -8,
-      2.8000000000000003,
-      6
+      2.25,
+      4.0
      ],
      "color": "#ffa040",
-     "intensity": 30,
-     "distance": 18
+     "intensity": 33.6,
+     "distance": 22,
+     "flicker": 0.35
     },
     {
      "type": "point",
      "pos": [
       8,
-      2.8000000000000003,
-      -6
+      2.25,
+      -4.0
      ],
      "color": "#ffa040",
-     "intensity": 30,
-     "distance": 18
+     "intensity": 18.9,
+     "distance": 22,
+     "flicker": 0.12
     },
     {
      "type": "point",
      "pos": [
       8,
-      2.8000000000000003,
-      6
+      2.25,
+      4.0
      ],
      "color": "#ffa040",
-     "intensity": 30,
-     "distance": 18
+     "intensity": 33.6,
+     "distance": 22,
+     "flicker": 0.35
     },
     {
      "type": "point",
      "pos": [
       0,
-      1.5,
-      -22.0
+      2.25,
+      -4.0
      ],
-     "color": "#3ac0d8",
+     "color": "#ffb060",
+     "intensity": 10.8,
+     "distance": 18,
+     "flicker": 0.2
+    },
+    {
+     "type": "point",
+     "pos": [
+      0,
+      3.0,
+      -26.0
+     ],
+     "color": "#4f9aa8",
+     "intensity": 26,
+     "distance": 70,
+     "decay": 1.1
+    },
+    {
+     "type": "point",
+     "pos": [
+      -16,
+      5.0,
+      -46.0
+     ],
+     "color": "#3f8a9c",
+     "intensity": 22,
+     "distance": 70,
+     "decay": 1.1
+    },
+    {
+     "type": "point",
+     "pos": [
+      16,
+      5.0,
+      -46.0
+     ],
+     "color": "#3f8a9c",
+     "intensity": 22,
+     "distance": 70,
+     "decay": 1.1
+    },
+    {
+     "type": "point",
+     "pos": [
+      0,
+      -3.2,
+      -45.0
+     ],
+     "color": "#3ab8d0",
      "intensity": 40,
-     "distance": 40
+     "distance": 50,
+     "decay": 1.2
     }
    ],
    "fog": {
-    "color": "#0c2a30",
-    "near": 6,
-    "far": 60
+    "color": "#0b1e24",
+    "near": 10,
+    "far": 85
    },
+   "exposure": 1.0,
+   "vignette": 0.55,
+   "grain": 0.025,
    "spawn": [
     0,
     -5.0,
@@ -7156,194 +7871,278 @@
      "pos": [
       -12,
       0,
-      -8
+      -8.0
      ],
      "w": 0.7,
-     "h": 3.2
+     "h": 3.4,
+     "band": "paint_green",
+     "bandH": 1.1,
+     "tile": 1.5
     },
     {
      "type": "pillar",
      "pos": [
       -12,
       0,
-      0
+      0.0
      ],
      "w": 0.7,
-     "h": 3.2
+     "h": 3.4,
+     "band": "paint_green",
+     "bandH": 1.1,
+     "tile": 1.5
     },
     {
      "type": "pillar",
      "pos": [
       -12,
-      0,
-      8
-     ],
-     "w": 0.7,
-     "h": 3.2
-    },
-    {
-     "type": "pillar",
-     "pos": [
-      -4,
-      0,
-      -8
-     ],
-     "w": 0.7,
-     "h": 3.2
-    },
-    {
-     "type": "pillar",
-     "pos": [
-      -4,
-      0,
-      0
-     ],
-     "w": 0.7,
-     "h": 3.2
-    },
-    {
-     "type": "pillar",
-     "pos": [
-      -4,
-      0,
-      8
-     ],
-     "w": 0.7,
-     "h": 3.2
-    },
-    {
-     "type": "pillar",
-     "pos": [
-      4,
-      0,
-      -8
-     ],
-     "w": 0.7,
-     "h": 3.2
-    },
-    {
-     "type": "pillar",
-     "pos": [
-      4,
-      0,
-      0
-     ],
-     "w": 0.7,
-     "h": 3.2
-    },
-    {
-     "type": "pillar",
-     "pos": [
-      4,
-      0,
-      8
-     ],
-     "w": 0.7,
-     "h": 3.2
-    },
-    {
-     "type": "pillar",
-     "pos": [
-      12,
-      0,
-      -8
-     ],
-     "w": 0.7,
-     "h": 3.2
-    },
-    {
-     "type": "pillar",
-     "pos": [
-      12,
-      0,
-      0
-     ],
-     "w": 0.7,
-     "h": 3.2
-    },
-    {
-     "type": "pillar",
-     "pos": [
-      12,
-      0,
-      8
-     ],
-     "w": 0.7,
-     "h": 3.2
-    },
-    {
-     "type": "sodium",
-     "pos": [
-      -8,
-      3.08,
-      -6
-     ]
-    },
-    {
-     "type": "sodium",
-     "pos": [
-      -8,
-      3.08,
-      6
-     ]
-    },
-    {
-     "type": "sodium",
-     "pos": [
-      8,
-      3.08,
-      -6
-     ]
-    },
-    {
-     "type": "sodium",
-     "pos": [
-      8,
-      3.08,
-      6
-     ]
-    },
-    {
-     "type": "car",
-     "pos": [
-      -5.0,
-      0,
-      6.0
-     ],
-     "mat": "lp_car",
-     "hero": true
-    },
-    {
-     "type": "car",
-     "pos": [
-      5.5,
-      0,
-      -2.0
-     ],
-     "rot": 8,
-     "mat": "lp_car2",
-     "hero": false
-    },
-    {
-     "type": "car",
-     "pos": [
-      -6.0,
-      0,
-      -9.0
-     ],
-     "rot": -6,
-     "mat": "lp_car3",
-     "hero": false
-    },
-    {
-     "type": "car",
-     "pos": [
-      9.0,
       0,
       8.0
      ],
-     "rot": 3,
+     "w": 0.7,
+     "h": 3.4,
+     "band": "paint_green",
+     "bandH": 1.1,
+     "tile": 1.5
+    },
+    {
+     "type": "pillar",
+     "pos": [
+      -4,
+      0,
+      -8.0
+     ],
+     "w": 0.7,
+     "h": 3.4,
+     "band": "paint_green",
+     "bandH": 1.1,
+     "tile": 1.5
+    },
+    {
+     "type": "pillar",
+     "pos": [
+      -4,
+      0,
+      0.0
+     ],
+     "w": 0.7,
+     "h": 3.4,
+     "band": "paint_green",
+     "bandH": 1.1,
+     "tile": 1.5
+    },
+    {
+     "type": "pillar",
+     "pos": [
+      -4,
+      0,
+      8.0
+     ],
+     "w": 0.7,
+     "h": 3.4,
+     "band": "paint_green",
+     "bandH": 1.1,
+     "tile": 1.5
+    },
+    {
+     "type": "pillar",
+     "pos": [
+      4,
+      0,
+      -8.0
+     ],
+     "w": 0.7,
+     "h": 3.4,
+     "band": "paint_green",
+     "bandH": 1.1,
+     "tile": 1.5
+    },
+    {
+     "type": "pillar",
+     "pos": [
+      4,
+      0,
+      0.0
+     ],
+     "w": 0.7,
+     "h": 3.4,
+     "band": "paint_green",
+     "bandH": 1.1,
+     "tile": 1.5
+    },
+    {
+     "type": "pillar",
+     "pos": [
+      4,
+      0,
+      8.0
+     ],
+     "w": 0.7,
+     "h": 3.4,
+     "band": "paint_green",
+     "bandH": 1.1,
+     "tile": 1.5
+    },
+    {
+     "type": "pillar",
+     "pos": [
+      12,
+      0,
+      -8.0
+     ],
+     "w": 0.7,
+     "h": 3.4,
+     "band": "paint_green",
+     "bandH": 1.1,
+     "tile": 1.5
+    },
+    {
+     "type": "pillar",
+     "pos": [
+      12,
+      0,
+      0.0
+     ],
+     "w": 0.7,
+     "h": 3.4,
+     "band": "paint_green",
+     "bandH": 1.1,
+     "tile": 1.5
+    },
+    {
+     "type": "pillar",
+     "pos": [
+      12,
+      0,
+      8.0
+     ],
+     "w": 0.7,
+     "h": 3.4,
+     "band": "paint_green",
+     "bandH": 1.1,
+     "tile": 1.5
+    },
+    {
+     "type": "sodium",
+     "pos": [
+      -8,
+      2.66,
+      -4.0
+     ]
+    },
+    {
+     "type": "sodium",
+     "pos": [
+      -8,
+      2.66,
+      4.0
+     ]
+    },
+    {
+     "type": "sodium",
+     "pos": [
+      8,
+      2.66,
+      -4.0
+     ]
+    },
+    {
+     "type": "sodium",
+     "pos": [
+      8,
+      2.66,
+      4.0
+     ]
+    },
+    {
+     "type": "sodium",
+     "pos": [
+      0,
+      2.66,
+      -4.0
+     ]
+    },
+    {
+     "type": "wallplate",
+     "pos": [
+      -11.64,
+      1.9,
+      -8.0
+     ],
+     "rot": 90,
+     "w": 1.1,
+     "h": 0.5
+    },
+    {
+     "type": "wallplate",
+     "pos": [
+      -11.64,
+      1.9,
+      8.0
+     ],
+     "rot": 90,
+     "w": 1.1,
+     "h": 0.5
+    },
+    {
+     "type": "wallplate",
+     "pos": [
+      11.64,
+      1.9,
+      -8.0
+     ],
+     "rot": -90,
+     "w": 1.1,
+     "h": 0.5
+    },
+    {
+     "type": "wallplate",
+     "pos": [
+      11.64,
+      1.9,
+      8.0
+     ],
+     "rot": -90,
+     "w": 1.1,
+     "h": 0.5
+    },
+    {
+     "type": "car",
+     "pos": [
+      7.4,
+      0,
+      4.0
+     ],
+     "rot": 178.4,
+     "mat": "lp_car2",
+     "len": 4.31,
+     "w": 1.83,
+     "hero": false
+    },
+    {
+     "type": "car",
+     "pos": [
+      7.4,
+      0,
+      -4.0
+     ],
+     "rot": 186.9,
+     "mat": "lp_car3",
+     "len": 4.67,
+     "w": 1.66,
+     "hero": false
+    },
+    {
+     "type": "car",
+     "pos": [
+      -12.6,
+      0,
+      -4.0
+     ],
+     "rot": 173.6,
      "mat": "lp_car4",
+     "len": 4.13,
+     "w": 1.83,
      "hero": false
     },
     {
@@ -7368,32 +8167,47 @@
    "boxes": [
     {
      "min": [
-      -60,
-      -4.2,
-      -92.0
+      -90,
+      -4.3,
+      -132.0
      ],
      "max": [
-      60,
+      90,
       -3.9,
       -12.0
      ],
      "mat": "water",
      "collide": false,
      "shadow": false,
-     "tile": 4.0
+     "tile": 5.0
     },
     {
      "min": [
       -16.3,
-      -0.25,
-      -12.02
+      -0.35,
+      -12.15
      ],
      "max": [
       16.3,
       0,
-      -11.5
+      -11.4
      ],
      "mat": "concrete",
+     "collide": false,
+     "tile": 2.0
+    },
+    {
+     "min": [
+      -16.3,
+      -0.9,
+      -12.02
+     ],
+     "max": [
+      16.3,
+      -0.35,
+      -11.7
+     ],
+     "mat": "concrete_wet",
      "collide": false,
      "tile": 2.0
     },
@@ -7415,633 +8229,1368 @@
     },
     {
      "min": [
-      -24.6,
-      -4.5,
-      -18.6
+      -6,
+      -4.05,
+      -48.0
      ],
      "max": [
-      -23.4,
-      9.0,
-      -17.4
+      6,
+      -4.0,
+      -42.0
      ],
-     "mat": "pool_tile",
+     "mat": "glow_water",
      "collide": false,
-     "tile": 1.0
+     "shadow": false
     },
     {
      "min": [
-      -24.6,
+      -28.98186757626694,
       -4.5,
-      -28.6
+      -20.7
      ],
      "max": [
-      -23.4,
-      9.0,
-      -27.4
+      -27.58186757626694,
+      12.0,
+      -19.3
      ],
-     "mat": "pool_tile",
+     "mat": "plaster",
      "collide": false,
-     "tile": 1.0
+     "tile": 2.0
     },
     {
      "min": [
-      -24.6,
+      -29.258641321720795,
       -4.5,
-      -38.6
+      -29.7
      ],
      "max": [
-      -23.4,
-      9.0,
-      -37.4
+      -27.858641321720796,
+      12.0,
+      -28.3
      ],
-     "mat": "pool_tile",
+     "mat": "plaster",
      "collide": false,
-     "tile": 1.0
+     "tile": 2.0
     },
     {
      "min": [
-      -24.6,
+      -28.458504843136232,
       -4.5,
-      -48.6
+      -38.7
      ],
      "max": [
-      -23.4,
-      9.0,
-      -47.4
+      -27.058504843136234,
+      12.0,
+      -37.3
      ],
-     "mat": "pool_tile",
+     "mat": "plaster",
      "collide": false,
-     "tile": 1.0
+     "tile": 2.0
     },
     {
      "min": [
-      -24.6,
+      -29.38410194133193,
       -4.5,
-      -58.6
+      -47.7
      ],
      "max": [
-      -23.4,
-      9.0,
-      -57.4
+      -27.984101941331932,
+      12.0,
+      -46.3
      ],
-     "mat": "pool_tile",
+     "mat": "plaster",
      "collide": false,
-     "tile": 1.0
+     "tile": 2.0
     },
     {
      "min": [
-      -24.6,
+      -28.642588793109297,
       -4.5,
-      -68.6
+      -56.7
      ],
      "max": [
-      -23.4,
-      9.0,
-      -67.4
+      -27.2425887931093,
+      12.0,
+      -55.3
      ],
-     "mat": "pool_tile",
+     "mat": "plaster",
      "collide": false,
-     "tile": 1.0
+     "tile": 2.0
     },
     {
      "min": [
-      -16.6,
+      -28.914897732939863,
       -4.5,
-      -18.6
+      -65.7
      ],
      "max": [
-      -15.4,
-      9.0,
-      -17.4
+      -27.514897732939865,
+      12.0,
+      -64.3
      ],
-     "mat": "pool_tile",
+     "mat": "plaster",
      "collide": false,
-     "tile": 1.0
+     "tile": 2.0
     },
     {
      "min": [
-      -16.6,
+      -29.40720172036047,
       -4.5,
-      -28.6
+      -74.7
      ],
      "max": [
-      -15.4,
-      9.0,
-      -27.4
+      -28.00720172036047,
+      12.0,
+      -73.3
      ],
-     "mat": "pool_tile",
+     "mat": "plaster",
      "collide": false,
-     "tile": 1.0
+     "tile": 2.0
     },
     {
      "min": [
-      -16.6,
+      -28.688102826896927,
       -4.5,
-      -38.6
+      -83.7
      ],
      "max": [
-      -15.4,
-      9.0,
-      -37.4
+      -27.288102826896928,
+      12.0,
+      -82.3
      ],
-     "mat": "pool_tile",
+     "mat": "plaster",
      "collide": false,
-     "tile": 1.0
+     "tile": 2.0
     },
     {
      "min": [
-      -16.6,
+      -29.440006946492822,
       -4.5,
-      -48.6
+      -92.7
      ],
      "max": [
-      -15.4,
-      9.0,
-      -47.4
+      -28.040006946492824,
+      12.0,
+      -91.3
      ],
-     "mat": "pool_tile",
+     "mat": "plaster",
      "collide": false,
-     "tile": 1.0
+     "tile": 2.0
     },
     {
      "min": [
-      -16.6,
+      -28.80616690614018,
       -4.5,
-      -58.6
+      -101.7
      ],
      "max": [
-      -15.4,
-      9.0,
-      -57.4
+      -27.406166906140182,
+      12.0,
+      -100.3
      ],
-     "mat": "pool_tile",
+     "mat": "plaster",
      "collide": false,
-     "tile": 1.0
+     "tile": 2.0
     },
     {
      "min": [
-      -16.6,
+      -22.38823132228061,
       -4.5,
-      -68.6
+      -20.7
      ],
      "max": [
-      -15.4,
-      9.0,
-      -67.4
+      -20.988231322280612,
+      12.0,
+      -19.3
      ],
-     "mat": "pool_tile",
+     "mat": "plaster",
      "collide": false,
-     "tile": 1.0
+     "tile": 2.0
     },
     {
      "min": [
-      -8.6,
+      -22.354859178649814,
       -4.5,
-      -18.6
+      -29.7
      ],
      "max": [
-      -7.4,
-      9.0,
-      -17.4
+      -20.954859178649816,
+      12.0,
+      -28.3
      ],
-     "mat": "pool_tile",
+     "mat": "plaster",
      "collide": false,
-     "tile": 1.0
+     "tile": 2.0
     },
     {
      "min": [
-      -8.6,
+      -21.820769297371978,
       -4.5,
-      -28.6
+      -38.7
      ],
      "max": [
-      -7.4,
-      9.0,
-      -27.4
+      -20.42076929737198,
+      12.0,
+      -37.3
      ],
-     "mat": "pool_tile",
+     "mat": "plaster",
      "collide": false,
-     "tile": 1.0
+     "tile": 2.0
     },
     {
      "min": [
-      -8.6,
+      -21.177036600524737,
       -4.5,
-      -38.6
+      -47.7
      ],
      "max": [
-      -7.4,
-      9.0,
-      -37.4
+      -19.777036600524738,
+      12.0,
+      -46.3
      ],
-     "mat": "pool_tile",
+     "mat": "plaster",
      "collide": false,
-     "tile": 1.0
+     "tile": 2.0
     },
     {
      "min": [
-      -8.6,
+      -22.301916862160567,
       -4.5,
-      -48.6
+      -56.7
      ],
      "max": [
-      -7.4,
-      9.0,
-      -47.4
+      -20.90191686216057,
+      12.0,
+      -55.3
      ],
-     "mat": "pool_tile",
+     "mat": "plaster",
      "collide": false,
-     "tile": 1.0
+     "tile": 2.0
     },
     {
      "min": [
-      -8.6,
+      -22.142817656628775,
       -4.5,
-      -58.6
+      -65.7
      ],
      "max": [
-      -7.4,
-      9.0,
-      -57.4
+      -20.742817656628777,
+      12.0,
+      -64.3
      ],
-     "mat": "pool_tile",
+     "mat": "plaster",
      "collide": false,
-     "tile": 1.0
+     "tile": 2.0
     },
     {
      "min": [
-      -8.6,
+      -21.496106844151058,
       -4.5,
-      -68.6
+      -74.7
      ],
      "max": [
-      -7.4,
-      9.0,
-      -67.4
+      -20.09610684415106,
+      12.0,
+      -73.3
      ],
-     "mat": "pool_tile",
+     "mat": "plaster",
      "collide": false,
-     "tile": 1.0
+     "tile": 2.0
     },
     {
      "min": [
-      -0.6,
+      -20.98366569206879,
       -4.5,
-      -18.6
+      -83.7
      ],
      "max": [
-      0.6,
-      9.0,
-      -17.4
+      -19.58366569206879,
+      12.0,
+      -82.3
      ],
-     "mat": "pool_tile",
+     "mat": "plaster",
      "collide": false,
-     "tile": 1.0
+     "tile": 2.0
     },
     {
      "min": [
-      -0.6,
+      -21.576635282212003,
       -4.5,
-      -28.6
+      -92.7
      ],
      "max": [
-      0.6,
-      9.0,
-      -27.4
+      -20.176635282212004,
+      12.0,
+      -91.3
      ],
-     "mat": "pool_tile",
+     "mat": "plaster",
      "collide": false,
-     "tile": 1.0
+     "tile": 2.0
     },
     {
      "min": [
-      -0.6,
+      -21.86531124055875,
       -4.5,
-      -38.6
+      -101.7
      ],
      "max": [
-      0.6,
-      9.0,
-      -37.4
+      -20.46531124055875,
+      12.0,
+      -100.3
      ],
-     "mat": "pool_tile",
+     "mat": "plaster",
      "collide": false,
-     "tile": 1.0
+     "tile": 2.0
     },
     {
      "min": [
-      -0.6,
+      -13.937991831051328,
       -4.5,
-      -48.6
+      -20.7
      ],
      "max": [
-      0.6,
-      9.0,
-      -47.4
+      -12.537991831051329,
+      12.0,
+      -19.3
      ],
-     "mat": "pool_tile",
+     "mat": "plaster",
      "collide": false,
-     "tile": 1.0
+     "tile": 2.0
     },
     {
      "min": [
-      -0.6,
+      -15.425467711011589,
       -4.5,
-      -58.6
+      -29.7
      ],
      "max": [
-      0.6,
-      9.0,
-      -57.4
+      -14.02546771101159,
+      12.0,
+      -28.3
      ],
-     "mat": "pool_tile",
+     "mat": "plaster",
      "collide": false,
-     "tile": 1.0
+     "tile": 2.0
     },
     {
      "min": [
-      -0.6,
+      -14.126450465522112,
       -4.5,
-      -68.6
+      -38.7
      ],
      "max": [
-      0.6,
-      9.0,
-      -67.4
+      -12.726450465522113,
+      12.0,
+      -37.3
      ],
-     "mat": "pool_tile",
+     "mat": "plaster",
      "collide": false,
-     "tile": 1.0
+     "tile": 2.0
     },
     {
      "min": [
-      7.4,
+      -15.036625141869317,
       -4.5,
-      -18.6
+      -47.7
      ],
      "max": [
-      8.6,
-      9.0,
-      -17.4
+      -13.636625141869319,
+      12.0,
+      -46.3
      ],
-     "mat": "pool_tile",
+     "mat": "plaster",
      "collide": false,
-     "tile": 1.0
+     "tile": 2.0
     },
     {
      "min": [
-      7.4,
+      -15.269191866628098,
       -4.5,
-      -28.6
+      -56.7
      ],
      "max": [
-      8.6,
-      9.0,
-      -27.4
+      -13.8691918666281,
+      12.0,
+      -55.3
      ],
-     "mat": "pool_tile",
+     "mat": "plaster",
      "collide": false,
-     "tile": 1.0
+     "tile": 2.0
     },
     {
      "min": [
-      7.4,
+      -15.31153241907461,
       -4.5,
-      -38.6
+      -65.7
      ],
      "max": [
-      8.6,
-      9.0,
-      -37.4
+      -13.91153241907461,
+      12.0,
+      -64.3
      ],
-     "mat": "pool_tile",
+     "mat": "plaster",
      "collide": false,
-     "tile": 1.0
+     "tile": 2.0
     },
     {
      "min": [
-      7.4,
+      -15.006429081436904,
       -4.5,
-      -48.6
+      -74.7
      ],
      "max": [
-      8.6,
-      9.0,
-      -47.4
+      -13.606429081436906,
+      12.0,
+      -73.3
      ],
-     "mat": "pool_tile",
+     "mat": "plaster",
      "collide": false,
-     "tile": 1.0
+     "tile": 2.0
     },
     {
      "min": [
-      7.4,
+      -14.194197825407949,
       -4.5,
-      -58.6
+      -83.7
      ],
      "max": [
-      8.6,
-      9.0,
-      -57.4
+      -12.79419782540795,
+      12.0,
+      -82.3
      ],
-     "mat": "pool_tile",
+     "mat": "plaster",
      "collide": false,
-     "tile": 1.0
+     "tile": 2.0
     },
     {
      "min": [
-      7.4,
+      -15.2108377921217,
       -4.5,
-      -68.6
+      -92.7
      ],
      "max": [
-      8.6,
-      9.0,
-      -67.4
+      -13.810837792121701,
+      12.0,
+      -91.3
      ],
-     "mat": "pool_tile",
+     "mat": "plaster",
      "collide": false,
-     "tile": 1.0
+     "tile": 2.0
     },
     {
      "min": [
-      15.4,
+      -14.569439738140053,
       -4.5,
-      -18.6
+      -101.7
      ],
      "max": [
-      16.6,
-      9.0,
-      -17.4
+      -13.169439738140055,
+      12.0,
+      -100.3
      ],
-     "mat": "pool_tile",
+     "mat": "plaster",
      "collide": false,
-     "tile": 1.0
+     "tile": 2.0
     },
     {
      "min": [
-      15.4,
+      -7.477738449718106,
       -4.5,
-      -28.6
+      -20.7
      ],
      "max": [
-      16.6,
-      9.0,
-      -27.4
+      -6.0777384497181055,
+      12.0,
+      -19.3
      ],
-     "mat": "pool_tile",
+     "mat": "plaster",
      "collide": false,
-     "tile": 1.0
+     "tile": 2.0
     },
     {
      "min": [
-      15.4,
+      -7.904163931638831,
       -4.5,
-      -38.6
+      -29.7
      ],
      "max": [
-      16.6,
-      9.0,
-      -37.4
+      -6.50416393163883,
+      12.0,
+      -28.3
      ],
-     "mat": "pool_tile",
+     "mat": "plaster",
      "collide": false,
-     "tile": 1.0
+     "tile": 2.0
     },
     {
      "min": [
-      15.4,
+      -7.623608854864708,
       -4.5,
-      -48.6
+      -38.7
      ],
      "max": [
-      16.6,
-      9.0,
-      -47.4
+      -6.2236088548647075,
+      12.0,
+      -37.3
      ],
-     "mat": "pool_tile",
+     "mat": "plaster",
      "collide": false,
-     "tile": 1.0
+     "tile": 2.0
     },
     {
      "min": [
-      15.4,
+      -8.399537640042682,
       -4.5,
-      -58.6
+      -47.7
      ],
      "max": [
-      16.6,
-      9.0,
-      -57.4
+      -6.999537640042683,
+      12.0,
+      -46.3
      ],
-     "mat": "pool_tile",
+     "mat": "plaster",
      "collide": false,
-     "tile": 1.0
+     "tile": 2.0
     },
     {
      "min": [
-      15.4,
+      -8.404638128054028,
       -4.5,
-      -68.6
+      -56.7
      ],
      "max": [
-      16.6,
-      9.0,
-      -67.4
+      -7.004638128054028,
+      12.0,
+      -55.3
      ],
-     "mat": "pool_tile",
+     "mat": "plaster",
      "collide": false,
-     "tile": 1.0
+     "tile": 2.0
     },
     {
      "min": [
-      23.4,
+      -8.170466059489078,
       -4.5,
-      -18.6
+      -65.7
      ],
      "max": [
-      24.6,
-      9.0,
-      -17.4
+      -6.7704660594890775,
+      12.0,
+      -64.3
      ],
-     "mat": "pool_tile",
+     "mat": "plaster",
      "collide": false,
-     "tile": 1.0
+     "tile": 2.0
     },
     {
      "min": [
-      23.4,
+      -7.411360042909142,
       -4.5,
-      -28.6
+      -74.7
      ],
      "max": [
-      24.6,
-      9.0,
-      -27.4
+      -6.011360042909142,
+      12.0,
+      -73.3
      ],
-     "mat": "pool_tile",
+     "mat": "plaster",
      "collide": false,
-     "tile": 1.0
+     "tile": 2.0
     },
     {
      "min": [
-      23.4,
+      -7.815852310928956,
       -4.5,
-      -38.6
+      -83.7
      ],
      "max": [
-      24.6,
-      9.0,
-      -37.4
+      -6.415852310928956,
+      12.0,
+      -82.3
      ],
-     "mat": "pool_tile",
+     "mat": "plaster",
      "collide": false,
-     "tile": 1.0
+     "tile": 2.0
     },
     {
      "min": [
-      23.4,
+      -7.997364527397134,
       -4.5,
-      -48.6
+      -92.7
      ],
      "max": [
-      24.6,
-      9.0,
-      -47.4
+      -6.597364527397134,
+      12.0,
+      -91.3
      ],
-     "mat": "pool_tile",
+     "mat": "plaster",
      "collide": false,
-     "tile": 1.0
+     "tile": 2.0
     },
     {
      "min": [
-      23.4,
+      -7.563101018387778,
       -4.5,
-      -58.6
+      -101.7
      ],
      "max": [
-      24.6,
-      9.0,
-      -57.4
+      -6.163101018387778,
+      12.0,
+      -100.3
      ],
-     "mat": "pool_tile",
+     "mat": "plaster",
      "collide": false,
-     "tile": 1.0
+     "tile": 2.0
     },
     {
      "min": [
-      23.4,
+      -0.7749049978067594,
       -4.5,
-      -68.6
+      -20.7
      ],
      "max": [
-      24.6,
-      9.0,
-      -67.4
+      0.6250950021932405,
+      12.0,
+      -19.3
      ],
-     "mat": "pool_tile",
+     "mat": "plaster",
      "collide": false,
-     "tile": 1.0
+     "tile": 2.0
+    },
+    {
+     "min": [
+      -1.0203728050181082,
+      -4.5,
+      -29.7
+     ],
+     "max": [
+      0.3796271949818917,
+      12.0,
+      -28.3
+     ],
+     "mat": "plaster",
+     "collide": false,
+     "tile": 2.0
+    },
+    {
+     "min": [
+      -0.228992829564014,
+      -4.5,
+      -38.7
+     ],
+     "max": [
+      1.171007170435986,
+      12.0,
+      -37.3
+     ],
+     "mat": "plaster",
+     "collide": false,
+     "tile": 2.0
+    },
+    {
+     "min": [
+      -0.38160890603268594,
+      -4.5,
+      -47.7
+     ],
+     "max": [
+      1.018391093967314,
+      12.0,
+      -46.3
+     ],
+     "mat": "plaster",
+     "collide": false,
+     "tile": 2.0
+    },
+    {
+     "min": [
+      -1.1094455828445553,
+      -4.5,
+      -56.7
+     ],
+     "max": [
+      0.29055441715544456,
+      12.0,
+      -55.3
+     ],
+     "mat": "plaster",
+     "collide": false,
+     "tile": 2.0
+    },
+    {
+     "min": [
+      -0.5809220635861263,
+      -4.5,
+      -65.7
+     ],
+     "max": [
+      0.8190779364138736,
+      12.0,
+      -64.3
+     ],
+     "mat": "plaster",
+     "collide": false,
+     "tile": 2.0
+    },
+    {
+     "min": [
+      -0.6596855939016777,
+      -4.5,
+      -74.7
+     ],
+     "max": [
+      0.7403144060983222,
+      12.0,
+      -73.3
+     ],
+     "mat": "plaster",
+     "collide": false,
+     "tile": 2.0
+    },
+    {
+     "min": [
+      -0.09978000708251367,
+      -4.5,
+      -83.7
+     ],
+     "max": [
+      1.3002199929174862,
+      12.0,
+      -82.3
+     ],
+     "mat": "plaster",
+     "collide": false,
+     "tile": 2.0
+    },
+    {
+     "min": [
+      -0.3328875368972517,
+      -4.5,
+      -92.7
+     ],
+     "max": [
+      1.0671124631027482,
+      12.0,
+      -91.3
+     ],
+     "mat": "plaster",
+     "collide": false,
+     "tile": 2.0
+    },
+    {
+     "min": [
+      -1.0392995761757016,
+      -4.5,
+      -101.7
+     ],
+     "max": [
+      0.36070042382429834,
+      12.0,
+      -100.3
+     ],
+     "mat": "plaster",
+     "collide": false,
+     "tile": 2.0
+    },
+    {
+     "min": [
+      7.068279755988131,
+      -4.5,
+      -20.7
+     ],
+     "max": [
+      8.468279755988132,
+      12.0,
+      -19.3
+     ],
+     "mat": "plaster",
+     "collide": false,
+     "tile": 2.0
+    },
+    {
+     "min": [
+      5.688905245207939,
+      -4.5,
+      -29.7
+     ],
+     "max": [
+      7.08890524520794,
+      12.0,
+      -28.3
+     ],
+     "mat": "plaster",
+     "collide": false,
+     "tile": 2.0
+    },
+    {
+     "min": [
+      6.168996514856364,
+      -4.5,
+      -38.7
+     ],
+     "max": [
+      7.568996514856364,
+      12.0,
+      -37.3
+     ],
+     "mat": "plaster",
+     "collide": false,
+     "tile": 2.0
+    },
+    {
+     "min": [
+      6.711425487304399,
+      -4.5,
+      -47.7
+     ],
+     "max": [
+      8.111425487304398,
+      12.0,
+      -46.3
+     ],
+     "mat": "plaster",
+     "collide": false,
+     "tile": 2.0
+    },
+    {
+     "min": [
+      5.743175255456808,
+      -4.5,
+      -56.7
+     ],
+     "max": [
+      7.143175255456808,
+      12.0,
+      -55.3
+     ],
+     "mat": "plaster",
+     "collide": false,
+     "tile": 2.0
+    },
+    {
+     "min": [
+      6.282340960761289,
+      -4.5,
+      -65.7
+     ],
+     "max": [
+      7.682340960761289,
+      12.0,
+      -64.3
+     ],
+     "mat": "plaster",
+     "collide": false,
+     "tile": 2.0
+    },
+    {
+     "min": [
+      5.5627316112758995,
+      -4.5,
+      -74.7
+     ],
+     "max": [
+      6.9627316112759,
+      12.0,
+      -73.3
+     ],
+     "mat": "plaster",
+     "collide": false,
+     "tile": 2.0
+    },
+    {
+     "min": [
+      6.569145370455032,
+      -4.5,
+      -83.7
+     ],
+     "max": [
+      7.969145370455032,
+      12.0,
+      -82.3
+     ],
+     "mat": "plaster",
+     "collide": false,
+     "tile": 2.0
+    },
+    {
+     "min": [
+      6.723313385940501,
+      -4.5,
+      -92.7
+     ],
+     "max": [
+      8.1233133859405,
+      12.0,
+      -91.3
+     ],
+     "mat": "plaster",
+     "collide": false,
+     "tile": 2.0
+    },
+    {
+     "min": [
+      6.4168415044438145,
+      -4.5,
+      -101.7
+     ],
+     "max": [
+      7.816841504443815,
+      12.0,
+      -100.3
+     ],
+     "mat": "plaster",
+     "collide": false,
+     "tile": 2.0
+    },
+    {
+     "min": [
+      13.900764498929423,
+      -4.5,
+      -20.7
+     ],
+     "max": [
+      15.300764498929421,
+      12.0,
+      -19.3
+     ],
+     "mat": "plaster",
+     "collide": false,
+     "tile": 2.0
+    },
+    {
+     "min": [
+      13.001996020556955,
+      -4.5,
+      -29.7
+     ],
+     "max": [
+      14.401996020556954,
+      12.0,
+      -28.3
+     ],
+     "mat": "plaster",
+     "collide": false,
+     "tile": 2.0
+    },
+    {
+     "min": [
+      13.612472586037855,
+      -4.5,
+      -38.7
+     ],
+     "max": [
+      15.012472586037854,
+      12.0,
+      -37.3
+     ],
+     "mat": "plaster",
+     "collide": false,
+     "tile": 2.0
+    },
+    {
+     "min": [
+      13.45099180336803,
+      -4.5,
+      -47.7
+     ],
+     "max": [
+      14.850991803368029,
+      12.0,
+      -46.3
+     ],
+     "mat": "plaster",
+     "collide": false,
+     "tile": 2.0
+    },
+    {
+     "min": [
+      13.427832326851988,
+      -4.5,
+      -56.7
+     ],
+     "max": [
+      14.827832326851986,
+      12.0,
+      -55.3
+     ],
+     "mat": "plaster",
+     "collide": false,
+     "tile": 2.0
+    },
+    {
+     "min": [
+      13.229928530082262,
+      -4.5,
+      -65.7
+     ],
+     "max": [
+      14.62992853008226,
+      12.0,
+      -64.3
+     ],
+     "mat": "plaster",
+     "collide": false,
+     "tile": 2.0
+    },
+    {
+     "min": [
+      13.843948448820067,
+      -4.5,
+      -74.7
+     ],
+     "max": [
+      15.243948448820065,
+      12.0,
+      -73.3
+     ],
+     "mat": "plaster",
+     "collide": false,
+     "tile": 2.0
+    },
+    {
+     "min": [
+      14.0114897521727,
+      -4.5,
+      -83.7
+     ],
+     "max": [
+      15.411489752172699,
+      12.0,
+      -82.3
+     ],
+     "mat": "plaster",
+     "collide": false,
+     "tile": 2.0
+    },
+    {
+     "min": [
+      13.258557339871432,
+      -4.5,
+      -92.7
+     ],
+     "max": [
+      14.65855733987143,
+      12.0,
+      -91.3
+     ],
+     "mat": "plaster",
+     "collide": false,
+     "tile": 2.0
+    },
+    {
+     "min": [
+      13.56264352875948,
+      -4.5,
+      -101.7
+     ],
+     "max": [
+      14.962643528759479,
+      12.0,
+      -100.3
+     ],
+     "mat": "plaster",
+     "collide": false,
+     "tile": 2.0
+    },
+    {
+     "min": [
+      19.59707108415555,
+      -4.5,
+      -20.7
+     ],
+     "max": [
+      20.99707108415555,
+      12.0,
+      -19.3
+     ],
+     "mat": "plaster",
+     "collide": false,
+     "tile": 2.0
+    },
+    {
+     "min": [
+      20.62238723408708,
+      -4.5,
+      -29.7
+     ],
+     "max": [
+      22.022387234087077,
+      12.0,
+      -28.3
+     ],
+     "mat": "plaster",
+     "collide": false,
+     "tile": 2.0
+    },
+    {
+     "min": [
+      20.535406167244272,
+      -4.5,
+      -38.7
+     ],
+     "max": [
+      21.93540616724427,
+      12.0,
+      -37.3
+     ],
+     "mat": "plaster",
+     "collide": false,
+     "tile": 2.0
+    },
+    {
+     "min": [
+      21.088953503146616,
+      -4.5,
+      -47.7
+     ],
+     "max": [
+      22.488953503146615,
+      12.0,
+      -46.3
+     ],
+     "mat": "plaster",
+     "collide": false,
+     "tile": 2.0
+    },
+    {
+     "min": [
+      20.815079658575545,
+      -4.5,
+      -56.7
+     ],
+     "max": [
+      22.215079658575544,
+      12.0,
+      -55.3
+     ],
+     "mat": "plaster",
+     "collide": false,
+     "tile": 2.0
+    },
+    {
+     "min": [
+      19.95535285135064,
+      -4.5,
+      -65.7
+     ],
+     "max": [
+      21.355352851350638,
+      12.0,
+      -64.3
+     ],
+     "mat": "plaster",
+     "collide": false,
+     "tile": 2.0
+    },
+    {
+     "min": [
+      20.117266307914736,
+      -4.5,
+      -74.7
+     ],
+     "max": [
+      21.517266307914735,
+      12.0,
+      -73.3
+     ],
+     "mat": "plaster",
+     "collide": false,
+     "tile": 2.0
+    },
+    {
+     "min": [
+      20.5698443454147,
+      -4.5,
+      -83.7
+     ],
+     "max": [
+      21.9698443454147,
+      12.0,
+      -82.3
+     ],
+     "mat": "plaster",
+     "collide": false,
+     "tile": 2.0
+    },
+    {
+     "min": [
+      19.536100684888943,
+      -4.5,
+      -92.7
+     ],
+     "max": [
+      20.93610068488894,
+      12.0,
+      -91.3
+     ],
+     "mat": "plaster",
+     "collide": false,
+     "tile": 2.0
+    },
+    {
+     "min": [
+      20.238712458079625,
+      -4.5,
+      -101.7
+     ],
+     "max": [
+      21.638712458079624,
+      12.0,
+      -100.3
+     ],
+     "mat": "plaster",
+     "collide": false,
+     "tile": 2.0
+    },
+    {
+     "min": [
+      26.76887740625047,
+      -4.5,
+      -20.7
+     ],
+     "max": [
+      28.16887740625047,
+      12.0,
+      -19.3
+     ],
+     "mat": "plaster",
+     "collide": false,
+     "tile": 2.0
+    },
+    {
+     "min": [
+      26.68735327117077,
+      -4.5,
+      -29.7
+     ],
+     "max": [
+      28.08735327117077,
+      12.0,
+      -28.3
+     ],
+     "mat": "plaster",
+     "collide": false,
+     "tile": 2.0
+    },
+    {
+     "min": [
+      26.5943270709301,
+      -4.5,
+      -38.7
+     ],
+     "max": [
+      27.994327070930098,
+      12.0,
+      -37.3
+     ],
+     "mat": "plaster",
+     "collide": false,
+     "tile": 2.0
+    },
+    {
+     "min": [
+      27.729172781556034,
+      -4.5,
+      -47.7
+     ],
+     "max": [
+      29.129172781556033,
+      12.0,
+      -46.3
+     ],
+     "mat": "plaster",
+     "collide": false,
+     "tile": 2.0
+    },
+    {
+     "min": [
+      26.706944355229897,
+      -4.5,
+      -56.7
+     ],
+     "max": [
+      28.106944355229896,
+      12.0,
+      -55.3
+     ],
+     "mat": "plaster",
+     "collide": false,
+     "tile": 2.0
+    },
+    {
+     "min": [
+      26.896183733915063,
+      -4.5,
+      -65.7
+     ],
+     "max": [
+      28.29618373391506,
+      12.0,
+      -64.3
+     ],
+     "mat": "plaster",
+     "collide": false,
+     "tile": 2.0
+    },
+    {
+     "min": [
+      27.125519525013164,
+      -4.5,
+      -74.7
+     ],
+     "max": [
+      28.525519525013163,
+      12.0,
+      -73.3
+     ],
+     "mat": "plaster",
+     "collide": false,
+     "tile": 2.0
+    },
+    {
+     "min": [
+      27.89427515860208,
+      -4.5,
+      -83.7
+     ],
+     "max": [
+      29.29427515860208,
+      12.0,
+      -82.3
+     ],
+     "mat": "plaster",
+     "collide": false,
+     "tile": 2.0
+    },
+    {
+     "min": [
+      26.628930081920224,
+      -4.5,
+      -92.7
+     ],
+     "max": [
+      28.028930081920223,
+      12.0,
+      -91.3
+     ],
+     "mat": "plaster",
+     "collide": false,
+     "tile": 2.0
+    },
+    {
+     "min": [
+      27.21869984151893,
+      -4.5,
+      -101.7
+     ],
+     "max": [
+      28.61869984151893,
+      12.0,
+      -100.3
+     ],
+     "mat": "plaster",
+     "collide": false,
+     "tile": 2.0
     }
    ],
    "footstep": {
@@ -8051,6 +9600,12 @@
    "open": [
     "N"
    ],
+   "background": "#07171c",
+   "hemisphere": {
+    "sky": "#2c5c68",
+    "ground": "#06121a",
+    "intensity": 0.22
+   },
    "id": "S6_H"
   },
   "S7_C": {
@@ -8142,7 +9697,7 @@
    "alias": "S6_H",
    "spawn": [
     0,
-    -9.0,
+    -9.5,
     0
    ],
    "_note": "The same edge, one step closer.",
@@ -8163,9 +9718,15 @@
     "floor": 3.0,
     "wall": 3.0
    },
+   "skirt": {
+    "mat": "paint_green",
+    "h": 1.0,
+    "t": 0.02,
+    "tile": 3.0
+   },
    "ambient": {
     "color": "#dfe6f0",
-    "intensity": 0.2
+    "intensity": 0.12
    },
    "sun": {
     "from": [
@@ -8174,7 +9735,7 @@
      26.0
     ],
     "color": "#e6ecff",
-    "intensity": 0.7
+    "intensity": 0.45
    },
    "lights": [
     {
@@ -8185,8 +9746,9 @@
       -14
      ],
      "color": "#e6ecff",
-     "intensity": 50,
-     "distance": 22
+     "intensity": 30,
+     "distance": 22,
+     "flicker": 0
     },
     {
      "type": "point",
@@ -8196,8 +9758,9 @@
       0
      ],
      "color": "#e6ecff",
-     "intensity": 50,
-     "distance": 22
+     "intensity": 30,
+     "distance": 22,
+     "flicker": 0
     },
     {
      "type": "point",
@@ -8207,8 +9770,9 @@
       14
      ],
      "color": "#e6ecff",
-     "intensity": 50,
-     "distance": 22
+     "intensity": 30,
+     "distance": 22,
+     "flicker": 0
     },
     {
      "type": "point",
@@ -8218,8 +9782,9 @@
       -14
      ],
      "color": "#e6ecff",
-     "intensity": 50,
-     "distance": 22
+     "intensity": 30,
+     "distance": 22,
+     "flicker": 0
     },
     {
      "type": "point",
@@ -8229,8 +9794,9 @@
       0
      ],
      "color": "#e6ecff",
-     "intensity": 50,
-     "distance": 22
+     "intensity": 30,
+     "distance": 22,
+     "flicker": 0
     },
     {
      "type": "point",
@@ -8240,8 +9806,9 @@
       14
      ],
      "color": "#e6ecff",
-     "intensity": 50,
-     "distance": 22
+     "intensity": 30,
+     "distance": 22,
+     "flicker": 0
     },
     {
      "type": "point",
@@ -8251,8 +9818,9 @@
       -14
      ],
      "color": "#e6ecff",
-     "intensity": 50,
-     "distance": 22
+     "intensity": 30,
+     "distance": 22,
+     "flicker": 0.15
     },
     {
      "type": "point",
@@ -8262,8 +9830,9 @@
       0
      ],
      "color": "#e6ecff",
-     "intensity": 50,
-     "distance": 22
+     "intensity": 30,
+     "distance": 22,
+     "flicker": 0
     },
     {
      "type": "point",
@@ -8273,14 +9842,15 @@
       14
      ],
      "color": "#e6ecff",
-     "intensity": 50,
-     "distance": 22
+     "intensity": 30,
+     "distance": 22,
+     "flicker": 0
     }
    ],
    "fog": {
-    "color": "#8e9299",
-    "near": 4,
-    "far": 34
+    "color": "#70747b",
+    "near": 9,
+    "far": 52
    },
    "spawn": [
     0,
@@ -9198,6 +10768,11 @@
     "wall": 2.0,
     "ceiling": 1.2
    },
+   "skirt": {
+    "mat": "plaster_dark",
+    "h": 0.1,
+    "t": 0.02
+   },
    "open": [
     "S"
    ],
@@ -9250,7 +10825,7 @@
    ],
    "ambient": {
     "color": "#f0f4ff",
-    "intensity": 0.5
+    "intensity": 0.22
    },
    "sun": {
     "from": [
@@ -9259,7 +10834,7 @@
      12.0
     ],
     "color": "#f4f6ff",
-    "intensity": 0.8
+    "intensity": 0.4
    },
    "lights": [
     {
@@ -9270,8 +10845,9 @@
       -5
      ],
      "color": "#f0f4ff",
-     "intensity": 18,
-     "distance": 10
+     "intensity": 8,
+     "distance": 10,
+     "flicker": 0
     },
     {
      "type": "point",
@@ -9281,8 +10857,9 @@
       -1
      ],
      "color": "#f0f4ff",
-     "intensity": 18,
-     "distance": 10
+     "intensity": 8,
+     "distance": 10,
+     "flicker": 0
     },
     {
      "type": "point",
@@ -9292,8 +10869,9 @@
       3
      ],
      "color": "#f0f4ff",
-     "intensity": 18,
-     "distance": 10
+     "intensity": 8,
+     "distance": 10,
+     "flicker": 0.3
     },
     {
      "type": "point",
@@ -9303,8 +10881,9 @@
       7
      ],
      "color": "#f0f4ff",
-     "intensity": 18,
-     "distance": 10
+     "intensity": 8,
+     "distance": 10,
+     "flicker": 0
     },
     {
      "type": "point",
@@ -9314,8 +10893,9 @@
       -5
      ],
      "color": "#f0f4ff",
-     "intensity": 18,
-     "distance": 10
+     "intensity": 8,
+     "distance": 10,
+     "flicker": 0
     },
     {
      "type": "point",
@@ -9325,8 +10905,9 @@
       -1
      ],
      "color": "#f0f4ff",
-     "intensity": 18,
-     "distance": 10
+     "intensity": 8,
+     "distance": 10,
+     "flicker": 0
     },
     {
      "type": "point",
@@ -9336,8 +10917,9 @@
       3
      ],
      "color": "#f0f4ff",
-     "intensity": 18,
-     "distance": 10
+     "intensity": 8,
+     "distance": 10,
+     "flicker": 0
     },
     {
      "type": "point",
@@ -9347,8 +10929,9 @@
       7
      ],
      "color": "#f0f4ff",
-     "intensity": 18,
-     "distance": 10
+     "intensity": 8,
+     "distance": 10,
+     "flicker": 0
     }
    ],
    "fog": {
@@ -9356,6 +10939,8 @@
     "near": 14,
     "far": 30
    },
+   "exposure": 1.0,
+   "vignette": 0.45,
    "background": "#000000",
    "spawn": [
     0,

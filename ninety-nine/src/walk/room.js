@@ -11,6 +11,15 @@
 // enforced here, not per room: the one shadow-casting light always sits on
 // the entrance side and aims at the core, whatever the room's own fixtures
 // are doing.
+//
+// Record keys beyond the shell (all optional):
+//   skirt   {mat, h, t}          a band low on every closed wall (painted
+//                                concrete, wainscot, a rubber kick)
+//   cornice {mat, h, t}          the same band up at the ceiling
+//   beams   {axis, every, w, h,  ceiling beams / soffits under the slab,
+//            mat, offset}         running along `axis` ('x' or 'z')
+//   lights[].flicker  0..1       a sodium/fluorescent buzz on that light
+//   exposure, grain, vignette    read by walk.js's composite pass
 
 import * as THREE from '../../vendor/three/three.module.js';
 import { applyWorldUV } from './materials.js';
@@ -19,17 +28,21 @@ import { buildProp } from './props.js';
 const WALL_T = 0.3;
 const FLOOR_T = 0.2;
 
-function archBox(mats, slot, min, max, tile, { collide = true, castShadow = true } = {}) {
+function archBox(mats, slot, min, max, tile, { collide = true, castShadow = true, receiveShadow = true } = {}) {
   const w = max[0] - min[0], h = max[1] - min[1], d = max[2] - min[2];
   const geo = new THREE.BoxGeometry(w, h, d);
   geo.translate(min[0] + w / 2, min[1] + h / 2, min[2] + d / 2); // world-space geometry so UVs tile across boxes
   applyWorldUV(geo, tile);
   const mesh = new THREE.Mesh(geo, mats.get(slot));
-  mesh.castShadow = castShadow;
-  mesh.receiveShadow = true;
+  mesh.castShadow = castShadow && !mats.isGlow(slot);
+  mesh.receiveShadow = receiveShadow;
   mesh.userData.collide = collide;
   return mesh;
 }
+
+// Deterministic per-light phase so a row of fixtures never flickers in
+// unison.
+function hash01(n) { const x = Math.sin(n * 12.9898) * 43758.5453; return x - Math.floor(x); }
 
 export function buildRoom(mats, rec) {
   const group = new THREE.Group();
@@ -37,6 +50,7 @@ export function buildRoom(mats, rec) {
   const walls = [];
   const floors = [];
   const lights = [];
+  const flickers = []; // { light, base, amount, phase }
   const [W, H, D] = rec.size;
   const tile = Object.assign({ floor: 2, wall: 2, ceiling: 2, box: 2 }, rec.tile || {});
   const open = new Set(rec.open || []);
@@ -55,11 +69,56 @@ export function buildRoom(mats, rec) {
     E: [[W / 2, 0, -D / 2], [W / 2 + WALL_T, H, D / 2]],
     W: [[-W / 2 - WALL_T, 0, -D / 2], [-W / 2, H, D / 2]]
   };
+  // Inner face of each closed wall, for the skirt / cornice bands.
+  const inner = {
+    N: (y0, y1, t) => [[-W / 2, y0, -D / 2], [W / 2, y1, -D / 2 + t]],
+    S: (y0, y1, t) => [[-W / 2, y0, D / 2 - t], [W / 2, y1, D / 2]],
+    E: (y0, y1, t) => [[W / 2 - t, y0, -D / 2], [W / 2, y1, D / 2]],
+    W: (y0, y1, t) => [[-W / 2, y0, -D / 2], [-W / 2 + t, y1, D / 2]]
+  };
   for (const side of Object.keys(shell)) {
     if (open.has(side)) continue;
     const m = archBox(mats, wallMat, shell[side][0], shell[side][1], tile.wall);
     group.add(m);
     walls.push(m);
+    if (rec.skirt) {
+      const sk = rec.skirt;
+      const [a, b] = inner[side](0, sk.h || 0.9, sk.t || 0.03);
+      group.add(archBox(mats, sk.mat || 'plaster_dark', a, b, sk.tile || tile.wall, { collide: false, castShadow: false }));
+    }
+    if (rec.cornice) {
+      const co = rec.cornice;
+      const [a, b] = inner[side](H - (co.h || 0.3), H, co.t || 0.06);
+      group.add(archBox(mats, co.mat || wallMat, a, b, co.tile || tile.wall, { collide: false, castShadow: false }));
+    }
+  }
+
+  // Ceiling beams / soffits: the slab reads as poured, not as a lid.
+  if (rec.beams && !rec.noCeiling) {
+    const bm = rec.beams;
+    const bw = bm.w || 0.5, bh = bm.h || 0.6, every = bm.every || 8, off = bm.offset || 0;
+    const mat = bm.mat || rec.ceiling || 'concrete';
+    if (bm.axis === 'z') {
+      for (let x = -W / 2 + off; x <= W / 2 + 1e-6; x += every) {
+        group.add(archBox(mats, mat, [x - bw / 2, H - bh, -D / 2], [x + bw / 2, H, D / 2], bm.tile || tile.ceiling, { collide: false, castShadow: false }));
+      }
+    } else {
+      for (let z = -D / 2 + off; z <= D / 2 + 1e-6; z += every) {
+        group.add(archBox(mats, mat, [-W / 2, H - bh, z - bw / 2], [W / 2, H, z + bw / 2], bm.tile || tile.ceiling, { collide: false, castShadow: false }));
+      }
+    }
+    // perimeter downstand so the beams land on something -- not across an
+    // open side (the edge room's slab just stops there)
+    const pw = bw * 0.8;
+    const perimeter = {
+      N: [[-W / 2, H - bh, -D / 2], [W / 2, H, -D / 2 + pw]], S: [[-W / 2, H - bh, D / 2 - pw], [W / 2, H, D / 2]],
+      W: [[-W / 2, H - bh, -D / 2], [-W / 2 + pw, H, D / 2]], E: [[W / 2 - pw, H - bh, -D / 2], [W / 2, H, D / 2]]
+    };
+    for (const side of Object.keys(perimeter)) {
+      if (open.has(side)) continue;
+      const [a, b] = perimeter[side];
+      group.add(archBox(mats, mat, a, b, bm.tile || tile.ceiling, { collide: false, castShadow: false }));
+    }
   }
 
   // Extra architecture (pillars, counters, water, ledges, barriers).
@@ -98,16 +157,18 @@ export function buildRoom(mats, rec) {
     const core = rec.core || [0, 0, -D / 2];
     sun.target.position.set(core[0], core[1], core[2]);
     sun.castShadow = true;
-    sun.shadow.mapSize.set(1024, 1024);
+    sun.shadow.mapSize.set(2048, 2048);
     const ext = Math.max(W, D) * 0.75;
     sun.shadow.camera.left = -ext; sun.shadow.camera.right = ext;
     sun.shadow.camera.top = ext; sun.shadow.camera.bottom = -ext;
     sun.shadow.camera.near = 0.5; sun.shadow.camera.far = Math.max(W, D, H) * 3;
-    sun.shadow.bias = -0.0015;
+    sun.shadow.bias = -0.0008;
+    sun.shadow.normalBias = 0.02;
+    sun.shadow.radius = 3;
     group.add(sun, sun.target);
     lights.push(sun);
   }
-  for (const l of rec.lights || []) {
+  (rec.lights || []).forEach((l, i) => {
     let light;
     if (l.type === 'spot') {
       light = new THREE.SpotLight(new THREE.Color(l.color || '#ffffff'), l.intensity || 20, l.distance || 15, THREE.MathUtils.degToRad(l.angle || 40), l.penumbra || 0.5, l.decay === undefined ? 1.5 : l.decay);
@@ -121,7 +182,8 @@ export function buildRoom(mats, rec) {
     }
     group.add(light);
     lights.push(light);
-  }
+    if (l.flicker) flickers.push({ light, base: light.intensity, amount: l.flicker, phase: hash01(i + 1) * 100, rate: 6 + hash01(i + 7) * 6 });
+  });
 
   const spawn = rec.spawn || [0, D / 2 - 1.5, 0];
   return {
@@ -133,6 +195,16 @@ export function buildRoom(mats, rec) {
     fog: rec.fog || null,
     background: rec.background || (rec.fog && rec.fog.color) || '#000000',
     footstep: rec.footstep || null,
+    // Per-frame: the sodium buzz -- a slow sag plus a fast jitter, per
+    // light, never in unison.
+    update(dt, t) {
+      for (const f of flickers) {
+        const slow = Math.sin(t * 0.7 + f.phase) * 0.5 + 0.5;
+        const fast = hash01(Math.floor((t + f.phase) * f.rate)) ;
+        const sag = 1 - f.amount * (0.25 * slow + 0.75 * (fast > 0.85 ? (fast - 0.85) * 6 : 0));
+        f.light.intensity = f.base * sag;
+      }
+    },
     dispose() {
       group.traverse((o) => {
         if (o.geometry) o.geometry.dispose();

@@ -128,6 +128,8 @@ export function choiceEntryIndex(branch) {
   return Math.min(n - 1, Math.max(0, i));
 }
 
+const SCENE_EFFECTS = new Set(['run-bob', 'slump']);
+
 export function createRouter({ manifest, endings, state, mount, onEnding, audio = null, sfx = null, library = null, rooms = null }) {
   const renderer = createRenderer(mount.scene);
   const choiceUI = createChoiceUI(mount.choice);
@@ -180,14 +182,17 @@ export function createRouter({ manifest, endings, state, mount, onEnding, audio 
 
   // Plays a planTransition() step list: clips (whole or a sub-range) and
   // still-cuts, in order, bailing between steps like everything else here.
-  async function playTransitionPlan(steps) {
+  // `fallbackStill` (the destination room's IMG_IN) stands in for a clip
+  // that fails to load, so a dropped connection mid-transition lands the
+  // player in the next room instead of on a black frame.
+  async function playTransitionPlan(steps, fallbackStill = null) {
     for (const step of steps) {
       if (gone()) return;
       if (step.still) {
         renderer.primeStill(step.still);
         await new Promise((resolve) => setTimeout(resolve, FLIP_STILL_HOLD_MS));
       } else {
-        await renderer.playTransition(step.file, { startAt: step.startAt || 0, stopAt: step.stopAt ?? null });
+        await renderer.playTransition(step.file, { startAt: step.startAt || 0, stopAt: step.stopAt ?? null, fallbackStill });
       }
     }
   }
@@ -197,14 +202,18 @@ export function createRouter({ manifest, endings, state, mount, onEnding, audio 
     const destLetter = peekRenderFor(state);
     const oppositeLetter = branchLetter === 'C' ? 'H' : branchLetter === 'H' ? 'C' : null;
     const nextScene = manifest.scenes[nextSceneId];
-    return planTransition({
-      branch,
-      otherBranch: oppositeLetter ? scene.branches[oppositeLetter] : null,
-      fromLetter: branchLetter,
-      destLetter,
-      nextSceneId,
-      destImgIn: nextScene?.branches?.[destLetter]?.imgIn || null
-    });
+    const destImgIn = nextScene?.branches?.[destLetter]?.imgIn || null;
+    return {
+      steps: planTransition({
+        branch,
+        otherBranch: oppositeLetter ? scene.branches[oppositeLetter] : null,
+        fromLetter: branchLetter,
+        destLetter,
+        nextSceneId,
+        destImgIn
+      }),
+      destImgIn
+    };
   }
 
   async function playScene(sceneId) {
@@ -307,17 +316,38 @@ export function createRouter({ manifest, endings, state, mount, onEnding, audio 
         if (secondary) audio.playAmbience(secondary);
       };
 
-      await renderer.playEntry(entry, branchLetter, { onStart });
+      await renderer.playEntry(entry, branchLetter, { onStart, fallbackStill: branch.imgIn || null });
       if (gone()) return;
 
       if (entry.mount === 'minigame') {
         currentMinigameSpec = branch.minigame;
         const snapshot = readOnlySnapshot(state);
         const sceneAssets = { screenRect: branch.screenRect, npcSprite: branch.npcSprite, imgIn: branch.imgIn, imgOut: branch.imgOut, sfxOneShot: branch.sfxOneShot };
-        const services = { audio, sfx }; // Doc 4 §6.3: mini-games request nodes from audio.js, never create their own AudioContext
+        // Doc 4 §6.3: mini-games request nodes from audio.js, never create
+        // their own AudioContext. `scene` is the narrow slice of the
+        // renderer a mini-game may drive: MG-05 H pauses the garage loop
+        // while the player stands still and slows it as stamina drains,
+        // then holds the dead-flat IMG_OUT still for the silence at the end.
+        // Anything a mini-game does here is undone below when it completes.
+        const services = {
+          audio,
+          sfx,
+          scene: {
+            pause: () => renderer.pause(),
+            resume: () => renderer.resume(),
+            setRate: (rate) => renderer.setPlaybackRate(rate),
+            showStill: (file) => { if (file) renderer.primeStill(file); },
+            // Whole-layer motion classes (style.css `.scene-fx-*`): the run's
+            // head-bob, the 90s slump. Whitelisted so a mini-game can't hang
+            // arbitrary classes on the scene layer.
+            setEffect: (name, on) => { if (SCENE_EFFECTS.has(name)) mount.scene.classList.toggle(`scene-fx-${name}`, !!on); }
+          }
+        };
         const payload = await mountMinigameOrFallback(branch.minigame, mount.minigame, snapshot, sceneAssets, services, (inst) => { currentMinigameInstance = inst; });
         currentMinigameSpec = null;
         if (gone()) return; // Doc 4 §9: bail fired mid-minigame -- stop this chain, jumpToEnding already ran
+        renderer.setPlaybackRate(1); // whatever the mini-game did to the room's speed/motion ends with it
+        for (const name of SCENE_EFFECTS) mount.scene.classList.remove(`scene-fx-${name}`);
 
         state.friction = Math.min(8, state.friction + Math.min(1, Math.max(0, payload.friction || 0)));
         for (const flag of payload.flags || []) state.flags.add(flag);
@@ -352,20 +382,22 @@ export function createRouter({ manifest, endings, state, mount, onEnding, audio 
       if (chosen.next === 'E') {
         const ending = resolveEnding(state);
         const transitionFile = branch.endingTransitions[ending];
-        await renderer.playTransition(transitionFile);
+        await renderer.playTransition(transitionFile, { fallbackStill: endings[ending]?.imgOut || null });
         if (gone()) return;
         await playEndingVisual(ending);
         if (gone()) return;
         return jumpToEnding(ending);
       }
 
-      await playTransitionPlan(transitionPlanTo(scene, branch, branchLetter, chosen.next));
+      const plan = transitionPlanTo(scene, branch, branchLetter, chosen.next);
+      await playTransitionPlan(plan.steps, plan.destImgIn);
       if (gone()) return;
       return playScene(chosen.next);
     }
 
     // S0: no choice, single auto-advance (Doc 1 §4, "n/a").
-    await playTransitionPlan(transitionPlanTo(scene, branch, branchLetter, branch.next));
+    const plan = transitionPlanTo(scene, branch, branchLetter, branch.next);
+    await playTransitionPlan(plan.steps, plan.destImgIn);
     if (gone()) return;
     return playScene(branch.next);
   }
@@ -382,7 +414,7 @@ export function createRouter({ manifest, endings, state, mount, onEnding, audio 
     if (!ending) return;
     if (audio) audio.setMusic(null); // the bed goes before the card; the drone runs to it (C7)
     if (ending.video) {
-      await renderer.playTransition(ending.video);
+      await renderer.playTransition(ending.video, { fallbackStill: ending.imgOut || null });
     } else if (ending.imgOut) {
       renderer.primeStill(ending.imgOut);
     }

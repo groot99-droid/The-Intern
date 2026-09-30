@@ -62,19 +62,26 @@ def waiting_room(hostile):
             a = rnd.uniform(0, 6.28)
             props.append(prop("slip", [-3.4 + r * 0.9 * math.cos(a), 0.004 + i * 0.001, -D / 2 + 1.3 + r * 0.6 * abs(math.sin(a))], round(rnd.uniform(0, 360), 1)))
     lights = [
-        {"type": "point", "pos": [-3.5, H - 0.3, -1.5], "color": "#ffe9c8", "intensity": 70 if hostile else 28, "distance": 16},
-        {"type": "point", "pos": [3.5, H - 0.3, -1.5], "color": "#ffe9c8", "intensity": 70 if hostile else 28, "distance": 16},
-        {"type": "point", "pos": [0, H - 0.3, 3.5], "color": "#ffe9c8", "intensity": 50 if hostile else 18, "distance": 16},
+        {"type": "point", "pos": [-3.5, H - 0.3, -1.5], "color": "#ffe9c8", "intensity": 42 if hostile else 22, "distance": 16, "flicker": 0.25 if hostile else 0},
+        {"type": "point", "pos": [3.5, H - 0.3, -1.5], "color": "#ffe9c8", "intensity": 42 if hostile else 22, "distance": 16, "flicker": 0.25 if hostile else 0},
+        {"type": "point", "pos": [0, H - 0.3, 3.5], "color": "#ffe9c8", "intensity": 34 if hostile else 16, "distance": 16},
     ]
+    # Ceiling fixtures to go with the light (the building's, C1).
+    for lx, lz in ((-3.5, -1.5), (3.5, -1.5), (0, 3.5)):
+        props.append(prop("fluoro", [lx, H - 0.06, lz], w=1.4, d=0.4))
     return {
         "name": "THE WAITING ROOM",
         "size": [W, H, D],
         "floor": "marble", "wall": "plaster_blown" if hostile else "plaster", "ceiling": "plaster_blown" if hostile else "plaster_dark",
         "tile": {"floor": 2.5, "wall": 2.0, "ceiling": 2.0},
-        "ambient": {"color": "#fff4e0", "intensity": 0.9 if hostile else 0.35},
-        "sun": {"from": [1.5, 6.5, 7.5], "color": "#fff1dc", "intensity": 1.2 if hostile else 0.9},
+        "skirt": {"mat": "marble", "h": 0.14, "t": 0.03, "tile": 2.5},
+        "cornice": {"mat": "plaster_blown" if hostile else "plaster_dark", "h": 0.28, "t": 0.08},
+        "ambient": {"color": "#fff4e0", "intensity": 0.55 if hostile else 0.22},
+        "sun": {"from": [1.5, 6.5, 7.5], "color": "#fff1dc", "intensity": 0.9 if hostile else 0.7},
         "lights": lights,
-        "fog": {"color": "#f2ede2" if hostile else "#1a1714", "near": 6 if hostile else 10, "far": 30 if hostile else 36},
+        "fog": {"color": "#e9e3d6" if hostile else "#1a1714", "near": 8 if hostile else 10, "far": 34 if hostile else 36},
+        "exposure": 1.05 if hostile else 1.0,
+        "vignette": 0.35 if hostile else 0.6,
         "spawn": [0, 4.6, 0],
         "props": props,
         "footstep": {"filterHz": 1400, "gain": 0.09},
@@ -100,7 +107,9 @@ def threshold_corridor():
         "size": [W, H, D],
         "floor": "carpet_red", "wall": "plaster_dark", "ceiling": "plaster_dark",
         "tile": {"floor": 1.5, "wall": 2.0, "ceiling": 2.0},
-        "ambient": {"color": "#ffe6d0", "intensity": 0.3},
+        "skirt": {"mat": "marble", "h": 0.12, "t": 0.03, "tile": 2.5},
+        "cornice": {"mat": "plaster_dark", "h": 0.22, "t": 0.06},
+        "ambient": {"color": "#ffe6d0", "intensity": 0.22},
         "sun": {"from": [0.5, 5.5, 8.0], "color": "#ffe0c0", "intensity": 0.8},
         "lights": lights,
         "fog": {"color": "#120f0e", "near": 4, "far": 22},
@@ -155,17 +164,20 @@ def cubicle_floor():
     props.append(prop("papers", [0.32, 0.86, -8.86], mat="plaster_blown"))
     props.append(prop("clock", [0, 2.4, -D / 2 + 0.02]))
     props.append(prop("slip", [1.1, 0.004, -3.8], rot=12))
-    lights = [{"type": "point", "pos": [x, H - 0.4, zz], "color": "#eef2ff", "intensity": 26, "distance": 14}
+    lights = [{"type": "point", "pos": [x, H - 0.4, zz], "color": "#eef2ff", "intensity": 11, "distance": 14, "flicker": 0.12 if (x, zz) == (8, 4) else 0}
               for x in (-8, 0, 8) for zz in (-12, -4, 4, 12)]
     return {
         "name": "THE FLOOR",
         "size": [W, H, D],
         "floor": "carpet", "wall": "plaster", "ceiling": "ceiling_tile",
         "tile": {"floor": 1.5, "wall": 2.0, "ceiling": 1.2},
-        "ambient": {"color": "#e8ecff", "intensity": 0.45},
-        "sun": {"from": [2.0, 5.0, 22.0], "color": "#f4f6ff", "intensity": 0.8},
+        "skirt": {"mat": "plaster_dark", "h": 0.1, "t": 0.02},
+        "ambient": {"color": "#e8ecff", "intensity": 0.2},
+        "sun": {"from": [2.0, 5.0, 22.0], "color": "#f4f6ff", "intensity": 0.4},
         "lights": lights,
-        "fog": {"color": "#c9ccc6", "near": 10, "far": 40},
+        "fog": {"color": "#b4b7b1", "near": 12, "far": 46},
+        "exposure": 1.0,
+        "vignette": 0.45,
         "spawn": [0, 15.5, 0],
         "props": props,
         "footstep": {"filterHz": 380, "gain": 0.05},
@@ -191,13 +203,18 @@ def utility_corridor():
     props.append(prop("door", [-W / 2 + 0.06, 0, -D / 2 + 6.0], rot=110))  # one door ajar (Harlowe)
     props.append(prop("slip", [-0.7, 0.004, 4.0], rot=-30))
     props.append(prop("clock", [W / 2 - 0.03, 2.3, 8.2], rot=-90))  # C8: the same clock, between two doors
-    lights = [{"type": "point", "pos": [0, H - 0.3, zz], "color": "#dfe6dc", "intensity": 9, "distance": 9} for zz in range(-15, 16, 5)]
+    # Exposed services down the ceiling: two pipe runs and a cable tray.
+    for z in range(int(-D / 2) + 3, int(D / 2) - 2, 6):
+        props.append(prop("pipe", [0.95, H - 0.22, z], rot=90, len=6.0, r=0.09))
+        props.append(prop("pipe", [-0.85, H - 0.3, z], rot=90, len=6.0, r=0.05, mat="lp_dark"))
+    lights = [{"type": "point", "pos": [0, H - 0.3, zz], "color": "#dfe6dc", "intensity": 7, "distance": 9, "flicker": 0.3 if zz in (-5, 10) else 0} for zz in range(-15, 16, 5)]
     return {
         "name": "THE FLOOR",
         "size": [W, H, D],
         "floor": "concrete_wet", "wall": "cinderblock", "ceiling": "concrete",
         "tile": {"floor": 2.0, "wall": 1.6, "ceiling": 2.0},
-        "ambient": {"color": "#dfe6dc", "intensity": 0.2},
+        "skirt": {"mat": "paint_green", "h": 1.2, "t": 0.02, "tile": 1.6},
+        "ambient": {"color": "#dfe6dc", "intensity": 0.14},
         "sun": {"from": [0.6, 4.5, 20.0], "color": "#dfe6dc", "intensity": 0.7},
         "lights": lights,
         "fog": {"color": "#101211", "near": 6, "far": 30},
@@ -232,6 +249,7 @@ def desk_void(monitor_on):
         "sun": {"from": [1.0, 6.0, 6.0], "color": "#ffe7c4", "intensity": 0.5},
         "lights": lights,
         "fog": {"color": "#000000", "near": 3, "far": 16},
+        "vignette": 0.75,
         "spawn": [0, 3.2, 0],
         "props": props,
         "footstep": {"filterHz": 600, "gain": 0.07},
@@ -239,23 +257,57 @@ def desk_void(monitor_on):
 
 
 def garage(depth=44.0, open_north=False):
-    W, H, D = 32.0, 3.2, depth
+    """S5-H's parking level (Doc 1 §5: photoreal concrete, photoreal sodium
+    light, photoreal oil stains; rusted low-poly vehicles, no two the same).
+    Read off assets/img/S5_H_IMG_IN.png: a coffered slab on 8 m beam rows,
+    square columns with a painted band, a green band round the walls, one
+    sodium tube per beam bay, bays marked by wall plates."""
+    W, H, D = 32.0, 3.4, depth
     props = []
     lights = []
+    rnd = random.Random(55)
+    beam_every = 8.0
+    z0 = -D / 2 + 4.0
+    zs = []
+    z = z0
+    while z < D / 2:
+        zs.append(z)
+        z += beam_every
     for x in range(-12, 13, 8):
-        for z in range(int(-D / 2) + 4, int(D / 2), 8):
-            props.append(prop("pillar", [x, 0, z], w=0.7, h=H))
+        for zz in zs:
+            props.append(prop("pillar", [x, 0, zz], w=0.7, h=H, band="paint_green", bandH=1.1, tile=1.5))
+    # Sodium tubes hang under the slab, one per bay between column rows
+    # down each lane, plus a dimmer one over the centre aisle every other
+    # bay. Point lights sit a little below the tubes so the slab glows
+    # rather than burns.
+    bay_z = [zz + beam_every / 2 for zz in zs if zz + beam_every / 2 < D / 2 - 1.0]
     for x in (-8, 8):
-        for z in range(int(-D / 2) + 6, int(D / 2), 12):
-            props.append(prop("sodium", [x, H - 0.12, z]))
-            lights.append({"type": "point", "pos": [x, H - 0.4, z], "color": "#ffa040", "intensity": 30, "distance": 18})
-    cars = [("lp_car", [-5.0, 0, 6.0], 0, True), ("lp_car2", [5.5, 0, -2.0], 8, False), ("lp_car3", [-6.0, 0, -9.0], -6, False), ("lp_car4", [9.0, 0, 10.0], 3, False)]
-    for mat, pos, rot, hero in cars:
-        if pos[2] < -D / 2 + 3:
-            pos[2] = -D / 2 + 4
-        if pos[2] > D / 2 - 3:
-            pos[2] = D / 2 - 4
-        props.append(prop("car", pos, rot=rot, mat=mat, hero=hero))
+        for i, bz in enumerate(bay_z):
+            props.append(prop("sodium", [x, H - 0.74, bz]))
+            lights.append({"type": "point", "pos": [x, H - 1.15, bz], "color": "#ffa040", "intensity": 42, "distance": 22, "flicker": 0.35 if i % 2 else 0.12})
+    for i, bz in enumerate(bay_z):
+        if i % 2 == 0:
+            props.append(prop("sodium", [0, H - 0.74, bz]))
+            lights.append({"type": "point", "pos": [0, H - 1.15, bz], "color": "#ffb060", "intensity": 24, "distance": 18, "flicker": 0.2})
+    # Bay plates on the columns (wordless red rectangles).
+    for x in (-12, 12):
+        for zz in zs[::2]:
+            props.append(prop("wallplate", [x + (0.36 if x < 0 else -0.36), 1.9, zz], rot=90 if x < 0 else -90, w=1.1, h=0.5))
+    # Rusted cars, no two the same model, none from the same decade.
+    car_mats = ["lp_car", "lp_car2", "lp_car3", "lp_car4", "lp_car5", "lp_car6"]
+    bays = []
+    for lane in (-1, 1):
+        for zz in zs:
+            for k in (-1, 1):
+                bays.append((lane * 10.0 + k * 2.6, zz + beam_every / 2))
+    rnd.shuffle(bays)
+    n_cars = 9 if depth > 30 else 4
+    for i, (bx, bz) in enumerate(bays[:n_cars]):
+        if abs(bz) > D / 2 - 3.0:
+            continue
+        rot = rnd.choice((0, 180)) + rnd.uniform(-7, 7)
+        props.append(prop("car", [bx, 0, bz], rot=round(rot, 1), mat=car_mats[i % len(car_mats)],
+                          len=round(rnd.uniform(3.9, 4.9), 2), w=round(rnd.uniform(1.65, 1.9), 2), hero=(i == 0)))
     props.append(prop("slip", [1.4, 0.004, 3.0], rot=100))
     props.append(prop("clock", [-W / 2 + 0.03, 2.4, D / 2 - 6.0], rot=90))  # C8: the same clock, on the west wall
     rec = {
@@ -263,10 +315,15 @@ def garage(depth=44.0, open_north=False):
         "size": [W, H, D],
         "floor": "garage_floor", "wall": "concrete", "ceiling": "concrete",
         "tile": {"floor": 3.0, "wall": 2.5, "ceiling": 2.5},
-        "ambient": {"color": "#ffb060", "intensity": 0.18},
+        "skirt": {"mat": "paint_green", "h": 1.1, "t": 0.02, "tile": 2.5},
+        "beams": {"axis": "x", "every": beam_every, "offset": 4.0, "w": 0.7, "h": 0.7, "mat": "concrete", "tile": 2.5},
+        "ambient": {"color": "#ffb060", "intensity": 0.24},
         "sun": {"from": [3.0, 5.0, D * 0.55], "color": "#ffb86a", "intensity": 0.6},
         "lights": lights,
-        "fog": {"color": "#120c06", "near": 8, "far": 42},
+        "fog": {"color": "#160f08", "near": 8, "far": 48},
+        "exposure": 1.25,
+        "vignette": 0.55,
+        "grain": 0.025,
         "spawn": [0, D / 2 - 3.0, 0],
         "props": props,
         "boxes": [],
@@ -274,23 +331,47 @@ def garage(depth=44.0, open_north=False):
     }
     if open_north:
         # The run that does not end, ended: the concrete stops one metre
-        # ahead and below is the pool room -- water to the horizon, tiled
-        # pillars, no ceiling, no far wall (Doc 1 §5 S6-H/S7-H).
+        # ahead and below is the pool room -- water to the horizon, pale
+        # square pillars standing in it, no ceiling, no far wall (Doc 1 §5
+        # S6-H/S7-H; blender/renders/S7_H/final.png). The fog closes it (C3).
         rec["name"] = "THE EDGE"
         rec["open"] = ["N"]
         edge = -D / 2
         rec["boxes"] = [
-            {"min": [-60, -4.2, edge - 80], "max": [60, -3.9, edge + 0.0], "mat": "water", "collide": False, "shadow": False, "tile": 4.0},
-            {"min": [-W / 2 - 0.3, -0.25, edge - 0.02], "max": [W / 2 + 0.3, 0, edge + 0.5], "mat": "concrete", "collide": False, "tile": 2.0},
+            {"min": [-90, -4.3, edge - 120], "max": [90, -3.9, edge + 0.0], "mat": "water", "collide": False, "shadow": False, "tile": 5.0},
+            # the broken lip of the slab
+            {"min": [-W / 2 - 0.3, -0.35, edge - 0.15], "max": [W / 2 + 0.3, 0, edge + 0.6], "mat": "concrete", "collide": False, "tile": 2.0},
+            {"min": [-W / 2 - 0.3, -0.9, edge - 0.02], "max": [W / 2 + 0.3, -0.35, edge + 0.3], "mat": "concrete_wet", "collide": False, "tile": 2.0},
             # invisible lip so the player can lean, not fall
             {"min": [-W / 2, 0, edge - 0.4], "max": [W / 2, 1.2, edge - 0.2], "mat": "void", "collide": True, "invisible": True, "shadow": False},
+            # a glow under the surface, far out
+            {"min": [-6, -4.05, edge - 36], "max": [6, -4.0, edge - 30], "mat": "glow_water", "collide": False, "shadow": False},
         ]
-        for x in range(-24, 25, 8):
-            for z in range(-6, -60, -10):
-                rec["boxes"].append({"min": [x - 0.6, -4.5, edge + z - 0.6], "max": [x + 0.6, 9.0, edge + z + 0.6], "mat": "pool_tile", "collide": False, "tile": 1.0})
-        rec["fog"] = {"color": "#0c2a30", "near": 6, "far": 60}
-        rec["lights"].append({"type": "point", "pos": [0, 1.5, edge - 10], "color": "#3ac0d8", "intensity": 40, "distance": 40})
-        rec["ambient"] = {"color": "#5fb0c0", "intensity": 0.22}
+        prnd = random.Random(7)
+        for x in range(-28, 29, 7):
+            for zz in range(-8, -90, -9):
+                jx = prnd.uniform(-0.8, 0.8)
+                rec["boxes"].append({"min": [x + jx - 0.7, -4.5, edge + zz - 0.7], "max": [x + jx + 0.7, 12.0, edge + zz + 0.7], "mat": "plaster", "collide": False, "tile": 2.0})
+        rec["fog"] = {"color": "#0b1e24", "near": 10, "far": 85}
+        rec["background"] = "#07171c"
+        # the garage's sodium stays behind him and dims toward the edge;
+        # the pool ahead is lit from below and from the haze, cold and low
+        kept = []
+        for l in rec["lights"]:
+            if l["pos"][2] > edge + 5:
+                l = dict(l)
+                l["intensity"] = round(l["intensity"] * (0.45 if l["pos"][2] < edge + 10 else 0.8), 1)
+                kept.append(l)
+        rec["lights"] = kept
+        rec["lights"].append({"type": "point", "pos": [0, 3.0, edge - 14], "color": "#4f9aa8", "intensity": 26, "distance": 70, "decay": 1.1})
+        rec["lights"].append({"type": "point", "pos": [-16, 5.0, edge - 34], "color": "#3f8a9c", "intensity": 22, "distance": 70, "decay": 1.1})
+        rec["lights"].append({"type": "point", "pos": [16, 5.0, edge - 34], "color": "#3f8a9c", "intensity": 22, "distance": 70, "decay": 1.1})
+        rec["lights"].append({"type": "point", "pos": [0, -3.2, edge - 33], "color": "#3ab8d0", "intensity": 40, "distance": 50, "decay": 1.2})
+        rec["ambient"] = {"color": "#5f9aa8", "intensity": 0.14}
+        rec["hemisphere"] = {"sky": "#2c5c68", "ground": "#06121a", "intensity": 0.22}
+        rec["sun"] = {"from": [2.0, 6.0, D * 0.55], "color": "#ffb86a", "intensity": 0.25}
+        rec["exposure"] = 1.0
+        rec["grain"] = 0.025
         rec["spawn"] = [0, edge + 7.0, 0]
     return rec
 
@@ -333,17 +414,18 @@ def mailroom():
     for fx in (-12, 0, 12):
         for fz in (-14, 0, 14):
             props.append(prop("fluoro", [fx, 7.5, fz], w=2.4, d=0.4))
-    lights = [{"type": "point", "pos": [fx, 7.0, fz], "color": "#e6ecff", "intensity": 50, "distance": 22} for fx in (-12, 0, 12) for fz in (-14, 0, 14)]
+    lights = [{"type": "point", "pos": [fx, 7.0, fz], "color": "#e6ecff", "intensity": 30, "distance": 22, "flicker": 0.15 if (fx, fz) == (12, -14) else 0} for fx in (-12, 0, 12) for fz in (-14, 0, 14)]
     return {
         "name": "THE DELIVERY",
         "size": [W, H, D],
         "floor": "concrete", "wall": "plaster_dark", "ceiling": "void",
         "noCeiling": True,
         "tile": {"floor": 3.0, "wall": 3.0},
-        "ambient": {"color": "#dfe6f0", "intensity": 0.2},
-        "sun": {"from": [4.0, 9.0, 26.0], "color": "#e6ecff", "intensity": 0.7},
+        "skirt": {"mat": "paint_green", "h": 1.0, "t": 0.02, "tile": 3.0},
+        "ambient": {"color": "#dfe6f0", "intensity": 0.12},
+        "sun": {"from": [4.0, 9.0, 26.0], "color": "#e6ecff", "intensity": 0.45},
         "lights": lights,
-        "fog": {"color": "#8e9299", "near": 4, "far": 34},
+        "fog": {"color": "#70747b", "near": 9, "far": 52},
         "spawn": [0, 16.0, 0],
         "props": props,
         "footstep": {"filterHz": 700, "gain": 0.09},
@@ -364,12 +446,13 @@ def convenience_store():
     for fx in (-3, 3):
         for fz in (-5, -1, 3, 7):
             props.append(prop("fluoro", [fx, H - 0.06, fz], w=1.2, d=0.3))
-    lights = [{"type": "point", "pos": [fx, H - 0.4, fz], "color": "#f0f4ff", "intensity": 18, "distance": 10} for fx in (-3, 3) for fz in (-5, -1, 3, 7)]
+    lights = [{"type": "point", "pos": [fx, H - 0.4, fz], "color": "#f0f4ff", "intensity": 8, "distance": 10, "flicker": 0.3 if (fx, fz) == (-3, 3) else 0} for fx in (-3, 3) for fz in (-5, -1, 3, 7)]
     return {
         "name": "THE STORE",
         "size": [W, H, D],
         "floor": "linoleum", "wall": "plaster", "ceiling": "ceiling_tile",
         "tile": {"floor": 1.0, "wall": 2.0, "ceiling": 1.2},
+        "skirt": {"mat": "plaster_dark", "h": 0.1, "t": 0.02},
         "open": ["S"],
         "boxes": [
             # Storefront glass: the street outside is photoreal and empty and he cannot render out there -- it stays black.
@@ -377,10 +460,12 @@ def convenience_store():
             {"min": [-W / 2 - 0.3, H - 0.3, D / 2], "max": [W / 2 + 0.3, H + 0.2, D / 2 + 0.3], "mat": "plaster", "collide": False},
             {"min": [-0.06, 0, D / 2 - 0.02], "max": [0.06, H, D / 2 + 0.1], "mat": "concrete", "collide": False, "tile": 1.0},
         ],
-        "ambient": {"color": "#f0f4ff", "intensity": 0.5},
-        "sun": {"from": [1.0, 5.0, 12.0], "color": "#f4f6ff", "intensity": 0.8},
+        "ambient": {"color": "#f0f4ff", "intensity": 0.22},
+        "sun": {"from": [1.0, 5.0, 12.0], "color": "#f4f6ff", "intensity": 0.4},
         "lights": lights,
         "fog": {"color": "#05070a", "near": 14, "far": 30},
+        "exposure": 1.0,
+        "vignette": 0.45,
         "background": "#000000",
         "spawn": [0, 6.0, 0],
         "props": props,
@@ -404,7 +489,7 @@ def build():
         "S6_C": desk_void(True),
         "S6_H": edge_room,
         "S7_C": freight_elevator(),
-        "S7_H": {"alias": "S6_H", "spawn": [0, -9.0, 0], "_note": "The same edge, one step closer."},
+        "S7_H": {"alias": "S6_H", "spawn": [0, -9.5, 0], "_note": "The same edge, one step closer."},
         "S8_C": mailroom(),
         "S8_H": convenience_store(),
     }
