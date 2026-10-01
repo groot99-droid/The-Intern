@@ -10,31 +10,42 @@
   </style>
 </head>
 <body>
-  <div id="stage"><div id="walk-layer" hidden></div></div>
-  <div id="picker"><select id="room"></select> <button id="go" type="button">ENTER</button></div>
+  <div id="stage"><div id="scene-layer"></div><div id="walk-layer" hidden></div></div>
+  <div id="picker"><select id="room"></select> <select id="shot"></select> <button id="go" type="button">PLAY SHOT</button> <button id="walkbtn" type="button">WALK</button></div>
   <script type="module">
-    // Dev-only: walk any room from data/rooms.json without playing to it.
-    // Same modules the game uses (src/walk/), so what you see here is what
-    // WALK THE ROOM shows. Query: ?room=S4_C jumps straight in.
-    import { createWalk } from '../src/walk/walk.js';
+    // Dev-only: play any shot of any room from data/rooms.json, or walk it,
+    // without playing to it. Same module the game uses (src/stage/), so
+    // what you see here is what the scene shows. Query: ?room=S4_C&shot=loop
+    // jumps straight in; ?room=S5_H&walk=1 walks it.
+    import { createStage } from '../src/stage/stage.js';
     const rooms = await fetch('../data/rooms.json').then((r) => r.json());
     const select = document.getElementById('room');
+    const shotSel = document.getElementById('shot');
     for (const key of Object.keys(rooms.rooms)) select.append(new Option(key, key));
-    const walk = createWalk(document.getElementById('walk-layer'), {});
-    function resolve(key) {
-      const rec = rooms.rooms[key];
-      return rec.alias ? { ...rooms.rooms[rec.alias], ...rec, id: key } : { ...rec, id: key };
+    const stage = createStage(document.getElementById('scene-layer'), { rooms });
+    function fillShots() {
+      const rec = stage.record(select.value);
+      shotSel.replaceChildren();
+      for (const name of Object.keys(rec.shots || {})) shotSel.append(new Option(name, name));
     }
-    async function enter(key) {
+    select.addEventListener('change', fillShots);
+    fillShots();
+    async function play(key, shot) {
+      select.value = key; fillShots(); if (shot) shotSel.value = shot;
+      await stage.playShot(key, shotSel.value);
+    }
+    async function walk(key) {
       select.value = key;
       document.body.classList.add('walking');
-      await walk.enter(resolve(key));
+      await stage.walk(key, { overlay: document.getElementById('walk-layer') });
       document.body.classList.remove('walking');
     }
-    document.getElementById('go').addEventListener('click', () => enter(select.value));
-    window.__ROOMS__ = { walk, enter, rooms };
-    const q = new URLSearchParams(location.search).get('room');
-    if (q && rooms.rooms[q]) enter(q);
+    document.getElementById('go').addEventListener('click', () => play(select.value));
+    document.getElementById('walkbtn').addEventListener('click', () => walk(select.value));
+    window.__ROOMS__ = { stage, play, walk, rooms };
+    const q = new URLSearchParams(location.search);
+    const room = q.get('room');
+    if (room && rooms.rooms[room]) { if (q.get('walk')) walk(room); else play(room, q.get('shot') || 'loop'); }
   </script>
 </body>
 </html>

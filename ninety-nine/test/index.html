@@ -22,7 +22,7 @@
     <h2>Manual checklist (Doc 4 explicitly says these cannot be automated)</h2>
     <ul>
       <li>Phase 2: drone never restarts, audibly detunes scene-to-scene, beats against memory by S8 (listen with headphones)</li>
-      <li>Phase 3: crossfades are clean (no black flash / wrong frame), S4-C plate/sprite composite reads as one figure, S6-C still + live UI rect aligns</li>
+      <li>Phase 3: black-joins between rooms are clean (leave fades out, arrive fades in, never a cut into the wrong render), S4-C's manager walks the aisle as one figure, S6-C's sheet sits on the terminal's glass</li>
       <li>Phase 4: MG-05's flag-then-silent-revert actually feels expensive and futile in a real playthrough</li>
       <li>Phase 6: handless clock visible in every scene; no window/sky/daylight/upward motion after S0; fracture texture-bleed never reads as a glitch effect (cap 0.22)</li>
       <li>Pre-deploy: DEBUG_RESUME is false (also asserted below, but nothing enforces this automatically without CI)</li>
@@ -36,14 +36,12 @@
       './cases/logic.spine.js',
       './cases/audio.drone.js',
       './cases/manifest.validate.js',
-      './cases/video.audiotrack.js',
-      './cases/video.faststart.js',
       './cases/canon.text.js',
       './cases/minigame.leak.js',
       './cases/minigame.hold.js',
       './cases/audio.mix.js',
       './cases/rooms.validate.js',
-      './cases/renderer.softloop.js'
+      './cases/stage.shots.js'
     ];
 
     for (const path of cases) {

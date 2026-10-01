@@ -1,7 +1,8 @@
 // Doc 4 §4.2's validator, adapted to run in-browser (no Node fs -- "file
 // exists" becomes "fetch(url, {method:'HEAD'}) returns 200", which Python's
-// http.server supports natively) plus a 7th assertion for the
-// `endingTransitions` schema extension (see the plan's scenes.json §3.2).
+// http.server supports natively). In the 3D-only build the "assets" a
+// scene references are sets and shots in data/rooms.json plus audio beds;
+// a video-era key anywhere in scenes.json or endings.json is a failure.
 //
 // NOTE: assertion 3 (every minigame module exists) is expected to FAIL
 // until Phase 5 lands all 7 mini-game files -- that's honest signal, not a
@@ -51,53 +52,42 @@ export async function run() {
     }
   });
 
-  await runCase('Assertion 2: every referenced asset filename exists in /assets', async () => {
+  await runCase('Assertion 2: every sequence entry names a room and a shot in /data/rooms.json, and every audio file exists', async () => {
+    const rooms = await loadJSON('../../data/rooms.json');
+    const resolve = (k) => { const r = rooms.rooms[k]; return r && r.alias ? { ...rooms.rooms[r.alias], ...r } : r; };
     const missing = [];
     const checks = [];
-    for (const scene of Object.values(manifest.scenes)) {
-      for (const branch of Object.values(scene.branches)) {
+    for (const [sceneId, scene] of Object.entries(manifest.scenes)) {
+      for (const [letter, branch] of Object.entries(scene.branches)) {
+        assert(branch.room && rooms.rooms[branch.room], `${sceneId}.${letter}: branch room ${branch.room} not in rooms.json`);
         for (const entry of branch.sequence) {
-          const kind = entry.type === 'still' ? 'img' : 'vid';
-          checks.push([entry.file, `../../assets/${kind}/${entry.file}`]);
+          const key = entry.room || branch.room;
+          const rec = resolve(key);
+          if (!rec) { missing.push(`${sceneId}.${letter}: room ${key}`); continue; }
+          const shot = entry.shot || 'loop';
+          if (!rec.shots || !rec.shots[shot]) missing.push(`${sceneId}.${letter}: ${key}.shots.${shot}`);
+          assert(entry.type === undefined && entry.file === undefined, `${sceneId}.${letter}: video-era entry (${entry.file})`);
         }
-        if (branch.imgIn) checks.push([branch.imgIn, `../../assets/img/${branch.imgIn}`]);
-        if (branch.imgOut) checks.push([branch.imgOut, `../../assets/img/${branch.imgOut}`]);
         if (branch.ambience) checks.push([branch.ambience, `../../assets/aud/${branch.ambience}`]);
-        if (branch.ambienceSequence) {
-          for (const f of branch.ambienceSequence) checks.push([f, `../../assets/aud/${f}`]);
-        }
+        if (branch.ambienceSequence) for (const f of branch.ambienceSequence) checks.push([f, `../../assets/aud/${f}`]);
+        if (branch.ambienceSecondary) checks.push([branch.ambienceSecondary.file, `../../assets/aud/${branch.ambienceSecondary.file}`]);
         if (branch.sfxOneShot) checks.push([branch.sfxOneShot, `../../assets/aud/${branch.sfxOneShot}`]);
-        if (branch.npcSprite) {
-          checks.push([branch.npcSprite.far.file, `../../assets/img/${branch.npcSprite.far.file}`]);
-          checks.push([branch.npcSprite.near.file, `../../assets/img/${branch.npcSprite.near.file}`]);
-        }
-        if (branch.transitions) {
-          for (const f of Object.values(branch.transitions)) checks.push([f, `../../assets/vid/${f}`]);
-        }
-        // A transitionsSwap entry must never be added ahead of its clip:
-        // router.js's fallback only covers an absent key, not a missing file.
-        if (branch.transitionsSwap) {
-          for (const f of Object.values(branch.transitionsSwap)) checks.push([f, `../../assets/vid/${f}`]);
-        }
-        if (branch.endingTransitions) {
-          for (const f of Object.values(branch.endingTransitions)) checks.push([f, `../../assets/vid/${f}`]);
+        for (const dead of ['imgIn', 'imgOut', 'transitions', 'transitionsSwap', 'transitionsSplit', 'endingTransitions', 'npcSprite']) {
+          if (dead === 'transitions') continue; // a {leave, arrive} shot-name override is allowed
+          assert(branch[dead] === undefined, `${sceneId}.${letter}: video-era key ${dead}`);
         }
       }
     }
     for (const [endingId, ending] of Object.entries(endings)) {
-      if (endingId.startsWith('_')) continue; // skip _comment
-      // RETAINED has no video/imgIn -- only one still was ever generated for
-      // it (data/endings.json's _note), so it renders as a static hold on
-      // imgOut alone. video/imgIn are optional per ending; imgOut is not.
-      if (ending.video) checks.push([ending.video, `../../assets/vid/${ending.video}`]);
-      if (ending.imgIn) checks.push([ending.imgIn, `../../assets/img/${ending.imgIn}`]);
-      checks.push([ending.imgOut, `../../assets/img/${ending.imgOut}`]);
+      if (endingId.startsWith('_')) continue;
+      const rec = resolve(ending.room);
+      if (!rec) { missing.push(`${endingId}: room ${ending.room}`); continue; }
+      if (!rec.shots || !rec.shots[ending.shot]) missing.push(`${endingId}: ${ending.room}.shots.${ending.shot}`);
+      assert(ending.video === undefined && ending.imgOut === undefined, `${endingId}: video-era keys`);
     }
     const results = await Promise.all(checks.map(async ([name, url]) => [name, await headOk(url)]));
-    for (const [name, ok] of results) {
-      if (!ok) missing.push(name);
-    }
-    assert(missing.length === 0, `missing assets: ${missing.join(', ')}`);
+    for (const [name, ok] of results) if (!ok) missing.push(name);
+    assert(missing.length === 0, `missing: ${missing.join(', ')}`);
   });
 
   await runCase('Assertion 3: every referenced minigame module exists in /src/minigames (expected red until Phase 5)', async () => {
@@ -150,42 +140,10 @@ export async function run() {
     }
   });
 
-  await runCase('Assertion 7 (extension): every ending reachable from a branch has a matching endingTransitions key', () => {
-    // C branches can resolve ASSIMILATION, PENDING, or RETAINED; H branches
-    // can resolve EXPULSION or PENDING (Doc 1 §2.4; RETAINED added post-launch).
-    const s8 = manifest.scenes.S8;
-    assert('ASSIMILATION' in s8.branches.C.endingTransitions, 'S8.C missing ASSIMILATION endingTransitions');
-    assert('PENDING' in s8.branches.C.endingTransitions, 'S8.C missing PENDING endingTransitions');
-    assert('RETAINED' in s8.branches.C.endingTransitions, 'S8.C missing RETAINED endingTransitions');
-    assert('EXPULSION' in s8.branches.H.endingTransitions, 'S8.H missing EXPULSION endingTransitions');
-    assert('PENDING' in s8.branches.H.endingTransitions, 'S8.H missing PENDING endingTransitions');
-  });
-
-  await runCase('Assertion 9 (extension): every transitionsSwap entry shadows a transitions key and follows S{n}_{R}_TRN_{target}_{dest}.mp4', () => {
-    // The swap clip lands in the opposite room: C->H, H->C, and S0's X->H
-    // (X's plain clip already lands in C).
-    const opposite = { C: 'H', H: 'C', X: 'H' };
-    for (const [sceneId, scene] of Object.entries(manifest.scenes)) {
-      for (const [letter, branch] of Object.entries(scene.branches)) {
-        if (!branch.transitionsSwap) continue;
-        for (const [target, file] of Object.entries(branch.transitionsSwap)) {
-          assert(branch.transitions && target in branch.transitions, `${sceneId}.${letter}: transitionsSwap.${target} has no plain transitions.${target} to fall back to`);
-          const expected = `${sceneId}_${letter}_TRN_${target}_${opposite[letter]}.mp4`;
-          assertEqual(file, expected, `${sceneId}.${letter}.transitionsSwap.${target}`);
-        }
-      }
-    }
-  });
-
-  await runCase('Assertion 10 (extension): every transitionsSplit entry names a plain transitions key with a positive black-join midpoint', () => {
-    for (const [sceneId, scene] of Object.entries(manifest.scenes)) {
-      for (const [letter, branch] of Object.entries(scene.branches)) {
-        if (!branch.transitionsSplit) continue;
-        for (const [target, seconds] of Object.entries(branch.transitionsSplit)) {
-          assert(branch.transitions && target in branch.transitions, `${sceneId}.${letter}: transitionsSplit.${target} has no transitions.${target} clip to split`);
-          assert(Number.isFinite(seconds) && seconds > 0.5 && seconds < 10, `${sceneId}.${letter}.transitionsSplit.${target}: implausible midpoint ${seconds}`);
-        }
-      }
+  await runCase('Assertion 7 (extension): every ending resolveEnding() can return has a set and a shot', () => {
+    for (const id of ['ASSIMILATION', 'PENDING', 'RETAINED', 'EXPULSION']) {
+      assert(endings[id] && endings[id].room && endings[id].shot, `${id}: no room/shot`);
+      assert(Number.isFinite(endings[id].holdSeconds) && endings[id].holdSeconds >= 0, `${id}: holdSeconds`);
     }
   });
 

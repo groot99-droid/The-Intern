@@ -44,8 +44,10 @@ function archBox(mats, slot, min, max, tile, { collide = true, castShadow = true
 // unison.
 function hash01(n) { const x = Math.sin(n * 12.9898) * 43758.5453; return x - Math.floor(x); }
 
-export function buildRoom(mats, rec) {
+export function buildRoom(mats, rec, ctx = null) {
   const group = new THREE.Group();
+  const named = new Map(); // prop name -> group (actors, the terminal screen, the hands)
+  const animated = []; // { group, spec }: curtains that swing, hands that drift
   group.name = rec.id || rec.name || 'room';
   const walls = [];
   const floors = [];
@@ -77,7 +79,7 @@ export function buildRoom(mats, rec) {
     W: (y0, y1, t) => [[-W / 2, y0, -D / 2], [-W / 2 + t, y1, D / 2]]
   };
   for (const side of Object.keys(shell)) {
-    if (open.has(side)) continue;
+    if (open.has(side) || rec.noWalls) continue;
     const m = archBox(mats, wallMat, shell[side][0], shell[side][1], tile.wall);
     group.add(m);
     walls.push(m);
@@ -132,11 +134,33 @@ export function buildRoom(mats, rec) {
 
   // Company property.
   for (const p of rec.props || []) {
-    const g = buildProp(mats, p);
+    const g = buildProp(mats, p, ctx);
     if (!g) continue;
     group.add(g);
     g.updateMatrixWorld(true);
     g.traverse((o) => { if (o.userData && o.userData.collide) walls.push(o); });
+    if (p.name) named.set(p.name, g);
+    if (p.swing || p.reach) animated.push({ group: g, spec: p, base: g.position.clone(), baseRot: g.rotation.clone() });
+  }
+  // Actors: named props with a path the stage drives (MG-03 C's manager
+  // walks the aisle). t=0 is the first point, t=1 the last.
+  const actors = {};
+  for (const [name, a] of Object.entries(rec.actors || {})) {
+    const g = named.get(name);
+    if (!g || !a.path || a.path.length < 2) continue;
+    const carry = (a.carry || []).map((n) => named.get(n)).filter(Boolean);
+    const offsets = carry.map((c) => c.position.clone().sub(g.position));
+    actors[name] = {
+      set(t) {
+        const u = Math.min(1, Math.max(0, t)) * (a.path.length - 1);
+        const i = Math.min(a.path.length - 2, Math.floor(u));
+        const f = u - i;
+        const [x0, z0] = a.path[i], [x1, z1] = a.path[i + 1];
+        g.position.x = x0 + (x1 - x0) * f;
+        g.position.z = z0 + (z1 - z0) * f;
+        carry.forEach((c, k) => { c.position.x = g.position.x + offsets[k].x; c.position.z = g.position.z + offsets[k].z; });
+      }
+    };
   }
 
   // Lights. `sun` is the C2 light: on the entrance (+z) side, aimed at the core.
@@ -195,6 +219,8 @@ export function buildRoom(mats, rec) {
     fog: rec.fog || null,
     background: rec.background || (rec.fog && rec.fog.color) || '#000000',
     footstep: rec.footstep || null,
+    named,
+    actors,
     // Per-frame: the sodium buzz -- a slow sag plus a fast jitter, per
     // light, never in unison.
     update(dt, t) {
@@ -203,6 +229,10 @@ export function buildRoom(mats, rec) {
         const fast = hash01(Math.floor((t + f.phase) * f.rate)) ;
         const sag = 1 - f.amount * (0.25 * slow + 0.75 * (fast > 0.85 ? (fast - 0.85) * 6 : 0));
         f.light.intensity = f.base * sag;
+      }
+      for (const a of animated) {
+        if (a.spec.swing) a.group.rotation.x = a.baseRot.x + Math.sin(t * 1.3) * 0.05 * Math.exp(-t * 0.03);
+        if (a.spec.reach) a.group.position.y = a.base.y + Math.sin(t * 0.9) * 0.04;
       }
     },
     dispose() {

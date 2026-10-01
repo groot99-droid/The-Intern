@@ -1,9 +1,11 @@
-// Doc 4 §8.1: "While scene N plays, prefetch both branches of scene N+1,
-// plus both transitions into it." Fire-and-forget: router.js does not await
-// this, it just warms the browser HTTP cache so canplaythrough resolves
-// fast when the real crossfade starts.
+// Doc 4 §8.1: "While scene N plays, prefetch both branches of scene N+1."
+// There are no clips to fetch any more: a scene is a set the stage builds
+// (geometry, procedural textures, the prop library), so prefetching means
+// asking the stage to build both renders' rooms ahead of time, plus
+// warming the browser cache for their ambience beds. Fire-and-forget:
+// router.js never awaits this.
 
-export function createPreloader(manifest, endings, { base = './assets' } = {}) {
+export function createPreloader(manifest, endings, { base = './assets', stage = null } = {}) {
   const fetched = new Set();
 
   function fetchAsset(kind, file) {
@@ -12,51 +14,34 @@ export function createPreloader(manifest, endings, { base = './assets' } = {}) {
     return fetch(`${base}/${kind}/${file}`).catch(() => {});
   }
 
-  function branchAssetTasks(branch) {
-    const tasks = [];
-    for (const entry of branch.sequence) {
-      tasks.push(fetchAsset(entry.type === 'still' ? 'img' : 'vid', entry.file));
-    }
-    if (branch.ambience) tasks.push(fetchAsset('aud', branch.ambience));
-    if (branch.ambienceSequence) {
-      for (const f of branch.ambienceSequence) tasks.push(fetchAsset('aud', f));
-    }
-    return tasks;
+  function roomsOf(branch) {
+    const keys = new Set();
+    for (const entry of branch.sequence) keys.add(entry.room || branch.room);
+    return [...keys].filter(Boolean);
   }
 
-  function branchTransitionTasks(branch) {
+  function branchTasks(branch) {
     const tasks = [];
-    if (branch.transitions) {
-      for (const file of Object.values(branch.transitions)) tasks.push(fetchAsset('vid', file));
-    }
-    // Swap clips (router.js pickTransition) -- only present once they exist.
-    if (branch.transitionsSwap) {
-      for (const file of Object.values(branch.transitionsSwap)) tasks.push(fetchAsset('vid', file));
-    }
-    if (branch.endingTransitions) {
-      for (const file of Object.values(branch.endingTransitions)) tasks.push(fetchAsset('vid', file));
-    }
+    if (stage) for (const key of roomsOf(branch)) stage.prefetch(key);
+    if (branch.ambience) tasks.push(fetchAsset('aud', branch.ambience));
+    if (branch.ambienceSequence) for (const f of branch.ambienceSequence) tasks.push(fetchAsset('aud', f));
+    if (branch.sfxOneShot) tasks.push(fetchAsset('aud', branch.sfxOneShot));
     return tasks;
   }
 
   async function prefetchNext(currentSceneId, nextSceneId) {
     const tasks = [];
-    const current = manifest.scenes[currentSceneId];
-    if (current) {
-      for (const branch of Object.values(current.branches)) tasks.push(...branchTransitionTasks(branch));
-    }
     const next = manifest.scenes[nextSceneId];
-    if (next) {
-      for (const branch of Object.values(next.branches)) tasks.push(...branchAssetTasks(branch));
-    }
-    // S8 doesn't know which ending resolves yet -- prefetch all three.
-    if (currentSceneId === 'S8' && endings) {
-      for (const ending of Object.values(endings)) {
-        tasks.push(fetchAsset('vid', ending.video));
+    if (next) for (const branch of Object.values(next.branches)) tasks.push(...branchTasks(branch));
+    // S8 doesn't know which ending resolves yet -- build all of them.
+    if (currentSceneId === 'S8' && endings && stage) {
+      for (const [id, ending] of Object.entries(endings)) {
+        if (id.startsWith('_') || !ending.room) continue;
+        stage.prefetch(ending.room);
       }
     }
     return Promise.all(tasks);
   }
 
-  return { prefetchNext };
+  return { prefetchNext, roomsOf };
 }

@@ -2,11 +2,19 @@
 // the render does (Doc 1 §1.2). This module owns scene sequencing, mini-game
 // mount lifecycle, and ending resolution.
 //
+// 3D-only build: every scene is a live set on the stage (src/stage/) and a
+// sequence entry is a SHOT (a camera move from data/rooms.json), not a
+// clip. A transition between two rooms is the `leave` shot of the room
+// being left and the `arrive` shot of the room being entered, joined
+// through black -- the same black-join the old clips had, which is also
+// why a render flip can never walk the player into the wrong room: the
+// destination render is decided at the join.
+//
 // Audio wiring (drone advance, ambience crossfade, ducking, music bed) lives
 // here too, added in Phase 2 by editing this file.
 
 import { renderFor, peekRenderFor, resolveEnding, commitChoice, fracture, seedRenderFromIntake } from './state.js';
-import { createRenderer } from './renderer.js';
+import { createStage } from './stage/stage.js';
 import { createChoiceUI } from './choice.js';
 import { createApplicationUI } from './application.js';
 import { createPreloader } from './preload.js';
@@ -14,37 +22,30 @@ import { createFractureOverlay } from './fracture.js';
 import { stringFor } from './text.js';
 import { createWalkLauncher } from './walk/launcher.js';
 
-// Mini-game modules (Doc 3) don't exist until Phase 4/5. This fallback lets
-// the skeleton run standalone: if the module 404s, the "mini-game" completes
-// instantly with zero friction, so nothing downstream needs to change when
-// the real modules land.
-//
-// Each of the 7 files covers 1-2 modes (11 modes total, Doc 3 §2), so the
-// module's default export is a factory `(mode) => minigameInstance`, not a
-// single fixed-mode instance (Doc 4 §6.2's example shows one mode; a file
-// serving two modes selects between them internally).
+// Each of the 7 mini-game files covers 1-2 modes (11 modes total, Doc 3 §2),
+// so the module's default export is a factory `(mode) => minigameInstance`.
 // sceneAssets is an additive 4th mount() argument beyond Doc 4 §6.2's base
-// contract (container, state, onComplete) -- purely rendering/positioning
-// metadata (screenRect, npcSprite) needed for S4-C/S6-C's compositing
-// (see the plan's scenes.json §3.3/§3.4), never player state.
+// contract (container, state, onComplete) -- rendering/positioning metadata
+// (the terminal's screen rect, the room's actors) needed for S4-C/S6-C,
+// never player state.
 async function mountMinigameOrFallback(spec, container, stateSnapshot, sceneAssets, services, registerInstance) {
   if (!spec) return { friction: 0, dwell: 0, flags: [] };
   try {
     const mod = await import(`./minigames/${spec.module}.js`);
     const instance = mod.default(spec.mode);
     registerInstance(instance); // Doc 4 §9: bail.js needs this to unmount a live mini-game
-    container.replaceChildren(); // clear any stale DOM from a previous mini-game
+    container.replaceChildren();
     return await new Promise((resolve) => {
       instance.mount(container, stateSnapshot, (payload) => {
         registerInstance(null);
         instance.unmount();
-        container.replaceChildren(); // unmount() clears listeners/timers, not DOM -- do that here
+        container.replaceChildren();
         resolve(payload || { friction: 0, dwell: 0, flags: [] });
       }, sceneAssets, services);
     });
   } catch (err) {
     console.warn(`router: minigame "${spec.module}" not available yet, using pass-through`, err);
-    registerInstance(null); // a mount() that threw must not leave a half-live instance registered for bail.js
+    registerInstance(null);
     return { friction: 0, dwell: 0, flags: [] };
   }
 }
@@ -61,67 +62,33 @@ function readOnlySnapshot(state) {
   });
 }
 
-// Swap-aware transition selection. A branch's plain `transitions` clip lands
-// in the same render it left (C->C, H->H; S0's X lands in C). When the
-// destination render differs -- the render flipped between scenes -- prefer
-// `transitionsSwap`, which lands in the opposite room. Entries are only ever
-// added to transitionsSwap once the clip exists (renderer.js does not error
-// on a missing file, it stalls ~14s), so an absent key falls back to the
-// plain clip, exactly as before swap clips existed.
-export function pickTransition(branch, fromLetter, destLetter, nextSceneId) {
-  const landsIn = fromLetter === 'X' ? 'C' : fromLetter;
-  const isSwap = destLetter !== landsIn;
-  return (isSwap && branch.transitionsSwap?.[nextSceneId]) || branch.transitions[nextSceneId];
+// The room a sequence entry plays in: its own `room`, else the branch's.
+export function roomOfEntry(branch, entry) {
+  return (entry && entry.room) || branch.room;
 }
 
-// Render-flip transitions. Transitions are per BRANCH, not per choice (Doc 1
-// §1.2: the sequence never forks, only the render does), and no swap clips
-// were ever generated -- so on a flip pickTransition()'s fallback walked the
-// player into the WRONG room: RUN at S2 (conformance -2, S3 renders H) played
-// the compliant curtain walk and then landed at the locked glass doors, which
-// read as "the video is assigned to the wrong choice".
-//
-// Most clips are black-joins (assets/MANIFEST.csv: "two 3s halves pinned to
-// solid black" -- the room being left, black, the room being entered).
-// `transitionsSplit[next]` (seconds, data/scenes.json) marks that midpoint,
-// so a flip can be composed out of real footage and never shows the wrong
-// room. Returns an ordered list of steps for playTransitionPlan():
-//   both branches split   [0,split] of this clip, then [split,end] of the other branch's clip
-//   only this branch      [0,split] of this clip, then the destination room's IMG_IN still
-//   only the other        [split,end] of the other branch's clip
-//   neither               the destination room's IMG_IN still
-// S0's X clip is branchless by construction (MANIFEST: "ends on the reception
-// interior so the hand-off into S1_C/H_VID still matches") and plays whole.
-// A real transitionsSwap clip, once one exists, still wins over all of this.
-export function planTransition({ branch, otherBranch = null, fromLetter, destLetter, nextSceneId, destImgIn = null }) {
-  const plain = pickTransition(branch, fromLetter, destLetter, nextSceneId);
-  const landsIn = fromLetter === 'X' ? 'C' : fromLetter;
-  const isSwap = destLetter !== landsIn;
-  if (!isSwap || fromLetter === 'X' || branch.transitionsSwap?.[nextSceneId]) return [{ file: plain }];
+// The room a branch is entered in (its first entry's) and left from (its
+// last entry's). S8-C enters the mailroom and leaves from the boardroom.
+export function entryRoom(branch) { return roomOfEntry(branch, branch.sequence[0]); }
+export function exitRoom(branch) { return roomOfEntry(branch, branch.sequence[branch.sequence.length - 1]); }
 
-  const leaveAt = branch.transitionsSplit?.[nextSceneId];
-  const arriveAt = otherBranch?.transitionsSplit?.[nextSceneId];
-  const arrivalClip = otherBranch?.transitions?.[nextSceneId];
-  const steps = [];
-  // `timeupdate` ticks every ~250ms, so a stopAt lands a little late: stop
-  // SPLIT_LEAD_S before the midpoint (still inside the pinned black) rather
-  // than risk the first frames of the wrong room's arrival half.
-  if (Number.isFinite(leaveAt) && leaveAt > 0) steps.push({ file: plain, stopAt: Math.max(0.1, leaveAt - SPLIT_LEAD_S) });
-  if (Number.isFinite(arriveAt) && arriveAt > 0 && arrivalClip) steps.push({ file: arrivalClip, startAt: arriveAt });
-  else if (destImgIn) steps.push({ still: destImgIn });
-  return steps;
+// Transition plan between two rooms: an ordered list of shots for
+// playTransitionPlan(). Leaving and entering the SAME set (S1 -> S2: the
+// call comes in the waiting room; S2_C aliases S1_C) is no transition at
+// all -- the next scene's first shot simply plays. `baseOf` resolves
+// aliases so that comparison holds. Explicit `transitions[next]` on a
+// branch (a {leave, arrive} pair of shot names) overrides the defaults.
+export function planTransition({ fromRoom, toRoom, baseOf = (k) => k, override = null }) {
+  if (!fromRoom || !toRoom) return [];
+  if (baseOf(fromRoom) === baseOf(toRoom)) return [];
+  const leave = (override && override.leave) || 'leave';
+  const arrive = (override && override.arrive) || 'arrive';
+  return [{ room: fromRoom, shot: leave }, { room: toRoom, shot: arrive }];
 }
-
-// How long a flip's still-cut holds before the destination room's own clip
-// crossfades in (planTransition's `still` step). Long enough to read as a
-// cut to a new place, short enough not to read as a stall.
-export const FLIP_STILL_HOLD_MS = 1200;
-export const SPLIT_LEAD_S = 0.12;
 
 // Which sequence entry the choice follows. Default: the last one. S8-H sets
 // `choiceAfterEntry: 0` so DIVE / SWIM FOR THE PILLARS is asked underwater
-// (where Doc 1 §5 puts it) and the store clip plays as the consequence,
-// instead of the choice appearing over the store's frozen last frame.
+// (where Doc 1 §5 puts it) and the store plays as the consequence.
 export function choiceEntryIndex(branch) {
   const n = branch.sequence.length;
   const i = Number.isInteger(branch.choiceAfterEntry) ? branch.choiceAfterEntry : n - 1;
@@ -130,21 +97,18 @@ export function choiceEntryIndex(branch) {
 
 const SCENE_EFFECTS = new Set(['run-bob', 'slump']);
 
-export function createRouter({ manifest, endings, state, mount, onEnding, audio = null, sfx = null, library = null, rooms = null }) {
-  const renderer = createRenderer(mount.scene);
+export function createRouter({ manifest, endings, state, mount, onEnding, audio = null, sfx = null, library = null, rooms = null, stage: stageIn = null }) {
+  const stage = stageIn || createStage(mount.scene, { rooms, audio, sfx });
   const choiceUI = createChoiceUI(mount.choice);
-  const preloader = createPreloader(manifest, endings);
+  const preloader = createPreloader(manifest, endings, { stage });
   const fractureOverlay = createFractureOverlay(mount.scene);
-  const walk = createWalkLauncher({ mount, rooms, audio, sfx, renderer });
+  const walk = createWalkLauncher({ mount, rooms, stage });
   let currentMinigameSpec = null;
   let currentMinigameInstance = null; // exposed for bail.js (Phase 6)
   let bailedOut = false;
   let captionTimers = [];
   let captionEl = null;
 
-  // Receptionist lines etc. (text/system.json) shown as on-screen cards
-  // alongside the recorded voice -- Doc 1 §5 S2's "Ninety-nine." / "Shaun."
-  // never actually appeared anywhere before.
   function scheduleCaptions(captions) {
     clearCaptions();
     if (!captions || !library) return;
@@ -169,10 +133,9 @@ export function createRouter({ manifest, endings, state, mount, onEnding, audio 
     captionEl = null;
   }
 
-  // Every await in playScene() is followed by this check: bail() used to
-  // only stop the chain if it fired inside a mini-game, so an exit during a
-  // video, choice or transition let the whole spine keep playing (and the
-  // audio keep firing) underneath the ending card.
+  // Every await in playScene() is followed by this check: bail() stops the
+  // chain wherever it fires -- a video, choice or transition -- so nothing
+  // keeps playing (and no audio keeps firing) underneath the ending card.
   const gone = () => bailedOut;
 
   async function leaveScene() {
@@ -180,40 +143,33 @@ export function createRouter({ manifest, endings, state, mount, onEnding, audio 
     if (audio) audio.stopOneShots({ ms: 300 }); // e.g. the receptionist line must not run into the next room
   }
 
-  // Plays a planTransition() step list: clips (whole or a sub-range) and
-  // still-cuts, in order, bailing between steps like everything else here.
-  // `fallbackStill` (the destination room's IMG_IN) stands in for a clip
-  // that fails to load, so a dropped connection mid-transition lands the
-  // player in the next room instead of on a black frame.
-  async function playTransitionPlan(steps, fallbackStill = null) {
+  // Plays a planTransition() step list in order, bailing between steps.
+  async function playTransitionPlan(steps) {
     for (const step of steps) {
       if (gone()) return;
-      if (step.still) {
-        renderer.primeStill(step.still);
-        await new Promise((resolve) => setTimeout(resolve, FLIP_STILL_HOLD_MS));
-      } else {
-        await renderer.playTransition(step.file, { startAt: step.startAt || 0, stopAt: step.stopAt ?? null, fallbackStill });
-      }
+      await stage.playShot(step.room, step.shot);
     }
   }
 
-  // planTransition() inputs for leaving the current scene toward nextSceneId.
-  function transitionPlanTo(scene, branch, branchLetter, nextSceneId) {
+  function transitionPlanTo(scene, branch, nextSceneId) {
     const destLetter = peekRenderFor(state);
-    const oppositeLetter = branchLetter === 'C' ? 'H' : branchLetter === 'H' ? 'C' : null;
     const nextScene = manifest.scenes[nextSceneId];
-    const destImgIn = nextScene?.branches?.[destLetter]?.imgIn || null;
-    return {
-      steps: planTransition({
-        branch,
-        otherBranch: oppositeLetter ? scene.branches[oppositeLetter] : null,
-        fromLetter: branchLetter,
-        destLetter,
-        nextSceneId,
-        destImgIn
-      }),
-      destImgIn
-    };
+    const dest = nextScene && nextScene.branches[destLetter];
+    return planTransition({
+      fromRoom: exitRoom(branch),
+      toRoom: dest ? entryRoom(dest) : null,
+      baseOf: (k) => stage.baseKey(k),
+      override: branch.transitions && branch.transitions[nextSceneId]
+    });
+  }
+
+  // Plays one sequence entry: a shot in a room. Looping shots (the idle
+  // pingpong) resolve at once -- the router controls advancement; finite
+  // shots (the street push, the descent) are awaited.
+  async function playEntry(branch, entry, { onStart }) {
+    const room = roomOfEntry(branch, entry);
+    const p = stage.playShot(room, entry.shot || 'loop', { onStart });
+    if (!entry.loop) await p;
   }
 
   async function playScene(sceneId) {
@@ -223,48 +179,37 @@ export function createRouter({ manifest, endings, state, mount, onEnding, audio 
     const branch = scene.branches[branchLetter];
     state.sceneIndex = manifest.spineOrder.indexOf(sceneId);
 
-    // Doc 4 §8.1: prefetch both branches of the next scene (+ both
-    // transitions into it) while this one plays. Fire-and-forget.
+    // Doc 4 §8.1: build both renders of the next scene while this one
+    // plays (geometry + the prop library). Fire-and-forget.
     const nextSceneId = manifest.spineOrder[state.sceneIndex + 1] || null;
     preloader.prefetchNext(sceneId, nextSceneId);
 
     if (audio) audio.resumeIfSuspended(); // Doc 4 §7.4: resume silently if it was suspended
 
-    if (sceneId === 'S0' && branch.imgIn) {
-      // Doc 4 §8.2 cold start, moved ahead of the preGesture block (added
-      // post-launch): the desk/monitor still is the backdrop for the new
-      // application form + countdown too, not just the video's load wait --
-      // otherwise the player fills out the form and watches the countdown
-      // against plain black, and the "you're at your desk" framing the
-      // monitor image establishes is missing for that whole beat.
-      renderer.primeStill(branch.imgIn);
+    if (sceneId === 'S0') {
+      // Doc 4 §8.2 cold start: the apartment is up (camera parked on its
+      // `in` pose) behind the application form and the countdown.
+      await stage.holdPose(entryRoom(branch), 'in');
+      if (gone()) return;
     }
 
     if (branch.preGesture) {
       // Doc 1 §5 / Doc 4 §7.4: the one non-diegetic-adjacent click in the
-      // game. AudioContext + drone start here, nowhere else. S0 now runs
-      // the application form + countdown (src/application.js, added post-
-      // launch) instead of a single SUBMIT click; the form's own final
-      // click still supplies that one required gesture.
+      // game. AudioContext + drone start here, nowhere else. S0 runs the
+      // application form + countdown (src/application.js); the form's own
+      // final click supplies that one required gesture.
       if (sceneId === 'S0') {
         const applicationUI = createApplicationUI(mount.choice);
         const { answers, refusals } = await applicationUI.present({
           onSubmitGesture: () => {
             if (!audio) return;
             audio.initOnGesture();
-            // Apartment room tone under the countdown (Doc 1 §5 S0: "the
-            // apartment is room tone only"); the street bed takes over on
-            // the commute cut below.
-            audio.playAmbience(branch.ambience);
+            audio.playAmbience(branch.ambience); // apartment room tone under the countdown
           }
         });
         if (gone()) return;
-        // Doc 4 §6.4's intake -> MG-07 payoff reads state.formAnswers. This
-        // form is now the only place they're collected (MG-01 is gone), so
-        // MG-07's review at S8 shows exactly what was handed over at S0.
         state.formAnswers = { ...state.formAnswers, ...answers };
-        // Render-only seed: two or more NOT WILLING answers open in S1-H.
-        seedRenderFromIntake(state, refusals);
+        seedRenderFromIntake(state, refusals); // render-only seed: two or more NOT WILLING open in S1-H
       } else {
         await choiceUI.presentSingle(branch.preGesture.label);
         if (gone()) return;
@@ -276,38 +221,31 @@ export function createRouter({ manifest, endings, state, mount, onEnding, audio 
       audio.advanceScene(state.sceneIndex); // Doc 4 §7.1 detune ramp
       const firstAmbience = branch.ambience !== undefined ? branch.ambience : (branch.ambienceSequence && branch.ambienceSequence[0]);
       audio.playAmbience(firstAmbience); // Doc 4 §7.2, null = carry over previous bed (Doc 1 §5 S2)
-      // Music bed: per-branch override, else per-scene, else none (fades out).
       const music = branch.music !== undefined ? branch.music : (scene.music !== undefined ? scene.music : null);
       audio.setMusic(music, branchLetter === 'X' ? 'C' : branchLetter);
     }
 
-    // Branch-entry one-shots (sfx.js's real-file/synthesized cues), e.g. the
-    // PA speaker click + receptionist voice at S2, or the parking garage's
-    // car alarm at S5-H. A single string or an array (S2's speaker click
-    // firing alongside the shared receptionist-voice recording).
     if (sfx && branch.sfxCue) {
       for (const cue of Array.isArray(branch.sfxCue) ? branch.sfxCue : [branch.sfxCue]) sfx.play(cue);
     }
     scheduleCaptions(branch.captions);
 
     // Doc 4 §5.2: fracture overlay, driven by current friction/dissonance.
-    // No opposite branch exists for S0 (X only).
+    // The bleed is the opposite render's palette; no opposite exists for S0.
     const oppositeLetter = branchLetter === 'C' ? 'H' : branchLetter === 'H' ? 'C' : null;
-    const oppositeImgIn = oppositeLetter ? scene.branches[oppositeLetter].imgIn : null;
-    fractureOverlay.apply(fracture(state), oppositeImgIn);
+    const oppositeRoom = oppositeLetter ? stage.record(entryRoom(scene.branches[oppositeLetter])) : null;
+    fractureOverlay.apply(fracture(state), oppositeRoom);
 
     const dwellStart = performance.now();
     let autoChoiceKey = null;
     let chosenKey = null;
     const choiceAt = branch.choice ? choiceEntryIndex(branch) : -1;
-    const roomId = walk.roomFor(sceneId, branchLetter);
 
     for (let i = 0; i < branch.sequence.length; i++) {
       const entry = branch.sequence[i];
+      const roomId = walk.roomFor(roomOfEntry(branch, entry));
 
-      // Bed changes land ON the cut (renderer's onStart), not after the
-      // clip has finished: S8's second bed used to start only once the
-      // store/boardroom clip had already ended.
+      // Bed changes land ON the cut (the shot's onStart), not after it.
       const bedForEntry = i > 0 && branch.ambienceSequence ? branch.ambienceSequence[i] : null;
       const secondary = i === 0 && branch.ambienceSecondary ? branch.ambienceSecondary.file : null;
       const onStart = () => {
@@ -316,53 +254,62 @@ export function createRouter({ manifest, endings, state, mount, onEnding, audio 
         if (secondary) audio.playAmbience(secondary);
       };
 
-      await renderer.playEntry(entry, branchLetter, { onStart, fallbackStill: branch.imgIn || null });
+      // A room change inside one scene (the mailroom to the boardroom, the
+      // dive to the store, the apartment to the street) is the same
+      // black-join a scene change gets.
+      if (i > 0) {
+        const prevRoom = roomOfEntry(branch, branch.sequence[i - 1]);
+        await playTransitionPlan(planTransition({ fromRoom: prevRoom, toRoom: roomOfEntry(branch, entry), baseOf: (k) => stage.baseKey(k) }));
+        if (gone()) return;
+      }
+      await playEntry(branch, entry, { onStart });
       if (gone()) return;
 
       if (entry.mount === 'minigame') {
         currentMinigameSpec = branch.minigame;
         const snapshot = readOnlySnapshot(state);
-        const sceneAssets = { screenRect: branch.screenRect, npcSprite: branch.npcSprite, imgIn: branch.imgIn, imgOut: branch.imgOut, sfxOneShot: branch.sfxOneShot };
+        const sceneAssets = {
+          screenRect: () => stage.screenRect() || branch.screenRect || null,
+          actors: branch.actors || null,
+          sfxOneShot: branch.sfxOneShot
+        };
         // Doc 4 §6.3: mini-games request nodes from audio.js, never create
-        // their own AudioContext. `scene` is the narrow slice of the
-        // renderer a mini-game may drive: MG-05 H pauses the garage loop
-        // while the player stands still and slows it as stamina drains,
-        // then holds the dead-flat IMG_OUT still for the silence at the end.
-        // Anything a mini-game does here is undone below when it completes.
+        // their own AudioContext. `scene` is the narrow slice of the stage
+        // a mini-game may drive: MG-05 H runs the garage only while the
+        // player holds, slows it as stamina drains, then parks on the
+        // dead-flat `out` pose for the silence at the end; MG-03 C walks
+        // the manager up the aisle. Anything done here is undone below.
         const services = {
           audio,
           sfx,
           scene: {
-            pause: () => renderer.pause(),
-            resume: () => renderer.resume(),
-            setRate: (rate) => renderer.setPlaybackRate(rate),
-            showStill: (file) => { if (file) renderer.primeStill(file); },
-            // Whole-layer motion classes (style.css `.scene-fx-*`): the run's
-            // head-bob, the 90s slump. Whitelisted so a mini-game can't hang
-            // arbitrary classes on the scene layer.
+            pause: () => stage.pause(),
+            resume: () => stage.resume(),
+            setRate: (rate) => stage.setRate(rate),
+            hold: (pose = 'out') => { stage.holdPose(null, pose); },
+            actor: (name, t) => stage.actor(name, t),
+            screenRect: () => stage.screenRect(),
             setEffect: (name, on) => { if (SCENE_EFFECTS.has(name)) mount.scene.classList.toggle(`scene-fx-${name}`, !!on); }
           }
         };
         const payload = await mountMinigameOrFallback(branch.minigame, mount.minigame, snapshot, sceneAssets, services, (inst) => { currentMinigameInstance = inst; });
         currentMinigameSpec = null;
         if (gone()) return; // Doc 4 §9: bail fired mid-minigame -- stop this chain, jumpToEnding already ran
-        renderer.setPlaybackRate(1); // whatever the mini-game did to the room's speed/motion ends with it
+        stage.setRate(1);
+        stage.resume();
         for (const name of SCENE_EFFECTS) mount.scene.classList.remove(`scene-fx-${name}`);
 
         state.friction = Math.min(8, state.friction + Math.min(1, Math.max(0, payload.friction || 0)));
         for (const flag of payload.flags || []) state.flags.add(flag);
         if (payload.formAnswers) state.formAnswers = { ...state.formAnswers, ...payload.formAnswers };
-        // MG-07 mode C only (Doc 3): OPEN THE BOX / a completed handoff IS
-        // the S8-C choice, not a separate step -- the mini-game may resolve
-        // the choice directly instead of falling through to choiceUI.
         if (payload.autoChoice === 'succumb' || payload.autoChoice === 'resist') {
-          autoChoiceKey = payload.autoChoice;
+          autoChoiceKey = payload.autoChoice; // MG-07 mode C: OPEN THE BOX / the handoff IS the choice
         }
       }
 
       if (i === choiceAt) {
         // Third, unscored affordance: walk the room (src/walk/). Only offered
-        // where data/rooms.json has a room for this scene+render.
+        // where data/rooms.json has a room for this entry.
         const extra = roomId ? { label: 'WALK THE ROOM', run: () => walk.enter(roomId, { state }) } : null;
         chosenKey = autoChoiceKey || await choiceUI.present(branch.choice, { extra });
         if (gone()) return;
@@ -381,43 +328,33 @@ export function createRouter({ manifest, endings, state, mount, onEnding, audio 
       const chosen = branch.choice[chosenKey];
       if (chosen.next === 'E') {
         const ending = resolveEnding(state);
-        const transitionFile = branch.endingTransitions[ending];
-        await renderer.playTransition(transitionFile, { fallbackStill: endings[ending]?.imgOut || null });
-        if (gone()) return;
-        await playEndingVisual(ending);
+        await playEndingVisual(ending, exitRoom(branch));
         if (gone()) return;
         return jumpToEnding(ending);
       }
-
-      const plan = transitionPlanTo(scene, branch, branchLetter, chosen.next);
-      await playTransitionPlan(plan.steps, plan.destImgIn);
+      await playTransitionPlan(transitionPlanTo(scene, branch, chosen.next));
       if (gone()) return;
       return playScene(chosen.next);
     }
 
     // S0: no choice, single auto-advance (Doc 1 §4, "n/a").
-    const plan = transitionPlanTo(scene, branch, branchLetter, branch.next);
-    await playTransitionPlan(plan.steps, plan.destImgIn);
+    await playTransitionPlan(transitionPlanTo(scene, branch, branch.next));
     if (gone()) return;
     return playScene(branch.next);
   }
 
-  // Doc 2 generated a dedicated SE_*_VID/IMG pair per ending (data/endings.json's
-  // video/imgOut/holdSeconds), separate from the S8_*_TRN_SE_* clip that gets
-  // the player TO the ending room -- this is the ending room itself. Endings
-  // with a video hold on its last frame for `holdSeconds` (README: "each
-  // SE_*_VID ends on a still hold; extend on the last frame for the 4s
-  // pre-card hold"); an ending with no video (e.g. RETAINED, only one still
-  // was ever generated for it) just holds imgOut directly for the same span.
-  async function playEndingVisual(endingId) {
+  // The ending room itself (data/endings.json: room + shot + holdSeconds),
+  // reached through the usual leave/arrive black-join from wherever S8
+  // ended, then its own camera move, then a dead-still hold before the
+  // card ("4 second hold with no motion whatsoever", Doc 2).
+  async function playEndingVisual(endingId, fromRoom) {
     const ending = endings[endingId];
     if (!ending) return;
     if (audio) audio.setMusic(null); // the bed goes before the card; the drone runs to it (C7)
-    if (ending.video) {
-      await renderer.playTransition(ending.video, { fallbackStill: ending.imgOut || null });
-    } else if (ending.imgOut) {
-      renderer.primeStill(ending.imgOut);
-    }
+    await playTransitionPlan(planTransition({ fromRoom, toRoom: ending.room, baseOf: (k) => stage.baseKey(k) }));
+    if (gone()) return;
+    if (ending.shot) await stage.playShot(ending.room, ending.shot);
+    if (gone()) return;
     const holdMs = (ending.holdSeconds || 0) * 1000;
     if (holdMs > 0) await new Promise((resolve) => setTimeout(resolve, holdMs));
   }
@@ -425,7 +362,7 @@ export function createRouter({ manifest, endings, state, mount, onEnding, audio 
   function jumpToEnding(endingId) {
     walk.abort();
     clearCaptions();
-    renderer.destroy();
+    stage.blackout(1.0).catch(() => {});
     fractureOverlay.destroy();
     choiceUI.clear();
     mount.minigame.replaceChildren();
@@ -458,6 +395,7 @@ export function createRouter({ manifest, endings, state, mount, onEnding, audio 
     getCurrentMinigame() {
       return currentMinigameSpec;
     },
-    isWalking() { return walk.isActive(); }
+    isWalking() { return walk.isActive(); },
+    stage
   };
 }

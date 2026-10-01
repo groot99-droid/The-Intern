@@ -2,9 +2,10 @@
 // per Doc 3 §5 -- "procedural maze is the highest engineering cost and the
 // lowest thesis risk."
 //
-// Mode C composites the manager as an engine billboard over the figure-free
-// S4_C_VID_PLATE.mp4 dolly (npcSprite far/near from scenes.json, per the
-// plan's §3.3 -- S4_C_VID's real Kling walk-cycle was rejected). Mode H
+// Mode C walks THE MANAGER up the cubicle aisle: he is a figure in the 3D
+// set (rooms.json S4_C's actor `manager`, papers in hand) and
+// services.scene.actor(name, t) moves him from the far end of the aisle
+// (t=0) to beside the player (t=1) while FOLLOW is on. Mode H
 // simplifies full 3D maze navigation/pathfinding (out of scope for this
 // build) down to its one load-bearing rule, stated directly by Doc 3:
 // standing completely still for 8s always opens a door. Directional
@@ -26,7 +27,7 @@ function el(tag, className, text) {
   return node;
 }
 
-function mountModeC(container, tracked, sceneAssets) {
+function mountModeC(container, tracked, sceneAssets, services) {
   const friction = createFrictionAccumulator();
   const dwell = createDwellTimer();
   dwell.start();
@@ -34,8 +35,6 @@ function mountModeC(container, tracked, sceneAssets) {
   let onComplete;
 
   const scene = el('div', 'mg03-corridor-scene');
-  const npcFar = el('div', 'mg03-npc-sprite mg03-npc-far');
-  const npcNear = el('div', 'mg03-npc-sprite mg03-npc-near');
   const controls = el('div', 'mg03-controls');
   const followBtn = el('button', 'mg03-btn', 'FOLLOW');
   followBtn.textContent = 'FOLLOW';
@@ -47,49 +46,17 @@ function mountModeC(container, tracked, sceneAssets) {
   lookBehindNote.textContent = 'The floor you already walked is gone. Just more cubicles.';
   lookBehindNote.hidden = true;
   controls.append(followBtn, wanderBtn, lookBehindBtn);
-  scene.append(npcFar, npcNear, controls, lookBehindNote);
+  scene.append(controls, lookBehindNote);
   container.appendChild(scene);
 
-  // scenes.json's npcSprite rects are CROP boxes: where the manager stands
-  // inside his source still, not a window to draw the whole still into.
-  // Drawing the file into a box that size (the first cut: an <img> plus
-  // object-fit) put the entire frame on screen shrunk to 14% wide, reading
-  // as a small window pasted over the scene rather than a figure in it.
-  // Background-position/-size crops to the figure alone.
-  function cropTo(node, spec) {
-    if (!spec) return;
-    const { x, y, w, h } = spec.rect;
-    node.style.backgroundImage = `url("./assets/img/${spec.file}")`;
-    node.style.backgroundSize = `${(1 / w) * 100}% ${(1 / h) * 100}%`;
-    // Percentage background-position is measured against (container - image),
-    // hence the /(1-w): at w=1 there is nothing to pan, so clamp.
-    node.style.backgroundPosition = `${w >= 1 ? 0 : (x / (1 - w)) * 100}% ${h >= 1 ? 0 : (y / (1 - h)) * 100}%`;
+  // Where the figure is: the far end of the aisle at progress 0, beside the
+  // player at 1, interpolated by the room (he never animates a walk cycle
+  // -- he translates, C5: no NPC ever does more than that).
+  const actor = services && services.scene && services.scene.actor ? services.scene.actor : null;
+  function placeAt(t) {
+    if (actor) actor('manager', t);
   }
-
-  // Where the figure sits on screen, which is what makes him approach:
-  // the far rect at progress 0, the near rect at 1, interpolated between.
-  // (The old build had no approach at all -- two fixed sizes and a hard
-  // swap at 70%, so the manager teleported one step closer and stopped.)
-  function placeAt(node, t) {
-    if (!far || !near) return;
-    const lerp = (a, b) => a + (b - a) * t;
-    node.style.left = `${lerp(far.rect.x, near.rect.x) * 100}%`;
-    node.style.top = `${lerp(far.rect.y, near.rect.y) * 100}%`;
-    node.style.width = `${lerp(far.rect.w, near.rect.w) * 100}%`;
-    node.style.height = `${lerp(far.rect.h, near.rect.h) * 100}%`;
-  }
-
-  const far = sceneAssets && sceneAssets.npcSprite ? sceneAssets.npcSprite.far : null;
-  const near = sceneAssets && sceneAssets.npcSprite ? sceneAssets.npcSprite.near : null;
-  cropTo(npcFar, far);
-  cropTo(npcNear, near);
-  placeAt(npcFar, 0);
-  placeAt(npcNear, 0);
-  npcNear.classList.remove('visible');
-  // Fade the figure in on the next frame rather than mounting him already
-  // at full opacity -- the CSS opacity transition can't run from a class
-  // set in the same paint.
-  tracked.setTimeout(() => npcFar.classList.add('visible'), 50);
+  placeAt(0);
 
   let progress = 0; // 0..1 toward the manager
   let following = false;
@@ -133,12 +100,8 @@ function mountModeC(container, tracked, sceneAssets) {
     if (resolved) return;
     if (following) {
       progress = Math.min(1, progress + 1 / (FOLLOW_SECONDS * 10));
-      // Both layers track the same interpolated placement, so the crossfade
-      // at the threshold swaps the source still without the figure jumping.
-      placeAt(npcFar, progress);
-      placeAt(npcNear, progress);
-      npcNear.classList.toggle('visible', progress >= NPC_NEAR_THRESHOLD);
-      npcFar.classList.toggle('visible', progress < NPC_NEAR_THRESHOLD);
+      placeAt(progress);
+      if (progress >= NPC_NEAR_THRESHOLD) scene.classList.add('mg03-near');
       if (progress >= 1) finish();
     } else if (wandering) {
       wanderElapsedMs += 100;
@@ -249,7 +212,7 @@ export default function createMg03(mode) {
     mode,
     mount(container, state, onComplete, sceneAssets, services) {
       tracked = createTrackedListeners();
-      const result = mode === 'C' ? mountModeC(container, tracked, sceneAssets) : mountModeH(container, tracked, sceneAssets, services);
+      const result = mode === 'C' ? mountModeC(container, tracked, sceneAssets, services) : mountModeH(container, tracked, sceneAssets, services);
       result.setOnComplete(onComplete);
       disposeFn = result.dispose;
     },
