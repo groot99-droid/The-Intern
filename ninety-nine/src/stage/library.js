@@ -14,7 +14,8 @@
 import * as THREE from '../../vendor/three/three.module.js';
 import { withVertexSnap } from '../walk/materials.js';
 
-const LIBRARY_URL = './assets/glb/library.glb';
+// Resolved against this module, not the page, so test/rooms.html finds it too.
+const LIBRARY_URL = new URL('../../assets/glb/library.glb', import.meta.url).href;
 const LOAD_TIMEOUT_MS = 12000;
 
 export function createLibrary({ url = LIBRARY_URL } = {}) {
@@ -41,11 +42,22 @@ export function createLibrary({ url = LIBRARY_URL } = {}) {
     }
   })();
 
-  function lowPoly(src) {
-    if (converted.has(src.uuid)) return converted.get(src.uuid);
+  // `tint` is the room's palette colour for the prop (its `mat` slot): a
+  // catalog model that shipped with a photo texture comes through white once
+  // the texture is dropped, so its light surfaces take the palette colour
+  // (the garage's rusted cars, the street's taxi); dark parts (tyres, trim)
+  // keep their own colour.
+  function lowPoly(src, tint) {
+    const key = src.uuid + (tint ? '#' + tint.getHexString() : '');
+    if (converted.has(key)) return converted.get(key);
     const map = src.map && src.map.image && src.map.image.width <= 256 ? src.map : null; // palette textures only
+    const color = src.color ? src.color.clone() : new THREE.Color('#8a8a86');
+    if (tint && !map) {
+      const lum = 0.2126 * color.r + 0.7152 * color.g + 0.0722 * color.b;
+      if (lum > 0.45) color.lerp(tint, 0.8);
+    }
     const mat = new THREE.MeshLambertMaterial({
-      color: src.color ? src.color.clone() : new THREE.Color('#8a8a86'),
+      color,
       map,
       flatShading: true,
       emissive: src.emissive ? src.emissive.clone() : new THREE.Color(0),
@@ -56,7 +68,7 @@ export function createLibrary({ url = LIBRARY_URL } = {}) {
     });
     if (map) { map.magFilter = THREE.NearestFilter; map.minFilter = THREE.NearestFilter; }
     withVertexSnap(mat);
-    converted.set(src.uuid, mat);
+    converted.set(key, mat);
     return mat;
   }
 
@@ -66,8 +78,9 @@ export function createLibrary({ url = LIBRARY_URL } = {}) {
     failed: () => failed,
     has(node) { return !!(scene && scene.getObjectByName(node)); },
     // A fresh clone of a named model, origin-centred on the floor, sharing
-    // geometry with every other clone. null when unavailable.
-    instance(node) {
+    // geometry with every other clone; `tint` is a THREE.Color for its light
+    // surfaces (see lowPoly). null when unavailable.
+    instance(node, tint = null) {
       if (!scene) return null;
       const src = scene.getObjectByName(node);
       if (!src) return null;
@@ -77,7 +90,7 @@ export function createLibrary({ url = LIBRARY_URL } = {}) {
       clone.scale.set(1, 1, 1);
       clone.traverse((o) => {
         if (!o.isMesh) return;
-        o.material = Array.isArray(o.material) ? o.material.map(lowPoly) : lowPoly(o.material);
+        o.material = Array.isArray(o.material) ? o.material.map((m) => lowPoly(m, tint)) : lowPoly(o.material, tint);
         o.castShadow = true;
         o.receiveShadow = true;
       });

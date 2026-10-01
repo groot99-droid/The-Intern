@@ -482,7 +482,9 @@ const BUILDERS = {
   // in, so a room never waits on the download to exist.
   glb(mats, o, ctx) {
     const lib = ctx && ctx.library;
-    const node = lib ? lib.instance(o.node, mats) : null;
+    // the prop's palette slot (a low-poly colour) tints the model's light surfaces
+    const tint = o.mat && mats.isLowPoly(o.mat) ? mats.get(o.mat).color : null;
+    const node = lib ? lib.instance(o.node, tint) : null;
     if (node) {
       node.userData.catalog = o.node;
       if (o.collide) {

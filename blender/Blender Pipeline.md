@@ -25,6 +25,9 @@ The `.blend` carries 3 Python Text datablocks that the pilot scenes were built w
 - **[[blender/prop_builders.py|prop_builders.py]]** — bmesh geometry helpers: primitives (`bm_add_box`/`bm_add_pyramid`/`bm_add_ngon_prism`/`bm_add_ring_band`) and archetype builders (`build_hand`, `build_chair`, `build_shelving_bay`, `build_door`, `add_desk_drawer`, `add_monitor_stand`, `add_car_details`).
 - **[[blender/helpers.py|helpers.py]]** — `check_camera_clearance()` (the bounding-box clearance check called for in PLAN_remaining_scenes.md's "process changes" section) and `point_obj_at()`.
 
+## The scene-builder copies (Higgsfield)
+Every set in `ninety-nine/data/rooms.json` is also a Blender 5.2 scene in the Higgsfield 3D scene builder, built from the same data by [[ninety-nine/tools/higgsfield_scene.py|ninety-nine/tools/higgsfield_scene.py]]: architecture, box props, the catalog props, lights and the ShotCam keyed with every camera move. [[blender/higgsfield/README|blender/higgsfield/README.md]] lists the 18 projects, their revisions and the proof renders (`in`/`out` stills, `leave`/`arrive` move proofs) that live beside it; `projects.json` there is the id table. The game plays the same moves live, so those proofs are the shoot's record, not assets the game loads.
+
 ## The render bridge (Track B1/B3)
 [[blender/export_game_assets.py|export_game_assets.py]] maps each Blender scene+frame to a game asset slot in the Doc 2 §1 naming grammar and renders into a **staging** root, `renders/_game/{img,vid}/`. Nothing here writes into the game's `assets/` tree directly — [[ninety-nine/tools/stage_assets.py|ninety-nine/tools/stage_assets.py]] copies staged files in, verifies the byte size, rewrites the `MANIFEST.csv` row from the new file, and moves whatever it replaced into `assets/_retired_ai/` (the AI stills have no seeds and can't be regenerated). `--restore` puts them back.
 

@@ -358,22 +358,22 @@ def build_room(rec):
     sun = rec.get("sun", {"intensity": 0.9, "color": "#ffffff"})
     if sun.get("intensity", 0) > 0:
         core = rec.get("core", [0, 0, -D/2]); frm = sun.get("from", [W * 0.15, H * 1.6, D * 0.6])
-        L = bpy.data.lights.new("Sun_C2", 'SUN'); L.energy = sun.get("intensity", 0.9) * 2.5; L.color = srgb_to_linear(hexrgb(sun.get("color", "#ffffff"))); L.angle = math.radians(4)
+        L = bpy.data.lights.new("Sun_C2", 'SUN'); L.energy = sun.get("intensity", 0.9) * 4.0; L.color = srgb_to_linear(hexrgb(sun.get("color", "#ffffff"))); L.angle = math.radians(4)
         ob = bpy.data.objects.new("Sun_C2", L); ob.location = to_bl(*frm); sc.collection.objects.link(ob)
         d = Vector(to_bl(*core)) - Vector(to_bl(*frm)); ob.rotation_euler = d.to_track_quat('-Z', 'Y').to_euler()
     for i, l in enumerate(rec.get("lights", [])):
         col = srgb_to_linear(hexrgb(l.get("color", "#ffffff")))
         if l.get("type") == "spot":
-            L = bpy.data.lights.new("Spot_%d" % i, 'SPOT'); L.energy = l.get("intensity", 20) * 14; L.spot_size = math.radians(l.get("angle", 40) * 2); L.spot_blend = l.get("penumbra", 0.5)
+            L = bpy.data.lights.new("Spot_%d" % i, 'SPOT'); L.energy = l.get("intensity", 20) * 30; L.spot_size = math.radians(l.get("angle", 40) * 2); L.spot_blend = l.get("penumbra", 0.5)
             ob = bpy.data.objects.new("Spot_%d" % i, L); ob.location = to_bl(*l["pos"]); sc.collection.objects.link(ob)
             t = l.get("target", [l["pos"][0], 0, l["pos"][2]]); d = Vector(to_bl(*t)) - Vector(to_bl(*l["pos"])); ob.rotation_euler = d.to_track_quat('-Z', 'Y').to_euler()
         else:
-            L = bpy.data.lights.new("Point_%d" % i, 'POINT'); L.energy = l.get("intensity", 10) * 12; L.shadow_soft_size = 0.35
+            L = bpy.data.lights.new("Point_%d" % i, 'POINT'); L.energy = l.get("intensity", 10) * 30; L.shadow_soft_size = 0.35
             ob = bpy.data.objects.new("Point_%d" % i, L); ob.location = to_bl(*l["pos"]); sc.collection.objects.link(ob)
         L.color = col
         if l.get("flicker"): ob["flicker"] = l["flicker"]
     # camera + shots
-    cam_data = bpy.data.cameras.new("ShotCam"); cam_data.lens_unit = 'FOV'
+    cam_data = bpy.data.cameras.new("ShotCam"); cam_data.sensor_fit = 'HORIZONTAL'
     cam = bpy.data.objects.new("ShotCam", cam_data); sc.collection.objects.link(cam); sc.camera = cam
     cam.rotation_mode = 'QUATERNION'
     shots = rec.get("shots", {})
@@ -381,8 +381,10 @@ def build_room(rec):
     def key(frame, pose):
         pos = Vector(to_bl(*pose["pos"])); look = Vector(to_bl(*pose["look"]))
         cam.location = pos; cam.rotation_quaternion = (look - pos).to_track_quat('-Z', 'Y')
-        cam_data.angle = math.radians(pose.get("fov", 62) * 1.0)
-        cam.keyframe_insert("location", frame=frame); cam.keyframe_insert("rotation_quaternion", frame=frame); cam_data.keyframe_insert("angle", frame=frame)
+        # fov is the game's VERTICAL fov at 16:9; the lens is keyed (angle is not animatable)
+        hfov = 2 * math.atan(math.tan(math.radians(pose.get("fov", 62)) / 2) * 16 / 9)
+        cam_data.lens = cam_data.sensor_width / (2 * math.tan(hfov / 2))
+        cam.keyframe_insert("location", frame=frame); cam.keyframe_insert("rotation_quaternion", frame=frame); cam_data.keyframe_insert("lens", frame=frame)
     frame = 1; markers = {}
     for name, s in shots.items():
         if "pos" in s:
@@ -392,9 +394,17 @@ def build_room(rec):
             key(frame, pose_of(s["from"])); key(frame + n - 1, pose_of(s["to"]))
             sc.timeline_markers.new(name, frame=frame); markers[name] = (frame, frame + n - 1); frame += n + 1
     sc.frame_start = 1; sc.frame_end = max(2, frame - 1); sc.render.fps = FPS
-    if cam.animation_data and cam.animation_data.action:
-        for fc in cam.animation_data.action.fcurves:
+    # Blender 5 layered actions: the f-curves live in a channelbag per slot.
+    try:
+        act = cam.animation_data.action
+        curves = []
+        for layer in act.layers:
+            for strip in layer.strips:
+                for cb in strip.channelbags: curves.extend(cb.fcurves)
+        for fc in curves:
             for kp in fc.keyframe_points: kp.interpolation = 'BEZIER'; kp.easing = 'EASE_IN_OUT'
+    except Exception as e:
+        print("easing skipped:", e)
     cam["shots"] = json.dumps(markers)
     sc["room"] = rec.get("id", ""); sc["shots"] = json.dumps(markers)
     sc.render.engine = 'BLENDER_EEVEE'
@@ -417,14 +427,18 @@ for node, places in PLACEMENTS.items():
         made[node] = "missing"; continue
     # the imported entity is a parent (Empty) with mesh children; mirror that
     first = places[0]
-    src.location = to_bl(first[0], first[1], first[2]); src.rotation_mode = 'XYZ'; src.rotation_euler = (0, 0, math.radians(first[3])); src.scale = (first[4],) * 3
+    src.rotation_mode = 'XYZ'; src.location = to_bl(first[0], first[1], first[2]); src.rotation_euler = (0, 0, math.radians(first[3])); src.scale = (first[4],) * 3
     children = [c for c in bpy.data.objects if c.parent == src]
     n = 0
     for x, y, z, rot, scale in places[1:]:
         dup = src.copy(); dup.name = "%s.%03d" % (node, n); sc.collection.objects.link(dup)
+        for k in ("hf_id", "hf_asset"):   # a copy must not repeat the import's entity id in the scene manifest
+            if k in dup: del dup[k]
         dup.location = to_bl(x, y, z); dup.rotation_euler = (0, 0, math.radians(rot)); dup.scale = (scale,) * 3
         for c in children:
             cc = c.copy(); cc.parent = dup; cc.matrix_parent_inverse = c.matrix_parent_inverse.copy(); sc.collection.objects.link(cc)
+            for k in ("hf_id", "hf_asset", "hf_asset_child"):
+                if k in cc: del cc[k]
         n += 1
     made[node] = n + 1
 result = {"placed": made, "objects": len(bpy.data.objects)}
@@ -465,6 +479,18 @@ result = {"room": ROOM_KEY, "rendered": out, "seconds": round(time.time() - t0, 
 '''
 
 
+def prune(template, rec):
+    """The template minus the prop builders this room never uses (and minus
+    comments): the scene builder caps code at 256 KiB and every byte is
+    pasted through a tool call."""
+    import ast
+    used = {p["type"] for p in rec.get("props", [])} | {p.get("fallback") for p in rec.get("props", []) if p.get("fallback")}
+    tree = ast.parse(template)
+    body = [n for n in tree.body if not (isinstance(n, ast.FunctionDef) and n.name.startswith("p_") and n.name[2:] not in used)]
+    tree.body = body
+    return ast.unparse(tree)
+
+
 def load_room(key):
     doc = json.load(open(ROOMS, encoding="utf-8"))
     rec = doc["rooms"][key]
@@ -495,7 +521,7 @@ def main():
     doc, rec = load_room(key)
     if cmd == "build":
         slim = {k: v for k, v in rec.items() if k not in ("_note",)}
-        print("ROOM_JSON = %s\n%s" % (json.dumps(json.dumps(slim)), TEMPLATE))
+        print("ROOM_JSON = %s\n%s" % (json.dumps(json.dumps(slim)), prune(TEMPLATE, rec)))
     elif cmd == "imports":
         cat = doc["catalog"]
         items = []
