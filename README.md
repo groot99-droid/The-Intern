@@ -8,9 +8,9 @@ Project home for **ninety-nine**, a browser game, plus the pipeline and design m
 
 ## Layout
 
-- **`ninety-nine/`** — the game itself: a static web app (`index.html`, `style.css`, `src/`, `data/`, `text/`, `vendor/` for three.js) with its generated media in `ninety-nine/assets/` (img/aud/vid, tracked in `ninety-nine/assets/MANIFEST.csv`). See [`ninety-nine/assets/README.md`](ninety-nine/assets/README.md) for the asset-generation pipeline and naming scheme. Run it locally via the `ninety-nine` config in `.claude/launch.json` (`python ninety-nine/tools/dev_server.py 8000`). Tests live in `ninety-nine/test/`.
+- **`ninety-nine/`** — the game itself: a static web app (`index.html`, `style.css`, `src/`, `data/`, `text/`, `vendor/` for three.js) with its audio in `ninety-nine/assets/aud` (tracked in `ninety-nine/assets/MANIFEST.csv`) and the optional open-source prop library in `ninety-nine/assets/glb`. Every scene is a live 3D set (`data/rooms.json`, drawn by `src/stage/`); the AI-generated stills and clips are gone. See [`ninety-nine/assets/README.md`](ninety-nine/assets/README.md). Run it locally via the `ninety-nine` config in `.claude/launch.json` (`python ninety-nine/tools/dev_server.py 8000`). Tests live in `ninety-nine/test/`.
 - **`docs/`** — design/spec documents referenced throughout the pipeline as "Doc 1"–"Doc 4": game logic, the Higgsfield generation pipeline, minigame UX, and the technical build.
-- **`blender/`** — a secondary Blender-based pipeline (scene file, reference images, per-scene renders) with its own plan in `blender/PLAN_remaining_scenes.md`.
+- **`blender/`** — the hand-built Blender pipeline (scene file, reference images, per-scene renders) with its own plan in `blender/PLAN_remaining_scenes.md`. The sets the game plays are also rebuilt as Blender scenes in the Higgsfield 3D scene builder by `ninety-nine/tools/higgsfield_scene.py`; `blender/higgsfield/` lists the projects and their proof renders.
 - **`sfx-raw/`** — raw, human-named sound effect sources; 10 of the 12 are already integrated into the manifest-tracked pipeline in `ninety-nine/assets/aud` (see [[sfx-raw/Raw SFX Library]] for which two aren't yet).
 - **`.claude/`** — Claude Code harness config (dev server launch config, scheduled tasks).
 

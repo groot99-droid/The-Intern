@@ -62,7 +62,9 @@ const BUILDERS = {
   monitor(mats, o) {
     const g = new THREE.Group();
     g.add(box(mats, 'lp_beige', 0.42, 0.34, 0.36, 0, 0.1, 0));
-    g.add(box(mats, o.on ? 'lp_screen' : 'lp_screen_off', 0.32, 0.24, 0.02, 0, 0.15, 0.18));
+    const screen = box(mats, o.on ? 'lp_screen' : 'lp_screen_off', 0.32, 0.24, 0.02, 0, 0.15, 0.18);
+    screen.userData.screen = true; // stage.screenRect(): where MG-05 C's requisition sheet is projected
+    g.add(screen);
     g.add(box(mats, 'lp_beige', 0.24, 0.1, 0.24, 0, 0, 0));
     g.add(box(mats, 'lp_beige', 0.3, 0.02, 0.3, 0, -0.02, 0));
     return g;
@@ -189,7 +191,7 @@ const BUILDERS = {
       g.add(box(mats, 'lp_dark', 0.16, 0.9, 0.16, s * 0.12, 0, 0));
     }
     if (o.tie) g.add(box(mats, 'lp_red', 0.06, 0.4, 0.01, 0, 1.05, 0.125)); // four flat polygons
-    if (o.seated) { g.position.y = -0.45; }
+    if (o.seated) { for (const c of g.children) c.position.y -= 0.45; } // legs into the seat: the torso sits at chair height
     return g;
   },
   // Rusted low-poly car (add_car_details): body, hood and trunk decks,
@@ -396,21 +398,129 @@ const BUILDERS = {
     const g = new THREE.Group();
     g.add(box(mats, 'lp_beige', 0.6, 0.18, 0.02, 0, 0, 0));
     return g;
+  },
+  // ---- Added for the 3D-only build (every scene is a live set now) ----
+  // Keyboard under his hands (S0): a slab with a key field, low-poly (C6).
+  keyboard(mats) {
+    const g = new THREE.Group();
+    g.add(box(mats, 'lp_beige', 0.46, 0.025, 0.16, 0, 0, 0));
+    for (let r = 0; r < 4; r++) for (let c = 0; c < 12; c++) g.add(box(mats, 'lp_dark', 0.028, 0.012, 0.028, -0.2 + c * 0.036, 0.025, -0.055 + r * 0.036, { castShadow: false }));
+    return g;
+  },
+  // His hands: blocky, four-fingered, untextured, low-poly from the very
+  // first shot (C6). `reach` lifts them toward the camera (the dive);
+  // `slip` puts the 99 slip between the fingers (PENDING REVIEW).
+  hands(mats, o) {
+    const g = new THREE.Group();
+    for (const s of [-1, 1]) {
+      const h = new THREE.Group();
+      h.add(box(mats, 'lp_skin', 0.09, 0.035, 0.11, 0, 0, 0));
+      for (let f = 0; f < 4; f++) h.add(box(mats, 'lp_skin', 0.018, 0.022, 0.07, -0.032 + f * 0.021, 0.004, -0.08));
+      h.add(box(mats, 'lp_skin', 0.02, 0.022, 0.05, s * 0.055, 0.004, -0.01)); // thumb
+      h.add(box(mats, 'lp_suit', 0.1, 0.05, 0.1, 0, -0.008, 0.09)); // cuff
+      h.position.set(s * 0.11, 0, 0);
+      if (o.reach) { h.rotation.x = -0.9; h.position.y = 0.2 + (s > 0 ? 0.04 : 0); h.position.z = -0.1; }
+      g.add(h);
+    }
+    if (o.slip) g.add(box(mats, 'lp_paper', 0.08, 0.003, 0.05, 0.0, 0.03, -0.06));
+    return g;
+  },
+  mug(mats) {
+    const g = new THREE.Group();
+    const m = cylinder(mats, 'lp_white', 0.04, 0.09, 0, 0, 0, 8);
+    g.add(m);
+    g.add(box(mats, 'lp_white', 0.015, 0.05, 0.03, 0.05, 0.02, 0));
+    return g;
+  },
+  // Desk lamp: base, stem, shade, a lit bulb face.
+  lamp(mats) {
+    const g = new THREE.Group();
+    g.add(cylinder(mats, 'lp_dark', 0.08, 0.02, 0, 0, 0, 8));
+    g.add(box(mats, 'lp_dark', 0.02, 0.36, 0.02, 0, 0.02, 0));
+    const shade = cylinder(mats, 'lp_brass', 0.1, 0.12, 0, 0.3, 0, 8);
+    g.add(shade);
+    g.add(box(mats, 'lp_fluoro', 0.08, 0.01, 0.08, 0, 0.3, 0, { castShadow: false }));
+    return g;
+  },
+  // A facade block (the street's fallback for the catalog buildings and
+  // the tower): photoreal brick/plaster, dark window bands, no interior.
+  building(mats, o) {
+    const g = new THREE.Group();
+    const w = o.w || 10, h = o.h || 16, d = o.d || 9;
+    const m = o.mat || 'plaster_dark';
+    const body = box(mats, m, w, h, d, 0, 0, 0, { collide: true });
+    applyWorldUV(body.geometry, 3.0);
+    g.add(body);
+    for (let y = 3.0; y < h - 1.0; y += 3.4) {
+      const band = box(mats, 'glass_dark', w + 0.04, 1.3, d + 0.04, 0, y, 0, { castShadow: false });
+      g.add(band);
+    }
+    return g;
+  },
+  // Street lamp post (fallback for the catalog lamps): a pole, an arm, a lit head.
+  lamppost(mats) {
+    const g = new THREE.Group();
+    g.add(cylinder(mats, 'lp_dark', 0.08, 5.0, 0, 0, 0, 8));
+    g.add(box(mats, 'lp_dark', 0.08, 0.08, 1.2, 0, 4.9, -0.6));
+    g.add(box(mats, 'lp_fluoro', 0.3, 0.12, 0.5, 0, 4.82, -1.1, { castShadow: false }));
+    return g;
+  },
+  // The boardroom table: a long dark glass slab on two plinths.
+  table(mats, o) {
+    const g = new THREE.Group();
+    const w = o.w || 2.0, d = o.d || 10.0;
+    g.add(box(mats, 'glass_dark', w, 0.05, d, 0, 0.74, 0, { collide: true }));
+    g.add(box(mats, 'lp_dark', w - 0.6, 0.72, 0.5, 0, 0, -d / 2 + 1.2));
+    g.add(box(mats, 'lp_dark', w - 0.6, 0.72, 0.5, 0, 0, d / 2 - 1.2));
+    const body = box(mats, 'lp_dark', w, 0.74, d, 0, 0, 0, { castShadow: false });
+    body.visible = false; body.userData.collide = true; g.add(body);
+    return g;
+  },
+  // A model from assets/glb/library.glb (the open-source catalog, imported
+  // through the Higgsfield scene builder). Built by library.js when the
+  // library is loaded; until then (or without it) the box fallback stands
+  // in, so a room never waits on the download to exist.
+  glb(mats, o, ctx) {
+    const lib = ctx && ctx.library;
+    // the prop's palette slot (a low-poly colour) tints the model's light surfaces
+    const tint = o.mat && mats.isLowPoly(o.mat) ? mats.get(o.mat).color : null;
+    const node = lib ? lib.instance(o.node, tint) : null;
+    if (node) {
+      node.userData.catalog = o.node;
+      if (o.collide) {
+        // an invisible collision box from the model's own bounds
+        const bb = new THREE.Box3().setFromObject(node);
+        const size = new THREE.Vector3(); bb.getSize(size);
+        const c = new THREE.Vector3(); bb.getCenter(c);
+        const body = box(mats, 'lp_dark', Math.max(0.2, size.x), Math.max(0.2, size.y), Math.max(0.2, size.z), c.x, 0, c.z, { castShadow: false, collide: true });
+        body.visible = false;
+        node.add(body);
+      }
+      return node;
+    }
+    if (o.fallback && BUILDERS[o.fallback]) {
+      const g = BUILDERS[o.fallback](mats, { ...o, type: o.fallback }, ctx);
+      g.userData.fallbackFor = o.node;
+      return g;
+    }
+    return new THREE.Group();
   }
 };
 
-export function buildProp(mats, spec) {
+export function buildProp(mats, spec, ctx = null) {
   const builder = BUILDERS[spec.type];
   if (!builder) {
     console.warn(`props.js: unknown prop type "${spec.type}"`);
     return null;
   }
-  const g = builder(mats, spec);
+  const g = builder(mats, spec, ctx);
+  if (!g) return null;
   const [x = 0, y = 0, z = 0] = spec.pos || [];
   g.position.set(x, y, z);
   g.rotation.y = THREE.MathUtils.degToRad(spec.rot || 0);
   if (spec.scale) g.scale.setScalar(spec.scale);
   g.name = spec.name || spec.type;
+  g.userData.spec = spec;
   return g;
 }
 

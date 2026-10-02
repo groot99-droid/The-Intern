@@ -3,7 +3,7 @@
 // beyond what the harness provides, buildable in Phase 1.
 
 import { createState, commitChoice, resolveEnding, renderFor, peekRenderFor, seedRenderFromIntake, DEBUG_RESUME } from '../../src/state.js';
-import { pickTransition, planTransition, SPLIT_LEAD_S } from '../../src/router.js';
+import { planTransition, entryRoom, exitRoom } from '../../src/router.js';
 import { runCase, assertEqual, assert } from '../harness.js';
 
 function runPath(bits) {
@@ -108,14 +108,20 @@ export async function run() {
     }
   });
 
-  await runCase('Swap transitions: a C->H flip mid-spine selects the swap clip', () => {
+  await runCase('Transitions: a change of set is leave + arrive; the same set (S1 -> S2) is no transition', () => {
+    const baseOf = (k) => ({ S2_C: 'S1_C', S2_H: 'S1_H', S7_H: 'S6_H' }[k] || k);
+    assertEqual(JSON.stringify(planTransition({ fromRoom: 'S1_C', toRoom: 'S2_C', baseOf })), '[]');
+    assertEqual(JSON.stringify(planTransition({ fromRoom: 'S6_H', toRoom: 'S7_H', baseOf })), '[]');
+    assertEqual(JSON.stringify(planTransition({ fromRoom: 'S2_C', toRoom: 'S3_H', baseOf })), JSON.stringify([{ room: 'S2_C', shot: 'leave' }, { room: 'S3_H', shot: 'arrive' }]));
+    assertEqual(JSON.stringify(planTransition({ fromRoom: 'S2_C', toRoom: 'S3_C', baseOf, override: { leave: 'call', arrive: 'in' } })), JSON.stringify([{ room: 'S2_C', shot: 'call' }, { room: 'S3_C', shot: 'in' }]));
+    assertEqual(JSON.stringify(planTransition({ fromRoom: null, toRoom: 'S1_C' })), '[]');
+  });
+
+  await runCase('Transitions: a render flip lands in the destination render by construction', () => {
     // S R S R R R: conformance 1,0,1,0,-1,-2 -- C holds through S6 (the
     // tie/near-tie keeps the last render), then S6's resist drops it to -2,
-    // so S7 renders H. The S6 -> S7 edge is the flip.
-    const branchC = {
-      transitions: { S7: 'S6_C_TRN_S7.mp4' },
-      transitionsSwap: { S7: 'S6_C_TRN_S7_H.mp4' }
-    };
+    // so S7 renders H. The S6 -> S7 edge is the flip: the plan leaves S6_C
+    // and arrives in S7_H, never S7_C.
     const state = createState();
     const bits = [1, -1, 1, -1, -1, -1];
     const played = [];
@@ -126,63 +132,31 @@ export async function run() {
     }
     assertEqual(played[4].join('>'), 'C>C', 'S5 -> S6 should not flip (conformance -1, tie-hold)');
     assertEqual(played[5].join('>'), 'C>H', 'S6 -> S7 should flip');
-    assertEqual(pickTransition(branchC, played[5][0], played[5][1], 'S7'), 'S6_C_TRN_S7_H.mp4');
-    assertEqual(pickTransition(branchC, played[4][0], played[4][1], 'S7'), 'S6_C_TRN_S7.mp4');
+    const steps = planTransition({ fromRoom: `S6_${played[5][0]}`, toRoom: `S7_${played[5][1]}` });
+    assertEqual(steps[steps.length - 1].room, 'S7_H');
+    assertEqual(steps[0].room, 'S6_C');
   });
 
-  await runCase('Swap transitions: missing swap entry falls back to the plain clip', () => {
-    const branch = { transitions: { S4: 'S3_H_TRN_S4.mp4' } };
-    assertEqual(pickTransition(branch, 'H', 'C', 'S4'), 'S3_H_TRN_S4.mp4');
-    assertEqual(pickTransition({ ...branch, transitionsSwap: {} }, 'H', 'C', 'S4'), 'S3_H_TRN_S4.mp4');
-  });
-
-  await runCase('Swap transitions: S0 (X) swaps only when S1 will render H', () => {
-    const s0 = {
-      transitions: { S1: 'S0_X_TRN_S1.mp4' },
-      transitionsSwap: { S1: 'S0_X_TRN_S1_H.mp4' }
-    };
-    assertEqual(pickTransition(s0, 'X', 'C', 'S1'), 'S0_X_TRN_S1.mp4');
-    assertEqual(pickTransition(s0, 'X', 'H', 'S1'), 'S0_X_TRN_S1_H.mp4');
-  });
-
-  await runCase('Flip transitions: same render / real swap clip / S0 -> whole plain clip', () => {
-    const branch = { transitions: { S3: 'S2_C_TRN_S3.mp4' }, transitionsSplit: { S3: 3.04 } };
-    const other = { transitions: { S3: 'S2_H_TRN_S3.mp4' }, transitionsSplit: { S3: 3.04 } };
-    // No flip: the plain clip, whole, split or not.
-    assertEqual(JSON.stringify(planTransition({ branch, otherBranch: other, fromLetter: 'C', destLetter: 'C', nextSceneId: 'S3', destImgIn: 'S3_C_IMG_IN.png' })), JSON.stringify([{ file: 'S2_C_TRN_S3.mp4' }]));
-    // A real swap clip wins over any composition.
-    const swapped = { ...branch, transitionsSwap: { S3: 'S2_C_TRN_S3_H.mp4' } };
-    assertEqual(JSON.stringify(planTransition({ branch: swapped, otherBranch: other, fromLetter: 'C', destLetter: 'H', nextSceneId: 'S3', destImgIn: 'S3_H_IMG_IN.png' })), JSON.stringify([{ file: 'S2_C_TRN_S3_H.mp4' }]));
-    // S0's X clip is branchless: the H seed plays it whole (MANIFEST: the
-    // hand-off into S1_C/H_VID matches either way).
-    const s0 = { transitions: { S1: 'S0_X_TRN_S1.mp4' } };
-    assertEqual(JSON.stringify(planTransition({ branch: s0, fromLetter: 'X', destLetter: 'H', nextSceneId: 'S1', destImgIn: 'S1_H_IMG_IN.png' })), JSON.stringify([{ file: 'S0_X_TRN_S1.mp4' }]));
-  });
-
-  await runCase('Flip transitions: black-join halves compose so the wrong room is never shown', () => {
-    const split = { transitions: { S3: 'S2_C_TRN_S3.mp4' }, transitionsSplit: { S3: 3.04 } };
-    const otherSplit = { transitions: { S3: 'S2_H_TRN_S3.mp4' }, transitionsSplit: { S3: 3.04 } };
-    const plain = { transitions: { S5: 'S4_C_TRN_S5.mp4' } };
-    const otherPlain = { transitions: { S5: 'S4_H_TRN_S5.mp4' }, transitionsSplit: { S5: 3.04 } };
-    const stopAt = 3.04 - SPLIT_LEAD_S;
-    // Both sides split (S2 -> S3, C -> H): leave C, arrive H, all real footage.
-    assertEqual(JSON.stringify(planTransition({ branch: split, otherBranch: otherSplit, fromLetter: 'C', destLetter: 'H', nextSceneId: 'S3', destImgIn: 'S3_H_IMG_IN.png' })),
-      JSON.stringify([{ file: 'S2_C_TRN_S3.mp4', stopAt }, { file: 'S2_H_TRN_S3.mp4', startAt: 3.04 }]));
-    // Only this side split (S4 -> S5, H -> C: the C clip is a continuous walk): leave H, then the C still.
-    assertEqual(JSON.stringify(planTransition({ branch: otherPlain, otherBranch: plain, fromLetter: 'H', destLetter: 'C', nextSceneId: 'S5', destImgIn: 'S5_C_IMG_IN.png' })),
-      JSON.stringify([{ file: 'S4_H_TRN_S5.mp4', stopAt }, { still: 'S5_C_IMG_IN.png' }]));
-    // Only the other side split (S4 -> S5, C -> H): skip the C walk into the wrong room, arrive via the H clip's second half.
-    assertEqual(JSON.stringify(planTransition({ branch: plain, otherBranch: otherPlain, fromLetter: 'C', destLetter: 'H', nextSceneId: 'S5', destImgIn: 'S5_H_IMG_IN.png' })),
-      JSON.stringify([{ file: 'S4_H_TRN_S5.mp4', startAt: 3.04 }]));
-    // Neither split: a still-cut to the destination room.
-    assertEqual(JSON.stringify(planTransition({ branch: plain, otherBranch: { transitions: { S5: 'X.mp4' } }, fromLetter: 'C', destLetter: 'H', nextSceneId: 'S5', destImgIn: 'S5_H_IMG_IN.png' })),
-      JSON.stringify([{ still: 'S5_H_IMG_IN.png' }]));
-  });
-
-  await runCase('Flip transitions: every edge that can flip is covered by real data/scenes.json entries', async () => {
+  await runCase('Transitions: every room a sequence entry names has leave/arrive shots and every edge resolves', async () => {
+    const [manifest, rooms] = await Promise.all([
+      fetch('../../data/scenes.json').then((r) => r.json()),
+      fetch('../../data/rooms.json').then((r) => r.json())
+    ]);
+    const resolve = (k) => { const r = rooms.rooms[k]; return r && r.alias ? { ...rooms.rooms[r.alias], ...r } : r; };
+    const baseOf = (k) => { const r = rooms.rooms[k]; return r && r.alias ? r.alias : k; };
+    for (const [sceneId, scene] of Object.entries(manifest.scenes)) {
+      for (const [letter, branch] of Object.entries(scene.branches)) {
+        for (const entry of branch.sequence) {
+          const key = entry.room || branch.room;
+          const rec = resolve(key);
+          assert(rec, `${sceneId}.${letter}: no room ${key}`);
+          assert(rec.shots && rec.shots[entry.shot || 'loop'], `${sceneId}.${letter}: ${key} has no shot ${entry.shot || 'loop'}`);
+          for (const name of ['leave', 'arrive', 'in', 'out']) assert(rec.shots[name], `${key}: no ${name} shot`);
+        }
+      }
+    }
     // Which spine edges can flip at all, per renderFor()'s +/-2 threshold and
     // the S0 seed: S0->S1 (H seed), S2->S3, S4->S5, S6->S7. Nothing else.
-    const manifest = await (await fetch('../../data/scenes.json')).json();
     const edges = new Set();
     for (const seed of ['C', 'H']) {
       for (let mask = 0; mask < 256; mask++) {
@@ -199,19 +173,14 @@ export async function run() {
       }
     }
     assertEqual([...edges].sort().join(','), 'S0->S1,S2->S3,S4->S5,S6->S7');
-    // On each flippable edge past S0, the plan must never end with the plain
-    // clip of the departing branch playing to its end (that is the wrong room).
-    for (const edge of ['S2->S3', 'S4->S5', 'S6->S7']) {
+    for (const edge of edges) {
       const [from, to] = edge.split('->');
-      const scene = manifest.scenes[from];
-      for (const [letter, dest] of [['C', 'H'], ['H', 'C']]) {
-        const steps = planTransition({ branch: scene.branches[letter], otherBranch: scene.branches[dest], fromLetter: letter, destLetter: dest, nextSceneId: to, destImgIn: manifest.scenes[to].branches[dest].imgIn });
-        assert(steps.length > 0, `${edge} ${letter}->${dest}: empty plan`);
-        for (const step of steps) {
-          if (step.file === scene.branches[letter].transitions[to]) assert(step.stopAt !== undefined, `${edge} ${letter}->${dest}: departing clip would play into the wrong room`);
-        }
-        const last = steps[steps.length - 1];
-        assert(last.still === manifest.scenes[to].branches[dest].imgIn || last.file === scene.branches[dest].transitions[to], `${edge} ${letter}->${dest}: must end in the destination render`);
+      for (const [letter, dest] of from === 'S0' ? [['X', 'C'], ['X', 'H']] : [['C', 'H'], ['H', 'C']]) {
+        const a = manifest.scenes[from].branches[letter], b = manifest.scenes[to].branches[dest];
+        const fromRoom = exitRoom(a), toRoom = entryRoom(b);
+        const steps = planTransition({ fromRoom, toRoom, baseOf });
+        assert(steps.length === 2, `${edge} ${letter}->${dest}: expected leave + arrive, got ${steps.length}`);
+        assertEqual(steps[1].room, toRoom, `${edge} ${letter}->${dest}: must end in the destination render`);
       }
     }
   });

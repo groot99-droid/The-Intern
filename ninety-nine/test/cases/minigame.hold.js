@@ -30,7 +30,7 @@ function stubServices() {
         pause() { calls.push(['pause']); },
         resume() { calls.push(['resume']); },
         setRate(r) { calls.push(['rate', r]); },
-        showStill(f) { calls.push(['still', f]); },
+        hold(pose) { calls.push(['hold', pose]); },
         setEffect(n, on) { calls.push(['fx', n, on]); }
       }
     }
@@ -42,7 +42,7 @@ async function mountH(modName, services, container) {
   const instance = factory('H');
   let payload = null;
   const snapshot = Object.freeze({ conformance: 0, dissonance: 0, friction: 0, flags: new Set(), formAnswers: {} });
-  instance.mount(container, snapshot, (p) => { payload = p; }, { imgOut: 'S6_H_IMG_OUT.png' }, services);
+  instance.mount(container, snapshot, (p) => { payload = p; }, {}, services);
   return { instance, done: () => payload };
 }
 
@@ -102,7 +102,7 @@ export async function run() {
     container.remove();
   });
 
-  await runCase('MG-05 H: held to depletion (40x clock) -> IMG_OUT still, then completes with friction 0.3', async () => {
+  await runCase('MG-05 H: held to depletion (40x clock) -> parks on the dead-flat out pose, then completes with friction 0.3', async () => {
     const restore = accelerate(40);
     const container = document.createElement('div');
     document.body.appendChild(container);
@@ -111,13 +111,13 @@ export async function run() {
     try {
       const factory = (await import('../../src/minigames/mg05-requisition.js')).default;
       const instance = factory('H');
-      instance.mount(container, Object.freeze({ conformance: 0, dissonance: 0, friction: 0, flags: new Set(), formAnswers: {} }), (p) => { payload = p; }, { imgOut: 'S6_H_IMG_OUT.png' }, services);
+      instance.mount(container, Object.freeze({ conformance: 0, dissonance: 0, friction: 0, flags: new Set(), formAnswers: {} }), (p) => { payload = p; }, {}, services);
       press(container.querySelector('.mg05-run-zone'));
       const t0 = performance.now();
       while (payload === null && performance.now() - t0 < 6000) await sleep(50);
       assert(payload !== null, 'never completed after a continuous hold');
       assert(Math.abs(payload.friction - 0.3) < 1e-9, `friction ${payload.friction}, expected 0.3 for an unbroken run`);
-      assert(calls.some((c) => c[0] === 'still' && c[1] === 'S6_H_IMG_OUT.png'), 'the dead-flat IMG_OUT was never shown for the silence');
+      assert(calls.some((c) => c[0] === 'hold' && c[1] === 'out'), 'the dead-flat out pose was never held for the silence');
       assert(container.querySelector('.mg05-run-zone').classList.contains('mg05-spent'), 'zone not flagged spent');
       instance.unmount();
       releaseAll();

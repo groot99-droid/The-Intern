@@ -1,0 +1,125 @@
+{
+ "_comment": "Higgsfield 3D scene-builder (3D Jutsu, Blender 5.2) projects holding each set of ninety-nine/data/rooms.json, built by ninety-nine/tools/higgsfield_scene.py (build, imports, place, proof). `revision` is the committed revision that holds the finished set; `proof` is the query operation whose renders sit in <ROOM>/ next to this file. The library project holds every catalog model assets/glb/library.glb was exported from. Aliases are rooms data/rooms.json shares between keys.",
+ "library": {
+  "id": "e149e26c-e289-405d-8543-e07e66c51de4",
+  "url": "https://higgsfield.ai/3d-jutsu/e149e26c-e289-405d-8543-e07e66c51de4",
+  "revision": 36
+ },
+ "rooms": {
+  "S1_C": {
+   "id": "420cccb7-93f4-46ff-851c-fddf04ce175c",
+   "url": "https://higgsfield.ai/3d-jutsu/420cccb7-93f4-46ff-851c-fddf04ce175c",
+   "revision": 4,
+   "proof": "s1c-proof-1"
+  },
+  "S1_H": {
+   "id": "89f35d94-ef22-4b47-9e85-05fbc9073d47",
+   "url": "https://higgsfield.ai/3d-jutsu/89f35d94-ef22-4b47-9e85-05fbc9073d47",
+   "revision": 3,
+   "proof": "s1h-proof-1"
+  },
+  "S0_X": {
+   "id": "e1596f1d-4fb2-4050-bf4d-1b84febbec0a",
+   "url": "https://higgsfield.ai/3d-jutsu/e1596f1d-4fb2-4050-bf4d-1b84febbec0a",
+   "revision": 5,
+   "proof": "s0x-proof-1"
+  },
+  "SET_STREET": {
+   "id": "84f6ad98-8443-47d4-ba83-26e1af7d3feb",
+   "url": "https://higgsfield.ai/3d-jutsu/84f6ad98-8443-47d4-ba83-26e1af7d3feb",
+   "revision": 13,
+   "proof": "street-proof-1"
+  },
+  "S3_C": {
+   "id": "834ee294-a113-499f-a0b3-6ee1e345fb47",
+   "url": "https://higgsfield.ai/3d-jutsu/834ee294-a113-499f-a0b3-6ee1e345fb47",
+   "revision": 3,
+   "proof": "s3c-proof-1"
+  },
+  "S3_H": {
+   "id": "015a264e-ce7b-4c9b-b5aa-7f5b2636d7ca",
+   "url": "https://higgsfield.ai/3d-jutsu/015a264e-ce7b-4c9b-b5aa-7f5b2636d7ca",
+   "revision": 4,
+   "proof": "s3h-proof-1"
+  },
+  "S4_C": {
+   "id": "881a3fab-3dcb-4b80-97fd-a9b598cb725d",
+   "url": "https://higgsfield.ai/3d-jutsu/881a3fab-3dcb-4b80-97fd-a9b598cb725d",
+   "revision": 5,
+   "proof": "s4c-proof-1"
+  },
+  "S4_H": {
+   "id": "e1be9215-f504-42b5-bb5e-1a10ea1d1c1f",
+   "url": "https://higgsfield.ai/3d-jutsu/e1be9215-f504-42b5-bb5e-1a10ea1d1c1f",
+   "revision": 4,
+   "proof": "s4h-proof-1"
+  },
+  "S5_C": {
+   "id": "e8683c77-ac6b-42b6-acb1-fed3a00c56ec",
+   "url": "https://higgsfield.ai/3d-jutsu/e8683c77-ac6b-42b6-acb1-fed3a00c56ec",
+   "revision": 2,
+   "proof": "s5c-proof-1"
+  },
+  "S5_H": {
+   "id": "e45bb032-4d45-4abd-8fc4-8e5da304d36a",
+   "url": "https://higgsfield.ai/3d-jutsu/e45bb032-4d45-4abd-8fc4-8e5da304d36a",
+   "revision": 8,
+   "proof": "s5h-proof-1"
+  },
+  "S6_C": {
+   "id": "de700913-8e54-4758-b541-07092fd4704d",
+   "url": "https://higgsfield.ai/3d-jutsu/de700913-8e54-4758-b541-07092fd4704d",
+   "revision": 2,
+   "proof": "s6c-proof-1"
+  },
+  "S6_H": {
+   "id": "653141d7-38a1-46a2-a64b-0155e673a239",
+   "url": "https://higgsfield.ai/3d-jutsu/653141d7-38a1-46a2-a64b-0155e673a239",
+   "revision": 5,
+   "proof": "s6h-proof-1"
+  },
+  "S7_C": {
+   "id": "c1819aa5-198f-4a5a-8d46-f936006a7692",
+   "url": "https://higgsfield.ai/3d-jutsu/c1819aa5-198f-4a5a-8d46-f936006a7692",
+   "revision": 2,
+   "proof": "s7c-proof-1"
+  },
+  "S8_C": {
+   "id": "6dd9c907-3a6e-41c9-8169-ec445ca32d50",
+   "url": "https://higgsfield.ai/3d-jutsu/6dd9c907-3a6e-41c9-8169-ec445ca32d50",
+   "revision": 5,
+   "proof": "s8c-proof-1"
+  },
+  "SET_DIVE": {
+   "id": "7b20e56e-11d4-476c-84cc-6d23ada57a40",
+   "url": "https://higgsfield.ai/3d-jutsu/7b20e56e-11d4-476c-84cc-6d23ada57a40",
+   "revision": 2,
+   "proof": "dive-proof-2"
+  },
+  "S8_H": {
+   "id": "a8498aec-8992-4cac-8ff4-5dbe0db75499",
+   "url": "https://higgsfield.ai/3d-jutsu/a8498aec-8992-4cac-8ff4-5dbe0db75499",
+   "revision": 3,
+   "proof": "s8h-proof-1"
+  },
+  "SE_ASSIM": {
+   "id": "cf477fef-4eae-433e-8080-002d6db53a87",
+   "url": "https://higgsfield.ai/3d-jutsu/cf477fef-4eae-433e-8080-002d6db53a87",
+   "revision": 3,
+   "proof": "assim-proof-1"
+  },
+  "SE_PEND": {
+   "id": "4c607f4d-5871-4b89-9d62-9c94ba2aad27",
+   "url": "https://higgsfield.ai/3d-jutsu/4c607f4d-5871-4b89-9d62-9c94ba2aad27",
+   "revision": 3,
+   "proof": "pend-proof-1"
+  }
+ },
+ "aliases": {
+  "S2_C": "S1_C",
+  "S2_H": "S1_H",
+  "S7_H": "S6_H",
+  "SE_RETAINED": "SE_ASSIM",
+  "SE_EXPUL": "S8_H"
+ }
+}

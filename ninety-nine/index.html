@@ -8,11 +8,9 @@
 </head>
 <body>
   <div id="stage">
-    <div id="scene-layer">
-      <video id="video-a" class="scene-video" muted playsinline></video>
-      <video id="video-b" class="scene-video" muted playsinline></video>
-      <img id="still-img" class="scene-still" hidden alt="" />
-    </div>
+    <!-- The stage (src/stage/stage.js) draws every scene live into this layer: no video, no stills. -->
+    <div id="scene-layer"></div>
+    <!-- WALK THE ROOM's HUD; the room itself is the stage underneath. -->
     <div id="walk-layer" hidden></div>
     <div id="minigame-layer"></div>
     <div id="choice-layer"></div>

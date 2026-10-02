@@ -55,10 +55,9 @@ html, body {
 .render-neutral { background: #1a1a1a; }
 .render-transition { background: #000; color: #666; }
 
-/* Phase 3: real renderer. Two pooled <video> elements + one <img> for
-   stills (S6-C's green-screen plate), crossfaded via opacity (Doc 4 §5.1
-   -- 400ms crossfade, never a cut). Created once in index.html, never at
-   runtime (Mobile Safari restriction). */
+/* The stage (src/stage/stage.js): one WebGL canvas, every scene drawn
+   live. The old two-<video> crossfade pool and the loading stills are
+   gone; the black-joins between rooms are the stage's own fade. */
 #scene-layer {
   position: relative;
   width: 100%;
@@ -67,17 +66,14 @@ html, body {
   overflow: hidden;
   --chroma-drift: 0deg;
 }
-.scene-video, .scene-still {
+#scene-layer .stage-canvas {
   position: absolute;
   inset: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  opacity: 0;
-  transition: opacity 400ms linear;
+  width: 100% !important;
+  height: 100% !important;
+  display: block;
   filter: hue-rotate(var(--chroma-drift));
 }
-.scene-video.visible, .scene-still.visible { opacity: 1; }
 
 /* Phase 6: fracture overlay (Doc 4 §5.2). Capped smoothness, never a glitch. */
 .fracture-bleed {
@@ -644,22 +640,19 @@ html, body {
 .choice-btn-walk { border-style: dashed; opacity: 0.8; }
 .choice-btn-walk:hover { opacity: 1; }
 
-/* 3D walk layer. The canvas renders at a third of the viewport (PS1 fill
-   rate) and is scaled up with nearest-neighbour sampling; the video layer
-   underneath is paused while this is up. */
+/* WALK THE ROOM's HUD layer. Transparent: the room is the stage's own
+   canvas underneath, which takes the pointer (pointer-lock / drag-look)
+   through this layer except where the HUD's own controls sit. */
 #walk-layer {
   position: absolute;
   inset: 0;
   z-index: 5;
-  background: #000;
+  background: transparent;
   overflow: hidden;
   touch-action: none;
+  pointer-events: none;
 }
-#walk-layer canvas {
-  width: 100% !important;
-  height: 100% !important;
-  display: block;
-}
+#walk-layer > * { pointer-events: auto; }
 .walk-hud {
   position: absolute;
   left: 0; right: 0; bottom: 0;

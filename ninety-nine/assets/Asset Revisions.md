@@ -4,6 +4,8 @@ tags: [generated-asset]
 
 # Asset Revisions
 
+> **Superseded.** Every still and clip this note tracks was removed when the game became 3D-only (the sets in `data/rooms.json` replace them); the note stays as the history of what was delivered and re-cut.
+
 ← [[ninety-nine/assets/Generated Assets|Generated Assets]]
 
 What changed in this pass, and what still needs regenerating. Regeneration means new Higgsfield/Kling renders (Doc 2) or new Blender renders ([[blender/Blender Pipeline|blender/]]) -- neither can run in the game repo, so the second list is a brief, not a diff.

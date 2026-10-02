@@ -53,14 +53,27 @@ function mountModeC(container, state, onComplete, sceneAssets, tracked, services
   dwell.start();
   let orderedRowCount = 0; // Doc 3: chime "detunes downward by 3 cents per row"
 
-  const rect = sceneAssets && sceneAssets.screenRect ? sceneAssets.screenRect : { x: 0.37, y: 0.25, w: 0.28, h: 0.36 };
-
+  // The sheet is projected onto the terminal's screen in the 3D set:
+  // sceneAssets.screenRect is a function (stage.screenRect) returning
+  // viewport fractions for the monitor's glass, re-read every tick since
+  // the room's idle camera drifts. A plain rect (tests) is used as-is.
+  const FALLBACK_RECT = { x: 0.37, y: 0.25, w: 0.28, h: 0.36 };
+  const readRect = () => {
+    const r = sceneAssets && sceneAssets.screenRect;
+    const v = typeof r === 'function' ? r() : r;
+    return v && v.w > 0.02 && v.h > 0.02 ? v : FALLBACK_RECT;
+  };
   const panel = el('div', 'mg05-terminal');
-  panel.style.left = `${rect.x * 100}%`;
-  panel.style.top = `${rect.y * 100}%`;
-  panel.style.width = `${rect.w * 100}%`;
-  panel.style.height = `${rect.h * 100}%`;
+  function placePanel() {
+    const rect = readRect();
+    panel.style.left = `${rect.x * 100}%`;
+    panel.style.top = `${rect.y * 100}%`;
+    panel.style.width = `${rect.w * 100}%`;
+    panel.style.height = `${rect.h * 100}%`;
+  }
+  placePanel();
   container.appendChild(panel);
+  tracked.setInterval(placePanel, 120);
 
   const list = el('div', 'mg05-list');
   panel.appendChild(list);
@@ -297,7 +310,7 @@ function mountModeH(container, state, onComplete, sceneAssets, tracked, services
     // silence") and the choice arrives only after the hold.
     tracked.setTimeout(() => {
       if (resolved) return;
-      if (scene && sceneAssets && sceneAssets.imgOut) scene.showStill(sceneAssets.imgOut);
+      if (scene && scene.hold) scene.hold('out'); // the dead-flat edge, no motion, for the silence
     }, SPENT_CUT_MS);
     tracked.setTimeout(finish, SPENT_HOLD_MS);
   }

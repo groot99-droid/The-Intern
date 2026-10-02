@@ -346,7 +346,7 @@ const SNAP = { value: 160.0 };
 const ANISO = { value: 1 };
 export function setSnapResolution(px) { SNAP.value = px; }
 export function setAnisotropy(n) { ANISO.value = Math.max(1, n | 0); }
-function withVertexSnap(material) {
+export function withVertexSnap(material) {
   material.onBeforeCompile = (shader) => {
     shader.uniforms.uSnap = SNAP;
     shader.vertexShader = shader.vertexShader
