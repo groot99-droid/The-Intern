@@ -1,45 +1,38 @@
-// The stage: every scene of the game is a live three.js set with a scripted
-// camera. This replaces the video pool (two <video> elements crossfading
-// Kling clips) and the stills that stood in while they loaded: nothing
-// here is a file but the open-source prop library (library.js); the
-// building is drawn by materials.js, the company's things by props.js,
-// and what used to be a clip is a SHOT -- a camera move between two poses
-// defined in data/rooms.json (tools/build_rooms.py's shots_for()).
+// The stage: the renderer, the composite pass and the frame loop that draw
+// the continuous building (src/world/world.js) through the candidate's
+// eyes (src/world/player.js). The game is played on foot, in first person,
+// from the apartment to the ending card, with no cuts; the camera is taken
+// away from the player only for CARRIED moments -- sitting down at the
+// computer, the freight cab's descent, the fall into the pool, an ending's
+// pull-back -- which are camera moves (carry() between two world poses, or
+// playShot() of a named shot from data/rooms.json, authored in the room's
+// own frame and carried into the world by the room's matrix).
 //
-// Public surface (router.js is the only caller besides test/rooms.html):
-//   prefetch(key)                 build a room ahead of time (and warm the library)
-//   show(key)                     make a room the visible set (no camera move)
-//   holdPose(key, pose)           park the camera on a named pose ('in' / 'out')
-//   playShot(key, shot, opts)     run a camera move; resolves when it ends
-//                                 (immediately for a pingpong loop)
-//   pause() / resume() / setRate  freeze, release, scale the shot clock
-//   screenRect()                  where the current room's `terminal` screen is on
-//                                 screen, as viewport fractions (MG-05 C's sheet)
-//   actor(name, t)                drive a room actor along its path (MG-03 C)
-//   walk(key)                     free first-person walk (WALK THE ROOM), resolves on LEAVE
-//   blackout()                    fade to black and stop (the ending card)
+// Public surface (src/director.js; test/rooms.html for previews):
+//   world, player, camera            the building, the body, the eye
+//   preview(key)                     a lone room at the origin (rooms.html)
+//   playShot(inst|key, shot, opts)   a camera move from rooms.json; resolves at its end
+//   holdPose(inst|key, pose)         park the camera on a named pose
+//   carry(pose, opts)                ease the camera from wherever it is to a world pose
+//   walk(key)                        walk a lone room (rooms.html), resolves never
+//   screenRect(inst, prop)           where a prop's screen is in the viewport (the CRT form)
+//   project(point)                   a world point in viewport fractions (threshold labels)
+//   onFrame(fn)                      per-frame hook (the director's zone checks)
+//   fadeTo / blackout                the composite's fade (the ending card)
 //
-// Look: the same composite pass the walk mode had -- an MSAA float target
-// at ~70% of the viewport, ACES, vignette, grain, dither -- plus a fade
-// uniform the leave/arrive shots use for their black-joins, so a
-// transition is exactly what the old clips were: the room being left,
-// black, the room being entered. Canon C2 (shadows toward the core) is
-// room.js's job; C3 (no sky after the lobby doors) is build_rooms.py's.
+// Look: an MSAA float target at ~70% of the viewport, ACES, vignette,
+// grain, dither. Exposure, grain, vignette, fog and background follow the
+// world's atmosphere, which blends between rooms across a connector.
 
 import * as THREE from '../../vendor/three/three.module.js';
 import { createMaterialLibrary, setSnapResolution } from '../walk/materials.js';
-import { buildRoom } from '../walk/room.js';
-import { createControls, createTouchControls, EYE_HEIGHT } from '../walk/controls.js';
 import { createLibrary } from './library.js';
+import { createWorld, resolveRecord } from '../world/world.js';
+import { createPlayer, WALK_FOV } from '../world/player.js';
 
 const RENDER_SCALE = 0.7;
 const MAX_RENDER_WIDTH = 1600;
 const MIN_RENDER_WIDTH = 480;
-const STRIDE_M = 0.72;
-const BOB_AMPLITUDE = 0.035;
-const BOB_RATE = 2 * Math.PI / STRIDE_M;
-const ROOM_CACHE_MAX = 4;
-const LIBRARY_WAIT_MS = 6000; // a room builds with box fallbacks if the library is slower than this
 export const DEFAULT_FOV = 62;
 
 const POST_VERT = `
@@ -77,90 +70,68 @@ const POST_FRAG = `
   }
 `;
 
-const EASE = {
+export const EASE = {
   linear: (t) => t,
   in: (t) => t * t,
   out: (t) => 1 - (1 - t) * (1 - t),
   inout: (t) => (t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2)
 };
 
-function resolveRecord(rooms, key) {
-  const rec = rooms.rooms[key];
-  if (!rec) return null;
-  if (rec.alias) return { ...rooms.rooms[rec.alias], ...rec, id: key, base: rec.alias };
-  return { ...rec, id: key, base: key };
-}
-
-export function createStage(container, { rooms = null, audio = null, sfx = null, library = null } = {}) {
-  let renderer = null;
-  let scene = null;
-  let camera = null;
-  let mats = null;
-  let target = null;
-  let postScene = null;
-  let postCamera = null;
-  let postMat = null;
+export function createStage(container, { rooms = null, audio = null, sfx = null, library = null, overlay = null, onBump = null } = {}) {
+  let destroyed = false;
   let rafId = 0;
   let elapsed = 0;
-  let destroyed = false;
   const clock = new THREE.Clock();
   const lib = library || createLibrary();
 
-  const cache = new Map(); // key -> { rec, room, promise }
-  let current = null;      // { key, rec, room }
-  let shot = null;         // the running camera move
-  let held = false;
-  let rate = 1;
-  let fade = 1;            // 0 black .. 1 clear (post uniform)
+  const renderer = new THREE.WebGLRenderer({ antialias: false, powerPreference: 'high-performance', alpha: false });
+  renderer.setPixelRatio(1);
+  renderer.shadowMap.enabled = true;
+  renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+  renderer.outputColorSpace = THREE.SRGBColorSpace;
+  renderer.toneMapping = THREE.NoToneMapping;
+  renderer.domElement.className = 'stage-canvas';
+  container.prepend(renderer.domElement); // under the fracture overlay
+  const camera = new THREE.PerspectiveCamera(WALK_FOV, 16 / 9, 0.05, 320);
+  const scene = new THREE.Scene();
+  scene.add(camera); // so props parented to the camera (a held package) render
+  scene.background = new THREE.Color('#000000');
+  scene.fog = new THREE.Fog(0x000000, 400, 1200); // never null: the fog define stays constant
+  const mats = createMaterialLibrary({ anisotropy: Math.min(8, renderer.capabilities.getMaxAnisotropy()) });
+  const samples = renderer.capabilities.isWebGL2 ? 4 : 0;
+  const target = new THREE.WebGLRenderTarget(16, 16, { type: THREE.HalfFloatType, samples, depthBuffer: true, stencilBuffer: false });
+  target.texture.minFilter = THREE.LinearFilter;
+  target.texture.magFilter = THREE.LinearFilter;
+  const postMat = new THREE.ShaderMaterial({
+    vertexShader: POST_VERT,
+    fragmentShader: POST_FRAG,
+    uniforms: {
+      tDiffuse: { value: target.texture },
+      uTime: { value: 0 },
+      uExposure: { value: 1.0 },
+      uGrain: { value: 0.03 },
+      uVignette: { value: 0.55 },
+      uFade: { value: 1.0 },
+      uResolution: { value: new THREE.Vector2(16, 16) }
+    },
+    depthTest: false, depthWrite: false, toneMapped: false
+  });
+  const postScene = new THREE.Scene();
+  postScene.add(new THREE.Mesh(new THREE.PlaneGeometry(2, 2), postMat));
+  const postCamera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1);
+
+  const world = createWorld({ scene, mats, library: lib, rooms });
+  const player = createPlayer({ camera, domElement: renderer.domElement, overlay: overlay || container, world, sfx, onBump });
+  player.disable();
+
+  let shot = null;          // the running camera move
+  let fade = 1;             // 0 black .. 1 clear (post uniform)
   let fadeTarget = 1;
-  let fadeSpeed = 0;       // per second
-  let poseFov = DEFAULT_FOV;
-
-  // Free-walk mode (WALK THE ROOM)
-  let walkState = null;    // { controls, touch, hud, title, resolve, strideAcc, bobPhase, savedShot }
-
-  function ensureRenderer() {
-    if (renderer) return;
-    renderer = new THREE.WebGLRenderer({ antialias: false, powerPreference: 'high-performance', alpha: false });
-    renderer.setPixelRatio(1);
-    renderer.shadowMap.enabled = true;
-    renderer.shadowMap.type = THREE.PCFSoftShadowMap;
-    renderer.outputColorSpace = THREE.SRGBColorSpace;
-    renderer.toneMapping = THREE.NoToneMapping;
-    renderer.domElement.className = 'stage-canvas';
-    container.prepend(renderer.domElement); // under the fracture overlay
-    camera = new THREE.PerspectiveCamera(DEFAULT_FOV, 16 / 9, 0.05, 260);
-    scene = new THREE.Scene();
-    mats = createMaterialLibrary({ anisotropy: Math.min(8, renderer.capabilities.getMaxAnisotropy()) });
-    const samples = renderer.capabilities.isWebGL2 ? 4 : 0;
-    target = new THREE.WebGLRenderTarget(16, 16, { type: THREE.HalfFloatType, samples, depthBuffer: true, stencilBuffer: false });
-    target.texture.minFilter = THREE.LinearFilter;
-    target.texture.magFilter = THREE.LinearFilter;
-    postMat = new THREE.ShaderMaterial({
-      vertexShader: POST_VERT,
-      fragmentShader: POST_FRAG,
-      uniforms: {
-        tDiffuse: { value: target.texture },
-        uTime: { value: 0 },
-        uExposure: { value: 1.0 },
-        uGrain: { value: 0.03 },
-        uVignette: { value: 0.55 },
-        uFade: { value: 1.0 },
-        uResolution: { value: new THREE.Vector2(16, 16) }
-      },
-      depthTest: false, depthWrite: false, toneMapped: false
-    });
-    postScene = new THREE.Scene();
-    postScene.add(new THREE.Mesh(new THREE.PlaneGeometry(2, 2), postMat));
-    postCamera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1);
-    window.addEventListener('resize', resize);
-    resize();
-    clock.getDelta();
-    frame();
-  }
+  let fadeSpeed = 0;        // per second
+  let playerActive = false;
+  const frameHooks = new Set();
 
   function resize() {
-    if (!renderer) return;
     const vw = container.clientWidth || window.innerWidth;
     const vh = container.clientHeight || window.innerHeight;
     renderer.setSize(vw, vh, false);
@@ -172,81 +143,59 @@ export function createStage(container, { rooms = null, audio = null, sfx = null,
     camera.updateProjectionMatrix();
     setSnapResolution(w / 2.5);
   }
+  window.addEventListener('resize', resize);
+  resize();
 
-  // ---- rooms -------------------------------------------------------------
+  // ---- instances -----------------------------------------------------------
 
-  async function getRoom(key) {
-    if (!rooms) throw new Error('stage: no rooms.json');
-    if (cache.has(key)) return cache.get(key).promise;
-    const rec = resolveRecord(rooms, key);
-    if (!rec) throw new Error(`stage: no room ${key}`);
-    const entry = { rec, room: null, promise: null, used: performance.now() };
-    entry.promise = (async () => {
-      ensureRenderer();
-      // Give the prop library a bounded head start so catalog models land in
-      // the first build; past that the box fallbacks stand in.
-      const needsLib = (rec.props || []).some((p) => p.type === 'glb');
-      if (needsLib && !lib.loaded() && !lib.failed()) {
-        await Promise.race([lib.ready, new Promise((r) => setTimeout(r, LIBRARY_WAIT_MS))]);
-      }
-      entry.room = buildRoom(mats, rec, { library: lib });
-      return entry;
-    })();
-    cache.set(key, entry);
-    trimCache();
-    return entry.promise;
+  function instOf(ref) {
+    if (!ref) return world.current();
+    if (typeof ref === 'object') return ref;
+    return world.instances().find((i) => i.key === ref || i.base === world.baseOf(ref)) || null;
   }
 
-  function trimCache() {
-    if (cache.size <= ROOM_CACHE_MAX) return;
-    const victims = [...cache.entries()]
-      .filter(([k]) => !current || k !== current.key)
-      .sort((a, b) => a[1].used - b[1].used);
-    while (cache.size > ROOM_CACHE_MAX && victims.length) {
-      const [k, e] = victims.shift();
-      cache.delete(k);
-      if (e.room) e.room.dispose();
-    }
+  // A lone room at the origin (rooms.html, tests): the world is cleared.
+  async function preview(key) {
+    await world.prebuild(key);
+    world.clear();
+    const inst = world.spawn(key);
+    world.setCurrent(inst);
+    return inst;
   }
 
-  async function show(key) {
-    const entry = await getRoom(key);
-    entry.used = performance.now();
-    if (destroyed) return entry;
-    if (current && current.key === key) return entry;
-    if (current) scene.remove(current.room.group);
-    const { rec, room } = entry;
-    scene.add(room.group);
-    scene.background = new THREE.Color(room.background);
-    scene.fog = room.fog ? new THREE.Fog(new THREE.Color(room.fog.color), room.fog.near, room.fog.far) : null;
-    postMat.uniforms.uExposure.value = rec.exposure || 1.0;
-    postMat.uniforms.uGrain.value = rec.grain === undefined ? 0.03 : rec.grain;
-    postMat.uniforms.uVignette.value = rec.vignette === undefined ? 0.55 : rec.vignette;
-    current = { key, rec, room };
-    return entry;
-  }
+  // ---- camera moves -----------------------------------------------------------
 
-  // ---- shots -------------------------------------------------------------
-
-  function poseOf(rec, p) {
+  function namedPose(inst, p) {
     if (typeof p === 'string') {
-      const named = rec.shots && rec.shots[p];
-      if (!named || !named.pos) throw new Error(`stage: ${rec.id} has no pose "${p}"`);
-      return named;
+      const named = inst.rec.shots && inst.rec.shots[p];
+      if (!named || !named.pos) throw new Error(`stage: ${inst.key} has no pose "${p}"`);
+      return world.poseToWorld(inst, named);
     }
-    return p;
+    return p.space === 'world' ? p : world.poseToWorld(inst, p);
   }
 
   function applyPose(pose) {
     camera.position.set(pose.pos[0], pose.pos[1], pose.pos[2]);
     camera.lookAt(pose.look[0], pose.look[1], pose.look[2]);
-    poseFov = pose.fov || DEFAULT_FOV;
-    if (camera.fov !== poseFov) { camera.fov = poseFov; camera.updateProjectionMatrix(); }
+    const fov = pose.fov || camera.fov;
+    if (camera.fov !== fov) { camera.fov = fov; camera.updateProjectionMatrix(); }
+  }
+
+  const _fwd = new THREE.Vector3();
+  function currentPose(lookDist = 3) {
+    camera.getWorldDirection(_fwd);
+    return {
+      pos: camera.position.toArray(),
+      look: [camera.position.x + _fwd.x * lookDist, camera.position.y + _fwd.y * lookDist, camera.position.z + _fwd.z * lookDist],
+      fov: camera.fov,
+      space: 'world'
+    };
   }
 
   function setFade(value, seconds) {
     fadeTarget = value;
     fadeSpeed = seconds > 0 ? Math.abs(value - fade) / seconds : Infinity;
+    if (seconds <= 0) fade = value;
   }
 
   const tmpPos = new THREE.Vector3();
@@ -254,7 +203,7 @@ export function createStage(container, { rooms = null, audio = null, sfx = null,
 
   function stepShot(dt) {
     if (!shot) return;
-    if (!held && !walkState) shot.t += (dt * rate) / shot.seconds;
+    shot.t += dt / shot.seconds;
     let u;
     if (shot.pingpong) {
       const c = shot.t % 2;
@@ -267,20 +216,23 @@ export function createStage(container, { rooms = null, audio = null, sfx = null,
     tmpPos.set(a.pos[0] + (b.pos[0] - a.pos[0]) * e, a.pos[1] + (b.pos[1] - a.pos[1]) * e, a.pos[2] + (b.pos[2] - a.pos[2]) * e);
     tmpLook.set(a.look[0] + (b.look[0] - a.look[0]) * e, a.look[1] + (b.look[1] - a.look[1]) * e, a.look[2] + (b.look[2] - a.look[2]) * e);
     if (shot.sway) {
-      const s = shot.sway * (held ? 0.3 : 1);
+      const s = shot.sway;
       tmpPos.y += Math.sin(elapsed * 0.9) * s;
       tmpPos.x += Math.sin(elapsed * 0.53 + 1.0) * s * 0.6;
       tmpLook.x += Math.sin(elapsed * 0.37) * s * 2.5;
       tmpLook.y += Math.cos(elapsed * 0.61) * s * 1.5;
     }
+    if (shot.shake) {
+      const k = shot.shake * (1 - u * 0.3);
+      tmpPos.x += (Math.sin(elapsed * 37) + Math.sin(elapsed * 23)) * 0.5 * k;
+      tmpPos.y += Math.sin(elapsed * 41) * k;
+    }
     camera.position.copy(tmpPos);
     camera.lookAt(tmpLook);
-    const fa = a.fov || DEFAULT_FOV, fb = b.fov || DEFAULT_FOV;
+    const fa = a.fov || camera.fov, fb = b.fov || fa;
     const fov = fa + (fb - fa) * e;
     if (Math.abs(camera.fov - fov) > 0.01) { camera.fov = fov; camera.updateProjectionMatrix(); }
 
-    // Black-joins: fade out over the move's last `fadeOut` seconds, fade in
-    // over its first `fadeIn`.
     const tSec = Math.min(shot.seconds, shot.t * shot.seconds);
     if (shot.fadeIn) fade = Math.min(1, tSec / shot.fadeIn);
     if (shot.fadeOut) fade = Math.min(fade, Math.max(0, (shot.seconds - tSec) / shot.fadeOut));
@@ -289,60 +241,72 @@ export function createStage(container, { rooms = null, audio = null, sfx = null,
       shot.done = true;
       const r = shot.resolve;
       shot.resolve = null;
+      if (!shot.hold) shot = null;
       if (r) r();
     }
   }
 
-  async function playShot(key, name, { onStart = null } = {}) {
-    if (destroyed) return;
-    const entry = await show(key);
-    if (destroyed) return;
-    const { rec } = entry;
-    const def = rec.shots && rec.shots[name];
-    if (!def) throw new Error(`stage: ${rec.id} has no shot "${name}"`);
+  function startMove(from, to, def) {
     if (shot && shot.resolve) { const r = shot.resolve; shot.resolve = null; r(); } // supersede: the old move releases its waiter
-    held = false;
-    if (def.pos) {
-      // a bare pose: park on it
-      shot = null;
-      applyPose(def);
-      if (onStart) onStart();
-      return;
-    }
-    const from = poseOf(rec, def.from), to = poseOf(rec, def.to);
     fadeTarget = 1; fadeSpeed = 0;
     if (def.fadeIn) fade = 0;
-    if (!def.fadeIn && !def.fadeOut) fade = 1;
-    const promise = new Promise((resolve) => {
+    return new Promise((resolve) => {
       shot = {
-        key, name, from, to,
+        from, to,
         seconds: Math.max(0.05, def.seconds || 4),
         ease: def.ease || 'inout',
         pingpong: !!def.pingpong,
         sway: def.sway || 0,
+        shake: def.shake || 0,
         fadeIn: def.fadeIn || 0,
         fadeOut: def.fadeOut || 0,
-        holdEnd: !!def.holdEnd,
+        hold: def.hold !== false,
         t: 0,
         done: false,
         resolve
       };
       stepShot(0);
+      if (shot && shot.pingpong) { const r = shot.resolve; shot.resolve = null; r(); }
     });
-    if (onStart) onStart();
-    if (shot.pingpong) { const r = shot.resolve; shot.resolve = null; r(); }
-    return promise;
   }
 
-  async function holdPose(key, pose) {
+  // A named shot of a room instance, in that room's frame.
+  async function playShot(ref, name, { onStart = null } = {}) {
     if (destroyed) return;
-    const entry = await show(key || (current && current.key));
+    let inst = instOf(ref);
+    if (!inst && typeof ref === 'string') inst = await preview(ref);
+    if (!inst) throw new Error(`stage: no instance for ${ref}`);
+    const def = inst.rec.shots && inst.rec.shots[name];
+    if (!def) throw new Error(`stage: ${inst.key} has no shot "${name}"`);
+    if (def.pos) {
+      shot = null;
+      applyPose(namedPose(inst, def));
+      if (onStart) onStart();
+      return;
+    }
+    const p = startMove(namedPose(inst, def.from), namedPose(inst, def.to), def);
+    if (onStart) onStart();
+    return p;
+  }
+
+  async function holdPose(ref, pose) {
     if (destroyed) return;
+    let inst = instOf(ref);
+    if (!inst && typeof ref === 'string') inst = await preview(ref);
     if (shot && shot.resolve) { const r = shot.resolve; shot.resolve = null; r(); }
     shot = null;
     fade = 1; fadeTarget = 1; fadeSpeed = 0;
-    applyPose(poseOf(entry.rec, pose));
+    applyPose(namedPose(inst, pose));
   }
+
+  // Ease the camera from where it is to `pose` ({pos, look, fov}, world
+  // space unless `inst` is given, then in that room's frame).
+  function carry(pose, { inst = null, seconds = 1.6, ease = 'inout', shake = 0, hold = true } = {}) {
+    const to = inst ? world.poseToWorld(inst, pose) : pose;
+    return startMove(currentPose(), to, { seconds, ease, shake, hold });
+  }
+
+  function releaseShot() { if (shot) { const r = shot.resolve; shot.resolve = null; shot = null; if (r) r(); } }
 
   // ---- per frame -----------------------------------------------------------
 
@@ -354,10 +318,18 @@ export function createStage(container, { rooms = null, audio = null, sfx = null,
     if (fadeSpeed > 0 && fade !== fadeTarget) {
       fade = fade < fadeTarget ? Math.min(fadeTarget, fade + fadeSpeed * dt) : Math.max(fadeTarget, fade - fadeSpeed * dt);
     }
-    if (walkState) stepWalk(dt); else stepShot(dt);
+    if (shot) stepShot(dt);
+    else if (playerActive) player.update(dt);
     mats.update(dt);
-    if (current && current.room.update) current.room.update(dt, elapsed);
-    if (!current) return;
+    const pos = camera.position.toArray();
+    const env = world.update(dt, elapsed, pos);
+    scene.background.set(env.background);
+    if (env.fog) { scene.fog.color.set(env.fog.color); scene.fog.near = env.fog.near; scene.fog.far = env.fog.far; } else { scene.fog.near = 400; scene.fog.far = 1200; }
+    postMat.uniforms.uExposure.value = env.exposure;
+    postMat.uniforms.uGrain.value = env.grain;
+    postMat.uniforms.uVignette.value = env.vignette;
+    for (const fn of frameHooks) fn(dt, elapsed);
+    if (!world.instances().length) return;
     renderer.setRenderTarget(target);
     renderer.render(scene, camera);
     renderer.setRenderTarget(null);
@@ -365,19 +337,22 @@ export function createStage(container, { rooms = null, audio = null, sfx = null,
     postMat.uniforms.uFade.value = fade;
     renderer.render(postScene, postCamera);
   }
+  clock.getDelta();
+  frame();
 
-  // ---- services for mini-games ---------------------------------------------
+  // ---- screen space ---------------------------------------------------------------
 
   const corner = new THREE.Vector3();
-  function screenRect() {
-    if (!current) return null;
-    const term = current.room.named.get('terminal');
+  function screenRect(ref, propName = 'terminal') {
+    const inst = instOf(ref);
+    if (!inst) return null;
+    const term = inst.room.named.get(propName);
     if (!term) return null;
-    let screen = null;
-    term.traverse((o) => { if (!screen && o.isMesh && o.userData.screen) screen = o; });
-    if (!screen) return null;
-    screen.updateWorldMatrix(true, false);
-    const bb = new THREE.Box3().setFromObject(screen);
+    let screenMesh = null;
+    term.traverse((o) => { if (!screenMesh && o.isMesh && o.userData.screen) screenMesh = o; });
+    if (!screenMesh) return null;
+    screenMesh.updateWorldMatrix(true, false);
+    const bb = new THREE.Box3().setFromObject(screenMesh);
     let minX = 1, minY = 1, maxX = -1, maxY = -1;
     for (let i = 0; i < 8; i++) {
       corner.set(i & 1 ? bb.max.x : bb.min.x, i & 2 ? bb.max.y : bb.min.y, i & 4 ? bb.max.z : bb.min.z).project(camera);
@@ -388,125 +363,72 @@ export function createStage(container, { rooms = null, audio = null, sfx = null,
     return { x, y, w: (maxX - minX) / 2, h: (maxY - minY) / 2 };
   }
 
-  function actor(name, t) {
-    if (!current) return;
-    const a = current.room.actors[name];
-    if (a) a.set(t);
+  const _proj = new THREE.Vector3();
+  function project(point) {
+    _proj.set(point[0], point[1], point[2]);
+    const camSpace = _proj.clone().applyMatrix4(camera.matrixWorldInverse);
+    _proj.project(camera);
+    return { x: (_proj.x + 1) / 2, y: (1 - _proj.y) / 2, behind: camSpace.z > 0 };
   }
 
-  // ---- free walk -------------------------------------------------------------
+  // ---- preview walk (rooms.html) ----------------------------------------------------
 
-  function stepWalk(dt) {
-    const w = walkState;
-    w.controls.update(dt);
-    const moved = w.controls.movedThisFrame();
-    w.strideAcc += moved;
-    w.bobPhase += moved * BOB_RATE;
-    if (w.strideAcc >= STRIDE_M) {
-      w.strideAcc -= STRIDE_M;
-      if (sfx) sfx.play('footstep', current && current.room.footstep ? current.room.footstep : {});
-    }
-    w.controls.setEyeOffset(moved > 0 ? Math.sin(w.bobPhase) * BOB_AMPLITUDE : 0, dt);
-  }
-
-  function buildHud(rec, overlay) {
-    const hud = document.createElement('div');
-    hud.className = 'walk-hud';
-    const hint = document.createElement('div');
-    hint.className = 'walk-hint';
-    const isTouch = (navigator.maxTouchPoints || 0) > 0;
-    hint.textContent = isTouch ? 'LEFT THUMB WALKS · RIGHT THUMB LOOKS' : 'W A S D WALKS · CLICK THE ROOM TO LOOK · ESC RELEASES THE MOUSE';
-    const leave = document.createElement('button');
-    leave.type = 'button';
-    leave.className = 'walk-leave';
-    leave.textContent = 'LEAVE THE ROOM';
-    leave.addEventListener('click', () => leaveWalk());
-    hud.append(hint, leave);
-    const title = document.createElement('div');
-    title.className = 'walk-title';
-    title.textContent = rec.name || '';
-    overlay.append(hud, title);
-    return { hud, title };
-  }
-
-  function leaveWalk() {
-    const w = walkState;
-    if (!w) return;
-    walkState = null;
-    w.controls.release();
-    w.controls.dispose();
-    if (w.touch) w.touch.dispose();
-    w.hud.remove();
-    w.title.remove();
-    w.overlay.hidden = true;
-    // back to the scripted camera exactly where it was
-    camera.fov = poseFov; camera.updateProjectionMatrix();
-    if (w.savedShot) { shot = w.savedShot; stepShot(0); } else if (w.savedPose) { camera.position.copy(w.savedPose.pos); camera.quaternion.copy(w.savedPose.quat); }
-    const r = w.resolve;
-    if (r) r();
-  }
-
-  async function walk(key, { overlay = null } = {}) {
-    if (walkState || destroyed) return;
-    const entry = await show(key);
-    if (destroyed) return;
-    const { rec, room } = entry;
-    const ov = overlay || container;
-    ov.hidden = false;
-    const controls = createControls(camera, renderer.domElement, () => ({ walls: room.walls, floors: room.floors }));
-    const saved = { savedShot: shot, savedPose: { pos: camera.position.clone(), quat: camera.quaternion.clone() } };
+  async function walk(key) {
+    const inst = await preview(key);
+    const s = inst.room.spawn;
     shot = null;
     fade = 1; fadeTarget = 1; fadeSpeed = 0;
-    camera.fov = 68; camera.updateProjectionMatrix();
-    controls.setEyeOffset(0, 1);
-    controls.teleport(room.spawn.x, room.spawn.z, room.spawn.yaw);
-    camera.position.y = EYE_HEIGHT;
-    const { hud, title } = buildHud(rec, ov);
-    const touch = createTouchControls({ domElement: renderer.domElement, overlay: ov, controls });
+    camera.fov = WALK_FOV; camera.updateProjectionMatrix();
+    player.teleport(s.x, inst.rec.floorY || 0, s.z, s.yaw);
+    player.enable();
+    playerActive = true;
     if (audio) audio.resumeIfSuspended();
-    return new Promise((resolve) => {
-      walkState = { controls, touch, hud, title, overlay: ov, resolve, strideAcc: 0, bobPhase: 0, ...saved };
-    });
+    return inst;
   }
 
   return {
     ready: lib.ready,
     library: lib,
-    prefetch(key) { if (rooms && rooms.rooms[key]) getRoom(key).catch(() => {}); },
-    show,
-    holdPose,
+    world,
+    player,
+    camera,
+    renderer,
+    scene,
+    mats,
+    preview,
+    prefetch(key) { if (rooms && rooms.rooms[key]) return world.prebuild(key).catch((e) => console.warn('stage: prefetch failed', key, e)); return Promise.resolve(); },
     playShot,
-    pause() { held = true; },
-    resume() { held = false; },
-    isPaused() { return held; },
-    setRate(r) { rate = Math.min(2, Math.max(0.25, Number.isFinite(r) ? r : 1)); },
-    screenRect,
-    actor,
+    holdPose,
+    carry,
+    releaseShot,
     walk,
-    abortWalk() { leaveWalk(); },
-    isWalking() { return !!walkState; },
-    currentKey() { return current ? current.key : null; },
+    setPlayerActive(v) { playerActive = !!v; },
+    isPlayerActive: () => playerActive,
+    screenRect,
+    project,
+    onFrame(fn) { frameHooks.add(fn); return () => frameHooks.delete(fn); },
+    currentKey() { const c = world.current(); return c ? c.key : null; },
     baseKey(key) { const rec = rooms && resolveRecord(rooms, key); return rec ? rec.base : key; },
     record(key) { return rooms ? resolveRecord(rooms, key) : null; },
     fadeTo(value, seconds) { setFade(value, seconds); return new Promise((r) => setTimeout(r, seconds * 1000)); },
     async blackout(seconds = 1.2) {
-      leaveWalk();
+      playerActive = false;
+      player.disable({ releasePointer: true });
       await this.fadeTo(0, seconds);
-      if (shot && shot.resolve) { const r = shot.resolve; shot.resolve = null; r(); }
-      shot = null;
+      releaseShot();
     },
+    elapsed: () => elapsed,
     destroy() {
       destroyed = true;
-      leaveWalk();
       cancelAnimationFrame(rafId);
-      if (shot && shot.resolve) { const r = shot.resolve; shot.resolve = null; r(); }
-      shot = null;
-      for (const e of cache.values()) if (e.room) e.room.dispose();
-      cache.clear();
-      current = null;
-      if (renderer) { window.removeEventListener('resize', resize); renderer.dispose(); renderer.domElement.remove(); renderer = null; }
+      releaseShot();
+      player.dispose();
+      world.clear();
+      window.removeEventListener('resize', resize);
+      renderer.dispose();
+      renderer.domElement.remove();
     },
     // Test hooks
-    _debug() { return { current: current ? current.key : null, shot: shot ? { name: shot.name, t: shot.t, pingpong: shot.pingpong } : null, fade, held, rate, camera: camera ? camera.position.toArray() : null, cached: [...cache.keys()], target: target ? [target.width, target.height] : null }; }
+    _debug() { return { current: world.currentKey ? world.currentKey() : (world.current() ? world.current().key : null), shot: shot ? { t: shot.t, pingpong: shot.pingpong } : null, fade, playerActive, camera: camera.position.toArray(), fov: camera.fov, world: world._debug(), target: [target.width, target.height] }; }
   };
 }

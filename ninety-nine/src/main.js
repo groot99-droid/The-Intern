@@ -1,7 +1,9 @@
-// Doc 4 §2: boot, preflight, kick off S0.
+// Doc 4 §2: boot, preflight, and put the candidate in his apartment. The
+// game is played on foot from there (src/director.js) to the ending card.
 
 import { createState, DEBUG_RESUME } from './state.js';
-import { createRouter } from './router.js';
+import { createDirector } from './director.js';
+import { createStage } from './stage/stage.js';
 import { loadTextLibrary, endingFor } from './text.js';
 import { createAudio } from './audio.js';
 import { createSfx } from './sfx.js';
@@ -62,9 +64,7 @@ async function boot() {
     loadJSON('./data/scenes.json'),
     loadJSON('./data/endings.json'),
     loadTextLibrary('./text'),
-    // Walkable 3D rooms (src/walk/). Optional: a missing/failed rooms.json
-    // just means no WALK THE ROOM button anywhere.
-    loadJSON('./data/rooms.json').catch((e) => { console.warn('main.js: rooms.json unavailable, walk mode off', e); return null; })
+    loadJSON('./data/rooms.json')
   ]);
 
   const state = createState();
@@ -73,30 +73,38 @@ async function boot() {
 
   const mount = {
     scene: document.getElementById('scene-layer'),
-    choice: document.getElementById('choice-layer'),
-    minigame: document.getElementById('minigame-layer'),
-    walk: document.getElementById('walk-layer')
+    hud: document.getElementById('hud-layer'),
+    screen: document.getElementById('screen-layer')
   };
 
-  const router = createRouter({
+  const stage = createStage(mount.scene, { rooms, audio, sfx, overlay: mount.hud });
+  const director = createDirector({
     manifest,
     endings,
     state,
+    stage,
     mount,
     audio,
     sfx,
     library,
-    rooms,
     onEnding(endingId) {
       renderEndingCard(endingId, state, library);
     }
   });
 
-  window.__NINETY_NINE__ = { state, router, manifest, endings, library, audio, rooms }; // dev inspection only
+  window.__NINETY_NINE__ = { state, director, stage, manifest, endings, library, audio, rooms }; // dev inspection only
 
-  initBail(router);
+  initBail(director);
   initSoundToggle(audio);
-  router.start('S0');
+  await director.start('S0');
+
+  // Dev only: ?autopilot=SSRR... walks the candidate through by himself
+  // (src/dev/autopilot.js, tools/walkthrough.cjs).
+  const q = new URLSearchParams(location.search);
+  if (q.has('autopilot')) {
+    const { startAutopilot } = await import('./dev/autopilot.js');
+    window.__NINETY_NINE__.autopilot = startAutopilot({ director, stage, plan: q.get('autopilot'), seed: q.get('seed') || 'C', bailAt: q.get('bail'), speed: parseFloat(q.get('speed') || '2.5') });
+  }
 }
 
 boot().catch((err) => {

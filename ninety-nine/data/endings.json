@@ -1,5 +1,5 @@
 {
-  "_comment": "Doc 1 §2.4 resolveEnding() output maps here. Each ending is a 3D set (data/rooms.json `room`) and the camera move played in it (`shot`), then a dead-still `holdSeconds` before the card (Doc 2: a 4 second hold with no motion whatsoever). Doc 1 §6.4 for card text (textKey resolved via text.js against /text/endings.json). C4 is deliberately broken only on these cards -- 'you' appears exactly once per card.",
+  "_comment": "Doc 1 §2.4 resolveEnding() output maps here. Each ending is a room of the building (data/rooms.json `room`) the candidate walks into: stepping into its `zone` (or `autoSeconds` passing) takes the camera for the pull-back `shot`, then a dead-still `holdSeconds` before the card (Doc 2: a 4 second hold with no motion whatsoever). `routes` is the way on from a room that is not the ending's (the store's staff door, toward the waiting room). Doc 1 §6.4 for card text (textKey resolved via text.js against /text/endings.json). C4 is deliberately broken only on these cards -- 'you' appears exactly once per card.",
   "ASSIMILATION": {
     "id": "SE_ASSIM",
     "room": "SE_ASSIM",
@@ -9,10 +9,15 @@
     "flagOverlays": [
       {
         "flag": "NEVER_SAT",
-        "status": "TODO",
-        "note": "Doc 1 §2.5: if NEVER_SAT there is no chair for him at all in the boardroom pull-back. The boardroom is a live set now (rooms.json SE_ASSIM, prop named `emptychair`), so this becomes a stage-side hide of that prop rather than a video patch; not wired yet."
+        "hide": [
+          "emptychair"
+        ],
+        "note": "Doc 1 §2.5: if NEVER_SAT there is no chair for him at all in the boardroom."
       }
-    ]
+    ],
+    "zone": "head",
+    "autoSeconds": 90,
+    "ambience": "S8_C_AMB_BOARDROOM.wav"
   },
   "EXPULSION": {
     "id": "SE_EXPUL",
@@ -20,7 +25,10 @@
     "shot": "ending",
     "holdSeconds": 4,
     "textKey": "ending.expulsion",
-    "flagOverlays": []
+    "flagOverlays": [],
+    "zone": "storefront",
+    "autoSeconds": 90,
+    "ambience": "S8_H_AMB_STORE.wav"
   },
   "PENDING": {
     "id": "SE_PEND",
@@ -28,7 +36,19 @@
     "shot": "ending",
     "holdSeconds": 4,
     "textKey": "ending.pending",
-    "flagOverlays": []
+    "flagOverlays": [],
+    "zone": "seat",
+    "autoSeconds": 90,
+    "preShot": "sit",
+    "show": [
+      "hands"
+    ],
+    "routes": {
+      "S8_H": {
+        "exit": "staff",
+        "via": "CN_CORRIDOR_SERVICE"
+      }
+    }
   },
   "RETAINED": {
     "id": "SE_RETAINED",
@@ -36,7 +56,17 @@
     "shot": "retained",
     "holdSeconds": 4,
     "textKey": "ending.retained",
-    "flagOverlays": [],
-    "_note": "Added post-launch (Doc 1 §9.1). The same boardroom as ASSIMILATION, a shorter pull-back that keeps the package in frame."
+    "flagOverlays": [
+      {
+        "flag": "NEVER_SAT",
+        "hide": [
+          "emptychair"
+        ]
+      }
+    ],
+    "_note": "Added post-launch (Doc 1 §9.1). The same boardroom as ASSIMILATION, a shorter pull-back that keeps the package in frame.",
+    "zone": "head",
+    "autoSeconds": 90,
+    "ambience": "S8_C_AMB_BOARDROOM.wav"
   }
 }
