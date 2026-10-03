@@ -17015,7 +17015,7 @@
    },
    "ambient": {
     "color": "#ffd9a0",
-    "intensity": 0.1
+    "intensity": 0.05
    },
    "sun": {
     "intensity": 0
@@ -17029,7 +17029,7 @@
       2.6999999999999997
      ],
      "color": "#ffd9a0",
-     "intensity": 5,
+     "intensity": 2.4,
      "distance": 8
     },
     {
@@ -17040,7 +17040,7 @@
       -2.6999999999999997
      ],
      "color": "#ffd9a0",
-     "intensity": 5,
+     "intensity": 2.4,
      "distance": 9
     }
    ],
@@ -17369,7 +17369,7 @@
    },
    "ambient": {
     "color": "#fff1dc",
-    "intensity": 0.1
+    "intensity": 0.05
    },
    "sun": {
     "intensity": 0
@@ -17460,7 +17460,7 @@
    ],
    "floorY": 0.0,
    "floor": "carpet",
-   "wall": "plaster",
+   "wall": "plaster_dark",
    "ceiling": "ceiling_tile",
    "tile": {
     "floor": 1.5,
@@ -17473,8 +17473,8 @@
     "t": 0.02
    },
    "ambient": {
-    "color": "#eef0f6",
-    "intensity": 0.1
+    "color": "#e6eaf2",
+    "intensity": 0.05
    },
    "sun": {
     "intensity": 0
@@ -17487,8 +17487,8 @@
       2.3000000000000003,
       1.5
      ],
-     "color": "#eef0f6",
-     "intensity": 9,
+     "color": "#e6eaf2",
+     "intensity": 3.2,
      "distance": 7
     },
     {
@@ -17498,8 +17498,8 @@
       2.3000000000000003,
       -1.5
      ],
-     "color": "#eef0f6",
-     "intensity": 9,
+     "color": "#e6eaf2",
+     "intensity": 3.2,
      "distance": 7
     }
    ],
@@ -17601,7 +17601,7 @@
    },
    "ambient": {
     "color": "#dfe6dc",
-    "intensity": 0.1
+    "intensity": 0.05
    },
    "sun": {
     "intensity": 0
@@ -17615,7 +17615,7 @@
       1.5
      ],
      "color": "#dfe6dc",
-     "intensity": 6,
+     "intensity": 2.6,
      "distance": 7
     },
     {
@@ -17626,7 +17626,7 @@
       -1.5
      ],
      "color": "#dfe6dc",
-     "intensity": 6,
+     "intensity": 2.6,
      "distance": 7
     }
    ],
@@ -17728,7 +17728,7 @@
    },
    "ambient": {
     "color": "#dfe6dc",
-    "intensity": 0.1
+    "intensity": 0.05
    },
    "sun": {
     "intensity": 0
@@ -17742,7 +17742,7 @@
       2.85
      ],
      "color": "#dfe6dc",
-     "intensity": 6,
+     "intensity": 2.6,
      "distance": 8
     },
     {
@@ -17753,7 +17753,7 @@
       -2.85
      ],
      "color": "#dfe6dc",
-     "intensity": 6,
+     "intensity": 2.6,
      "distance": 9
     }
    ],
@@ -18097,7 +18097,7 @@
    },
    "ambient": {
     "color": "#dfe6dc",
-    "intensity": 0.1
+    "intensity": 0.05
    },
    "sun": {
     "intensity": 0
@@ -18111,7 +18111,7 @@
       3.4000000000000004
      ],
      "color": "#dfe6dc",
-     "intensity": 6,
+     "intensity": 2.6,
      "distance": 8
     },
     {
@@ -18122,7 +18122,7 @@
       -3.4000000000000004
      ],
      "color": "#dfe6dc",
-     "intensity": 6,
+     "intensity": 2.6,
      "distance": 9
     }
    ],
@@ -18361,7 +18361,7 @@
    },
    "ambient": {
     "color": "#ffa040",
-    "intensity": 0.1
+    "intensity": 0.05
    },
    "sun": {
     "intensity": 0
@@ -18375,7 +18375,7 @@
       4.0
      ],
      "color": "#ffa040",
-     "intensity": 18,
+     "intensity": 10,
      "distance": 14,
      "flicker": 0.2
     },
@@ -18387,7 +18387,7 @@
       0
      ],
      "color": "#ffa040",
-     "intensity": 18,
+     "intensity": 10,
      "distance": 14,
      "flicker": 0.2
     },
@@ -18399,7 +18399,7 @@
       -4.0
      ],
      "color": "#ffa040",
-     "intensity": 18,
+     "intensity": 10,
      "distance": 14,
      "flicker": 0.2
     }
@@ -18554,7 +18554,7 @@
    },
    "ambient": {
     "color": "#dfe6dc",
-    "intensity": 0.1
+    "intensity": 0.05
    },
    "sun": {
     "intensity": 0

@@ -195,11 +195,11 @@ def drop_props(rec, pred):
 
 # Connector styles: floor, wall, ceiling, lamp colour, footstep.
 CN_STYLE = {
-    "office":  {"floor": "carpet", "wall": "plaster", "ceiling": "ceiling_tile", "lamp": "#eef0f6", "lamp_i": 9, "skirt": "plaster_dark"},
-    "service": {"floor": "concrete_wet", "wall": "cinderblock", "ceiling": "concrete", "lamp": "#dfe6dc", "lamp_i": 6, "skirt": "paint_green"},
-    "home":    {"floor": "carpet", "wall": "plaster_dark", "ceiling": "plaster_dark", "lamp": "#ffd9a0", "lamp_i": 5, "skirt": "plaster_dark"},
-    "marble":  {"floor": "marble", "wall": "plaster_dark", "ceiling": "plaster_dark", "lamp": "#fff1dc", "lamp_i": 10, "skirt": "marble"},
-    "garage":  {"floor": "garage_floor", "wall": "concrete", "ceiling": "concrete", "lamp": "#ffa040", "lamp_i": 18, "skirt": "paint_green"},
+    "office":  {"floor": "carpet", "wall": "plaster_dark", "ceiling": "ceiling_tile", "lamp": "#e6eaf2", "lamp_i": 3.2, "skirt": "plaster_dark"},
+    "service": {"floor": "concrete_wet", "wall": "cinderblock", "ceiling": "concrete", "lamp": "#dfe6dc", "lamp_i": 2.6, "skirt": "paint_green"},
+    "home":    {"floor": "carpet", "wall": "plaster_dark", "ceiling": "plaster_dark", "lamp": "#ffd9a0", "lamp_i": 2.4, "skirt": "plaster_dark"},
+    "marble":  {"floor": "marble", "wall": "plaster_dark", "ceiling": "plaster_dark", "lamp": "#fff1dc", "lamp_i": 4.0, "skirt": "marble"},
+    "garage":  {"floor": "garage_floor", "wall": "concrete", "ceiling": "concrete", "lamp": "#ffa040", "lamp_i": 10, "skirt": "paint_green"},
 }
 
 
@@ -214,7 +214,7 @@ def _connector(name, style, size, floor_y=0.0, entry_kind="door", entry_w=1.2, e
         "floor": st["floor"], "wall": st["wall"], "ceiling": st["ceiling"],
         "tile": {"floor": 1.5, "wall": 1.6, "ceiling": 1.5},
         "skirt": {"mat": st["skirt"], "h": 0.12, "t": 0.02},
-        "ambient": {"color": st["lamp"], "intensity": 0.1},
+        "ambient": {"color": st["lamp"], "intensity": 0.05},
         "sun": {"intensity": 0},
         "lights": [],
         "fog": {"color": "#050505", "near": 6, "far": 24},

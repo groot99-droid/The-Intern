@@ -104,8 +104,10 @@ export function createDirector({ manifest, endings, state, stage, audio = null, 
     dropHeld();
     const g = buildProp(stage.mats, { type, pos: [0, 0, 0] });
     if (!g) return;
-    g.position.set(0.2, -0.42, -0.62);
-    g.rotation.set(0.25, -0.35, 0);
+    // carried low and to the right, small in the frame
+    g.position.set(0.24, -0.5, -0.75);
+    g.rotation.set(0.35, -0.4, 0);
+    g.scale.setScalar(0.55);
     g.traverse((o) => { if (o.isMesh) { o.castShadow = false; o.renderOrder = 2; } });
     stage.camera.add(g);
     held = g;
@@ -791,9 +793,43 @@ export function createDirector({ manifest, endings, state, stage, audio = null, 
   }
   stage.onFrame(tick);
 
+  // Dev only (?start=S5&render=H): put the candidate straight into a scene,
+  // standing just inside its room's entry, with a score that gives that
+  // render. The rest of the game plays on from there as normal.
+  async function startAt(sceneId, letter = 'C') {
+    const sc = manifest.scenes[sceneId];
+    if (!sc || sceneId === 'S0') return startS0();
+    const L = sc.branches[letter] ? letter : 'C';
+    const n = manifest.spineOrder.indexOf(sceneId);
+    state.lastRender = L;
+    state.conformance = (n - 1) % 2 === 1 ? (L === 'C' ? 1 : -1) : 0;
+    state.lastPolarity = state.conformance === 0 ? null : (L === 'C' ? 1 : -1);
+    const branch = sc.branches[L];
+    await world.prebuild(branch.room);
+    const inst = world.spawn(branch.room);
+    world.setCurrent(inst);
+    const e = inst.anchorsWorld[inst.entryName];
+    if (inst.rec.swim) {
+      const y0 = inst.matrix.elements[13];
+      player.teleport(0, y0 + inst.rec.size[1] - 3, 0, 0);
+      startSwim(inst);
+    } else if (e && !inst.room.anchors[inst.entryName].vertical) {
+      const y = (e.yaw + 180) * Math.PI / 180;
+      player.teleport(e.pos[0] - Math.sin(y) * 1.8, e.pos[1], e.pos[2] - Math.cos(y) * 1.8, e.yaw + 180);
+    } else {
+      const sp = inst.room.spawn;
+      player.teleport(sp.x, inst.rec.floorY || 0, sp.z, sp.yaw);
+    }
+    player.enable();
+    stage.setPlayerActive(true);
+    unlockOnGesture(manifest.scenes.S0.branches.X);
+    if (audio) { audio.unlock(); audio.startDrone({ fadeMs: 400 }); }
+    enterScene(sceneId, inst);
+  }
+
   return {
-    start(sceneId = 'S0') {
-      if (sceneId !== 'S0') throw new Error('director: the building is entered from the apartment');
+    start(sceneId = 'S0', letter = 'C') {
+      if (sceneId !== 'S0') return startAt(sceneId, letter);
       return startS0();
     },
     bail() {
@@ -827,7 +863,10 @@ export function createDirector({ manifest, endings, state, stage, audio = null, 
         armed: scene ? scene.armed : false,
         committing: scene ? scene.committing : false,
         reached: scene ? [...scene.reached] : [],
-        links: links.map((L) => ({ from: L.from.key, conn: L.conn.key, dest: L.dest.key, seal1: L.seal1, seal2: L.seal2, boundary: L.boundary, exit: L.from.anchorsWorld[L.exitName] ? L.from.anchorsWorld[L.exitName].pos : null, connExit: L.conn.anchorsWorld.exit ? L.conn.anchorsWorld.exit.pos : null, destEntry: L.dest.anchorsWorld[L.dest.entryName] ? L.dest.anchorsWorld[L.dest.entryName].pos : null })),
+        links: links.map((L) => {
+          const a = (inst, name) => (inst.anchorsWorld[name] ? { pos: inst.anchorsWorld[name].pos, yaw: inst.anchorsWorld[name].yaw } : null);
+          return { from: L.from.key, conn: L.conn.key, dest: L.dest.key, seal1: L.seal1, seal2: L.seal2, boundary: L.boundary, held: !!L.held, exit: a(L.from, L.exitName), connExit: a(L.conn, 'exit'), destEntry: a(L.dest, L.dest.entryName) };
+        }),
         targets,
         ending: endingWatch ? endingWatch.endingId : null,
         ended,

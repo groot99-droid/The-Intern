@@ -104,7 +104,10 @@ const RECIPES = {
   void:          { a: '#050505', b: '#0a0a0a', seed: 131, contrast: 0.2, pattern: 'none', rough: 1.0, bump: 0 },
   asphalt:       { a: '#2a2928', b: '#3f3e3c', seed: 141, contrast: 0.8, pattern: 'concrete', rough: 0.9, bump: 0.015, roughVar: 0.4 },
   glass:         { a: '#9fb2b8', b: '#c8d6da', seed: 151, contrast: 0.1, pattern: 'none', rough: 0.05, metal: 0.2, opacity: 0.22, bump: 0 },
-  glass_dark:    { a: '#1a2224', b: '#25302f', seed: 152, contrast: 0.1, pattern: 'none', rough: 0.05, metal: 0.4, opacity: 0.55, bump: 0 }
+  glass_dark:    { a: '#1a2224', b: '#25302f', seed: 152, contrast: 0.1, pattern: 'none', rough: 0.05, metal: 0.4, opacity: 0.55, bump: 0 },
+  // the street's brick and the apartment desk's wood: the building's, photoreal (C1)
+  brick:         { a: '#5a3428', b: '#8a5a44', seed: 161, contrast: 0.75, pattern: 'blocks', rough: 0.9, bump: 0.025, roughVar: 0.4 },
+  wood:          { a: '#3e2a1c', b: '#6a4a32', seed: 171, contrast: 0.7, pattern: 'stains', rough: 0.55, bump: 0.006, roughVar: 0.5 }
 };
 
 // Pattern pass. `c` draws colour, `h` draws height (white = raised,

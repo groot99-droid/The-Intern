@@ -513,6 +513,27 @@ const BUILDERS = {
     g.add(box(mats, 'lp_chrome', 0.04, 0.008, 0.015, 0.09, 0.006, 0));
     return g;
   },
+  // ---- polish: S0 + street -- begin (that scene's new props go between these lines) ----
+  // ---- polish: S0 + street -- end ----
+  //
+  // ---- polish: S1-S2 waiting room -- begin (that scene's new props go between these lines) ----
+  // ---- polish: S1-S2 waiting room -- end ----
+  //
+  // ---- polish: S3 threshold -- begin (that scene's new props go between these lines) ----
+  // ---- polish: S3 threshold -- end ----
+  //
+  // ---- polish: S4 floor -- begin (that scene's new props go between these lines) ----
+  // ---- polish: S4 floor -- end ----
+  //
+  // ---- polish: S5-S6 desk / garage -- begin (that scene's new props go between these lines) ----
+  // ---- polish: S5-S6 desk / garage -- end ----
+  //
+  // ---- polish: S7 descent -- begin (that scene's new props go between these lines) ----
+  // ---- polish: S7 descent -- end ----
+  //
+  // ---- polish: S8 + endings -- begin (that scene's new props go between these lines) ----
+  // ---- polish: S8 + endings -- end ----
+  //
   // A model from assets/glb/library.glb (the open-source catalog, imported
   // through the Higgsfield scene builder). Built by library.js when the
   // library is loaded; until then (or without it) the box fallback stands

@@ -70,8 +70,7 @@
                 {
                   "sit": {
                     "eye": 1.12,
-                    "holdMs": 2400,
-                    "stand": false
+                    "holdMs": 2400
                   }
                 }
               ]
@@ -106,8 +105,7 @@
                 {
                   "sit": {
                     "eye": 1.12,
-                    "holdMs": 2400,
-                    "stand": false
+                    "holdMs": 2400
                   }
                 }
               ]

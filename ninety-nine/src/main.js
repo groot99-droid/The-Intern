@@ -96,11 +96,12 @@ async function boot() {
 
   initBail(director);
   initSoundToggle(audio);
-  await director.start('S0');
+  // Dev only: ?start=S5&render=H drops the candidate straight into a scene.
+  const q = new URLSearchParams(location.search);
+  await director.start(q.get('start') || 'S0', q.get('render') || 'C');
 
   // Dev only: ?autopilot=SSRR... walks the candidate through by himself
   // (src/dev/autopilot.js, tools/walkthrough.cjs).
-  const q = new URLSearchParams(location.search);
   if (q.has('autopilot')) {
     const { startAutopilot } = await import('./dev/autopilot.js');
     window.__NINETY_NINE__.autopilot = startAutopilot({ director, stage, plan: q.get('autopilot'), seed: q.get('seed') || 'C', bailAt: q.get('bail'), speed: parseFloat(q.get('speed') || '2.5') });

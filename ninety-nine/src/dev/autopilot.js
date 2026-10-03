@@ -201,13 +201,14 @@ export function startAutopilot({ director, stage, plan = '', seed = 'C', bailAt 
 
   function chooseGoal(dbg) {
     // a doorway being walked through comes first
-    const L = dbg.links.find((l) => !l.seal2);
+    const L = dbg.links.find((l) => !l.seal2 && !l.held);
     if (L) {
       const cur = world.current();
       const curKey = cur ? cur.key : null;
-      if (curKey === L.from) return { kind: 'exit', point: L.exit, inst: cur, through: true };
-      if (curKey === L.conn) return { kind: 'conn', point: L.connExit, inst: null, through: true };
-      return { kind: 'enter', point: L.destEntry, inst: null, through: true, beyond: true };
+      if (curKey === L.from) return { kind: 'exit', point: L.exit.pos, yaw: L.exit.yaw, inst: cur };
+      if (curKey === L.conn) return { kind: 'conn', point: L.connExit.pos, yaw: L.connExit.yaw, inst: null };
+      // into the next room: the entry anchor faces out of it, so walk the other way
+      return { kind: 'enter', point: L.destEntry.pos, yaw: L.destEntry.yaw + 180, inst: null };
     }
     const armed = dbg.targets.filter((t) => t.kind !== 'threshold' || t.armed);
     const beat = armed.find((t) => t.kind === 'beat');
@@ -228,13 +229,11 @@ export function startAutopilot({ director, stage, plan = '', seed = 'C', bailAt 
     return null;
   }
 
-  // Push a doorway target a little past its anchor so he walks through it.
-  function past(point, inst, metres) {
-    if (!inst || !point) return point;
-    const c = player.position();
-    const dx = point[0] - c[0], dz = point[2] - c[2];
-    const d = Math.hypot(dx, dz) || 1;
-    return [point[0] + (dx / d) * metres, point[1], point[2] + (dz / d) * metres];
+  // A point `metres` beyond a doorway anchor along the way it faces
+  // (controls.js yaw: 0 faces -z), so he walks through, not up to, it.
+  function past(point, yawDeg, metres) {
+    const y = yawDeg * Math.PI / 180;
+    return [point[0] - Math.sin(y) * metres, point[1], point[2] - Math.cos(y) * metres];
   }
 
   function tick(dt) {
@@ -259,7 +258,7 @@ export function startAutopilot({ director, stage, plan = '', seed = 'C', bailAt 
       const key = `exit:${goal.point.map((n) => n.toFixed(1)).join(',')}`;
       if (!route || route.key !== key) { route = planTo(goal.point, goal.inst); route.key = key; }
     } else if (goal.kind === 'conn' || goal.kind === 'enter') {
-      route = { key: goal.kind, points: [goal.kind === 'enter' ? past(goal.point, true, 2.5) : past(goal.point, true, 0.8)], i: 0 };
+      route = { key: goal.kind, points: [past(goal.point, goal.yaw, goal.kind === 'enter' ? 2.6 : 0.8)], i: 0 };
     } else if (!swim) {
       const key = `${goal.kind}:${goal.point.map((n) => n.toFixed(1)).join(',')}`;
       if (!route || route.key !== key || (goal.kind === 'threshold' && goal.zone === 'manager')) { route = planTo(goal.point, goal.inst); route.key = key; }
@@ -268,7 +267,7 @@ export function startAutopilot({ director, stage, plan = '', seed = 'C', bailAt 
     }
     while (route.i < route.points.length - 1 && Math.hypot(route.points[route.i][0] - player.position()[0], route.points[route.i][2] - player.position()[2]) < 0.5) route.i++;
     target = route.points[route.i];
-    if (goal.kind === 'exit' && route.i === route.points.length - 1) target = past(goal.point, true, 1.5);
+    if (goal.kind === 'exit' && route.i >= route.points.length - 2 && Math.hypot(goal.point[0] - player.position()[0], goal.point[2] - player.position()[2]) < 1.6) target = past(goal.point, goal.yaw, 1.5);
     const d = steerTo(target, { swim });
     // stuck?
     const p = player.position();

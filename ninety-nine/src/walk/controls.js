@@ -44,6 +44,7 @@ export function createControls(camera, domElement, getCollidables, { onBump = nu
   let fallV = 0;
   let lastFloor = null;
   let speedScale = 1;
+  let lastSafe = null;  // the last place he stood on a floor (a fall too far puts him back)
 
   const euler = new THREE.Euler(0, 0, 0, 'YXZ');
   const raycaster = new THREE.Raycaster();
@@ -162,9 +163,11 @@ export function createControls(camera, domElement, getCollidables, { onBump = nu
     const { floors } = getCollidables();
     if (!floors || floors.length === 0) return;
     const feetY = footY === null ? camera.position.y - EYE_HEIGHT - eyeOffset : footY;
-    rayOrigin.set(camera.position.x, feetY + STEP_UP, camera.position.z);
+    // snapping (a teleport, the end of a carried move) looks down from the eye,
+    // so a camera left low (seated) still finds the floor under it
+    rayOrigin.set(camera.position.x, snap ? camera.position.y + 0.2 : feetY + STEP_UP, camera.position.z);
     raycaster.set(rayOrigin, DOWN);
-    raycaster.far = STEP_UP + (snap ? 50 : STEP_DOWN);
+    raycaster.far = snap ? 50 : STEP_UP + STEP_DOWN;
     const hits = raycaster.intersectObjects(floors, false);
     if (hits.length > 0) {
       const target = hits[0].point.y;
@@ -172,10 +175,19 @@ export function createControls(camera, domElement, getCollidables, { onBump = nu
       fallV = 0;
       if (footY === null || snap) footY = target;
       else footY += (target - footY) * Math.min(1, delta * 14);
+      lastSafe = { x: camera.position.x, y: footY, z: camera.position.z };
     } else if (footY !== null) {
       fallV += GRAVITY * delta;
       footY -= fallV * delta;
       lastFloor = null;
+      if (lastSafe && footY < lastSafe.y - 6) {
+        // nothing under him for six metres: a hole in the building that should
+        // not be there. Back to where he last stood.
+        camera.position.x = lastSafe.x;
+        camera.position.z = lastSafe.z;
+        footY = lastSafe.y;
+        fallV = 0;
+      }
     }
     if (footY !== null) camera.position.y = footY + EYE_HEIGHT + eyeOffset;
   }
@@ -220,6 +232,7 @@ export function createControls(camera, domElement, getCollidables, { onBump = nu
     pitch = Math.max(-Math.PI / 2 + 0.08, Math.min(Math.PI / 2 - 0.08, euler.x));
     setLook(yaw, pitch);
     footY = camera.position.y - EYE_HEIGHT - eyeOffset;
+    followFloor(0, true);
   }
   function setMoveAxis(x, y) {
     const len = Math.hypot(x, y);
