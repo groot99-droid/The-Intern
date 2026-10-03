@@ -8,12 +8,12 @@
 </head>
 <body>
   <div id="stage">
-    <!-- The stage (src/stage/stage.js) draws every scene live into this layer: no video, no stills. -->
+    <!-- The stage (src/stage/stage.js) draws the building live into this layer, through the candidate's eyes. -->
     <div id="scene-layer"></div>
-    <!-- WALK THE ROOM's HUD; the room itself is the stage underneath. -->
-    <div id="walk-layer" hidden></div>
-    <div id="minigame-layer"></div>
-    <div id="choice-layer"></div>
+    <!-- Threshold labels, captions, the walk hint, the touch joystick. -->
+    <div id="hud-layer"></div>
+    <!-- The application form, laid over the apartment's CRT while he sits at it. -->
+    <div id="screen-layer" hidden></div>
     <div id="ending-card" hidden></div>
     <div id="boot-error" hidden></div>
   </div>

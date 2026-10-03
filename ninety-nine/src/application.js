@@ -1,8 +1,9 @@
 // S0 application beat (added post-launch, at the user's request -- not part
-// of Doc 1-4's original design, unlike every other module in src/). Replaces
-// the old single SUBMIT click with: a drag-and-drop form (text/form.json),
-// then a countdown loading bar stepping "6 MONTHS" down to "LEAVE NOW", then
-// the existing S0 video/street sequence proceeds unchanged.
+// of Doc 1-4's original design, unlike every other module in src/). The
+// candidate walks up to the computer in his apartment and sits; this form is
+// laid over the CRT's screen (src/director.js follows stage.screenRect()):
+// a drag-and-drop form (text/form.json), then the portal's answer and a
+// countdown stepping "6 MONTHS" down to "LEAVE NOW", drawn on the screen.
 //
 // Three questions, two tiles each -- WILLING and NOT WILLING, both already
 // written out by the building; the candidate only chooses which one to hand
@@ -10,21 +11,15 @@
 // with one pre-filled tile apiece, which meant every player submitted an
 // identical form and the answers could not mean anything. (The cut before
 // that was free typing, judged "boring".) The ten-question set is gone
-// entirely; the MG-01 slot at S1 is now mg01-stack (THE TRAY), which
-// scenes.json does mount -- this form is the intake, that is the tray.
+// entirely (and the mini-games after it are gone too).
 //
 // What the answers do: two or more NOT WILLING answers seed the hostile
 // render, which is what finally makes S1-H/S2-H reachable. The seed is
 // render-only -- it moves lastRender, never conformance -- so every ending
 // threshold and the documented 256-path counts are untouched (state.js
-// seedRenderFromIntake). This form is still deliberately NOT a mini-game:
-// no friction or dwell scoring (Doc 4 §6.3's contract), because it happens
-// before the game proper starts. It's the pre-game ritual, not a scored beat.
-//
-// Pointer-drag + percentage positioning follows the same pattern as
-// mg07-handoff.js's package-drag (mountModeC), for consistency. Like every
-// mini-game in this build, the beat cannot be failed: the hit-test is
-// generous, and neither tile is the wrong one.
+// seedRenderFromIntake). No friction or dwell scoring: it happens before the
+// game proper starts. It's the pre-game ritual, not a scored beat. It cannot
+// be failed: the hit-test is generous, and neither tile is the wrong one.
 
 const COUNTDOWN_STEPS = ['6 MONTHS', '5 MONTHS', '4 MONTHS', '3 MONTHS', '2 MONTHS', '1 MONTH', 'LEAVE NOW'];
 const COUNTDOWN_STEP_MS = 450;
@@ -190,11 +185,20 @@ export function createApplicationUI(container) {
 
   return {
     // onSubmitGesture fires synchronously inside the form's final drop
-    // handler -- callers must use it (not the returned promise) to start
+    // handler -- callers must use it (not the returned promise) to unlock
     // the AudioContext, or autoplay policy will block it.
-    // Resolves { answers, refusals }: the labelled answers for MG-07's
-    // intake review, and the NOT WILLING count router.js seeds the render
-    // from (state.js seedRenderFromIntake).
+    // Resolves { answers, refusals }: the labelled answers, and the NOT
+    // WILLING count the director seeds the render from (state.js
+    // seedRenderFromIntake).
+    async presentForm({ onSubmitGesture = () => {} } = {}) {
+      const formText = await loadFormText();
+      return renderForm(formText.fields, onSubmitGesture);
+    },
+    // The countdown is drawn on the CRT itself now (src/screens.js); these
+    // give the director its steps and pace.
+    countdownSteps: () => COUNTDOWN_STEPS.slice(),
+    countdownStepMs: () => COUNTDOWN_STEP_MS,
+    // Form then DOM countdown in one go (kept for previews).
     async present({ onSubmitGesture = () => {} } = {}) {
       const formText = await loadFormText();
       const { answers, refusals } = await renderForm(formText.fields, onSubmitGesture);

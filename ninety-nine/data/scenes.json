@@ -1,5 +1,5 @@
 {
-  "_comment": "Single source of truth linking Doc 1 logic, Doc 3 minigame IDs and the 3D sets in data/rooms.json (Doc 4 §15). A sequence entry is a SHOT: `room` (a rooms.json key; defaults to the branch's `room`) + `shot` (a name from that room's `shots`). `loop: true` entries resolve at once and play until the next shot; others are awaited. Transitions are derived (router.js planTransition: the current room's `leave` shot, black, the next room's `arrive`); a branch's `transitions[next]` may override the pair's shot names. Flags COUNTED_DOOR (MG-02 mode H) and EARLY_EXIT (bail.js) are NOT set here -- they come from minigame onComplete().flags or the global bail-out, not from scene choices.",
+  "_comment": "Single source of truth linking Doc 1's logic to the building (Doc 4 §15). The game is one continuous walk: each scene's branch names the ROOM it is played in (data/rooms.json) and its two THRESHOLDS -- zones in that room the candidate walks to; stepping into one commits the choice (src/director.js). A threshold's `exit` is the door that opens onto `via` (a CN_* connector) with the next scene's room joined behind it; when the next scene's room is the same set (S1 -> S2, S5 C -> S6 C, S6 H -> S7 H) the scene changes where he stands. `next` is per branch and the same for both thresholds: the spine never forks, only the render does (state.js renderFor). Beats (`beat`, `onEnter`, `approach`) are run in order: sfxCue, oneShot, caption, rattle, open/close (door), show/hide (prop), light, screen, setFlag, hold/drop (a prop in his hands), actor, lookAt, sit, moveTo, shot, ride, shake, seal, waitMs. The mini-games are gone (the author's call); friction now comes from how he walks to the choice (src/friction.js).",
   "spineOrder": [
     "S0",
     "S1",
@@ -19,34 +19,31 @@
       "music": null,
       "branches": {
         "X": {
-          "preGesture": {
-            "_note": "Doc 1 §5 S0 Beat 1: 'He clicks SUBMIT.' This is also the one browser-mandated user gesture the whole game needs (Doc 4 §7.4) -- AudioContext is created here and nowhere else. Styled as the crude Web 1.0 portal button, not a generic UI control.",
-            "label": "SUBMIT"
-          },
           "room": "S0_X",
-          "sequence": [
-            {
-              "shot": "loop",
-              "loop": true,
-              "mount": null,
-              "_note": "the apartment, the form up; leaving it (the push into the screen) and the street push are the room change between this entry and the next"
-            },
-            {
-              "room": "SET_STREET",
-              "shot": "out",
-              "loop": false,
-              "mount": null,
-              "_note": "the commute: the street`s `arrive` shot is the 9 s push to the tower doors (was S0_X_VID.mp4); this entry then parks at the doors until the transition into S1"
-            }
-          ],
           "ambience": "S0_X_AMB.wav",
-          "ambienceSecondary": {
-            "file": "S0_X_AMB_STREET.wav",
-            "fadeInAtBeat": "commute",
-            "_note": "Crossfades in on the commute cut (router.js: renderer onStart for sequence entry 0). The apartment bed above plays under the form/countdown from the SUBMIT gesture. Was declared but never played."
+          "next": "S1",
+          "start": {
+            "zone": "desk",
+            "label": "APPLY",
+            "sit": "sit",
+            "lean": "lean",
+            "stand": "stand",
+            "_note": "Walking up to the lit screen sits him down at it: the application (application.js) is laid over the CRT, the portal answers on the screen, ACCEPTED stays there. Hands show while seated (C6)."
           },
-          "minigame": null,
-          "next": "S1"
+          "out": {
+            "exit": "door",
+            "via": "CN_STAIRS_APT",
+            "to": "SET_STREET",
+            "ambience": "S0_X_AMB_STREET.wav",
+            "_note": "The apartment door unlocks after ACCEPTED: stairs down to the street, the first descent. The street bed comes in on the stairs."
+          },
+          "report": {
+            "zone": "report",
+            "label": "666 HALLAM ROW.",
+            "exit": "tower",
+            "via": "CN_VESTIBULE",
+            "_note": "At the tower the glass doors open; through the vestibule into the lobby. When the lobby doors close behind him the drone begins (C7) and S1 starts."
+          }
         }
       }
     },
@@ -57,53 +54,71 @@
       "branches": {
         "C": {
           "room": "S1_C",
-          "sequence": [
-            {
-              "shot": "loop",
-              "loop": true,
-              "mount": "minigame"
-            }
-          ],
+          "next": "S2",
           "ambience": "S1_C_AMB.wav",
-          "minigame": {
-            "module": "mg01-stack",
-            "mode": "C"
-          },
-          "choice": {
+          "thresholds": {
             "succumb": {
               "label": "TAKE A SEAT",
-              "next": "S2"
+              "zone": [
+                "seat_w",
+                "seat_e"
+              ],
+              "beat": [
+                {
+                  "sfxCue": "package-drag"
+                },
+                {
+                  "sit": {
+                    "eye": 1.12,
+                    "holdMs": 2400
+                  }
+                }
+              ]
             },
             "resist": {
               "label": "STAY STANDING",
-              "next": "S2",
-              "setFlag": "NEVER_SAT"
+              "zone": "counter",
+              "setFlag": "NEVER_SAT",
+              "beat": [
+                {
+                  "waitMs": 1800
+                }
+              ]
             }
           }
         },
         "H": {
           "room": "S1_H",
-          "sequence": [
-            {
-              "shot": "loop",
-              "loop": true,
-              "mount": "minigame"
-            }
-          ],
+          "next": "S2",
           "ambience": "S1_H_AMB.wav",
-          "minigame": {
-            "module": "mg01-stack",
-            "mode": "H"
-          },
-          "choice": {
+          "thresholds": {
             "succumb": {
               "label": "TAKE A SEAT",
-              "next": "S2"
+              "zone": [
+                "seat_w",
+                "seat_e"
+              ],
+              "beat": [
+                {
+                  "sfxCue": "package-drag"
+                },
+                {
+                  "sit": {
+                    "eye": 1.12,
+                    "holdMs": 2400
+                  }
+                }
+              ]
             },
             "resist": {
               "label": "STAY STANDING",
-              "next": "S2",
-              "setFlag": "NEVER_SAT"
+              "zone": "counter",
+              "setFlag": "NEVER_SAT",
+              "beat": [
+                {
+                  "waitMs": 1800
+                }
+              ]
             }
           }
         }
@@ -116,14 +131,8 @@
       "branches": {
         "C": {
           "room": "S2_C",
-          "sequence": [
-            {
-              "shot": "call",
-              "loop": false,
-              "mount": null,
-              "_note": "the speaker clicks; a 4 s push to the receptionist (was S2_*_VID.mp4)"
-            }
-          ],
+          "next": "S3",
+          "ambience": null,
           "sfxCue": [
             "speaker-click",
             "receptionist-voice"
@@ -136,29 +145,64 @@
               "className": "scene-caption-receptionist"
             }
           ],
-          "ambience": null,
-          "minigame": null,
-          "choice": {
+          "onEnter": [
+            {
+              "lookAt": "receptionist",
+              "lookY": 1.05,
+              "seconds": 1.5,
+              "holdMs": 1600
+            }
+          ],
+          "friction": {
+            "t0": 10,
+            "t1": 45
+          },
+          "thresholds": {
             "succumb": {
               "label": "STAND",
-              "next": "S3"
+              "zone": "inner_door",
+              "exit": "inner",
+              "via": "CN_CORRIDOR_OFFICE",
+              "beat": [
+                {
+                  "sfxCue": "door-buzz"
+                },
+                {
+                  "waitMs": 500
+                }
+              ]
             },
             "resist": {
               "label": "RUN",
-              "next": "S3"
+              "zone": "front_doors",
+              "exit": "service",
+              "via": "CN_CORRIDOR_SERVICE",
+              "beat": [
+                {
+                  "rattle": "front",
+                  "sfxCue": "door-rattle"
+                },
+                {
+                  "waitMs": 800
+                },
+                {
+                  "rattle": "front",
+                  "sfxCue": "door-rattle"
+                },
+                {
+                  "waitMs": 900
+                },
+                {
+                  "sfxCue": "door-buzz"
+                }
+              ]
             }
           }
         },
         "H": {
           "room": "S2_H",
-          "sequence": [
-            {
-              "shot": "call",
-              "loop": false,
-              "mount": null,
-              "_note": "the speaker clicks; a 4 s push to the receptionist (was S2_*_VID.mp4)"
-            }
-          ],
+          "next": "S3",
+          "ambience": null,
           "sfxCue": [
             "speaker-hiss",
             "receptionist-voice"
@@ -171,16 +215,57 @@
               "className": "scene-caption-receptionist"
             }
           ],
-          "ambience": null,
-          "minigame": null,
-          "choice": {
+          "onEnter": [
+            {
+              "lookAt": "receptionist",
+              "lookY": 1.05,
+              "seconds": 1.5,
+              "holdMs": 1600
+            }
+          ],
+          "friction": {
+            "t0": 10,
+            "t1": 45
+          },
+          "thresholds": {
             "succumb": {
               "label": "STAND",
-              "next": "S3"
+              "zone": "inner_door",
+              "exit": "inner",
+              "via": "CN_CORRIDOR_OFFICE",
+              "beat": [
+                {
+                  "sfxCue": "door-buzz"
+                },
+                {
+                  "waitMs": 500
+                }
+              ]
             },
             "resist": {
               "label": "RUN",
-              "next": "S3"
+              "zone": "front_doors",
+              "exit": "service",
+              "via": "CN_CORRIDOR_SERVICE",
+              "beat": [
+                {
+                  "rattle": "front",
+                  "sfxCue": "door-rattle"
+                },
+                {
+                  "waitMs": 800
+                },
+                {
+                  "rattle": "front",
+                  "sfxCue": "door-rattle"
+                },
+                {
+                  "waitMs": 900
+                },
+                {
+                  "sfxCue": "door-buzz"
+                }
+              ]
             }
           }
         }
@@ -193,52 +278,119 @@
       "branches": {
         "C": {
           "room": "S3_C",
-          "sequence": [
-            {
-              "shot": "loop",
-              "loop": true,
-              "mount": "minigame"
-            }
-          ],
-          "sfxCue": "curtain-rustle",
+          "next": "S4",
           "ambience": "S3_C_AMB.wav",
-          "minigame": {
-            "module": "mg02-scan",
-            "mode": "C"
-          },
-          "choice": {
+          "thresholds": {
             "succumb": {
               "label": "PART THE CURTAIN",
-              "next": "S4"
+              "zone": "curtain",
+              "exit": "curtain",
+              "via": "CN_CORRIDOR_OFFICE",
+              "approach": [
+                {
+                  "caption": "scan.prompt",
+                  "holdMs": 2600
+                }
+              ],
+              "beat": [
+                {
+                  "sfxCue": "curtain-rustle"
+                },
+                {
+                  "open": "curtain",
+                  "seconds": 1.6,
+                  "await": true
+                }
+              ]
             },
             "resist": {
               "label": "TRY THE DOOR",
-              "next": "S4"
+              "zone": "glass",
+              "exit": "service",
+              "via": "CN_CORRIDOR_SERVICE",
+              "beat": [
+                {
+                  "rattle": "glass",
+                  "sfxCue": "door-rattle"
+                },
+                {
+                  "waitMs": 700
+                },
+                {
+                  "rattle": "glass",
+                  "sfxCue": "door-rattle"
+                },
+                {
+                  "waitMs": 700
+                },
+                {
+                  "caption": "door.violation",
+                  "className": "scene-caption-receptionist",
+                  "holdMs": 3400
+                },
+                {
+                  "waitMs": 2000
+                },
+                {
+                  "sfxCue": "door-buzz"
+                }
+              ]
             }
           }
         },
         "H": {
           "room": "S3_H",
-          "sequence": [
-            {
-              "shot": "loop",
-              "loop": true,
-              "mount": "minigame"
-            }
-          ],
+          "next": "S4",
           "ambience": "S3_H_AMB.wav",
-          "minigame": {
-            "module": "mg02-scan",
-            "mode": "H"
-          },
-          "choice": {
+          "thresholds": {
             "succumb": {
               "label": "PART THE CURTAIN",
-              "next": "S4"
+              "zone": "curtain",
+              "exit": "curtain",
+              "via": "CN_CORRIDOR_SERVICE",
+              "beat": [
+                {
+                  "sfxCue": "curtain-rustle"
+                },
+                {
+                  "open": "curtain",
+                  "seconds": 1.6,
+                  "await": true
+                }
+              ]
             },
             "resist": {
               "label": "TRY THE DOOR",
-              "next": "S4"
+              "zone": "glass",
+              "exit": "service",
+              "via": "CN_CORRIDOR_SERVICE",
+              "beat": [
+                {
+                  "rattle": "front",
+                  "sfxCue": "door-rattle"
+                },
+                {
+                  "waitMs": 700
+                },
+                {
+                  "rattle": "front",
+                  "sfxCue": "door-rattle"
+                },
+                {
+                  "waitMs": 700
+                },
+                {
+                  "caption": "door.violation",
+                  "className": "scene-caption-receptionist",
+                  "holdMs": 3400
+                },
+                {
+                  "waitMs": 2000
+                },
+                {
+                  "sfxCue": "door-buzz"
+                }
+              ]
             }
           }
         }
@@ -251,56 +403,73 @@
       "branches": {
         "C": {
           "room": "S4_C",
-          "sequence": [
+          "next": "S5",
+          "ambience": "S4_C_AMB.wav",
+          "onEnter": [
             {
-              "shot": "loop",
-              "loop": true,
-              "mount": "minigame"
+              "actor": {
+                "name": "manager",
+                "speed": 0.55
+              }
             }
           ],
-          "ambience": "S4_C_AMB.wav",
-          "minigame": {
-            "module": "mg03-corridor",
-            "mode": "C"
-          },
-          "choice": {
+          "thresholds": {
             "succumb": {
               "label": "TAKE THE PAPERS",
-              "next": "S5",
-              "sfxCue": "paper-handoff"
+              "zone": "manager",
+              "exit": "back",
+              "via": "CN_CORRIDOR_OFFICE",
+              "sfxCue": "paper-handoff",
+              "beat": [
+                {
+                  "caption": "manager.line",
+                  "className": "scene-caption-receptionist",
+                  "holdMs": 3400
+                },
+                {
+                  "hide": "evidence",
+                  "hold": "papers"
+                },
+                {
+                  "waitMs": 1400
+                }
+              ]
             },
             "resist": {
               "label": "TAKE THE SIDE DOOR",
-              "next": "S5"
+              "zone": "side_door",
+              "exit": "side",
+              "via": "CN_STAIRS_CONCRETE"
             }
-          },
-          "actors": {
-            "manager": "the figure named `manager` in rooms.json S4_C walks the aisle under MG-03 C (services.scene.actor)"
           }
         },
         "H": {
           "room": "S4_H",
-          "sequence": [
-            {
-              "shot": "loop",
-              "loop": true,
-              "mount": "minigame"
-            }
-          ],
+          "next": "S5",
           "ambience": "S4_H_AMB.wav",
-          "sfxOneShot": "S4_H_SFX_FOOTSTEPS.wav",
-          "minigame": {
-            "module": "mg03-corridor",
-            "mode": "H"
-          },
-          "choice": {
+          "thresholds": {
             "succumb": {
               "label": "TAKE THE PAPERS",
-              "next": "S5"
+              "zone": "far_end",
+              "exit": "far",
+              "via": "CN_CORRIDOR_SERVICE",
+              "beat": [
+                {
+                  "oneShot": "S4_H_SFX_FOOTSTEPS.wav"
+                },
+                {
+                  "hide": "manager"
+                },
+                {
+                  "waitMs": 900
+                }
+              ]
             },
             "resist": {
               "label": "TAKE THE SIDE DOOR",
-              "next": "S5"
+              "zone": "ajar",
+              "exit": "ajar",
+              "via": "CN_STAIRS_CONCRETE"
             }
           }
         }
@@ -309,58 +478,84 @@
     "S5": {
       "id": "S5",
       "name": "THE DESK / THE GARAGE",
-      "music": "pad",
+      "music": "deep",
       "branches": {
         "C": {
           "room": "S5_C",
-          "sequence": [
-            {
-              "shot": "loop",
-              "loop": true,
-              "mount": "minigame"
-            }
-          ],
+          "next": "S6",
           "ambience": "S5_C_AMB.wav",
-          "minigame": {
-            "module": "mg04-stapler",
-            "mode": "C"
-          },
-          "choice": {
+          "thresholds": {
             "succumb": {
               "label": "STAPLE",
-              "next": "S6"
+              "zone": "desk",
+              "sfxCue": "stapler-thud",
+              "beat": [
+                {
+                  "waitMs": 700
+                },
+                {
+                  "sfxCue": "stapler-thud"
+                },
+                {
+                  "waitMs": 900
+                }
+              ]
             },
             "resist": {
               "label": "WAKE THE TERMINAL",
-              "next": "S6",
+              "zone": "terminal",
               "setFlag": "SAW_HARLOWE",
-              "sfxCue": "crt-degauss"
+              "approach": [
+                {
+                  "screen": {
+                    "prop": "harlowe",
+                    "page": "harlowe"
+                  },
+                  "light": {
+                    "id": "harlowe_glow",
+                    "on": true
+                  },
+                  "sfxCue": "crt-degauss",
+                  "setFlag": "SAW_HARLOWE"
+                }
+              ],
+              "beat": [
+                {
+                  "waitMs": 1800
+                }
+              ]
             }
           }
         },
         "H": {
           "room": "S5_H",
-          "sequence": [
-            {
-              "shot": "loop",
-              "loop": true,
-              "mount": "minigame"
-            }
-          ],
-          "sfxCue": "car-alarm",
+          "next": "S6",
           "ambience": "S5_H_AMB.wav",
-          "minigame": {
-            "module": "mg04-stapler",
-            "mode": "H"
-          },
-          "choice": {
+          "sfxCue": "car-alarm",
+          "thresholds": {
             "succumb": {
               "label": "REST",
-              "next": "S6"
+              "zone": "curb",
+              "exit": "ramp",
+              "via": "CN_RAMP_DOWN",
+              "beat": [
+                {
+                  "sit": {
+                    "eye": 0.95,
+                    "holdMs": 3200
+                  }
+                },
+                {
+                  "open": "ramp",
+                  "seconds": 2.4
+                }
+              ]
             },
             "resist": {
               "label": "TAKE THE SIDE DOOR",
-              "next": "S6"
+              "zone": "stairs",
+              "exit": "stairs",
+              "via": "CN_STAIRS_CONCRETE"
             }
           }
         }
@@ -373,53 +568,87 @@
       "branches": {
         "C": {
           "room": "S6_C",
-          "sequence": [
+          "next": "S7",
+          "ambience": "S6_C_AMB.wav",
+          "onEnter": [
             {
-              "shot": "loop",
-              "loop": false,
-              "mount": "minigame"
+              "screen": {
+                "prop": "terminal",
+                "page": "requisition"
+              },
+              "light": {
+                "id": "terminal_glow",
+                "on": true
+              },
+              "sfxCue": "crt-degauss"
             }
           ],
-          "ambience": "S6_C_AMB.wav",
-          "minigame": {
-            "module": "mg05-requisition",
-            "mode": "C"
-          },
-          "choice": {
+          "thresholds": {
             "succumb": {
               "label": "ORDER",
-              "next": "S7"
+              "zone": "tube",
+              "exit": "freight",
+              "via": "CN_CORRIDOR_DOWN",
+              "beat": [
+                {
+                  "sfxCue": "requisition-chime"
+                },
+                {
+                  "waitMs": 1000
+                }
+              ]
             },
             "resist": {
               "label": "FLAG",
-              "next": "S7"
+              "zone": "flagbox",
+              "exit": "freight",
+              "via": "CN_CORRIDOR_DOWN",
+              "beat": [
+                {
+                  "sfxCue": "flag-reject-beep",
+                  "caption": "flag.reject.1",
+                  "holdMs": 2200
+                },
+                {
+                  "waitMs": 2400
+                },
+                {
+                  "sfxCue": "flag-reject-beep",
+                  "caption": "flag.reject.4",
+                  "holdMs": 2400
+                },
+                {
+                  "waitMs": 1800
+                }
+              ]
             }
           }
         },
         "H": {
-          "music": "water",
           "room": "S6_H",
-          "sequence": [
-            {
-              "shot": "loop",
-              "loop": true,
-              "mount": "minigame",
-              "_note": "THE RUN: the camera runs toward the edge only while MG-05 H holds the room resumed"
-            }
-          ],
+          "next": "S7",
           "ambience": "S6_H_AMB.wav",
-          "minigame": {
-            "module": "mg05-requisition",
-            "mode": "H"
-          },
-          "choice": {
+          "music": "water",
+          "thresholds": {
             "succumb": {
               "label": "PUSH ON",
-              "next": "S7"
+              "zone": "push",
+              "exit": "freight",
+              "via": "CN_CORRIDOR_DOWN"
             },
             "resist": {
               "label": "STOP",
-              "next": "S7"
+              "zone": "stopline",
+              "exit": "freight",
+              "via": "CN_CORRIDOR_DOWN",
+              "beat": [
+                {
+                  "sit": {
+                    "eye": 1.0,
+                    "holdMs": 2800
+                  }
+                }
+              ]
             }
           }
         }
@@ -432,53 +661,95 @@
       "branches": {
         "C": {
           "room": "S7_C",
-          "sequence": [
-            {
-              "shot": "loop",
-              "loop": true,
-              "mount": "minigame"
-            }
-          ],
+          "next": "S8",
           "ambience": "S7_C_AMB.wav",
-          "minigame": {
-            "module": "mg06-panel",
-            "mode": "C"
-          },
-          "choice": {
+          "thresholds": {
             "succumb": {
               "label": "DESCEND",
-              "next": "S8"
+              "zone": "panel",
+              "exit": "cab",
+              "via": "CN_CORRIDOR_OFFICE",
+              "beat": [
+                {
+                  "sfxCue": "keyboard-press"
+                },
+                {
+                  "seal": true
+                },
+                {
+                  "waitMs": 1300
+                },
+                {
+                  "ride": {
+                    "drop": 14,
+                    "seconds": 11
+                  }
+                }
+              ]
             },
             "resist": {
               "label": "REFUSE",
-              "next": "S8"
+              "zone": "doorway",
+              "exit": "cab",
+              "via": "CN_CORRIDOR_OFFICE",
+              "beat": [
+                {
+                  "caption": "elevator.refuse",
+                  "holdMs": 3400
+                },
+                {
+                  "moveTo": {
+                    "pos": [
+                      0.0,
+                      0.2
+                    ],
+                    "seconds": 0.9
+                  }
+                },
+                {
+                  "seal": true
+                },
+                {
+                  "waitMs": 1300
+                },
+                {
+                  "ride": {
+                    "drop": 14,
+                    "seconds": 11
+                  }
+                }
+              ]
             }
           }
         },
         "H": {
-          "music": "water",
           "room": "S7_H",
-          "sequence": [
-            {
-              "shot": "lean",
-              "loop": true,
-              "mount": "minigame",
-              "_note": "THE EDGE: leaning out over the pool"
-            }
-          ],
+          "next": "S8",
           "ambience": "S7_H_AMB.wav",
-          "minigame": {
-            "module": "mg06-panel",
-            "mode": "H"
-          },
-          "choice": {
+          "music": "water",
+          "thresholds": {
             "succumb": {
               "label": "JUMP",
-              "next": "S8"
+              "zone": "gap",
+              "exit": "drop",
+              "via": "fall"
             },
             "resist": {
               "label": "TURN BACK",
-              "next": "S8"
+              "zone": "turnback",
+              "exit": "drop",
+              "via": "fall",
+              "beat": [
+                {
+                  "sfxCue": "concrete-grains"
+                },
+                {
+                  "shake": {
+                    "seconds": 1.4,
+                    "amount": 0.05
+                  }
+                }
+              ]
             }
           }
         }
@@ -491,82 +762,78 @@
       "branches": {
         "C": {
           "room": "S8_C",
-          "sequence": [
+          "next": "E",
+          "ambience": "S8_C_AMB.wav",
+          "beatZones": [
             {
-              "shot": "push",
-              "loop": false,
-              "mount": null,
-              "_note": "the walk to the counter (was S8_C_VID.mp4)"
-            },
-            {
-              "room": "SE_ASSIM",
-              "shot": "loop",
-              "loop": true,
-              "mount": "minigame",
-              "_note": "the boardroom (was S8_C_VID_BOARDROOM.mp4): MG-07 C plays here"
+              "zone": "counter",
+              "label": "THE PACKAGE",
+              "beat": [
+                {
+                  "sfxCue": "package-drag"
+                },
+                {
+                  "hide": "package",
+                  "hold": "package"
+                }
+              ]
             }
           ],
-          "ambienceSequence": [
-            "S8_C_AMB.wav",
-            "S8_C_AMB_BOARDROOM.wav"
-          ],
-          "minigame": {
-            "module": "mg07-handoff",
-            "mode": "C"
-          },
-          "choice": {
+          "thresholds": {
             "succumb": {
               "label": "DELIVER",
-              "next": "E"
+              "zone": "deliver",
+              "exit": "deliveries",
+              "via": "CN_CORRIDOR_OFFICE"
             },
             "resist": {
               "label": "OPEN THE BOX",
-              "next": "E",
-              "setFlag": "OPENED_BOX"
+              "zone": "sorting",
+              "setFlag": "OPENED_BOX",
+              "exit": "deliveries",
+              "via": "CN_CORRIDOR_OFFICE",
+              "beat": [
+                {
+                  "sfxCue": "package-drag"
+                },
+                {
+                  "drop": true
+                },
+                {
+                  "caption": "box.contents",
+                  "holdMs": 3800
+                },
+                {
+                  "waitMs": 2600
+                }
+              ]
             }
           }
         },
         "H": {
+          "room": "SET_DIVE",
+          "next": "E",
+          "ambience": "S8_H_AMB.wav",
           "music": "water",
-          "choiceAfterEntry": 0,
-          "_choiceNote": "DIVE / SWIM FOR THE PILLARS is asked underwater, after entry 0 (Doc 1 §5 S8-H); S8_H_VID_STORE then plays as the consequence before the ending transition. Absent = after the last entry (router.js choiceEntryIndex).",
-          "room": "S8_H",
-          "sequence": [
-            {
-              "room": "SET_DIVE",
-              "shot": "descend",
-              "loop": false,
-              "mount": "minigame",
-              "_note": "the dive (was S8_H_VID.mp4): MG-07 H plays above the grate"
-            },
-            {
-              "shot": "loop",
-              "loop": true,
-              "mount": null,
-              "_note": "the store (was S8_H_VID_STORE.mp4)"
-            }
-          ],
-          "ambienceSequence": [
-            "S8_H_AMB.wav",
-            "S8_H_AMB_STORE.wav"
-          ],
-          "minigame": {
-            "module": "mg07-handoff",
-            "mode": "H"
-          },
-          "choice": {
+          "thresholds": {
             "succumb": {
               "label": "DIVE",
-              "next": "E"
+              "zone": "grate",
+              "to": "S8_H"
             },
             "resist": {
               "label": "SWIM FOR THE PILLARS",
-              "next": "E"
+              "zone": "pillars",
+              "to": "S8_H",
+              "beat": [
+                {
+                  "waitMs": 900
+                }
+              ]
             }
           }
         }
       }
     }
-  },
-  "_shotNote": "Every shot is a camera move defined in tools/build_rooms.py (shots_for() + per-room overrides) and authored as the same camera animation in each room's Higgsfield 3D scene project (tools/higgsfield_scene.py). No video, no stills: the AI-generated clips and loading frames this file used to name were removed."
+  }
 }

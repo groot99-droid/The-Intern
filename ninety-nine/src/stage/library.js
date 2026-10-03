@@ -90,6 +90,7 @@ export function createLibrary({ url = LIBRARY_URL } = {}) {
       clone.scale.set(1, 1, 1);
       clone.traverse((o) => {
         if (!o.isMesh) return;
+        o.geometry.userData.shared = true; // every clone shares it: rooms must not dispose it (room.js)
         o.material = Array.isArray(o.material) ? o.material.map((m) => lowPoly(m, tint)) : lowPoly(o.material, tint);
         o.castShadow = true;
         o.receiveShadow = true;

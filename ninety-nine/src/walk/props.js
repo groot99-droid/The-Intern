@@ -408,7 +408,8 @@ const BUILDERS = {
     return g;
   },
   // His hands: blocky, four-fingered, untextured, low-poly from the very
-  // first shot (C6). `reach` lifts them toward the camera (the dive);
+  // first shot (C6). (No longer in the pool scenes: removed at the
+  // author's request, with the `reach` pose that lifted them in the dive.)
   // `slip` puts the 99 slip between the fingers (PENDING REVIEW).
   hands(mats, o) {
     const g = new THREE.Group();
@@ -419,7 +420,6 @@ const BUILDERS = {
       h.add(box(mats, 'lp_skin', 0.02, 0.022, 0.05, s * 0.055, 0.004, -0.01)); // thumb
       h.add(box(mats, 'lp_suit', 0.1, 0.05, 0.1, 0, -0.008, 0.09)); // cuff
       h.position.set(s * 0.11, 0, 0);
-      if (o.reach) { h.rotation.x = -0.9; h.position.y = 0.2 + (s > 0 ? 0.04 : 0); h.position.z = -0.1; }
       g.add(h);
     }
     if (o.slip) g.add(box(mats, 'lp_paper', 0.08, 0.003, 0.05, 0.0, 0.03, -0.06));
@@ -476,6 +476,64 @@ const BUILDERS = {
     body.visible = false; body.userData.collide = true; g.add(body);
     return g;
   },
+  // A bench against the garage wall (S6 H: STOP sits him down on it).
+  bench(mats, o) {
+    const g = new THREE.Group();
+    const w = o.w || 1.8;
+    g.add(box(mats, o.mat || 'lp_wood', w, 0.05, 0.4, 0, 0.44, 0, { collide: true }));
+    g.add(box(mats, o.mat || 'lp_wood', w, 0.3, 0.04, 0, 0.55, -0.2));
+    for (const x of [-w / 2 + 0.1, w / 2 - 0.1]) g.add(box(mats, 'lp_dark', 0.06, 0.44, 0.36, x, 0, 0));
+    const body = box(mats, 'lp_dark', w, 0.6, 0.45, 0, 0, 0, { castShadow: false, collide: true });
+    body.visible = false; g.add(body);
+    return g;
+  },
+  // Pneumatic tube station (S6 C: ORDER sends the requisition down it).
+  tubestation(mats, o) {
+    const g = new THREE.Group();
+    g.add(box(mats, 'lp_grey', 0.7, 1.9, 0.45, 0, 0, 0, { collide: true }));
+    g.add(box(mats, 'lp_dark', 0.5, 0.3, 0.05, 0, 1.15, 0.24));
+    g.add(cylinder(mats, 'lp_glass', 0.09, 1.3, 0, 1.9, 0.0));
+    g.add(box(mats, 'lp_brass', 0.22, 0.06, 0.12, 0, 0.98, 0.26));
+    g.add(box(mats, 'lp_sign', 0.08, 0.08, 0.04, 0.22, 1.6, 0.24)); // the green lamp
+    return g;
+  },
+  // A red box on a post with a handset (S6 C: FLAG objects to the requisition).
+  flagbox(mats, o) {
+    const g = new THREE.Group();
+    g.add(box(mats, 'lp_dark', 0.08, 1.2, 0.08, 0, 0, 0, { collide: true }));
+    g.add(box(mats, 'lp_red', 0.42, 0.5, 0.26, 0, 1.15, 0));
+    g.add(box(mats, 'lp_black', 0.08, 0.26, 0.06, 0.12, 1.25, 0.16)); // handset
+    g.add(box(mats, 'lp_taillight', 0.06, 0.06, 0.03, -0.12, 1.5, 0.14)); // the red lamp
+    return g;
+  },
+  // Box cutter on the sorting table (S8 C: OPEN THE BOX).
+  boxcutter(mats) {
+    const g = new THREE.Group();
+    g.add(box(mats, 'lp_brass', 0.14, 0.02, 0.03, 0, 0, 0));
+    g.add(box(mats, 'lp_chrome', 0.04, 0.008, 0.015, 0.09, 0.006, 0));
+    return g;
+  },
+  // ---- polish: S0 + street -- begin (that scene's new props go between these lines) ----
+  // ---- polish: S0 + street -- end ----
+  //
+  // ---- polish: S1-S2 waiting room -- begin (that scene's new props go between these lines) ----
+  // ---- polish: S1-S2 waiting room -- end ----
+  //
+  // ---- polish: S3 threshold -- begin (that scene's new props go between these lines) ----
+  // ---- polish: S3 threshold -- end ----
+  //
+  // ---- polish: S4 floor -- begin (that scene's new props go between these lines) ----
+  // ---- polish: S4 floor -- end ----
+  //
+  // ---- polish: S5-S6 desk / garage -- begin (that scene's new props go between these lines) ----
+  // ---- polish: S5-S6 desk / garage -- end ----
+  //
+  // ---- polish: S7 descent -- begin (that scene's new props go between these lines) ----
+  // ---- polish: S7 descent -- end ----
+  //
+  // ---- polish: S8 + endings -- begin (that scene's new props go between these lines) ----
+  // ---- polish: S8 + endings -- end ----
+  //
   // A model from assets/glb/library.glb (the open-source catalog, imported
   // through the Higgsfield scene builder). Built by library.js when the
   // library is loaded; until then (or without it) the box fallback stands

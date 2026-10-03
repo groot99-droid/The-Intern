@@ -320,11 +320,32 @@ export function createAudio() {
   }
 
   return {
-    // Doc 4 §7.4: call ONLY from S0's SUBMIT click, nowhere else.
-    initOnGesture() {
+    // The first trusted gesture (a click to look, a key, a touch) unlocks
+    // the AudioContext: room tone, footsteps and the music bus can sound
+    // from the apartment on. The drone does NOT start here (C7).
+    unlock() {
       ensureContext();
-      drone.start();
       music.start();
+      if (ctx && ctx.state === 'suspended') ctx.resume().catch(() => {});
+    },
+
+    // C7: the 48 Hz drone starts when the lobby doors close behind the
+    // candidate (src/director.js), fades in over two seconds, and is never
+    // stopped or restarted until the final card. Drone.start() is guarded,
+    // so this is safe to call more than once.
+    startDrone({ fadeMs = 2000 } = {}) {
+      ensureContext();
+      if (!drone.started) {
+        drone.gain.gain.setValueAtTime(0, ctx.currentTime);
+        drone.start();
+        rampGain(drone.gain.gain, ctx, DRONE_GAIN, fadeMs);
+      }
+    },
+
+    // Old one-call path (tests, previews): unlock and start the drone at once.
+    initOnGesture() {
+      this.unlock();
+      this.startDrone({ fadeMs: 30 });
     },
 
     // Doc 4 §7.4: if the context is suspended later, resume silently and log it.
@@ -397,6 +418,7 @@ export function createAudio() {
       }
     },
 
+    // Filters, never stops, the drone (Doc 4 §7.3): underwater in the dive.
     duckDrone({ lowpassHz = 400, gain = 0.5, ms = 1200 } = {}) {
       if (!drone) return;
       const t = ctx.currentTime;

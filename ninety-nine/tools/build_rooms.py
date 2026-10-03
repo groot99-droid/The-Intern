@@ -145,6 +145,167 @@ def shots_for(rec, eye=EYE, out_dist=2.5, leave_dist=None, arrive_dist=1.8, loop
     }
 
 
+# ---------------------------------------------------------------------------
+# The continuous building. A room joins the next only through a DOORWAY
+# cut out of its shell (door()); a threshold the player can walk to is a
+# ZONE (zone()); a room is entered through the doorway named by `entry`.
+# src/world/world.js lines rooms up door to door through CONNECTORS (the
+# CN_* records below): corridors, stairs and ramps down, the vestibule, the
+# chute. scenes.json names which zone is which choice and which door it
+# opens; this file only says where things are.
+# ---------------------------------------------------------------------------
+
+WALL_T = 0.3  # room.js
+
+
+def door(rec, name, wall, x=0.0, w=1.2, h=2.2, kind="door", y=None, **kw):
+    """A doorway on `wall` ('N','S','E','W'), centred `x` along it (the x
+    coordinate on N/S walls, z on E/W), `w` x `h`, sill at `y` (default the
+    floor). kind: door | glass | curtain | shutter | slide | open."""
+    d = {"name": name, "wall": wall, "x": round(x, 3), "w": w, "h": h, "kind": kind}
+    if y is not None:
+        d["y"] = round(y, 3)
+    d.update(kw)
+    rec.setdefault("doors", []).append(d)
+    return d
+
+
+def zone(rec, name, pos, r=0.7, ring=3.0, label_at=None, **kw):
+    """A threshold zone: `pos` [x, z] (or [x, y, z] underwater), inner radius
+    `r` (stepping in commits), approach `ring` (the label fades in). Or
+    box=[[x0, z0], [x1, z1]] for a stretch (the row of chairs)."""
+    z = {"name": name, "pos": r3(pos), "r": r, "ring": ring}
+    if label_at:
+        z["labelAt"] = r3(label_at)
+    z.update(kw)
+    rec.setdefault("zones", []).append(z)
+    return z
+
+
+def anchor(rec, name, pos, yaw=0, vertical=False):
+    a = {"pos": r3(pos), "yaw": yaw}
+    if vertical:
+        a["vertical"] = True
+    rec.setdefault("anchors", {})[name] = a
+
+
+def drop_props(rec, pred):
+    rec["props"] = [p for p in rec["props"] if not pred(p)]
+
+
+# Connector styles: floor, wall, ceiling, lamp colour, footstep.
+CN_STYLE = {
+    "office":  {"floor": "carpet", "wall": "plaster_dark", "ceiling": "ceiling_tile", "lamp": "#e6eaf2", "lamp_i": 3.2, "skirt": "plaster_dark"},
+    "service": {"floor": "concrete_wet", "wall": "cinderblock", "ceiling": "concrete", "lamp": "#dfe6dc", "lamp_i": 2.6, "skirt": "paint_green"},
+    "home":    {"floor": "carpet", "wall": "plaster_dark", "ceiling": "plaster_dark", "lamp": "#ffd9a0", "lamp_i": 2.4, "skirt": "plaster_dark"},
+    "marble":  {"floor": "marble", "wall": "plaster_dark", "ceiling": "plaster_dark", "lamp": "#fff1dc", "lamp_i": 4.0, "skirt": "marble"},
+    "garage":  {"floor": "garage_floor", "wall": "concrete", "ceiling": "concrete", "lamp": "#ffa040", "lamp_i": 10, "skirt": "paint_green"},
+}
+
+
+def _connector(name, style, size, floor_y=0.0, entry_kind="door", entry_w=1.2, entry_h=2.2, exit_w=1.2, exit_h=2.2, exit_y=None):
+    st = CN_STYLE[style]
+    W, H, D = size
+    rec = {
+        "name": name,
+        "connector": True,
+        "size": [W, H, D],
+        "floorY": floor_y,
+        "floor": st["floor"], "wall": st["wall"], "ceiling": st["ceiling"],
+        "tile": {"floor": 1.5, "wall": 1.6, "ceiling": 1.5},
+        "skirt": {"mat": st["skirt"], "h": 0.12, "t": 0.02},
+        "ambient": {"color": st["lamp"], "intensity": 0.05},
+        "sun": {"intensity": 0},
+        "lights": [],
+        "fog": {"color": "#050505", "near": 6, "far": 24},
+        "props": [],
+        "boxes": [],
+        "spawn": [0, D / 2 - 0.8, 0],
+        "entry": "entry",
+    }
+    # the seal: a leaf on the way in that stands open until the player is
+    # through, then shuts behind him (world.js); the far end is a bare
+    # opening -- the next room's own entry leaf closes it
+    door(rec, "entry", "S", 0.0, w=entry_w, h=entry_h, kind=entry_kind, y=0.0, open=True, hinge="L", sill=st["floor"])
+    door(rec, "exit", "N", 0.0, w=exit_w, h=exit_h, kind="open", y=floor_y if exit_y is None else exit_y, sill=st["floor"])
+    rec["shots"] = {"in": pose([0, EYE, D / 2 - 0.8], [0, EYE - 0.2, -D / 2])}
+    return rec
+
+
+def cn_corridor(name, style, length=6.0, width=1.8, height=2.6):
+    rec = _connector(name, style, [width, height, length])
+    st = CN_STYLE[style]
+    for z in (length / 4, -length / 4):
+        rec["props"].append(prop("fluoro", [0, height - 0.06, z], w=1.0, d=0.25))
+        rec["lights"].append({"type": "point", "pos": [0, height - 0.3, z], "color": st["lamp"], "intensity": st["lamp_i"], "distance": 7})
+    return rec
+
+
+def cn_stairs(name, style, drop=3.0, width=1.6, height=2.6, rise=0.2, tread=0.3, landing=1.2):
+    """A straight flight down toward -z: a top landing at y 0, treads, a
+    bottom landing at -drop. Treads are floors (controls.js eases over them)."""
+    n = int(round(drop / rise))
+    run = n * tread
+    D = landing * 2 + run
+    rec = _connector(name, style, [width, height, D], floor_y=-drop)
+    st = CN_STYLE[style]
+    top = D / 2
+    rec["boxes"].append({"min": [-width / 2, -drop, top - landing], "max": [width / 2, 0, top], "mat": st["floor"], "floor": True, "tile": 1.5})
+    for k in range(1, n + 1):
+        z1 = top - landing - (k - 1) * tread
+        z0 = z1 - tread
+        y = -k * rise
+        rec["boxes"].append({"min": [-width / 2, -drop, round(z0, 3)], "max": [width / 2, round(y, 3), round(z1, 3)], "mat": "concrete" if style != "home" else "carpet", "floor": True, "tile": 1.0})
+    rec["props"].append(prop("fluoro", [0, height - 0.06, top - landing / 2], w=0.8, d=0.2))
+    rec["lights"].append({"type": "point", "pos": [0, height - 0.4, top - landing / 2], "color": st["lamp"], "intensity": st["lamp_i"], "distance": 8})
+    rec["lights"].append({"type": "point", "pos": [0, height - 0.4, -top + landing / 2], "color": st["lamp"], "intensity": st["lamp_i"], "distance": 9})
+    rec["props"].append(prop("fluoro", [0, height - 0.06, -top + landing / 2], w=0.8, d=0.2))
+    rec["drop"] = drop
+    return rec
+
+
+def cn_ramp(name, style, drop=2.5, length=12.0, width=6.0, height=3.4):
+    rec = _connector(name, style, [width, height, length], floor_y=-drop, entry_kind="shutter", entry_w=4.0, entry_h=2.8, exit_w=4.0, exit_h=2.8)
+    st = CN_STYLE[style]
+    run = length - 2.0
+    slope = math.degrees(math.atan2(drop, run))
+    hyp = math.hypot(run, drop)
+    # the slab: a box `hyp` long, tilted about its centre
+    cy = -drop / 2 - 0.1
+    rec["boxes"].append({"min": [-width / 2, cy - 0.1, -hyp / 2], "max": [width / 2, cy + 0.1, hyp / 2], "pitch": round(-slope, 3), "mat": st["floor"], "floor": True, "tile": 3.0})
+    rec["boxes"].append({"min": [-width / 2, -drop, -length / 2], "max": [width / 2, -drop + 0.0001, -length / 2 + 1.0], "mat": st["floor"], "floor": True, "tile": 3.0})
+    rec["boxes"].append({"min": [-width / 2, -0.2, length / 2 - 1.0], "max": [width / 2, 0, length / 2], "mat": st["floor"], "floor": True, "tile": 3.0})
+    for z in (length / 3, 0, -length / 3):
+        rec["props"].append(prop("sodium", [0, height - 0.74, z]))
+        rec["lights"].append({"type": "point", "pos": [0, height - 1.15, z], "color": st["lamp"], "intensity": st["lamp_i"], "distance": 14, "flicker": 0.2})
+    rec["drop"] = drop
+    return rec
+
+
+def cn_vestibule():
+    """Between the street and the lobby: a marble airlock, glass at both ends."""
+    rec = _connector("THE VESTIBULE", "marble", [3.6, 3.4, 3.2], entry_kind="glass", entry_w=2.6, entry_h=2.9, exit_w=2.6, exit_h=2.9)
+    rec["props"].append(prop("pendant", [0, 3.4, 0], drop=0.6))
+    rec["lights"].append({"type": "point", "pos": [0, 2.6, 0], "color": "#fff1dc", "intensity": 7, "distance": 7})
+    return rec
+
+
+def cn_chute():
+    """Under the dive's grate: a dry concrete chute, steep, into the store."""
+    W, H, D = 1.6, 1.8, 10.0
+    drop = 6.0
+    rec = _connector("THE CHUTE", "service", [W, H, D], floor_y=-drop, entry_kind="open", entry_w=1.2, entry_h=1.4, exit_w=1.2, exit_h=1.2)
+    slope = math.degrees(math.atan2(drop, D - 1.0))
+    hyp = math.hypot(D - 1.0, drop)
+    rec["boxes"].append({"min": [-W / 2, -drop / 2 - 0.2, -hyp / 2], "max": [W / 2, -drop / 2, hyp / 2], "pitch": round(-slope, 3), "mat": "concrete", "floor": True, "tile": 1.0})
+    rec["lights"].append({"type": "point", "pos": [0, -drop + 1.2, -D / 2 + 1.0], "color": "#f0f4ff", "intensity": 3, "distance": 5})
+    # entered from above: the grate drops the candidate in at the top
+    anchor(rec, "top", [0, 0.6, D / 2 - 0.6], 0, vertical=True)
+    rec["entry"] = "top"
+    rec["drop"] = drop
+    return rec
+
+
 def waiting_room(hostile):
     W, H, D = 14.0, 4.2, 12.0
     props = []
@@ -202,14 +363,28 @@ def waiting_room(hostile):
     # S2 THE CALL plays in this room: a slow push toward the receptionist as
     # the speaker clicks (S2_*_VID was 3 s of exactly this).
     rec["shots"]["call"] = {"from": "out", "to": pose([0, EYE, -D / 2 + 3.2], [0, 1.1, -D / 2 + 0.35]), "seconds": 4.0, "ease": "inout"}
+    # The lobby's doorways: the glass doors from the street (they close
+    # behind the candidate and the drone begins, C7), the inner door beside
+    # the counter that buzzes open when he answers the call, and a service
+    # door by the entrance that opens when he runs for the locked glass.
+    door(rec, "front", "S", 0.0, w=2.6, h=2.9, kind="glass", locked=True)
+    door(rec, "inner", "N", 5.6, w=1.1, h=2.2, kind="door", locked=True, mat="lp_beige", hinge="R")
+    door(rec, "service", "S", -4.6, w=1.0, h=2.1, kind="door", locked=True, mat="lp_grey")
+    rec["entry"] = "front"
+    # S1: TAKE A SEAT (either row of chairs) / STAY STANDING (at the counter)
+    zone(rec, "seat_w", [-4.3, -0.5], box=[[-4.75, -3.3], [-3.85, 2.3]], ring=2.2, label_at=[-4.6, 1.5, -0.5])
+    zone(rec, "seat_e", [4.3, -0.5], box=[[3.85, -3.3], [4.75, 2.3]], ring=2.2, label_at=[4.6, 1.5, -0.5])
+    zone(rec, "counter", [-1.3, -3.95], r=0.65, ring=3.0, label_at=[-1.3, 1.75, -4.7])
+    # S2: STAND (the inner door) / RUN (back to the glass doors)
+    zone(rec, "inner_door", [5.6, -5.15], r=0.6, ring=3.0, label_at=[5.6, 2.55, -5.9])
+    zone(rec, "front_doors", [0.0, 4.95], r=0.75, ring=3.2, label_at=[0.0, 3.2, 5.9])
     return rec
 
 
 def threshold_corridor():
     W, H, D = 4.2, 3.4, 14.0
     props = [
-        prop("curtain", [0, 0, -5.9], w=3.8, h=3.1),
-        prop("sign", [0, 3.05, -5.6], w=1.0, h=0.32),
+        prop("sign", [0, 3.12, -D / 2 + 0.06], w=1.0, h=0.28, name="enter_sign"),
         prop("badgereader", [W / 2 - 0.04, 1.25, -4.6], rot=-90),
         prop("clock", [-W / 2 + 0.03, 2.4, 2.0], rot=90),
         prop("slip", [0.9, 0.004, -3.2], rot=25),
@@ -218,7 +393,8 @@ def threshold_corridor():
     lights = [
         {"type": "point", "pos": [0, H - 0.3, 3.5], "color": "#ffdfb8", "intensity": 14, "distance": 12},
         {"type": "point", "pos": [0, H - 0.3, -1.0], "color": "#ffdfb8", "intensity": 14, "distance": 12},
-        {"type": "point", "pos": [0, 2.9, -5.3], "color": "#33ff77", "intensity": 9, "distance": 6, "flicker": 0.5},
+        # the ENTER sign's green, on its 2.3 s cycle (Doc 1 S3)
+        {"type": "point", "pos": [0, 2.9, -D / 2 + 0.6], "color": "#33ff77", "intensity": 9, "distance": 6, "pattern": {"period": 2.3, "duty": 0.86, "low": 0.1}},
     ]
     rec = {
         "name": "THE THRESHOLD",
@@ -237,6 +413,16 @@ def threshold_corridor():
     }
     rec["shots"] = shots_for(rec, out_dist=4.0, leave_dist=11.4)
     rec["shots"]["leave"]["seconds"] = 3.4  # through the curtain
+    # Both thresholds in the one corridor: the curtain under the ENTER sign
+    # ahead, the lobby's locked glass doors behind. The candidate comes in
+    # by a side door; a service door opposite opens when the glass refuses.
+    door(rec, "curtain", "N", 0.0, w=2.4, h=2.9, kind="curtain", locked=True)
+    door(rec, "glass", "S", 0.0, w=2.4, h=2.8, kind="glass", locked=True)
+    door(rec, "side", "E", 4.6, w=1.2, h=2.2, kind="door", mat="lp_beige", hinge="R")
+    door(rec, "service", "W", 4.0, w=1.0, h=2.1, kind="door", locked=True, mat="lp_grey")
+    rec["entry"] = "side"
+    zone(rec, "curtain", [0.0, -5.95], r=0.7, ring=3.2, label_at=[0.0, 2.55, -6.8])
+    zone(rec, "glass", [0.0, 6.0], r=0.7, ring=2.4, label_at=[0.0, 2.45, 6.85])
     return rec
 
 
@@ -244,8 +430,11 @@ def lobby_doors():
     rec = waiting_room(False)
     rec["name"] = "THE LOBBY DOORS"
     W, H, D = rec["size"]
-    rec["props"].append(prop("glassdoors", [0, 0, D / 2 - 0.1], rot=180, w=2.6, h=2.9))
     rec["props"].append(prop("placard", [2.2, 1.5, D / 2 - 0.02], rot=180))
+    # the curtain is here too, at the far end, where the clock was
+    for p in rec["props"]:
+        if p["type"] == "clock":
+            p["pos"] = [-2.9, 2.9, -D / 2 + 0.02]
     rec["props"].append(prop("slip", [0.6, 0.004, D / 2 - 1.2], rot=15))  # one 99, at the foot of the locked doors
     rec["props"].append(glb("lib_payphone", [-W / 2 + 0.7, 0, D / 2 - 1.0], rot=90, fallback=None, collide=True))
     rec["spawn"] = [0, 1.5, 180]
@@ -257,6 +446,13 @@ def lobby_doors():
     # (the receptionist's line lands here), then black.
     rec["shots"]["leave"] = {"from": "out", "to": pose([0, EYE, 2.6], [0, 1.2, -D / 2]), "seconds": 3.4, "ease": "inout", "fadeOut": 1.2}
     rec["shots"].pop("call", None)
+    # TRY THE DOOR is the lobby's own glass (front); PART THE CURTAIN is a
+    # curtain doorway in the far corner. In by a side door from the call.
+    door(rec, "curtain", "N", -5.6, w=2.0, h=2.9, kind="curtain", locked=True)
+    door(rec, "side", "E", 3.0, w=1.2, h=2.2, kind="door", mat="lp_beige", hinge="R")
+    rec["entry"] = "side"
+    zone(rec, "glass", [0.0, 4.95], r=0.75, ring=3.0, label_at=[0.0, 3.2, 5.9])
+    zone(rec, "curtain", [-5.6, -4.95], r=0.7, ring=3.0, label_at=[-5.6, 2.6, -5.85])
     return rec
 
 
@@ -268,6 +464,11 @@ def cubicle_floor():
     z = -D / 2 + 2.0
     row = 0
     while z < D / 2 - 2.6:
+        if abs(z - 3.2) < 0.01:
+            # the cross-aisle: one row left out, so the side door can be walked to
+            z += 2.4
+            row += 1
+            continue
         for side in (-1, 1):
             for k in (0, 1, 2, 3):
                 bx = side * (2.1 + k * 4.6)
@@ -291,7 +492,7 @@ def cubicle_floor():
     # camera while the player follows (MG-03 C drives `actors.manager`).
     props.append(prop("figure", [0, 0, -9.0], face="blur", tie=True, name="manager"))
     props.append(prop("papers", [0.32, 0.86, -8.86], mat="plaster_blown", name="evidence"))
-    props.append(prop("clock", [0, 2.4, -D / 2 + 0.02]))
+    props.append(prop("clock", [4.0, 2.4, -D / 2 + 0.02]))
     props.append(prop("slip", [1.1, 0.004, -3.8], rot=12))
     lights = [{"type": "point", "pos": [x, H - 0.4, zz], "color": "#eef2ff", "intensity": 11, "distance": 14, "flicker": 0.12 if (x, zz) == (8, 4) else 0}
               for x in (-8, 0, 8) for zz in (-12, -4, 4, 12)]
@@ -311,9 +512,16 @@ def cubicle_floor():
         "props": props,
         "footstep": {"filterHz": 380, "gain": 0.05},
         # The manager approaches down the aisle: t=0 far, t=1 beside the player.
-        "actors": {"manager": {"path": [[0, -9.0], [0, 11.8]], "carry": ["evidence"]}},
+        "actors": {"manager": {"path": [[0, -9.0], [0, 6.0]], "carry": ["evidence"]}},
     }
     rec["shots"] = shots_for(rec, out_dist=3.0, leave_dist=13.0, loop_seconds=24.0)
+    door(rec, "front", "S", 0.0, w=1.4, h=2.3, kind="door", mat="lp_beige")
+    door(rec, "back", "N", 0.0, w=1.4, h=2.3, kind="door", locked=True, mat="lp_beige")
+    door(rec, "side", "E", 3.9, w=1.0, h=2.2, kind="door", locked=True, mat="lp_grey")
+    rec["entry"] = "front"
+    # TAKE THE PAPERS: the zone walks with the manager as he comes up the aisle
+    zone(rec, "manager", [0.0, -8.1], r=0.85, ring=3.5, actor="manager", offset=[0.0, 0.9], label_at=[0.0, 2.25, -9.0])
+    zone(rec, "side_door", [12.0, 3.9], r=0.6, ring=3.0, label_at=[12.9, 2.5, 3.9])
     return rec
 
 
@@ -323,7 +531,8 @@ def utility_corridor():
     z = -D / 2 + 3.0
     i = 0
     while z < D / 2 - 2.0:
-        props.append(prop("door", [-W / 2 + 0.06, 0, z], rot=90))
+        if abs(z + 6.0) > 0.01:  # z -6 west is the real, ajar door (below)
+            props.append(prop("door", [-W / 2 + 0.06, 0, z], rot=90))
         props.append(prop("door", [W / 2 - 0.06, 0, z + 2.2], rot=-90))
         if i % 2 == 0:
             props.append(glb("lib_basin", [W / 2 - 0.45, 0, z - 1.6], rot=-90, fallback="mopsink", collide=True))
@@ -333,7 +542,6 @@ def utility_corridor():
         z += 4.5
         i += 1
     props.append(prop("figure", [0, 0, -D / 2 + 1.2], rot=180, face="blur", tie=True, name="manager"))  # facing away, never closer
-    props.append(prop("door", [-W / 2 + 0.06, 0, -D / 2 + 6.0], rot=110))  # one door ajar (Harlowe)
     props.append(prop("slip", [-0.7, 0.004, 4.0], rot=-30))
     props.append(prop("clock", [W / 2 - 0.03, 2.3, 8.2], rot=-90))  # C8: the same clock, between two doors
     props.append(glb("lib_breaker", [-W / 2 + 0.12, 1.1, 10.5], rot=90, fallback=None))
@@ -357,11 +565,18 @@ def utility_corridor():
         "footstep": {"filterHz": 900, "gain": 0.1},
     }
     rec["shots"] = shots_for(rec, out_dist=4.0, leave_dist=14.0, loop_seconds=26.0)
+    door(rec, "front", "S", 0.0, w=1.2, h=2.2, kind="door", mat="lp_grey")
+    door(rec, "far", "N", 0.0, w=1.2, h=2.2, kind="door", locked=True, mat="lp_grey")
+    # one door ajar among the identical ones (Harlowe's)
+    door(rec, "ajar", "W", -6.0, w=0.9, h=2.1, kind="door", locked=True, ajar=0.22, mat="lp_beige", hinge="L")
+    rec["entry"] = "front"
+    zone(rec, "far_end", [0.0, -15.0], r=0.75, ring=4.0, label_at=[0.0, 2.3, -16.6])
+    zone(rec, "ajar", [-0.85, -6.0], r=0.55, ring=2.6, label_at=[-1.4, 2.35, -6.0])
     return rec
 
 
-def desk_void(monitor_on):
-    W, H, D = 40.0, 8.0, 40.0
+def desk_void(monitor_on=False):
+    W, H, D = 24.0, 8.0, 24.0
     props = [
         prop("desk", [0, 0, 0], w=1.7, d=0.85),
         # The terminal: its screen quad is what MG-05 C's requisition sheet is
@@ -372,12 +587,20 @@ def desk_void(monitor_on):
         prop("papers", [-0.15, 0.75, 0.1], h=0.06),
         prop("clock", [2.6, 2.1, -2.4], rot=35),   # floating at the light pool's edge
         prop("slip", [0.55, 0.004, 1.4], rot=70),
+        # S5: a second terminal at the edge of the light, dark until he comes near (S. HARLOWE)
+        prop("desk", [6.0, 0, -4.2], w=1.1, d=0.7, mat="lp_grey"),
+        prop("monitor", [6.0, 0.75, -4.35], on=False, name="harlowe"),
+        # S6: where a requisition goes (ORDER) and where it is objected to (FLAG)
+        prop("tubestation", [-6.0, 0, -4.4], name="tube"),
+        prop("flagbox", [6.4, 0, 3.6], rot=-90, name="flagbox"),
     ]
     lights = [
         {"type": "spot", "pos": [0, 5.5, 0.3], "target": [0, 0, 0], "color": "#ffe7c4", "intensity": 90, "distance": 14, "angle": 32, "penumbra": 0.7},
     ]
-    if monitor_on:
-        lights.append({"type": "point", "pos": [0.35, 1.2, 0.2], "color": "#7ad9a0", "intensity": 4, "distance": 4})
+    lights.append({"type": "point", "pos": [0.35, 1.2, 0.2], "color": "#7ad9a0", "intensity": 4, "distance": 4, "id": "terminal_glow", "off": not monitor_on})
+    lights.append({"type": "point", "pos": [6.0, 1.3, -3.7], "color": "#7ad9a0", "intensity": 3, "distance": 4, "id": "harlowe_glow", "off": True})
+    lights.append({"type": "point", "pos": [-6.0, 2.2, -3.8], "color": "#33ff77", "intensity": 3, "distance": 4})
+    lights.append({"type": "point", "pos": [6.0, 1.9, 3.6], "color": "#ff4433", "intensity": 2.5, "distance": 4})
     rec = {
         "name": "THE REQUISITION" if monitor_on else "THE DESK",
         "size": [W, H, D],
@@ -398,6 +621,15 @@ def desk_void(monitor_on):
         rec["shots"]["in"] = pose([0.35, 1.45, 1.35], [0.35, 0.95, -0.2])
         rec["shots"]["out"] = pose([0.35, 1.4, 1.1], [0.35, 0.95, -0.2])
         rec["shots"]["loop"]["sway"] = 0.012
+    door(rec, "front", "S", 0.0, w=1.2, h=2.2, kind="door", mat="lp_dark")
+    door(rec, "freight", "N", 0.0, w=1.4, h=2.3, kind="door", locked=True, mat="lp_dark")
+    rec["entry"] = "front"
+    # S5: STAPLE at the desk / WAKE THE TERMINAL (approaching it sets SAW_HARLOWE)
+    zone(rec, "desk", [0.0, 1.05], r=0.5, ring=2.6, label_at=[-0.45, 1.25, 0.05])
+    zone(rec, "terminal", [6.0, -3.25], r=0.55, ring=2.6, label_at=[6.0, 1.6, -4.3])
+    # S6: ORDER at the tube station / FLAG at the red box
+    zone(rec, "tube", [-6.0, -3.35], r=0.55, ring=2.8, label_at=[-6.0, 2.5, -4.4])
+    zone(rec, "flagbox", [5.45, 3.6], r=0.55, ring=2.8, label_at=[6.3, 2.1, 3.6])
     return rec
 
 
@@ -471,6 +703,15 @@ def garage(depth=44.0, open_north=False):
         "footstep": {"filterHz": 800, "gain": 0.1},
     }
     rec["shots"] = shots_for(rec, out_dist=4.0, leave_dist=D - 6.0, loop_seconds=30.0)
+    door(rec, "front", "S", 0.0, w=1.4, h=2.3, kind="door", mat="lp_grey")
+    rec["entry"] = "front"
+    if not open_north:
+        # S5 H: the curb to rest on, the stairwell door, the ramp shutter
+        rec["boxes"].append({"min": [-W / 2, 0, -6.0], "max": [-W / 2 + 0.75, 0.16, 6.0], "mat": "concrete", "floor": True, "tile": 1.5})
+        door(rec, "stairs", "E", -8.0, w=1.1, h=2.2, kind="door", locked=True, mat="lp_grey")
+        door(rec, "ramp", "N", 0.0, w=4.0, h=2.8, kind="shutter", locked=True, mat="lp_grey")
+        zone(rec, "curb", [-W / 2 + 1.1, 0.0], r=0.7, ring=3.0, label_at=[-W / 2 + 0.4, 1.4, 0.0])
+        zone(rec, "stairs", [W / 2 - 1.0, -8.0], r=0.6, ring=3.0, label_at=[W / 2 - 0.1, 2.5, -8.0])
     if open_north:
         # The run that does not end, ended: the concrete stops one metre
         # ahead and below is the pool room -- water to the horizon, pale
@@ -483,14 +724,16 @@ def garage(depth=44.0, open_north=False):
             {"min": [-90, -4.3, edge - 120], "max": [90, -3.9, edge + 0.0], "mat": "water", "collide": False, "shadow": False, "tile": 5.0},
             {"min": [-W / 2 - 0.3, -0.35, edge - 0.15], "max": [W / 2 + 0.3, 0, edge + 0.6], "mat": "concrete", "collide": False, "tile": 2.0},
             {"min": [-W / 2 - 0.3, -0.9, edge - 0.02], "max": [W / 2 + 0.3, -0.35, edge + 0.3], "mat": "concrete_wet", "collide": False, "tile": 2.0},
-            {"min": [-W / 2, 0, edge - 0.4], "max": [W / 2, 1.2, edge - 0.2], "mat": "void", "collide": True, "invisible": True, "shadow": False},
+            # the barrier at the lip, broken where the guard rail is gone
+            {"min": [-W / 2, 0, edge - 0.4], "max": [-1.2, 1.2, edge - 0.2], "mat": "void", "collide": True, "invisible": True, "shadow": False},
+            {"min": [1.2, 0, edge - 0.4], "max": [W / 2, 1.2, edge - 0.2], "mat": "void", "collide": True, "invisible": True, "shadow": False},
             {"min": [-6, -4.05, edge - 36], "max": [6, -4.0, edge - 30], "mat": "glow_water", "collide": False, "shadow": False},
         ]
         prnd = random.Random(7)
         for x in range(-28, 29, 7):
             for zz in range(-8, -90, -9):
                 jx = prnd.uniform(-0.8, 0.8)
-                rec["boxes"].append({"min": [x + jx - 0.7, -4.5, edge + zz - 0.7], "max": [x + jx + 0.7, 12.0, edge + zz + 0.7], "mat": "plaster", "collide": False, "tile": 2.0})
+                rec["boxes"].append({"min": [x + jx - 0.7, -4.28, edge + zz - 0.7], "max": [x + jx + 0.7, 12.0, edge + zz + 0.7], "mat": "plaster", "collide": False, "tile": 2.0})
         rec["fog"] = {"color": "#0b1e24", "near": 10, "far": 85}
         rec["background"] = "#07171c"
         kept = []
@@ -521,7 +764,21 @@ def garage(depth=44.0, open_north=False):
         s["lean"] = {"from": pose([0, EYE, edge + 1.1], [0, 1.0, edge - 6]), "to": pose([0, EYE - 0.25, edge + 0.6], [0, -2.5, edge - 2.5]), "seconds": 9.0, "pingpong": True, "ease": "inout", "sway": 0.02}
         s["leave"] = {"from": "out", "to": pose([0, -1.0, edge - 1.2], [0, -6, edge - 3]), "seconds": 2.6, "ease": "in", "fadeOut": 0.9}
         s["arrive"] = {"from": pose([0, EYE, D / 2 - 1.5], [0, 1.3, edge]), "to": "in", "seconds": 3.0, "ease": "out", "fadeIn": 1.0}
+        # THE FALL: off the lip, down into the water (to the dive, joined below)
+        s["fall"] = {"from": pose([0, EYE, edge + 0.4], [0, 0.4, edge - 4]), "to": pose([0, -4.0, edge - 5.5], [0, -9, edge - 6.5]), "seconds": 1.6, "ease": "in"}
         rec["shots"] = s
+        # S6 H: PUSH ON down the bay / STOP at the line, on the bench
+        rec["boxes"].append({"min": [-W / 2 + 0.6, 0, 1.4], "max": [-0.6, 0.004, 1.55], "mat": "plaster_blown", "collide": False, "shadow": False})
+        rec["props"].append(prop("bench", [-5.0, 0, 2.4], name="bench"))
+        zone(rec, "push", [0.0, -8.4], r=0.9, ring=3.6, label_at=[0.0, 2.2, -9.6])
+        zone(rec, "stopline", [-5.0, 1.55], r=0.65, ring=2.8, label_at=[-5.0, 1.6, 2.4])
+        # S7 H: JUMP through the gap in the rail / TURN BACK (only once he has
+        # stood at the edge: walking up to it must not read as turning back)
+        zone(rec, "edge_approach", [0.0, edge + 2.0], r=3.0, ring=3.0, silent=True)
+        zone(rec, "gap", [0.0, edge + 0.55], r=0.6, ring=2.6, label_at=[0.0, 1.5, edge - 0.6])
+        zone(rec, "turnback", [0.0, edge + 7.0], r=1.2, ring=2.6, armAfter="edge_approach", label_at=[0.0, 2.3, edge + 8.5])
+        door(rec, "freight", "W", 4.0, w=1.2, h=2.2, kind="door", locked=True, mat="lp_grey")
+        anchor(rec, "drop", [0.0, -4.3, edge - 6.0], 0, vertical=True)
     return rec
 
 
@@ -537,6 +794,7 @@ def freight_elevator():
         "lights": [{"type": "point", "pos": [0, H - 0.25, 0.2], "color": "#ffcf9a", "intensity": 6, "distance": 6, "flicker": 0.2}],
         "fog": {"color": "#0a0705", "near": 2, "far": 9},
         "spawn": [0, 1.0, 0],
+        "holdEntry": True,  # the cab doors stay open behind him until he chooses
         "props": [
             prop("panel", [W / 2 - 0.05, 0.7, 0.5], rot=-90),
             prop("clock", [0, 1.9, -D / 2 + 0.03]),
@@ -551,6 +809,11 @@ def freight_elevator():
     s["loop"]["sway"] = 0.05
     s["leave"] = {"from": "out", "to": pose([0, -1.4, 0.4], [0, -6.0, -1.5]), "seconds": 3.2, "ease": "in", "fadeOut": 1.4}
     rec["shots"] = s
+    door(rec, "cab", "S", 0.0, w=1.6, h=2.2, kind="slide", mat="lp_rust")
+    rec["entry"] = "cab"
+    zone(rec, "cab_center", [0.0, -0.6], r=0.9, ring=0.9, silent=True)
+    zone(rec, "panel", [0.95, 0.5], r=0.45, ring=1.6, label_at=[1.3, 1.55, 0.5])
+    zone(rec, "doorway", [0.0, 2.05], r=0.5, ring=1.2, armAfter="cab_center", label_at=[0.0, 2.35, 1.75])
     return rec
 
 
@@ -560,8 +823,8 @@ def mailroom():
     rnd = random.Random(8)
     for x in range(-16, 17, 4):
         for z in range(-20, 21, 4):
-            if abs(x) < 5 and z > -12:
-                continue  # keep the whole approach lane, spawn to counter, clear
+            if (abs(x) < 5 and z > -12) or abs(x) < 4:
+                continue  # keep the approach lane clear, spawn to counter to the deliveries door
             if (x + z) % 3 == 0:
                 props.append(glb("lib_pallets", [x + rnd.uniform(-0.6, 0.6), 0, z + rnd.uniform(-0.6, 0.6)], rot=rnd.randint(0, 90), fallback="boxtower", collide=True, n=rnd.randint(4, 12)))
             else:
@@ -572,6 +835,9 @@ def mailroom():
     props.append(glb("lib_mailsacks", [3.2, 0, -8.6], rot=20, fallback=None))
     props.append(prop("clock", [3.6, 4.2, -14.0], rot=20))
     props.append(prop("slip", [-1.2, 0.004, -6.0], rot=45))
+    # OPEN THE BOX: a sorting table with a box cutter, off the lane
+    props.append(prop("table", [-3.5, 0, -3.5], w=1.2, d=2.0, name="sorting"))
+    props.append(prop("boxcutter", [-3.3, 0.76, -3.2], rot=30))
     for fx in (-12, 0, 12):
         for fz in (-14, 0, 14):
             props.append(prop("fluoro", [fx, 7.5, fz], w=2.4, d=0.4))
@@ -596,6 +862,12 @@ def mailroom():
     s["push"] = {"from": "in", "to": pose([0, EYE, -7.2], [0.3, 1.15, -9.6]), "seconds": 8.0, "ease": "inout"}
     s["out"] = pose([0, EYE, -7.2], [0.3, 1.15, -9.6])
     rec["shots"] = s
+    door(rec, "front", "S", 0.0, w=2.0, h=3.0, kind="door", mat="lp_dark")
+    door(rec, "deliveries", "N", 0.0, w=1.6, h=2.6, kind="door", locked=True, mat="lp_dark")
+    rec["entry"] = "front"
+    zone(rec, "counter", [0.4, -7.85], r=0.6, ring=3.0, label_at=[0.4, 1.7, -8.9])
+    zone(rec, "deliver", [0.0, -22.6], r=0.8, ring=4.0, armAfter="counter", label_at=[0.0, 3.0, -24.6])
+    zone(rec, "sorting", [-2.45, -3.5], r=0.6, ring=2.6, armAfter="counter", label_at=[-3.5, 1.5, -3.5])
     return rec
 
 
@@ -648,7 +920,14 @@ def convenience_store():
     # rendering in the doorway -- the push ends inside the black beyond it.
     s["ending"] = {"from": "out", "to": pose([0, EYE, D / 2 + 1.6], [0, 1.2, D / 2 + 12]), "seconds": 7.0, "ease": "inout", "fadeOut": 1.4}
     s["leave"] = {"from": "out", "to": pose([0, EYE, D / 2 - 0.5], [0, 1.2, D / 2 + 12]), "seconds": 3.0, "ease": "in", "fadeOut": 1.1}
+    # expelled from the chute onto the linoleum
+    s["land"] = {"from": pose([-W / 2 + 0.2, 0.5, -4.0], [0, 0.3, -4.0]), "to": pose([-W / 2 + 1.6, EYE, -4.0], [0, 1.3, D / 2]), "seconds": 1.8, "ease": "out"}
     rec["shots"] = s
+    door(rec, "hatch", "W", -4.0, w=1.0, h=1.1, kind="open")
+    door(rec, "staff", "E", -5.0, w=1.0, h=2.1, kind="door", locked=True, mat="lp_grey")
+    rec["entry"] = "hatch"
+    rec["holdEntry"] = True
+    zone(rec, "storefront", [0.0, 6.7], r=0.8, ring=3.5, label_at=[0.0, 2.6, 7.9])
     return rec
 
 
@@ -661,11 +940,11 @@ def apartment():
         prop("desk", [0.2, 0, -D / 2 + 0.75], w=1.5, d=0.7, mat="lp_wood"),
         prop("monitor", [0.3, 0.75, -D / 2 + 0.62], on=True, name="terminal"),
         prop("keyboard", [0.3, 0.75, -D / 2 + 1.02]),
-        prop("hands", [0.3, 0.76, -D / 2 + 1.1], name="hands"),
+        prop("hands", [0.3, 0.76, -D / 2 + 1.1], name="hands", hidden=True),  # shown when he sits (C6)
         prop("mug", [-0.35, 0.75, -D / 2 + 0.95]),
         glb("lib_tablelamp", [-0.45, 0.75, -D / 2 + 0.55], fallback="lamp"),
         glb("lib_books", [0.85, 0.75, -D / 2 + 0.6], rot=15, fallback=None),
-        glb("lib_chair_wood", [0.3, 0, -D / 2 + 1.65], rot=180, fallback="chair"),
+        glb("lib_chair_wood", [0.3, 0, -D / 2 + 1.65], rot=180, fallback="chair", collide=True),
         prop("clock", [-W / 2 + 0.03, 1.9, 0.6], rot=90),
     ]
     rec = {
@@ -683,10 +962,14 @@ def apartment():
         "fog": {"color": "#050706", "near": 2, "far": 9},
         "vignette": 0.7,
         "grain": 0.045,
-        "spawn": [0.3, 1.2, 0],
+        "spawn": [0.3, 1.5, 0],
         "props": props,
         "footstep": {"filterHz": 380, "gain": 0.04},
     }
+    # The way out: the apartment door, locked until ACCEPTED; stairs down to the street.
+    door(rec, "door", "S", -1.3, w=1.2, h=2.2, kind="door", locked=True, mat="lp_beige", hinge="R")
+    # The start: walking up to the lit screen sits him down at it.
+    zone(rec, "desk", [0.3, -0.35], r=0.45, ring=1.4, label_at=[0.3, 1.45, -1.9])
     s = shots_for(rec, out_dist=0.4, leave_dist=1.2, loop_seconds=14.0)
     # Over the shoulder, the monitor in the middle of frame (S0_X_IMG_IN).
     s["in"] = pose([0.3, 1.5, -D / 2 + 2.15], [0.3, 0.98, -D / 2 + 0.62], fov=48)
@@ -694,6 +977,10 @@ def apartment():
     s["loop"]["sway"] = 0.01
     # ACCEPTED. The window cannot be closed: the camera pushes into the screen's glow and the room goes.
     s["leave"] = {"from": "out", "to": pose([0.3, 1.1, -D / 2 + 0.9], [0.3, 0.98, -D / 2 + 0.62], fov=40), "seconds": 2.6, "ease": "in", "fadeOut": 1.0}
+    # Carried: sitting down at the computer, leaning in to the form, standing up to go.
+    s["sit"] = pose([0.3, 1.17, -1.0], [0.3, 0.88, -1.7], fov=54)
+    s["lean"] = pose([0.3, 1.10, -1.25], [0.3, 1.02, -1.70], fov=46)
+    s["stand"] = pose([0.3, 1.60, -0.35], [-1.3, 1.3, 2.5], fov=68)
     rec["shots"] = s
     return rec
 
@@ -711,16 +998,15 @@ def street():
     for i, z in enumerate(range(-20, 31, 10)):
         node = "lib_brownstone" if i % 2 == 0 else "lib_aptblock"
         props.append(glb(node, [-W / 2 - 3.5, 0, z], rot=90, fallback="building", w=10, h=16 + (i % 3) * 4, d=9))
-        props.append(glb("lib_aptblock" if i % 2 == 0 else "lib_brownstone", [W / 2 + 3.5, 0, z + 5], rot=-90, fallback="building", w=10, h=14 + ((i + 1) % 3) * 5, d=9))
-    # The tower: the whole core end of the street, no top.
-    props.append(glb("lib_tower", [0, 0, -D / 2 - 14], fallback="building", w=26, h=88, d=28, scale=2.2, name="tower"))
-    props.append(prop("glassdoors", [0, 0, -D / 2 + 0.3], w=3.2, h=3.2, name="doors"))
+        if z + 5 < D / 2 - 3:
+            props.append(glb("lib_aptblock" if i % 2 == 0 else "lib_brownstone", [W / 2 + 3.5, 0, z + 5], rot=-90, fallback="building", w=10, h=14 + ((i + 1) % 3) * 5, d=9))
     for z in (-22, -6, 10, 26):
-        props.append(glb("lib_streetlamp", [-W / 2 + 1.2, 0, z], fallback="lamppost"))
-        props.append(glb("lib_streetlamp", [W / 2 - 1.2, 0, z + 8], rot=180, fallback="lamppost"))
-    props.append(glb("lib_trafficlight", [W / 2 - 1.4, 0, -D / 2 + 9], rot=180, fallback="lamppost"))
-    props.append(glb("lib_hydrant", [-W / 2 + 1.6, 0, 4.0], fallback=None))
-    props.append(glb("lib_trashbin", [W / 2 - 1.8, 0, -3.0], fallback=None))
+        props.append(glb("lib_streetlamp", [-W / 2 + 1.2, 0.14, z], fallback="lamppost"))
+        if z + 8 < D / 2 - 2:
+            props.append(glb("lib_streetlamp", [W / 2 - 1.2, 0.14, z + 8], rot=180, fallback="lamppost"))
+    props.append(glb("lib_trafficlight", [W / 2 - 1.4, 0.14, -D / 2 + 9], rot=180, fallback="lamppost"))
+    props.append(glb("lib_hydrant", [-W / 2 + 1.6, 0.14, 4.0], fallback=None, collide=True))
+    props.append(glb("lib_trashbin", [W / 2 - 1.8, 0.14, -3.0], fallback=None, collide=True))
     cars = ["lib_car_sedan", "lib_car_taxi", "lib_car_sedan2", "lib_car_pastel"]
     for i, z in enumerate((-16, -2, 12, 24)):
         side = -1 if i % 2 else 1
@@ -735,25 +1021,50 @@ def street():
         "noWalls": True,
         "tile": {"floor": 3.0},
         "boxes": [
-            # pavements
-            {"min": [-W / 2 - 3.0, 0, -D / 2], "max": [-W / 2 + 2.6, 0.14, D / 2], "mat": "concrete", "collide": False, "tile": 2.0},
-            {"min": [W / 2 - 2.6, 0, -D / 2], "max": [W / 2 + 3.0, 0.14, D / 2], "mat": "concrete", "collide": False, "tile": 2.0},
-            # the tower's plinth and entrance step
-            {"min": [-14, 0, -D / 2 - 30], "max": [14, 0.3, -D / 2 + 0.6], "mat": "marble_light", "collide": True, "tile": 2.5},
+            # pavements (walkable: kerbs are climbed, controls.js eases over them)
+            {"min": [-W / 2 - 3.0, 0, -D / 2 + 3.8], "max": [-W / 2 + 2.6, 0.14, D / 2 - 2.4], "mat": "concrete", "floor": True, "tile": 2.0},
+            {"min": [W / 2 - 2.6, 0, -D / 2 + 3.8], "max": [W / 2 + 3.0, 0.14, D / 2 - 2.4], "mat": "concrete", "floor": True, "tile": 2.0},
+            # the dead end he comes out into: a kerb across it and a brick end wall
+            # with his building's door in it (the stairs from the apartment behind)
+            {"min": [-W / 2 - 3.0, 0, D / 2 - 2.4], "max": [W / 2 + 3.0, 0.14, D / 2], "mat": "concrete", "floor": True, "tile": 2.0},
+            {"min": [-24, 0, D / 2], "max": [-0.6, 18, D / 2 + WALL_T], "mat": "plaster_dark", "shadow": False, "tile": 2.0},
+            {"min": [0.6, 0, D / 2], "max": [24, 18, D / 2 + WALL_T], "mat": "plaster_dark", "shadow": False, "tile": 2.0},
+            {"min": [-0.6, 2.34, D / 2], "max": [0.6, 18, D / 2 + WALL_T], "mat": "plaster_dark", "shadow": False, "tile": 2.0},
+            # the tower: a forecourt and step (the last ascent in the game), the
+            # facade with the doors in it, and the rest of it, which has no top
+            {"min": [-16, 0, -D / 2], "max": [16, 0.3, -D / 2 + 3.2], "mat": "marble_light", "floor": True, "tile": 2.5},
+            {"min": [-12, 0, -D / 2 + 3.2], "max": [12, 0.15, -D / 2 + 3.8], "mat": "marble_light", "floor": True, "tile": 2.5},
+            {"min": [-16, 0, -D / 2 - WALL_T], "max": [-1.3, 9.0, -D / 2], "mat": "marble_light", "shadow": False, "tile": 2.5},
+            {"min": [1.3, 0, -D / 2 - WALL_T], "max": [16, 9.0, -D / 2], "mat": "marble_light", "shadow": False, "tile": 2.5},
+            {"min": [-1.3, 3.2, -D / 2 - WALL_T], "max": [1.3, 9.0, -D / 2], "mat": "marble_light", "shadow": False, "tile": 2.5},
+            {"min": [-16, 0, -D / 2 - 40], "max": [-8.2, 9.0, -D / 2 - WALL_T], "mat": "concrete", "collide": False, "shadow": False, "tile": 3.0},
+            {"min": [8.2, 0, -D / 2 - 40], "max": [16, 9.0, -D / 2 - WALL_T], "mat": "concrete", "collide": False, "shadow": False, "tile": 3.0},
+            {"min": [-8.2, 0, -D / 2 - 40], "max": [8.2, 9.0, -D / 2 - 19.0], "mat": "concrete", "collide": False, "shadow": False, "tile": 3.0},
+            {"min": [-16, 9.0, -D / 2 - 40], "max": [16, 220.0, -D / 2], "mat": "concrete", "collide": False, "shadow": False, "tile": 4.0},
+            # invisible kerb-side bounds: the street is the only way
+            {"min": [-W / 2 + 0.7, 0, -D / 2], "max": [-W / 2 + 1.0, 3.0, D / 2], "mat": "void", "invisible": True, "shadow": False},
+            {"min": [W / 2 - 1.0, 0, -D / 2], "max": [W / 2 - 0.7, 3.0, D / 2], "mat": "void", "invisible": True, "shadow": False},
         ],
         "ambient": {"color": "#f0c8a0", "intensity": 0.3},
         "hemisphere": {"sky": "#e8b07a", "ground": "#3a3028", "intensity": 0.5},
-        "sun": {"from": [-6.0, 7.0, 40.0], "color": "#ffb070", "intensity": 1.6},
+        "sun": {"from": [-6.0, 9.0, 60.0], "color": "#ffb070", "intensity": 1.6},
         "lights": [],
         "fog": {"color": "#d9a878", "near": 18, "far": 95},
         "background": "#d9a878",
         "exposure": 1.1,
         "vignette": 0.4,
         "grain": 0.03,
-        "spawn": [0, 26.0, 0],
+        "spawn": [0, 30.0, 0],
         "props": props,
         "footstep": {"filterHz": 1600, "gain": 0.1},
     }
+    # window bands on the tower face, glass that shows nothing
+    for y in range(10, 200, 4):
+        rec["boxes"].append({"min": [-15, y, -D / 2 + 0.02], "max": [15, y + 1.4, -D / 2 + 0.06], "mat": "glass_dark", "collide": False, "shadow": False, "tile": 4.0})
+    door(rec, "stoop", "S", 0.0, w=1.2, h=2.2, kind="door", y=0.14, locked=True, mat="lp_dark", panel="glass", hinge="L")
+    door(rec, "tower", "N", 0.0, w=2.6, h=2.9, kind="glass", y=0.3, locked=True)
+    rec["entry"] = "stoop"
+    zone(rec, "report", [0.0, -D / 2 + 1.6], r=1.2, ring=5.0, label_at=[0.0, 3.6, -D / 2 - 0.1])
     s = shots_for(rec, out_dist=6.0, leave_dist=D - 4.5, loop_seconds=16.0)
     # The push-in to the tower (S0_X_VID, 8 s) and through the doors.
     s["push"] = {"from": pose([0, EYE, 26.0], [0, 6.0, -D / 2 - 14]), "to": pose([0, EYE, -D / 2 + 6.0], [0, 1.4, -D / 2 - 2]), "seconds": 9.0, "ease": "inout", "fadeIn": 1.2}
@@ -792,10 +1103,8 @@ def dive():
         "grain": 0.04,
         "spawn": [0, 2.0, 0],
         "props": [
-            prop("hands", [0, 1.2, 1.4], rot=0, name="hands", reach=True),
             prop("clock", [-W / 2 + 0.03, 4.0, -2.0], rot=90),
             prop("slip", [1.2, 0.004, -1.0], rot=60),
-            glb("lib_lift", [-4.0, 0, -4.0], rot=45, fallback=None, collide=True),
         ],
         "footstep": {"filterHz": 300, "gain": 0.03},
     }
@@ -809,7 +1118,20 @@ def dive():
     # Through the grate into the dry concrete chute (black), then the store.
     s["leave"] = {"from": "out", "to": pose([0, -1.5, 0.2], [0, -6, -0.5]), "seconds": 2.8, "ease": "in", "fadeOut": 1.0}
     s["arrive"] = {"from": pose([0, 12.0, 3.0], [0, 0, 0]), "to": "in", "seconds": 2.4, "ease": "out", "fadeIn": 1.4}
+    # the splash: from the surface down into the water, before he swims
+    s["sink"] = {"from": pose([0, H - 0.2, 0.0], [0, 6, -2.0]), "to": pose([0, H - 3.5, 0.6], [0, 4, -2.5]), "seconds": 2.2, "ease": "out"}
+    # through the grate, dragged by the current
+    s["grate"] = {"from": "out", "to": pose([0, 0.3, 0.1], [0, -4, -0.3]), "seconds": 2.0, "ease": "in"}
     rec["shots"] = s
+    # the tiled pillars at the corners (SWIM FOR THE PILLARS)
+    for px, pz in ((-4.3, -4.3), (4.3, -4.3), (-4.3, 4.3), (4.3, 4.3)):
+        rec["boxes"].append({"min": [px - 0.45, 0, pz - 0.45], "max": [px + 0.45, H, pz + 0.45], "mat": "pool_tile", "collide": True, "tile": 1.5})
+    anchor(rec, "surface", [0.0, H, 0.0], 0, vertical=True)
+    anchor(rec, "grate", [0.0, -0.3, 0.0], 0, vertical=True)
+    rec["entry"] = "surface"
+    rec["swim"] = {"floorY": 0.9, "ceilingY": H - 0.7}
+    zone(rec, "grate", [0.0, 1.0, 0.0], r=1.3, ring=4.0, label_at=[0.0, 2.6, 0.0])
+    zone(rec, "pillars", [-3.3, 6.0, -3.3], r=1.1, ring=3.5, label_at=[-4.3, 7.6, -4.3])
     return rec
 
 
@@ -855,6 +1177,9 @@ def boardroom():
     # RETAINED: the same pull-back, shorter, the package still on the table.
     s["retained"] = {"from": pose([0, 1.3, -0.4], [0, 0.78, -6.6], fov=40), "to": pose([0, 1.7, 7.4], [0, 0.9, -8.0], fov=56), "seconds": 7.0, "ease": "inout"}
     rec["shots"] = s
+    door(rec, "front", "S", 0.0, w=1.4, h=2.4, kind="door", mat="lp_wood")
+    rec["entry"] = "front"
+    zone(rec, "head", [0.0, -7.6], r=0.6, ring=3.0, label_at=[0.0, 1.9, -8.0])
     return rec
 
 
@@ -868,7 +1193,7 @@ def pending_room():
     rec["props"] = [p for p in rec["props"] if p["type"] != "glb"]  # the rows go; two chairs face each other
     rec["props"].append(glb("lib_chair", [-0.9, 0, 1.2], rot=-90, fallback="chair"))
     rec["props"].append(glb("lib_chair", [0.9, 0, 1.2], rot=90, fallback="chair", name="vacated"))
-    rec["props"].append(prop("hands", [-0.6, 0.95, 1.2], rot=-90, name="hands", slip=True))
+    rec["props"].append(prop("hands", [-0.6, 0.95, 1.2], rot=-90, name="hands", slip=True, hidden=True))
     rec["props"].append(prop("curtain", [0, 0, -D / 2 + 0.05], w=2.2, h=3.0, name="farcurtain", swing=True))
     rec["props"].append(prop("slip", [0.9, 0.45, 1.2], rot=10))  # the hundredth? no: the one he holds is drawn by the hands; this one on the vacated seat
     rec["spawn"] = [-0.9, 1.2, -90]
@@ -877,11 +1202,63 @@ def pending_room():
     s["out"] = pose([-0.75, 1.15, 1.2], [0.9, 0.7, 1.2], fov=52)
     s["ending"] = {"from": pose([-0.75, 1.15, 1.2], [-0.2, 0.9, 1.2], fov=52), "to": pose([-0.75, 1.15, 1.2], [1.6, 0.8, 0.6], fov=52), "seconds": 7.0, "ease": "inout", "sway": 0.015}
     s.pop("call", None)
+    # sitting down to wait, before the pull-back
+    s["sit"] = {"from": pose([-1.6, EYE, 1.2], [0.9, 1.0, 1.2]), "to": pose([-0.75, 1.15, 1.2], [-0.2, 0.9, 1.2], fov=52), "seconds": 1.8, "ease": "inout"}
     rec["shots"] = s
+    rec["entry"] = "inner"
+    rec["zones"] = [z for z in rec.get("zones", []) if False]
+    zone(rec, "seat", [-1.55, 1.2], r=0.55, ring=2.6, label_at=[-0.9, 1.3, 1.2])
     return rec
 
 
-KEY_RE = r"^(S\d_[CHX]|SE_(ASSIM|EXPUL|PEND|RETAINED)|SET_[A-Z]+)$"
+KEY_RE = r"^(S\d_[CHX]|SE_(ASSIM|EXPUL|PEND|RETAINED)|SET_[A-Z]+|CN_[A-Z_]+)$"
+
+# What an alias may change: anything that is not the room itself (the
+# world builds one room per base set and reuses it for every alias).
+ALIAS_KEYS = {"alias", "spawn", "_note", "name", "id", "shots"}
+
+
+def _point_in_box(x, z, b, pad=0.0):
+    return b["min"][0] - pad <= x <= b["max"][0] + pad and b["min"][2] - pad <= z <= b["max"][2] + pad
+
+
+def check_room(k, r):
+    """The continuous building's rules for one built room (see door()/zone())."""
+    W, H, D = r["size"]
+    names = set()
+    spans = {}
+    for d in r.get("doors", []):
+        assert d["name"] not in names, "%s: two doors named %s" % (k, d["name"])
+        names.add(d["name"])
+        assert d["wall"] in "NSEW", "%s: door %s on wall %s" % (k, d["name"], d["wall"])
+        assert d["wall"] not in r.get("open", []), "%s: door %s on an open side" % (k, d["name"])
+        length = W if d["wall"] in "NS" else D
+        assert abs(d["x"]) + d["w"] / 2 <= length / 2 - 0.05 + (WALL_T if d["wall"] in "NS" else 0), "%s: door %s runs off its wall" % (k, d["name"])
+        y = d.get("y", r.get("floorY", 0))
+        assert y + d["h"] < H + 1e-6 or r.get("noWalls") or r.get("noCeiling"), "%s: door %s taller than the room" % (k, d["name"])
+        for (s0, s1) in spans.get(d["wall"], []):
+            assert d["x"] + d["w"] / 2 <= s0 or d["x"] - d["w"] / 2 >= s1, "%s: door %s overlaps another on wall %s" % (k, d["name"], d["wall"])
+        spans.setdefault(d["wall"], []).append((d["x"] - d["w"] / 2, d["x"] + d["w"] / 2))
+    if r.get("entry"):
+        assert r["entry"] in names or r["entry"] in r.get("anchors", {}), "%s: entry %s is no door" % (k, r["entry"])
+    else:
+        assert k == "S0_X", "%s: no entry doorway" % k
+    collide_boxes = [b for b in r.get("boxes", []) if b.get("collide", True) and not b.get("floor")]
+    for z in r.get("zones", []):
+        x, zz = (z["pos"][0], z["pos"][-1])
+        assert -W / 2 <= x <= W / 2 and -D / 2 - 0.4 <= zz <= D / 2 + 0.4, "%s: zone %s outside the room" % (k, z["name"])
+        if z.get("actor"):
+            continue
+        for b in collide_boxes:
+            assert not _point_in_box(x, zz, b, -0.05) or (len(z["pos"]) == 3 and not (b["min"][1] <= z["pos"][1] <= b["max"][1])), "%s: zone %s inside a solid box" % (k, z["name"])
+        assert z["ring"] >= z["r"] or z.get("silent"), "%s: zone %s ring inside its radius" % (k, z["name"])
+        if z.get("armAfter"):
+            assert any(o["name"] == z["armAfter"] for o in r["zones"]), "%s: zone %s arms after a missing zone" % (k, z["name"])
+    for p in r.get("props", []):
+        assert not p.get("reach"), "%s: hands that reach (removed from the pool scenes)" % k
+    hands = sum(1 for p in r.get("props", []) if p["type"] == "hands")
+    assert hands == 0 or k in ("S0_X", "SE_PEND"), "%s: hands outside the apartment and the pending room" % k
+
 
 
 def build():
@@ -900,7 +1277,7 @@ def build():
         "S4_H": utility_corridor(),
         "S5_C": desk_void(False),
         "S5_H": garage(),
-        "S6_C": desk_void(True),
+        "S6_C": {"alias": "S5_C", "_note": "The same desk: the terminal wakes with the requisition on it."},
         "S6_H": edge_room,
         "S7_C": freight_elevator(),
         "S7_H": {"alias": "S6_H", "spawn": [0, -9.5, 0], "_note": "The same edge, one step closer: S7 H plays the `lean` shot here."},
@@ -911,12 +1288,25 @@ def build():
         "SE_RETAINED": {"alias": "SE_ASSIM", "_note": "The same boardroom; the ending plays the `retained` shot."},
         "SE_EXPUL": {"alias": "S8_H", "_note": "The same store; the ending pushes through the open door."},
         "SE_PEND": pending_room(),
+        # connectors: what the continuous building joins rooms with
+        "CN_STAIRS_APT": cn_stairs("THE STAIRS", "home", drop=2.8, width=1.4),
+        "CN_VESTIBULE": cn_vestibule(),
+        "CN_CORRIDOR_OFFICE": cn_corridor("A CORRIDOR", "office", length=6.0),
+        "CN_CORRIDOR_SERVICE": cn_corridor("A SERVICE CORRIDOR", "service", length=6.0, width=1.6),
+        "CN_STAIRS_CONCRETE": cn_stairs("A STAIRWELL", "service", drop=3.0),
+        "CN_CORRIDOR_DOWN": cn_stairs("A CORRIDOR DOWN", "service", drop=1.2, rise=0.15, tread=0.6, landing=2.0, width=1.8),
+        "CN_RAMP_DOWN": cn_ramp("THE RAMP", "garage", drop=2.5),
+        "CN_CHUTE": cn_chute(),
     }
     for k, r in rooms.items():
         r["id"] = k
         assert re.match(KEY_RE, k), k
         if "alias" in r:
             assert "alias" not in rooms[r["alias"]], "%s: alias of an alias" % k
+            assert set(r) <= ALIAS_KEYS, "%s: an alias may not change the room (%s)" % (k, sorted(set(r) - ALIAS_KEYS))
+            continue
+        check_room(k, r)
+        if r.get("connector"):
             continue
         clocks = sum(1 for p in r["props"] if p["type"] == "clock")
         assert clocks == 1, "%s: %d clocks (C8: exactly one handless clock per room)" % (k, clocks)
