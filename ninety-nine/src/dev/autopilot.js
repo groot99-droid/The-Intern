@@ -276,8 +276,15 @@ export function startAutopilot({ director, stage, plan = '', seed = 'C', bailAt 
     if (stuckT > 2.5) {
       stuckT = 0;
       jitter = (Math.random() - 0.5) * 1.6;
+      // the cell he is pushing into is not walkable after all: mark it and re-plan
+      const cur = world.current();
+      const g = cur && grids.get(cur.id);
+      if (g && target) {
+        const c = toCell(g, target);
+        if (ok(g, c[0], c[1])) g.walk[c[0] * g.nz + c[1]] = 0;
+      }
+      log(`stuck near [${p.map((n) => n.toFixed(1))}] going ${goal.kind} ${goal.label || goal.key || ''} -> target [${target.map((n) => n.toFixed(1))}] route ${route ? `${route.i}/${route.points.length}` : '-'} in ${cur ? cur.key : '-'}`);
       route = null;
-      log(`stuck near [${p.map((n) => n.toFixed(1))}] going ${goal.kind} ${goal.label || goal.key || ''}`);
     }
   }
 
