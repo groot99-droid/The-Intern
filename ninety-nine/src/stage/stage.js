@@ -121,7 +121,8 @@ export function createStage(container, { rooms = null, audio = null, sfx = null,
   const postCamera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1);
 
   const world = createWorld({ scene, mats, library: lib, rooms });
-  const player = createPlayer({ camera, domElement: renderer.domElement, overlay: overlay || container, world, sfx, onBump });
+  let bumpHandler = onBump;
+  const player = createPlayer({ camera, domElement: renderer.domElement, overlay: overlay || container, world, sfx, onBump: (o) => { if (bumpHandler) bumpHandler(o); } });
   player.disable();
 
   let shot = null;          // the running camera move
@@ -403,6 +404,8 @@ export function createStage(container, { rooms = null, audio = null, sfx = null,
     releaseShot,
     walk,
     setPlayerActive(v) { playerActive = !!v; },
+    // what walking into a collider means (the director: locked doors rattle)
+    setBumpHandler(fn) { bumpHandler = fn; },
     isPlayerActive: () => playerActive,
     screenRect,
     project,

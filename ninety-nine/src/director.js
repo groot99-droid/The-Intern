@@ -793,6 +793,33 @@ export function createDirector({ manifest, endings, state, stage, audio = null, 
   }
   stage.onFrame(tick);
 
+  // Walking into a locked door: it shudders and rattles. A branch may count
+  // the pushes (S3 H: thirty-one and the building remarks on it).
+  let lastBump = { door: null, at: -10 };
+  const bumpCounts = new Map();
+  stage.setBumpHandler((obj) => {
+    if (gone() || !obj || !obj.userData || !obj.userData.doorBody) return;
+    const inst = world.instances().find((i) => i.room.walls.includes(obj));
+    if (!inst) return;
+    const name = obj.userData.doorBody;
+    const door = inst.room.doors.get(name);
+    if (!door || !door.locked) return;
+    const now = stage.elapsed();
+    if (lastBump.door === door && now - lastBump.at < 0.6) { lastBump.at = now; return; }
+    lastBump = { door, at: now };
+    door.rattle();
+    sfxPlay('door-rattle', { gain: 0.6 });
+    const bc = scene && scene.branch && scene.branch.bumpCount;
+    if (bc && bc.door === name && scene.inst === inst) {
+      const n = (bumpCounts.get(scene.id) || 0) + 1;
+      bumpCounts.set(scene.id, n);
+      if (n === bc.at) {
+        if (bc.setFlag) state.flags.add(bc.setFlag);
+        if (bc.caption) captions.show(bc.caption, { holdMs: 3200, className: 'scene-caption-receptionist' });
+      }
+    }
+  });
+
   // Dev only (?start=S5&render=H): put the candidate straight into a scene,
   // standing just inside its room's entry, with a score that gives that
   // render. The rest of the game plays on from there as normal.
