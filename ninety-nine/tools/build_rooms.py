@@ -937,29 +937,41 @@ def apartment():
     the keyboard, mug, hands and the chair are his (low-poly, C6)."""
     W, H, D = 4.6, 2.6, 5.0
     props = [
-        prop("desk", [0.2, 0, -D / 2 + 0.75], w=1.5, d=0.7, mat="lp_wood"),
+        # the desk is the building's (photoreal wood, Doc 1 §5 S0 / Doc 2 S0_X_IMG_IN)
+        prop("homedesk", [0.2, 0, -D / 2 + 0.75], w=1.5, d=0.7, mat="wood"),
         prop("monitor", [0.3, 0.75, -D / 2 + 0.62], on=True, name="terminal"),
         prop("keyboard", [0.3, 0.75, -D / 2 + 1.02]),
         prop("hands", [0.3, 0.76, -D / 2 + 1.1], name="hands", hidden=True),  # shown when he sits (C6)
         prop("mug", [-0.35, 0.75, -D / 2 + 0.95]),
-        glb("lib_tablelamp", [-0.45, 0.75, -D / 2 + 0.55], fallback="lamp"),
-        glb("lib_books", [0.85, 0.75, -D / 2 + 0.6], rot=15, fallback=None),
+        glb("lib_tablelamp", [-0.45, 0.75, -D / 2 + 0.55], fallback="lamp", scale=0.8),
+        glb("lib_books", [0.85, 0.75, -D / 2 + 0.6], rot=15, fallback=None, scale=0.8),
+        prop("papers", [0.78, 0.75, -D / 2 + 0.98], rot=-8),
         glb("lib_chair_wood", [0.3, 0, -D / 2 + 1.65], rot=180, fallback="chair", collide=True),
+        # his bed, under the clock: the room is his, not an office cell
+        prop("bed", [-W / 2 + 0.47, 0, -0.05], w=0.9, len=2.0),
         prop("clock", [-W / 2 + 0.03, 1.9, 0.6], rot=90),
+        # the way out, before it opens: light from the stairwell under the door
+        prop("doorglow", [-1.3, 0, D / 2 - 0.02], rot=180, w=1.1),
+        # dust in the CRT's light (Doc 2 S0_X)
+        prop("dust", [0.3, 0.9, -D / 2 + 1.35], n=26, w=0.6, h=0.55, d=0.7, size=0.0045, opacity=0.4),
     ]
     rec = {
         "name": "THE UPLOAD",
         "size": [W, H, D],
         "floor": "carpet", "wall": "plaster_dark", "ceiling": "plaster_dark",
-        "tile": {"floor": 1.2, "wall": 2.0, "ceiling": 2.0},
+        "tile": {"floor": 1.2, "wall": 2.6, "ceiling": 2.6},
         "skirt": {"mat": "plaster_dark", "h": 0.1, "t": 0.02},
-        "ambient": {"color": "#8fd0b0", "intensity": 0.08},
-        "sun": {"from": [0.3, 2.4, 2.2], "color": "#9ad8b8", "intensity": 0.25},
+        # 3am: the CRT's grey-blue page is the light (Doc 2 S0_X: "lit only by
+        # one CRT monitor"), the desk lamp a warm pool, and a line of the
+        # stairwell's light under the door
+        "ambient": {"color": "#7d93a6", "intensity": 0.09},
+        "sun": {"from": [0.3, 2.4, 2.2], "color": "#a9c3d6", "intensity": 0.2},
         "lights": [
-            {"type": "point", "pos": [0.3, 1.1, -D / 2 + 0.9], "color": "#8fe0b8", "intensity": 5, "distance": 5, "flicker": 0.08},
+            {"type": "point", "pos": [0.3, 1.1, -D / 2 + 0.9], "color": "#bcd4e2", "intensity": 5.5, "distance": 5, "flicker": 0.08},
             {"type": "point", "pos": [-0.45, 1.3, -D / 2 + 0.6], "color": "#ffc27a", "intensity": 2.2, "distance": 4},
+            {"type": "point", "pos": [-1.3, 0.18, D / 2 - 0.25], "color": "#ffcf8a", "intensity": 0.9, "distance": 2.2},
         ],
-        "fog": {"color": "#050706", "near": 2, "far": 9},
+        "fog": {"color": "#050607", "near": 2.5, "far": 10},
         "vignette": 0.7,
         "grain": 0.045,
         "spawn": [0.3, 1.5, 0],
@@ -980,39 +992,178 @@ def apartment():
     # Carried: sitting down at the computer, leaning in to the form, standing up to go.
     s["sit"] = pose([0.3, 1.17, -1.0], [0.3, 0.88, -1.7], fov=54)
     s["lean"] = pose([0.3, 1.10, -1.25], [0.3, 1.02, -1.70], fov=46)
-    s["stand"] = pose([0.3, 1.60, -0.35], [-1.3, 1.3, 2.5], fov=68)
+    # stand ends clear of the chair (its face at z -0.63, his radius 0.35), facing the door
+    s["stand"] = pose([0.3, 1.60, -0.15], [-1.3, 1.25, 2.5], fov=68)
     rec["shots"] = s
     return rec
 
 
 def street():
-    """S0 beat 2, the commute: dawn, an empty street from the base of the
-    tower. Asphalt, brick and the low sun are photoreal; parked cars, signs
-    and lamps are low-poly. The tower ahead has no visible top (the fog
-    takes it). The one set before the lobby doors, so C3 does not apply:
-    there is a sky colour, and it is the only one in the game."""
+    """S0 beat 2, the commute (Doc 1 §5 S0, Doc 2 S0_X_IMG_OUT): dawn, an
+    empty street walked from his building's door at the dead end to the
+    tower. Asphalt, brick facades, wet gutters, the low sun, the haze and
+    the tower are the building's: photoreal boxes (C1 -- not the catalog
+    blocks, which library.js renders low-poly). Parked cars, signs, lamps,
+    the traffic light, the newspaper box and the clock are low-poly. The sun
+    sits low behind him on the street's axis, so every shadow, the cars' and
+    the lamps' and the hydrant's, runs at the tower (C2). The tower has no
+    visible top: the haze takes it. No people, no birds. The one set before
+    the lobby doors, so C3 does not apply: there is a sky colour, and it is
+    the only one in the game."""
     W, H, D = 18.0, 90.0, 64.0
+    FX = W / 2 - 0.2      # the facades' front line, |x| 8.8
+    KERB = W / 2 - 2.6    # the kerb edge, |x| 6.4
+    PAVE = 0.14           # pavement height
     props = []
-    rnd = random.Random(0)
-    # Facades either side: catalog blocks, box fallbacks.
-    for i, z in enumerate(range(-20, 31, 10)):
-        node = "lib_brownstone" if i % 2 == 0 else "lib_aptblock"
-        props.append(glb(node, [-W / 2 - 3.5, 0, z], rot=90, fallback="building", w=10, h=16 + (i % 3) * 4, d=9))
-        if z + 5 < D / 2 - 3:
-            props.append(glb("lib_aptblock" if i % 2 == 0 else "lib_brownstone", [W / 2 + 3.5, 0, z + 5], rot=-90, fallback="building", w=10, h=14 + ((i + 1) % 3) * 5, d=9))
-    for z in (-22, -6, 10, 26):
-        props.append(glb("lib_streetlamp", [-W / 2 + 1.2, 0.14, z], fallback="lamppost"))
-        if z + 8 < D / 2 - 2:
-            props.append(glb("lib_streetlamp", [W / 2 - 1.2, 0.14, z + 8], rot=180, fallback="lamppost"))
-    props.append(glb("lib_trafficlight", [W / 2 - 1.4, 0.14, -D / 2 + 9], rot=180, fallback="lamppost"))
-    props.append(glb("lib_hydrant", [-W / 2 + 1.6, 0.14, 4.0], fallback=None, collide=True))
-    props.append(glb("lib_trashbin", [W / 2 - 1.8, 0.14, -3.0], fallback=None, collide=True))
+    lights = []
+    boxes = []
+
+    # -- facades: unbroken rows from the tower's forecourt (z -32) to his
+    # building at the dead end (z 32), 2.4 m of pavement in front of them.
+    # (width, height, ground floor, material, extras)
+    west = [(8.0, 18, "shop", "brick", {"shutter": True}), (10.5, 14, "door", "brick", {}), (7.5, 22, "shop", "plaster", {}),
+            (11.0, 16, "door", "brick", {}), (9.0, 20, "shop", "brick", {"shutter": True}), (8.5, 13, "door", "plaster", {}),
+            (9.5, 17, "shop", "brick", {})]
+    east = [(9.5, 16, "door", "brick", {}), (8.0, 21, "shop", "brick", {}), (11.0, 14, "shop", "plaster", {"shutter": True}),
+            (7.5, 18, "door", "brick", {}), (10.0, 24, "shop", "brick", {}), (9.0, 15, "door", "brick", {}),
+            (9.0, 13, "shop", "plaster", {"shutter": True})]
+    for side, row in ((-1, west), (1, east)):
+        z = -D / 2
+        for (w, h, ground, mat, extra) in row:
+            trim = "plaster_blown" if mat == "brick" else "concrete"
+            props.append(prop("facade", [side * FX, 0, z + w / 2], rot=-90 * side, w=w, h=h, d=9.0, mat=mat, trim=trim,
+                              ground=ground, tile=0.5 if mat == "brick" else 2.0, **extra))
+            z += w
+        assert abs(z - D / 2) < 1e-6
+
+    # -- street furniture (low-poly, the company's). Lamps still burning at
+    # dawn; their poles stand behind the invisible kerb-side bounds.
+    LAMP_S = 1.4
+    lamp_x = FX - 0.35 - 0.62 * LAMP_S             # the pole at |x| 8.45
+    head_x = lamp_x - 0.675 * LAMP_S               # the head over the kerb
+    for side, zs in ((-1, (-22, -6, 10, 26)), (1, (-14, 2, 18))):
+        for z in zs:
+            props.append(glb("lib_streetlamp", [side * lamp_x, PAVE, z], rot=0 if side < 0 else 180, fallback="lamppost", scale=LAMP_S))
+            hz = z - 0.12 if side < 0 else z + 0.12  # the head sits a hand off the pole line
+            props.append(prop("lampglow", [side * head_x, PAVE + 3.72 * LAMP_S, hz]))
+            lights.append({"type": "point", "pos": [side * head_x, PAVE + 3.5 * LAMP_S, hz], "color": "#ffb46a", "intensity": 1.8, "distance": 8})
+    props.append(glb("lib_trafficlight", [W / 2 - 1.4, PAVE, -D / 2 + 9], rot=180, fallback="lamppost", scale=1.25))
+    props.append(glb("lib_hydrant", [-W / 2 + 1.6, PAVE, 4.0], fallback=None, collide=True))
+    props.append(glb("lib_trashbin", [W / 2 - 1.8, PAVE, -3.0], fallback=None, collide=True))
+    # Doc 2 S0_X: "parked cars, street signs, a traffic light, a newspaper box"
+    props.append(prop("newsbox", [W / 2 - 1.65, PAVE, 8.0], rot=-90))
+    props.append(prop("streetsign", [-W / 2 + 1.8, PAVE, 23.5], kind="ahead"))
+    props.append(prop("streetsign", [W / 2 - 1.8, PAVE, 13.5], kind="noparking"))
+    props.append(prop("streetsign", [-W / 2 + 1.8, PAVE, -11.0], kind="oneway"))
+    props.append(prop("streetsign", [W / 2 - 1.8, PAVE, -19.5], kind="ahead"))
+    # Parked cars, at a car's size (the catalog's are 3 m long), off the kerb.
     cars = ["lib_car_sedan", "lib_car_taxi", "lib_car_sedan2", "lib_car_pastel"]
     for i, z in enumerate((-16, -2, 12, 24)):
         side = -1 if i % 2 else 1
-        props.append(glb(cars[i], [side * (W / 2 - 3.0), 0, z], rot=0 if side > 0 else 180, fallback="car", collide=True, mat="lp_car%d" % (2 + i), len=4.4, w=1.8))
-    props.append(prop("clock", [-W / 2 - 0.1, 3.2, -D / 2 + 6], rot=90))
-    props.append(prop("slip", [0.4, 0.004, -D / 2 + 3.0], rot=30))
+        props.append(glb(cars[i], [side * (KERB - 1.1), 0, z], rot=0 if side > 0 else 180, fallback="car", collide=True,
+                         mat="lp_car%d" % (2 + i), len=4.4, w=1.8, scale=1.45))
+    # C8: the street's one clock, on a post at the near end, facing him as he
+    # comes out (south half: never in a frame with the lobby's clock).
+    props.append(prop("clockpost", [-W / 2 + 1.5, PAVE, 21.0], h=2.8))
+    props.append(prop("clock", [-W / 2 + 1.5, PAVE + 2.8 + 0.26, 21.0]))
+    # Track C motif 2: the first 99, on the asphalt before the tower's step.
+    props.append(prop("slip", [0.4, 0.004, -D / 2 + 4.4], rot=30))
+
+    # -- the street itself (photoreal: the building's)
+    boxes += [
+        # pavements (walkable: kerbs are climbed, controls.js eases over them)
+        {"min": [-W / 2 - 3.0, 0, -D / 2 + 3.8], "max": [-KERB, PAVE, D / 2 - 2.4], "mat": "concrete", "floor": True, "tile": 2.0},
+        {"min": [KERB, 0, -D / 2 + 3.8], "max": [W / 2 + 3.0, PAVE, D / 2 - 2.4], "mat": "concrete", "floor": True, "tile": 2.0},
+        # kerb stones, a lighter edge to every pavement
+        {"min": [-KERB - 0.28, 0, -D / 2 + 3.8], "max": [-KERB + 0.02, PAVE + 0.012, D / 2 - 2.4], "mat": "marble_light", "collide": False, "shadow": False, "tile": 1.0},
+        {"min": [KERB - 0.02, 0, -D / 2 + 3.8], "max": [KERB + 0.28, PAVE + 0.012, D / 2 - 2.4], "mat": "marble_light", "collide": False, "shadow": False, "tile": 1.0},
+        # wet gutters along both kerbs (Doc 2 S0_X)
+        {"min": [-KERB, 0, -D / 2 + 3.8], "max": [-KERB + 0.55, 0.006, D / 2 - 2.4], "mat": "concrete_wet", "collide": False, "shadow": False, "tile": 1.5},
+        {"min": [KERB - 0.55, 0, -D / 2 + 3.8], "max": [KERB, 0.006, D / 2 - 2.4], "mat": "concrete_wet", "collide": False, "shadow": False, "tile": 1.5},
+        # the dead end he comes out into: a kerb across it and his building's
+        # brick end wall with its door (the stairs from the apartment behind)
+        {"min": [-W / 2 - 3.0, 0, D / 2 - 2.4], "max": [W / 2 + 3.0, PAVE, D / 2], "mat": "concrete", "floor": True, "tile": 2.0},
+        {"min": [-KERB - 0.28, 0, D / 2 - 2.42], "max": [KERB + 0.28, PAVE + 0.012, D / 2 - 2.12], "mat": "marble_light", "collide": False, "shadow": False, "tile": 1.0},
+        {"min": [-24, 0, D / 2], "max": [-0.6, 18, D / 2 + WALL_T], "mat": "brick", "shadow": False, "tile": 0.5},
+        {"min": [0.6, 0, D / 2], "max": [24, 18, D / 2 + WALL_T], "mat": "brick", "shadow": False, "tile": 0.5},
+        {"min": [-0.6, 2.34, D / 2], "max": [0.6, 18, D / 2 + WALL_T], "mat": "brick", "shadow": False, "tile": 0.5},
+        # his door's stone surround and step
+        {"min": [-1.0, 0, D / 2 - 0.08], "max": [-0.66, 2.7, D / 2], "mat": "plaster_blown", "shadow": False, "tile": 1.2},
+        {"min": [0.66, 0, D / 2 - 0.08], "max": [1.0, 2.7, D / 2], "mat": "plaster_blown", "shadow": False, "tile": 1.2},
+        {"min": [-1.0, 2.4, D / 2 - 0.1], "max": [1.0, 2.7, D / 2], "mat": "plaster_blown", "shadow": False, "tile": 1.2},
+    ]
+    # road paint: a dashed centre line and the parking lanes' edges running at
+    # the tower, a crossing before its forecourt
+    for z in range(-20, 28, 6):
+        boxes.append({"min": [-0.06, 0, z], "max": [0.06, 0.004, z + 2.6], "mat": "plaster_blown", "collide": False, "shadow": False, "tile": 1.0})
+    for s in (-1, 1):
+        boxes.append({"min": [s * (KERB - 2.3) - 0.08, 0, -D / 2 + 7.0], "max": [s * (KERB - 2.3) + 0.08, 0.005, D / 2 - 3.2], "mat": "plaster_blown", "collide": False, "shadow": False, "tile": 1.0})
+    for i in range(12):
+        x0 = -KERB + 0.35 + i * 1.05
+        boxes.append({"min": [x0, 0, -D / 2 + 5.0], "max": [x0 + 0.5, 0.004, -D / 2 + 7.4], "mat": "plaster_blown", "collide": False, "shadow": False, "tile": 1.0})
+    # two manhole covers
+    for (x, z) in ((2.3, -6.0), (-2.6, 15.0)):
+        boxes.append({"min": [x - 0.4, 0, z - 0.4], "max": [x + 0.4, 0.008, z + 0.4], "mat": "grate", "collide": False, "shadow": False, "tile": 0.8})
+
+    # -- the tower: a forecourt and a step (the last ascent in the game), a
+    # stone base with the entrance under a canopy, and a glass curtain wall
+    # above it that has no top -- the haze takes it.
+    TZ = -D / 2
+    boxes += [
+        {"min": [-16, 0, TZ], "max": [16, 0.3, TZ + 3.2], "mat": "marble_light", "floor": True, "tile": 2.5},
+        {"min": [-12, 0, TZ + 3.2], "max": [12, 0.15, TZ + 3.8], "mat": "marble_light", "floor": True, "tile": 2.5},
+        # the base, its face cut for the doors; it casts, so the joined
+        # vestibule and lobby behind it are not lit by the street's sun
+        {"min": [-16, 0, TZ - WALL_T], "max": [-1.3, 9.0, TZ], "mat": "marble_light", "tile": 0.9},
+        {"min": [1.3, 0, TZ - WALL_T], "max": [16, 9.0, TZ], "mat": "marble_light", "tile": 0.9},
+        {"min": [-1.3, 3.2, TZ - WALL_T], "max": [1.3, 9.0, TZ], "mat": "marble_light", "tile": 0.9},
+        # dark stone surround to the doors
+        {"min": [-1.75, 0.3, TZ], "max": [-1.3, 3.55, TZ + 0.12], "mat": "marble", "tile": 1.5},
+        {"min": [1.3, 0.3, TZ], "max": [1.75, 3.55, TZ + 0.12], "mat": "marble", "tile": 1.5},
+        {"min": [-1.75, 3.2, TZ], "max": [1.75, 3.55, TZ + 0.12], "mat": "marble", "tile": 1.5},
+        # the canopy over the entrance: the thing lit at the end of the street
+        {"min": [-3.4, 3.95, TZ], "max": [3.4, 4.2, TZ + 2.6], "mat": "concrete", "collide": False, "tile": 2.0},
+        {"min": [-3.45, 3.88, TZ + 2.55], "max": [3.45, 4.26, TZ + 2.68], "mat": "marble", "collide": False, "tile": 1.5},
+        # behind the face: the cavity the vestibule and the lobby are joined
+        # into. Until they are, the glass shows a dark lobby -- a polished floor
+        # just under theirs (top 0.28, inside their slabs once joined) and
+        # unlit walls, so no haze shows through the doors
+        {"min": [-16, 0, TZ - 40], "max": [-8.2, 9.0, TZ - WALL_T], "mat": "void", "collide": False, "shadow": False, "tile": 3.0},
+        {"min": [8.2, 0, TZ - 40], "max": [16, 9.0, TZ - WALL_T], "mat": "void", "collide": False, "shadow": False, "tile": 3.0},
+        {"min": [-8.2, 0, TZ - 40], "max": [8.2, 9.0, TZ - 19.0], "mat": "void", "collide": False, "shadow": False, "tile": 3.0},
+        {"min": [-8.2, 0, TZ - 19.0], "max": [8.2, 0.28, TZ - WALL_T], "mat": "marble", "collide": False, "shadow": False, "tile": 2.0},
+        # the tower above: a dark glass curtain wall on the full height
+        {"min": [-16, 9.0, TZ - 40], "max": [16, 220.0, TZ], "mat": "void", "collide": False, "shadow": False, "tile": 4.0},
+        {"min": [-15.8, 9.6, TZ + 0.01], "max": [15.8, 220.0, TZ + 0.04], "mat": "glass_dark", "collide": False, "shadow": False, "tile": 4.0},
+        # the base's cornice, where the glass begins
+        {"min": [-16.2, 8.6, TZ], "max": [16.2, 9.6, TZ + 0.45], "mat": "marble_light", "collide": False, "tile": 2.5},
+        # invisible kerb-side bounds: the street is the only way
+        {"min": [-W / 2 + 0.7, 0, -D / 2], "max": [-W / 2 + 1.0, 3.0, D / 2], "mat": "void", "invisible": True, "shadow": False},
+        {"min": [W / 2 - 1.0, 0, -D / 2], "max": [W / 2 - 0.7, 3.0, D / 2], "mat": "void", "invisible": True, "shadow": False},
+    ]
+    # stone fins up the base, mullions up the glass, spandrels across it
+    for x in (-12.0, -8.0, -4.4, 4.4, 8.0, 12.0):
+        boxes.append({"min": [x - 0.3, 0.3, TZ], "max": [x + 0.3, 8.6, TZ + 0.22], "mat": "marble_light", "collide": False, "tile": 0.9})
+    for i in range(18):
+        x = -15.3 + i * 1.8
+        boxes.append({"min": [x - 0.14, 9.6, TZ], "max": [x + 0.14, 220.0, TZ + 0.3], "mat": "marble_light", "collide": False, "shadow": False, "tile": 3.0})
+    for y in range(13, 110, 4):
+        boxes.append({"min": [-15.8, y, TZ], "max": [15.8, y + 0.9, TZ + 0.14], "mat": "concrete", "collide": False, "shadow": False, "tile": 3.0})
+    # bollards across the forecourt, leaving the way to the doors open
+    for x in (-6.2, -4.2, -2.4, 2.4, 4.2, 6.2):
+        boxes.append({"min": [x - 0.16, 0.3, TZ + 2.6], "max": [x + 0.16, 1.15, TZ + 2.92], "mat": "marble_light", "tile": 1.0})
+    # the lit thing at the end of the street: downlights under the canopy,
+    # the brass address plate beside the doors (wordless; the label says it)
+    props.append(prop("fluoro", [-1.6, 3.93, TZ + 1.3], w=0.9, d=0.22))
+    props.append(prop("fluoro", [1.6, 3.93, TZ + 1.3], w=0.9, d=0.22))
+    props.append(prop("wallplate", [2.15, 1.55, TZ + 0.015], w=0.5, h=0.32, mat="lp_brass"))
+    lights.append({"type": "point", "pos": [0, 3.5, TZ + 1.4], "color": "#ffe2b8", "intensity": 5, "distance": 8})
+    # his building: windows on the end wall, a lamp over his door
+    props.append(prop("facade", [0, 0, D / 2], rot=180, w=2 * FX, h=18, d=0.3, mat="brick", trim="plaster_blown", body=False, plinth=False, ground="none", groundH=3.0))
+    props.append(prop("lampglow", [0, 2.95, D / 2 - 0.25], w=0.3, d=0.16, glow=0.8))
+    props.append(prop("wallplate", [0, 2.9, D / 2 - 0.14], w=0.36, h=0.14, mat="lp_dark"))
+    lights.append({"type": "point", "pos": [0, 2.7, D / 2 - 0.6], "color": "#ffd9a0", "intensity": 1.6, "distance": 5})
+
     rec = {
         "name": "THE COMMUTE",
         "size": [W, H, D],
@@ -1020,49 +1171,26 @@ def street():
         "noCeiling": True,
         "noWalls": True,
         "tile": {"floor": 3.0},
-        "boxes": [
-            # pavements (walkable: kerbs are climbed, controls.js eases over them)
-            {"min": [-W / 2 - 3.0, 0, -D / 2 + 3.8], "max": [-W / 2 + 2.6, 0.14, D / 2 - 2.4], "mat": "concrete", "floor": True, "tile": 2.0},
-            {"min": [W / 2 - 2.6, 0, -D / 2 + 3.8], "max": [W / 2 + 3.0, 0.14, D / 2 - 2.4], "mat": "concrete", "floor": True, "tile": 2.0},
-            # the dead end he comes out into: a kerb across it and a brick end wall
-            # with his building's door in it (the stairs from the apartment behind)
-            {"min": [-W / 2 - 3.0, 0, D / 2 - 2.4], "max": [W / 2 + 3.0, 0.14, D / 2], "mat": "concrete", "floor": True, "tile": 2.0},
-            {"min": [-24, 0, D / 2], "max": [-0.6, 18, D / 2 + WALL_T], "mat": "plaster_dark", "shadow": False, "tile": 2.0},
-            {"min": [0.6, 0, D / 2], "max": [24, 18, D / 2 + WALL_T], "mat": "plaster_dark", "shadow": False, "tile": 2.0},
-            {"min": [-0.6, 2.34, D / 2], "max": [0.6, 18, D / 2 + WALL_T], "mat": "plaster_dark", "shadow": False, "tile": 2.0},
-            # the tower: a forecourt and step (the last ascent in the game), the
-            # facade with the doors in it, and the rest of it, which has no top
-            {"min": [-16, 0, -D / 2], "max": [16, 0.3, -D / 2 + 3.2], "mat": "marble_light", "floor": True, "tile": 2.5},
-            {"min": [-12, 0, -D / 2 + 3.2], "max": [12, 0.15, -D / 2 + 3.8], "mat": "marble_light", "floor": True, "tile": 2.5},
-            {"min": [-16, 0, -D / 2 - WALL_T], "max": [-1.3, 9.0, -D / 2], "mat": "marble_light", "shadow": False, "tile": 2.5},
-            {"min": [1.3, 0, -D / 2 - WALL_T], "max": [16, 9.0, -D / 2], "mat": "marble_light", "shadow": False, "tile": 2.5},
-            {"min": [-1.3, 3.2, -D / 2 - WALL_T], "max": [1.3, 9.0, -D / 2], "mat": "marble_light", "shadow": False, "tile": 2.5},
-            {"min": [-16, 0, -D / 2 - 40], "max": [-8.2, 9.0, -D / 2 - WALL_T], "mat": "concrete", "collide": False, "shadow": False, "tile": 3.0},
-            {"min": [8.2, 0, -D / 2 - 40], "max": [16, 9.0, -D / 2 - WALL_T], "mat": "concrete", "collide": False, "shadow": False, "tile": 3.0},
-            {"min": [-8.2, 0, -D / 2 - 40], "max": [8.2, 9.0, -D / 2 - 19.0], "mat": "concrete", "collide": False, "shadow": False, "tile": 3.0},
-            {"min": [-16, 9.0, -D / 2 - 40], "max": [16, 220.0, -D / 2], "mat": "concrete", "collide": False, "shadow": False, "tile": 4.0},
-            # invisible kerb-side bounds: the street is the only way
-            {"min": [-W / 2 + 0.7, 0, -D / 2], "max": [-W / 2 + 1.0, 3.0, D / 2], "mat": "void", "invisible": True, "shadow": False},
-            {"min": [W / 2 - 1.0, 0, -D / 2], "max": [W / 2 - 0.7, 3.0, D / 2], "mat": "void", "invisible": True, "shadow": False},
-        ],
-        "ambient": {"color": "#f0c8a0", "intensity": 0.3},
-        "hemisphere": {"sky": "#e8b07a", "ground": "#3a3028", "intensity": 0.5},
-        "sun": {"from": [-6.0, 9.0, 60.0], "color": "#ffb070", "intensity": 1.6},
-        "lights": [],
-        "fog": {"color": "#d9a878", "near": 18, "far": 95},
-        "background": "#d9a878",
-        "exposure": 1.1,
-        "vignette": 0.4,
+        "boxes": boxes,
+        # dawn: a low orange sun behind him on the street's axis (C2: shadows
+        # down the street at the tower), warm haze, a sky that is all haze
+        "ambient": {"color": "#f2c9a2", "intensity": 0.34},
+        "hemisphere": {"sky": "#f4c48e", "ground": "#4a3a2c", "intensity": 0.75},
+        "sun": {"from": [0.0, 21.0, 64.0], "color": "#ffb36e", "intensity": 3.0},
+        "lights": lights,
+        "fog": {"color": "#dcab7c", "near": 16, "far": 95},
+        "background": "#dcab7c",
+        "exposure": 1.12,
+        "vignette": 0.34,
         "grain": 0.03,
-        "spawn": [0, 30.0, 0],
+        "spawn": [0, 29.0, 0],
         "props": props,
         "footstep": {"filterHz": 1600, "gain": 0.1},
     }
-    # window bands on the tower face, glass that shows nothing
-    for y in range(10, 200, 4):
-        rec["boxes"].append({"min": [-15, y, -D / 2 + 0.02], "max": [15, y + 1.4, -D / 2 + 0.06], "mat": "glass_dark", "collide": False, "shadow": False, "tile": 4.0})
-    door(rec, "stoop", "S", 0.0, w=1.2, h=2.2, kind="door", y=0.14, locked=True, mat="lp_dark", panel="glass", hinge="L")
-    door(rec, "tower", "N", 0.0, w=2.6, h=2.9, kind="glass", y=0.3, locked=True)
+    door(rec, "stoop", "S", 0.0, w=1.2, h=2.2, kind="door", y=PAVE, locked=True, mat="lp_dark", panel="glass", hinge="L")
+    # the tower's glass doors: they swing away from him, into the vestibule
+    # behind (Doc 1: "He pushes through the glass doors")
+    door(rec, "tower", "N", 0.0, w=2.6, h=2.9, kind="glass", y=0.3, locked=True, swing="out", frame="marble")
     rec["entry"] = "stoop"
     zone(rec, "report", [0.0, -D / 2 + 1.6], r=1.2, ring=5.0, label_at=[0.0, 3.6, -D / 2 - 0.1])
     s = shots_for(rec, out_dist=6.0, leave_dist=D - 4.5, loop_seconds=16.0)
