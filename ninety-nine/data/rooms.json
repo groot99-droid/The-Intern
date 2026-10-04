@@ -205,7 +205,7 @@
    },
    "ambient": {
     "color": "#7d93a6",
-    "intensity": 0.09
+    "intensity": 0.11
    },
    "sun": {
     "from": [
@@ -248,8 +248,8 @@
       2.25
      ],
      "color": "#ffcf8a",
-     "intensity": 0.9,
-     "distance": 2.2
+     "intensity": 1.2,
+     "distance": 2.4
     }
    ],
    "fog": {
@@ -337,11 +337,12 @@
     {
      "type": "papers",
      "pos": [
-      0.78,
+      0.74,
       0.75,
-      -1.52
+      -1.5
      ],
-     "rot": -8
+     "rot": -14,
+     "h": 0.012
     },
     {
      "type": "glb",
@@ -907,12 +908,12 @@
     },
     {
      "min": [
-      -4.180000000000001,
+      -4.2,
       0,
       -25.0
      ],
      "max": [
-      -4.0200000000000005,
+      -4.000000000000001,
       0.005,
       28.8
      ],
@@ -923,12 +924,12 @@
     },
     {
      "min": [
-      4.0200000000000005,
+      4.000000000000001,
       0,
       -25.0
      ],
      "max": [
-      4.180000000000001,
+      4.2,
       0.005,
       28.8
      ],
@@ -1202,8 +1203,8 @@
       9.0,
       -32.0
      ],
-     "mat": "marble_light",
-     "tile": 0.9
+     "mat": "concrete",
+     "tile": 2.2
     },
     {
      "min": [
@@ -1216,8 +1217,8 @@
       9.0,
       -32.0
      ],
-     "mat": "marble_light",
-     "tile": 0.9
+     "mat": "concrete",
+     "tile": 2.2
     },
     {
      "min": [
@@ -1230,8 +1231,8 @@
       9.0,
       -32.0
      ],
-     "mat": "marble_light",
-     "tile": 0.9
+     "mat": "concrete",
+     "tile": 2.2
     },
     {
      "min": [
@@ -2336,8 +2337,8 @@
       -22.12
      ],
      "color": "#ffb46a",
-     "intensity": 1.8,
-     "distance": 8
+     "intensity": 1.1,
+     "distance": 7.5
     },
     {
      "type": "point",
@@ -2347,8 +2348,8 @@
       -6.12
      ],
      "color": "#ffb46a",
-     "intensity": 1.8,
-     "distance": 8
+     "intensity": 1.1,
+     "distance": 7.5
     },
     {
      "type": "point",
@@ -2358,8 +2359,8 @@
       9.88
      ],
      "color": "#ffb46a",
-     "intensity": 1.8,
-     "distance": 8
+     "intensity": 1.1,
+     "distance": 7.5
     },
     {
      "type": "point",
@@ -2369,8 +2370,8 @@
       25.88
      ],
      "color": "#ffb46a",
-     "intensity": 1.8,
-     "distance": 8
+     "intensity": 1.1,
+     "distance": 7.5
     },
     {
      "type": "point",
@@ -2380,8 +2381,8 @@
       -13.88
      ],
      "color": "#ffb46a",
-     "intensity": 1.8,
-     "distance": 8
+     "intensity": 1.1,
+     "distance": 7.5
     },
     {
      "type": "point",
@@ -2391,8 +2392,8 @@
       2.12
      ],
      "color": "#ffb46a",
-     "intensity": 1.8,
-     "distance": 8
+     "intensity": 1.1,
+     "distance": 7.5
     },
     {
      "type": "point",
@@ -2402,8 +2403,8 @@
       18.12
      ],
      "color": "#ffb46a",
-     "intensity": 1.8,
-     "distance": 8
+     "intensity": 1.1,
+     "distance": 7.5
     },
     {
      "type": "point",
@@ -3084,7 +3085,7 @@
       -30.4
      ],
      "r": 1.2,
-     "ring": 5.0,
+     "ring": 8.0,
      "labelAt": [
       0.0,
       3.6,

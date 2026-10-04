@@ -945,7 +945,7 @@ def apartment():
         prop("mug", [-0.35, 0.75, -D / 2 + 0.95]),
         glb("lib_tablelamp", [-0.45, 0.75, -D / 2 + 0.55], fallback="lamp", scale=0.8),
         glb("lib_books", [0.85, 0.75, -D / 2 + 0.6], rot=15, fallback=None, scale=0.8),
-        prop("papers", [0.78, 0.75, -D / 2 + 0.98], rot=-8),
+        prop("papers", [0.74, 0.75, -D / 2 + 1.0], rot=-14, h=0.012),
         glb("lib_chair_wood", [0.3, 0, -D / 2 + 1.65], rot=180, fallback="chair", collide=True),
         # his bed, under the clock: the room is his, not an office cell
         prop("bed", [-W / 2 + 0.47, 0, -0.05], w=0.9, len=2.0),
@@ -964,12 +964,12 @@ def apartment():
         # 3am: the CRT's grey-blue page is the light (Doc 2 S0_X: "lit only by
         # one CRT monitor"), the desk lamp a warm pool, and a line of the
         # stairwell's light under the door
-        "ambient": {"color": "#7d93a6", "intensity": 0.09},
+        "ambient": {"color": "#7d93a6", "intensity": 0.11},
         "sun": {"from": [0.3, 2.4, 2.2], "color": "#a9c3d6", "intensity": 0.2},
         "lights": [
             {"type": "point", "pos": [0.3, 1.1, -D / 2 + 0.9], "color": "#bcd4e2", "intensity": 5.5, "distance": 5, "flicker": 0.08},
             {"type": "point", "pos": [-0.45, 1.3, -D / 2 + 0.6], "color": "#ffc27a", "intensity": 2.2, "distance": 4},
-            {"type": "point", "pos": [-1.3, 0.18, D / 2 - 0.25], "color": "#ffcf8a", "intensity": 0.9, "distance": 2.2},
+            {"type": "point", "pos": [-1.3, 0.18, D / 2 - 0.25], "color": "#ffcf8a", "intensity": 1.2, "distance": 2.4},
         ],
         "fog": {"color": "#050607", "near": 2.5, "far": 10},
         "vignette": 0.7,
@@ -1046,7 +1046,7 @@ def street():
             props.append(glb("lib_streetlamp", [side * lamp_x, PAVE, z], rot=0 if side < 0 else 180, fallback="lamppost", scale=LAMP_S))
             hz = z - 0.12 if side < 0 else z + 0.12  # the head sits a hand off the pole line
             props.append(prop("lampglow", [side * head_x, PAVE + 3.72 * LAMP_S, hz]))
-            lights.append({"type": "point", "pos": [side * head_x, PAVE + 3.5 * LAMP_S, hz], "color": "#ffb46a", "intensity": 1.8, "distance": 8})
+            lights.append({"type": "point", "pos": [side * head_x, PAVE + 3.5 * LAMP_S, hz], "color": "#ffb46a", "intensity": 1.1, "distance": 7.5})
     props.append(glb("lib_trafficlight", [W / 2 - 1.4, PAVE, -D / 2 + 9], rot=180, fallback="lamppost", scale=1.25))
     props.append(glb("lib_hydrant", [-W / 2 + 1.6, PAVE, 4.0], fallback=None, collide=True))
     props.append(glb("lib_trashbin", [W / 2 - 1.8, PAVE, -3.0], fallback=None, collide=True))
@@ -1097,7 +1097,7 @@ def street():
     for z in range(-20, 28, 6):
         boxes.append({"min": [-0.06, 0, z], "max": [0.06, 0.004, z + 2.6], "mat": "plaster_blown", "collide": False, "shadow": False, "tile": 1.0})
     for s in (-1, 1):
-        boxes.append({"min": [s * (KERB - 2.3) - 0.08, 0, -D / 2 + 7.0], "max": [s * (KERB - 2.3) + 0.08, 0.005, D / 2 - 3.2], "mat": "plaster_blown", "collide": False, "shadow": False, "tile": 1.0})
+        boxes.append({"min": [s * (KERB - 2.3) - 0.1, 0, -D / 2 + 7.0], "max": [s * (KERB - 2.3) + 0.1, 0.005, D / 2 - 3.2], "mat": "plaster_blown", "collide": False, "shadow": False, "tile": 1.0})
     for i in range(12):
         x0 = -KERB + 0.35 + i * 1.05
         boxes.append({"min": [x0, 0, -D / 2 + 5.0], "max": [x0 + 0.5, 0.004, -D / 2 + 7.4], "mat": "plaster_blown", "collide": False, "shadow": False, "tile": 1.0})
@@ -1114,9 +1114,9 @@ def street():
         {"min": [-12, 0, TZ + 3.2], "max": [12, 0.15, TZ + 3.8], "mat": "marble_light", "floor": True, "tile": 2.5},
         # the base, its face cut for the doors; it casts, so the joined
         # vestibule and lobby behind it are not lit by the street's sun
-        {"min": [-16, 0, TZ - WALL_T], "max": [-1.3, 9.0, TZ], "mat": "marble_light", "tile": 0.9},
-        {"min": [1.3, 0, TZ - WALL_T], "max": [16, 9.0, TZ], "mat": "marble_light", "tile": 0.9},
-        {"min": [-1.3, 3.2, TZ - WALL_T], "max": [1.3, 9.0, TZ], "mat": "marble_light", "tile": 0.9},
+        {"min": [-16, 0, TZ - WALL_T], "max": [-1.3, 9.0, TZ], "mat": "concrete", "tile": 2.2},
+        {"min": [1.3, 0, TZ - WALL_T], "max": [16, 9.0, TZ], "mat": "concrete", "tile": 2.2},
+        {"min": [-1.3, 3.2, TZ - WALL_T], "max": [1.3, 9.0, TZ], "mat": "concrete", "tile": 2.2},
         # dark stone surround to the doors
         {"min": [-1.75, 0.3, TZ], "max": [-1.3, 3.55, TZ + 0.12], "mat": "marble", "tile": 1.5},
         {"min": [1.3, 0.3, TZ], "max": [1.75, 3.55, TZ + 0.12], "mat": "marble", "tile": 1.5},
@@ -1192,7 +1192,8 @@ def street():
     # behind (Doc 1: "He pushes through the glass doors")
     door(rec, "tower", "N", 0.0, w=2.6, h=2.9, kind="glass", y=0.3, locked=True, swing="out", frame="marble")
     rec["entry"] = "stoop"
-    zone(rec, "report", [0.0, -D / 2 + 1.6], r=1.2, ring=5.0, label_at=[0.0, 3.6, -D / 2 - 0.1])
+    # the address fades in from the crossing (ring 8), over the doors
+    zone(rec, "report", [0.0, -D / 2 + 1.6], r=1.2, ring=8.0, label_at=[0.0, 3.6, -D / 2 - 0.1])
     s = shots_for(rec, out_dist=6.0, leave_dist=D - 4.5, loop_seconds=16.0)
     # The push-in to the tower (S0_X_VID, 8 s) and through the doors.
     s["push"] = {"from": pose([0, EYE, 26.0], [0, 6.0, -D / 2 - 14]), "to": pose([0, EYE, -D / 2 + 6.0], [0, 1.4, -D / 2 - 2]), "seconds": 9.0, "ease": "inout", "fadeIn": 1.2}

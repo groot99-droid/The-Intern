@@ -605,8 +605,10 @@ const BUILDERS = {
       applyWorldUV(body.geometry, o.tile || 0.5);
       g.add(body);
     }
+    // details cast no shadow: the sun runs down the street, along the
+    // fronts, so they would only cost shadow-pass draws
     const add = (slot, bw, bh, bd, x, y, z, opts = {}) => {
-      const b = box(mats, slot, bw, bh, bd, x, y, z, opts);
+      const b = box(mats, slot, bw, bh, bd, x, y, z, { castShadow: false, ...opts });
       if (!mats.isLowPoly(slot) && !mats.isGlow(slot)) applyWorldUV(b.geometry, opts.tile || 1.2);
       g.add(b);
       return b;
@@ -631,7 +633,7 @@ const BUILDERS = {
       // a shut roller shutter on half of them (dawn: nothing open)
       if (o.shutter) {
         add('lp_grey', sw - 0.1, 2.3, 0.04, 0, 0.7, 0.11, { castShadow: false });
-        for (let y = 0.85; y < 2.95; y += 0.28) add('lp_dark', sw - 0.1, 0.02, 0.05, 0, y, 0.12, { castShadow: false });
+        for (let y = 0.9; y < 2.95; y += 0.4) add('lp_dark', sw - 0.1, 0.02, 0.05, 0, y, 0.12, { castShadow: false });
       }
     } else if (gf === 'door') {
       // a residential door up two steps, off-centre
@@ -698,7 +700,7 @@ const BUILDERS = {
       if (kind === 'ahead') {
         disc('lp_blue', 0.3, 0.05);
         for (const s of [-1, 1]) {
-          const z = 0.05 + s * 0.012;
+          const z = 0.05 + s * 0.016;
           g.add(box(mats, 'lp_white', 0.07, 0.26, 0.006, 0, h - 0.47, z, { castShadow: false }));
           const head = new THREE.Mesh(new THREE.CylinderGeometry(0.13, 0.13, 0.006, 3), mats.get('lp_white'));
           head.rotation.set(Math.PI / 2, Math.PI, 0); // a triangle in the face, tip up
