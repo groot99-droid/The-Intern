@@ -6,6 +6,10 @@ tags: [blender-pipeline]
 
 ← [[blender/Blender Pipeline|Blender Pipeline]] · [[README|Router]]
 
+> **Stale until rebuilt (2026-10-03).** Every project below predates the continuous building: no doorways, no connectors, none of the props the threshold zones stand at, and `S6_C` is still its own room. Rebuild after the per-scene polish lands. [[blender/higgsfield/REBUILD_NOTE|REBUILD_NOTE]] has the per-room changes, what `higgsfield_scene.py` must port first, and the order to run things in.
+
+- [[blender/higgsfield/REBUILD_NOTE|REBUILD_NOTE.md]]: what to rebuild, why, and how
+
 Every set the game plays from `ninety-nine/data/rooms.json` also exists as a Blender 5.2 scene in the Higgsfield 3D scene builder ("3D Jutsu"), built by [[ninety-nine/tools/higgsfield_scene.py|ninety-nine/tools/higgsfield_scene.py]] from the same data, with the same open-source catalog props and the same camera moves. `projects.json` next to this note maps each room key to its project, the committed revision that holds the finished set, and the proof-render operation; each `<ROOM>/` folder holds that project's proof renders.
 
 ## What one project holds
@@ -56,5 +60,7 @@ Open any project at `https://higgsfield.ai/3d-jutsu/<id>`; the ids and revisions
 `S2_C`/`S2_H` play in the waiting rooms, `S7_H` on the edge, `SE_RETAINED` in the boardroom and `SE_EXPUL` in the store, so those keys are aliases in `projects.json` rather than projects.
 
 ## Rebuilding after a set changes
+
+The next rebuild has more to do than usual: the tool has to learn doorways, `floorY`, pitched boxes, hidden props and four new prop types first. See [[blender/higgsfield/REBUILD_NOTE|REBUILD_NOTE]].
 
 Edit `ninety-nine/tools/build_rooms.py`, re-run it, then for the room: create a fresh project (or start from revision 0 of the old one), run `python ninety-nine/tools/higgsfield_scene.py <ROOM> build` and paste its code into `scene_builder_3d_run_python`, then `imports` (one `scene_builder_3d_import_asset` per line), `place` (one more `run_python`) and `proof` (a `scene_builder_3d_query_python`), and record the new id and revision in `projects.json`. A copied import must not carry the catalog entity's `hf_id`/`hf_asset` custom properties, which is why `place` strips them.
