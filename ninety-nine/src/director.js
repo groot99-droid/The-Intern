@@ -52,6 +52,7 @@ export function createDirector({ manifest, endings, state, stage, audio = null, 
   let links = [];          // doorways being walked through
   let beatZones = [];      // non-choice zones: APPLY, the street's door, picking up the package
   let endingWatch = null;  // the ending room, waiting for its zone
+  let endedWith = null;    // the ending the card shows, once it does
   let held = null;         // a prop in the candidate's hands (the package)
   let actorRuns = [];      // actors walking their paths
   let ride = null;         // the cab, descending
@@ -584,6 +585,7 @@ export function createDirector({ manifest, endings, state, stage, audio = null, 
   async function jumpToEnding(endingId) {
     if (ended) return;
     ended = true;
+    endedWith = endingId;
     scene = null;
     endingWatch = null;
     captions.stop();
@@ -895,7 +897,7 @@ export function createDirector({ manifest, endings, state, stage, audio = null, 
           return { from: L.from.key, conn: L.conn.key, dest: L.dest.key, seal1: L.seal1, seal2: L.seal2, boundary: L.boundary, held: !!L.held, exit: a(L.from, L.exitName), connExit: a(L.conn, 'exit'), destEntry: a(L.dest, L.dest.entryName) };
         }),
         targets,
-        ending: endingWatch ? endingWatch.endingId : null,
+        ending: endedWith || (endingWatch ? endingWatch.endingId : null),
         ended,
         playerEnabled: player.isEnabled(),
         position: pos,
