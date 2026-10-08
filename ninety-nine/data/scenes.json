@@ -166,7 +166,7 @@
       "id": "S2",
       "name": "THE CALL",
       "music": "muzak",
-      "_note": "The line is a caption, not the 15 s library voice (assets/Asset Revisions.md item 8: five unrelated phrases, unchecked for C4, and with no cut after S2 it would run on under the walk); a single recorded line per render can go back in sfxCue. Her jaw is shown only for the line: four discrete steps, snapping, out of step with the words (C5).",
+      "_note": "H: the speaker clicks, then hisses, then the line (Doc 1 S2). The line is a caption, not the 15 s library voice (assets/Asset Revisions.md item 8: five unrelated phrases, unchecked for C4, and with no cut after S2 it would run on under the walk); a single recorded line per render can go back in sfxCue. Her jaw is shown only for the line: four discrete steps, snapping, out of step with the words (C5).",
       "branches": {
         "C": {
           "room": "S2_C",
@@ -278,7 +278,7 @@
           "next": "S3",
           "ambience": null,
           "sfxCue": [
-            "speaker-hiss"
+            "speaker-click"
           ],
           "captions": [
             {
@@ -290,7 +290,13 @@
           ],
           "onEnter": [
             {
-              "waitMs": 1100
+              "waitMs": 300
+            },
+            {
+              "sfxCue": "speaker-hiss"
+            },
+            {
+              "waitMs": 800
             },
             {
               "show": "receptionist_jaw"
