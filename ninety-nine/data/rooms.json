@@ -2950,6 +2950,22 @@
      "fallback": "car"
     },
     {
+     "type": "glb",
+     "pos": [
+      -5.3,
+      0,
+      -19.5
+     ],
+     "rot": 180,
+     "node": "lib_car_suv",
+     "collide": true,
+     "mat": "lp_car6",
+     "len": 4.4,
+     "w": 1.8,
+     "scale": 1.35,
+     "fallback": "car"
+    },
+    {
      "type": "clockpost",
      "pos": [
       -7.5,

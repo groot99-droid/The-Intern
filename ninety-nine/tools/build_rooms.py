@@ -1065,6 +1065,9 @@ def street():
         side = -1 if i % 2 else 1
         props.append(glb(cars[i], [side * (KERB - 1.1), 0, z], rot=0 if side > 0 else 180, fallback="car", collide=True,
                          mat="lp_car%d" % (2 + i), len=4.4, w=1.8, scale=1.45))
+    # and one more at the far end, before the crossing, so the row of
+    # parked cars runs all the way to the tower
+    props.append(glb("lib_car_suv", [-(KERB - 1.1), 0, -19.5], rot=180, fallback="car", collide=True, mat="lp_car6", len=4.4, w=1.8, scale=1.35))
     # C8: the street's one clock, on a post at the near end, facing him as he
     # comes out (south half: never in a frame with the lobby's clock).
     # A street clock is a big one: the same handless clock at 1.6x, its rim
