@@ -646,7 +646,7 @@ const BUILDERS = {
     const leaf = new THREE.Group();
     leaf.rotation.y = THREE.MathUtils.degToRad(o.angle === undefined ? 50 : o.angle);
     leaf.add(box(mats, m, 0.06, h, len, 0, y, len / 2));
-    leaf.add(box(mats, 'lp_rust', 0.065, h * 0.35, len * 0.4, 0, y + 0.04, len * 0.55)); // rust along the sill
+    leaf.add(box(mats, 'lp_rust', 0.065, h * 0.22, len * 0.45, 0, y, len * 0.7)); // rust eating the bottom rear corner
     if (o.window !== false) leaf.add(box(mats, 'lp_glass', 0.02, h * 0.6, len * 0.78, 0, y + h, len * 0.45));
     leaf.add(box(mats, 'lp_chrome', 0.04, 0.03, 0.1, -0.04, y + h * 0.75, len - 0.14)); // handle
     g.add(leaf);
@@ -701,11 +701,11 @@ const BUILDERS = {
     for (let i = 0; i < n; i++) {
       const k = Math.sin((i + 1) * 12.9898 + (o.seed || 0) * 78.233) * 43758.5453;
       const f = k - Math.floor(k);
-      const L = 0.22 + f * 0.55;
-      const bar = new THREE.Mesh(new THREE.BoxGeometry(0.024, 0.024, L), mats.get('rust'));
+      const L = 0.14 + f * 0.34;
+      const bar = new THREE.Mesh(new THREE.BoxGeometry(0.018, 0.018, L), mats.get('rust'));
       bar.geometry.translate(0, 0, -L / 2);
-      bar.position.set(-len / 2 + (i + 0.5) * len / n + (f - 0.5) * 0.25, -0.1 - f * 0.18, 0);
-      bar.rotation.set(-0.15 - f * 0.7, (f - 0.5) * 0.7, 0);
+      bar.position.set(-len / 2 + (i + 0.5) * len / n + (f - 0.5) * 0.25, -0.05 - f * 0.16, 0);
+      bar.rotation.set((f - 0.45) * 0.9, (f - 0.5) * 0.8, 0); // some droop, some stand up past the lip
       bar.receiveShadow = true;
       g.add(bar);
     }

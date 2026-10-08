@@ -679,7 +679,7 @@ def desk_void(monitor_on=False):
     # commits) sits him back down in front of the requisition
     zone(rec, "tube", [-3.17, -2.5], r=0.5, ring=2.6, label_at=[-3.8, 2.25, -3.0])
     zone(rec, "flagbox", [3.97, 2.59], r=0.5, ring=2.6, label_at=[4.6, 2.05, 3.0])
-    zone(rec, "read", [0.0, 0.95], r=0.45, ring=0.45, silent=True)
+    zone(rec, "read", [0.0, 0.95], r=0.45, ring=2.0, label_at=[0.32, 1.45, -0.17])
     return rec
 
 
@@ -737,19 +737,19 @@ def garage(depth=44.0, open_north=False):
     # ~3 m long); the box fallback is sized so it scales to the same car.
     CAR_SCALE = 1.45
 
-    def car(node, x, zc, rot, mat, ajar=False, **kw):
+    def car(node, x, zc, rot, mat, ajar=None, **kw):
         kw.setdefault("collide", True)
         props.append(glb(node, [x, 0, zc], rot=rot, fallback="car", mat=mat, scale=CAR_SCALE,
                          len=round(4.4 / CAR_SCALE, 2), w=round(1.8 / CAR_SCALE, 2), rust=0.6, **kw))
         if ajar:
-            # the driver's door hanging open (the catalog model is one mesh): hinged at the
-            # front of the left flank, swung out toward the aisle side
+            # a door hanging open (the catalog model is one mesh; its nose is +z at
+            # rot 0): hinged at the front of the flank facing the aisle (-x for a car
+            # east of it), swung out; `ajar` is the door's colour
             fwd = math.radians(rot)
-            side = -1.0
-            hx = x + side * 0.82 * math.cos(fwd) + 0.55 * math.sin(fwd)
-            hz = zc - side * 0.82 * math.sin(fwd) + 0.55 * math.cos(fwd)
-            props.append(prop("cardoor", [hx, 0, hz], rot=rot + 180, mat=mat, len=1.05, h=0.42, y=0.32, angle=-55, hidden=kw.get("hidden", False),
-                              **({"name": kw["name"] + "_door"} if kw.get("name") else {})))
+            side = -1.0 if x > 0 else 1.0
+            hx = x + side * 0.82 * math.cos(fwd) + 0.42 * math.sin(fwd)
+            hz = zc - side * 0.82 * math.sin(fwd) + 0.42 * math.cos(fwd)
+            props.append(prop("cardoor", [hx, 0, hz], rot=rot + 180, mat=ajar, len=1.1, h=0.46, y=0.3, angle=-42 * side, window=node != "lib_car_cruiser"))
 
     def stain(x0, z0_, x1, z1):
         boxes.append({"min": [x0, 0.001, z0_], "max": [x1, 0.004, z1], "mat": "concrete_wet", "collide": False, "shadow": False, "tile": 1.5})
@@ -790,9 +790,9 @@ def garage(depth=44.0, open_north=False):
                 l["pattern"] = {"period": 2.9, "duty": 0.7, "low": 0.08}
             lights.append(l)
         # four cars, no two the same model, four decades; two doors ajar
-        car("lib_car_cruiser", 7.4, 10.0, 2.0, "lp_car4", ajar=True)    # the fifties
+        car("lib_car_cruiser", 7.4, 10.0, 2.0, "lp_car4", ajar="lp_beige")    # the fifties
         car("lib_car_pastel", -7.4, -6.0, 178.0, "lp_car3")             # the eighties: nearest the kerb
-        car("lib_car_sedan", 7.4, -14.0, -4.0, "lp_car", ajar=True)     # the two-thousands
+        car("lib_car_sedan", 7.4, -14.0, -4.0, "lp_car", ajar="lp_dark")     # the two-thousands
         car("lib_car_suv", -12.6, 10.0, 181.0, "lp_car2")               # the twenty-tens
         # the fifth: the nearest one's model again, in the far bay, there when he looks up from the kerb
         # (no collider: hidden, it must not stand invisible in the way to the side door)
@@ -818,6 +818,7 @@ def garage(depth=44.0, open_north=False):
         rec["shots"] = shots_for(rec, out_dist=4.0, leave_dist=D - 6.0, loop_seconds=30.0)
         rec["shots"]["kerb"] = pose([-3.15, 0.95, 2.0], [-8.0, 0.7, -12.0])
         rec["shots"]["side"] = pose([10.5, 1.6, -13.0], [16.0, 1.4, -19.5])
+        rec["shots"]["cruiser"] = pose([4.6, 1.5, 13.8], [7.4, 0.6, 10.0])
         door(rec, "front", "S", 0.0, w=1.4, h=2.3, kind="door", mat="lp_grey")
         door(rec, "stairs", "E", -19.5, w=1.1, h=2.2, kind="door", locked=True, mat="lp_grey")
         door(rec, "ramp", "N", 0.0, w=4.0, h=2.8, kind="shutter", locked=True, mat="lp_grey")
@@ -839,8 +840,8 @@ def garage(depth=44.0, open_north=False):
     for bz in bay_z:
         car("lib_car_suv", -12.6, bz, 181.0, "lp_car2")
         car("lib_car_pastel", -7.4, bz, 178.0, "lp_car3")
-        car("lib_car_cruiser", 7.4, bz, 2.0, "lp_car4", ajar=True)
-        car("lib_car_sedan", 12.6, bz, -4.0, "lp_car", ajar=True)
+        car("lib_car_cruiser", 7.4, bz, 2.0, "lp_car4", ajar="lp_beige")
+        car("lib_car_sedan", 12.6, bz, -4.0, "lp_car", ajar="lp_dark")
         stain(6.95, bz + 0.6, 7.85, bz + 1.5)
     # an arrow worn into the aisle in the last bay, pointing on into the dark
     zz = bay_z[0] + 1.2
@@ -913,6 +914,7 @@ def garage(depth=44.0, open_north=False):
     s["bench"] = pose([-8.0, 1.08, edge + 2.05], [-8.0, 0.25, edge - 3.0])
     gx = (gap[0] + gap[1]) / 2
     s["gap"] = pose([gx, EYE, edge + 1.3], [gx, 0.2, edge - 3.5])
+    s["edge"] = pose([1.5, EYE, edge + 2.8], [gx, 0.2, edge - 1.0])
     # THE EDGE (S7 H): leaning out over the pool through the gap, and back
     s["lean"] = {"from": pose([gx, EYE, edge + 1.3], [gx, 1.0, edge - 6]), "to": pose([gx, EYE - 0.25, edge + 0.55], [gx, -2.5, edge - 2.5]), "seconds": 9.0, "pingpong": True, "ease": "inout", "sway": 0.02}
     # THE FALL: off the lip at the gap, down into the water (to the dive, joined below)
