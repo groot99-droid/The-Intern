@@ -526,6 +526,215 @@ const BUILDERS = {
   // ---- polish: S4 floor -- end ----
   //
   // ---- polish: S5-S6 desk / garage -- begin (that scene's new props go between these lines) ----
+  // A heavy desk stapler (S5 C: STAPLE): base plate, anvil, hinge block, the
+  // magazine arm and its cover. Company property, low-poly (C1).
+  staplerheavy(mats) {
+    const g = new THREE.Group();
+    g.add(box(mats, 'lp_dark', 0.075, 0.018, 0.22, 0, 0, 0));
+    g.add(box(mats, 'lp_chrome', 0.05, 0.005, 0.05, 0, 0.018, -0.07)); // anvil
+    g.add(box(mats, 'lp_dark', 0.05, 0.032, 0.06, 0, 0.018, 0.075));   // hinge block
+    const arm = new THREE.Group();
+    arm.position.set(0, 0.05, 0.1);
+    arm.rotation.x = 0.05;
+    arm.add(box(mats, 'lp_chrome', 0.05, 0.026, 0.2, 0, -0.012, -0.1)); // magazine
+    arm.add(box(mats, 'lp_black', 0.058, 0.02, 0.215, 0, 0.012, -0.105)); // top cover
+    g.add(arm);
+    return g;
+  },
+  // Pneumatic tube station (S6 C: ORDER): a grey cabinet, a receiver head,
+  // an OUT tray tipped toward him, the tube rising `h` into the dark, an
+  // unlit lamp housing (the `lampdot` prop lights it when S6 begins). The
+  // canister in the tray is its own prop so ORDER can send it.
+  tubeorder(mats, o) {
+    const g = new THREE.Group();
+    const h = o.h || 3.0;
+    g.add(box(mats, 'lp_grey', 0.6, 1.05, 0.5, 0, 0, 0, { collide: true }));
+    g.add(box(mats, 'lp_dark', 0.62, 0.07, 0.52, 0, 0, 0));          // plinth
+    g.add(box(mats, 'lp_dark', 0.48, 0.52, 0.015, 0, 0.28, 0.255));  // door panel
+    g.add(box(mats, 'lp_brass', 0.03, 0.08, 0.02, 0.19, 0.5, 0.265)); // latch
+    g.add(box(mats, 'lp_grey', 0.42, 0.32, 0.34, 0, 1.05, -0.05));    // receiver head
+    g.add(box(mats, 'lp_dark', 0.3, 0.2, 0.02, 0, 1.11, 0.125));      // its hatch
+    const tray = box(mats, 'lp_dark', 0.44, 0.03, 0.22, 0, 0.98, 0.33);
+    tray.rotation.x = 0.16;
+    g.add(tray);
+    g.add(box(mats, 'lp_dark', 0.44, 0.06, 0.02, 0, 0.97, 0.44));     // tray lip
+    g.add(cylinder(mats, 'lp_chrome', 0.07, Math.max(0.2, h - 1.37), 0, 1.37, -0.05, 10)); // the tube
+    g.add(cylinder(mats, 'lp_dark', 0.095, 0.1, 0, 1.37, -0.05, 10)); // collar
+    g.add(cylinder(mats, 'lp_dark', 0.095, 0.06, 0, h - 0.06, -0.05, 10)); // ceiling flange
+    g.add(box(mats, 'lp_dark', 0.08, 0.08, 0.05, 0.21, 1.28, 0.22));  // lamp housing
+    return g;
+  },
+  // The canister waiting in the tube station's OUT tray (same pos/rot as the station).
+  canister(mats) {
+    const g = new THREE.Group();
+    const c = cylinder(mats, 'lp_brass', 0.045, 0.28, 0, 0, 0, 8);
+    c.rotation.z = Math.PI / 2;
+    c.position.set(0.02, 1.05, 0.33);
+    g.add(c);
+    for (const s of [-1, 1]) {
+      const e = cylinder(mats, 'lp_dark', 0.05, 0.03, 0, 0, 0, 8);
+      e.rotation.z = Math.PI / 2;
+      e.position.set(0.02 + s * 0.14, 1.05, 0.33);
+      g.add(e);
+    }
+    return g;
+  },
+  // A red call box on a post (S6 C: FLAG): hooded box, face plate, the
+  // handset on its hook, an unlit lamp housing on top (lampdot lights it).
+  callbox(mats) {
+    const g = new THREE.Group();
+    g.add(box(mats, 'lp_dark', 0.09, 1.25, 0.09, 0, 0, 0, { collide: true }));
+    g.add(box(mats, 'lp_dark', 0.3, 0.03, 0.3, 0, 0, 0));            // foot plate
+    g.add(box(mats, 'lp_red', 0.32, 0.44, 0.2, 0, 1.12, 0.03));
+    g.add(box(mats, 'lp_red', 0.36, 0.04, 0.24, 0, 1.56, 0.03));     // hood
+    g.add(box(mats, 'lp_dark', 0.22, 0.26, 0.01, 0.0, 1.19, 0.135)); // face plate
+    g.add(box(mats, 'lp_black', 0.06, 0.22, 0.05, 0.09, 1.2, 0.165)); // handset
+    g.add(box(mats, 'lp_black', 0.04, 0.03, 0.06, 0.09, 1.42, 0.155)); // hook
+    g.add(box(mats, 'lp_black', 0.015, 0.22, 0.015, 0.09, 0.98, 0.15)); // cord
+    g.add(box(mats, 'lp_dark', 0.06, 0.06, 0.04, -0.1, 1.59, 0.07)); // lamp housing
+    return g;
+  },
+  // A small lit lamp face (`mat`: lp_sign green, lp_taillight red, lp_sodium
+  // amber), at local `at` inside a parent's pos/rot. The S6 C lamps are
+  // `hidden` until the requisition is up; Harlowe's standby LED is always on.
+  lampdot(mats, o) {
+    const g = new THREE.Group();
+    const r = o.r || 0.02;
+    const [x, y, z] = o.at || [0, 0, 0];
+    g.add(box(mats, o.mat || 'lp_sign', r * 2, r * 2, Math.max(0.006, r * 0.8), x, y - r, z, { castShadow: false }));
+    return g;
+  },
+  // Dust standing in the troffer's light (Doc 2 S5_C): a faint additive cone
+  // from the fixture to the carpet. The building's light (C1), not a prop's.
+  troffbeam(mats, o) {
+    const g = new THREE.Group();
+    const h = o.h || 2.9, r0 = o.r0 || 0.5, r1 = o.r1 || 2.8;
+    const mat = new THREE.MeshBasicMaterial({ color: o.color || '#fff0d8', transparent: true, opacity: o.opacity || 0.035, blending: THREE.AdditiveBlending, depthWrite: false, side: THREE.DoubleSide });
+    mat.userData.owned = true;
+    const cone = new THREE.Mesh(new THREE.CylinderGeometry(r0, r1, h, 28, 1, true), mat);
+    cone.position.y = h / 2;
+    cone.castShadow = false;
+    cone.receiveShadow = false;
+    cone.renderOrder = 3;
+    g.add(cone);
+    return g;
+  },
+  // A parking boom barrier (S5 H, in front of the ramp shutter): a post and
+  // a red-and-white arm along local +x; `up` raises it. Decorative only --
+  // the shutter is what bars the ramp -- so nothing here collides.
+  boom(mats, o) {
+    const g = new THREE.Group();
+    const len = o.len || 4.0;
+    g.add(box(mats, 'lp_dark', 0.32, 1.0, 0.32, 0, 0, 0));
+    g.add(box(mats, 'lp_grey', 0.36, 0.06, 0.36, 0, 1.0, 0));
+    g.add(box(mats, 'lp_dark', 0.14, 0.14, 0.14, 0.2, 0.84, 0));      // pivot
+    const arm = new THREE.Group();
+    arm.position.set(0.2, 0.91, 0);
+    const n = Math.max(2, Math.round(len / 0.5));
+    for (let i = 0; i < n; i++) arm.add(box(mats, i % 2 ? 'lp_white' : 'lp_red', len / n, 0.09, 0.06, (i + 0.5) * len / n, -0.045, 0));
+    arm.rotation.z = o.up ? 1.4 : 0;
+    g.add(arm);
+    if (!o.up) g.add(box(mats, 'lp_dark', 0.08, 0.86, 0.08, len + 0.1, 0, 0)); // the arm's rest post
+    return g;
+  },
+  // A car door hanging open beside a catalog car (whose model is one mesh):
+  // the hinge at the group origin, the panel swung `angle` degrees out,
+  // `len` long, its sill at `y`, tinted `mat` like the car.
+  cardoor(mats, o) {
+    const g = new THREE.Group();
+    const len = o.len || 1.0, h = o.h || 0.45, y = o.y === undefined ? 0.28 : o.y, m = o.mat || 'lp_car';
+    const leaf = new THREE.Group();
+    leaf.rotation.y = THREE.MathUtils.degToRad(o.angle === undefined ? 50 : o.angle);
+    leaf.add(box(mats, m, 0.06, h, len, 0, y, len / 2));
+    leaf.add(box(mats, 'lp_rust', 0.065, h * 0.35, len * 0.4, 0, y + 0.04, len * 0.55)); // rust along the sill
+    if (o.window !== false) leaf.add(box(mats, 'lp_glass', 0.02, h * 0.6, len * 0.78, 0, y + h, len * 0.45));
+    leaf.add(box(mats, 'lp_chrome', 0.04, 0.03, 0.1, -0.04, y + h * 0.75, len - 0.14)); // handle
+    g.add(leaf);
+    return g;
+  },
+  // A W-beam guard rail on posts along local +x, `len` long; the last `bend`
+  // metres twisted down and out over the drop (Doc 2 S7_H: "a section of
+  // bent guard rail"). An invisible body stops him at the rail unless
+  // collide is false.
+  guardrail(mats, o) {
+    const g = new THREE.Group();
+    const len = o.len || 4, bend = Math.min(o.bend || 0, len - 0.5), h = o.h || 0.75;
+    const straight = len - bend;
+    const m = o.mat || 'lp_grey';
+    for (let x = 0.05; x <= straight + 1e-3; x += 1.25) g.add(box(mats, 'lp_dark', 0.08, h + 0.04, 0.1, x, 0, 0));
+    g.add(box(mats, m, straight, 0.3, 0.05, straight / 2, h - 0.32, 0.075));
+    g.add(box(mats, 'lp_chrome', straight, 0.06, 0.04, straight / 2, h - 0.2, 0.1)); // the beam's ridge
+    if (bend > 0) {
+      const piv = new THREE.Group();
+      piv.position.set(straight, h - 0.17, 0.075);
+      piv.rotation.set(0, 0.45, -0.85);
+      piv.add(box(mats, m, bend, 0.3, 0.05, bend / 2, -0.15, 0));
+      piv.add(box(mats, 'lp_dark', 0.08, 0.5, 0.1, bend * 0.4, -0.55, -0.04)); // a post torn half out
+      g.add(piv);
+    }
+    if (o.collide !== false) {
+      const body = box(mats, 'lp_dark', straight, 1.1, 0.24, straight / 2, 0, 0.05, { castShadow: false, collide: true });
+      body.visible = false;
+      g.add(body);
+    }
+    return g;
+  },
+  // The bench at the stop line (S6 H: STOP sits him on it). Slatted back on
+  // local -z; nothing collides, so the threshold can stand on the seat.
+  stopbench(mats, o) {
+    const g = new THREE.Group();
+    const w = o.w || 1.8, m = o.mat || 'lp_wood';
+    g.add(box(mats, m, w, 0.05, 0.42, 0, 0.43, 0));
+    for (let i = 0; i < 3; i++) g.add(box(mats, m, w, 0.08, 0.03, 0, 0.56 + i * 0.11, -0.2));
+    for (const x of [-w / 2 + 0.14, w / 2 - 0.14]) {
+      g.add(box(mats, 'lp_dark', 0.06, 0.43, 0.36, x, 0, 0));
+      g.add(box(mats, 'lp_dark', 0.05, 0.88, 0.05, x, 0, -0.215));
+    }
+    return g;
+  },
+  // Rebar stubs out of a broken slab edge (S6 H / S7 H): `n` bars across
+  // `len`, poking out along local -z, each bent its own way. Building
+  // steel, photoreal rust (C1).
+  rebar(mats, o) {
+    const g = new THREE.Group();
+    const n = o.n || 6, len = o.len || 3.0;
+    for (let i = 0; i < n; i++) {
+      const k = Math.sin((i + 1) * 12.9898 + (o.seed || 0) * 78.233) * 43758.5453;
+      const f = k - Math.floor(k);
+      const L = 0.22 + f * 0.55;
+      const bar = new THREE.Mesh(new THREE.BoxGeometry(0.024, 0.024, L), mats.get('rust'));
+      bar.geometry.translate(0, 0, -L / 2);
+      bar.position.set(-len / 2 + (i + 0.5) * len / n + (f - 0.5) * 0.25, -0.1 - f * 0.18, 0);
+      bar.rotation.set(-0.15 - f * 0.7, (f - 0.5) * 0.7, 0);
+      bar.receiveShadow = true;
+      g.add(bar);
+    }
+    return g;
+  },
+  // A painted line on the floor (photoreal paint, the building's): the stop
+  // line in S6 H, `w` x `d`.
+  paintline(mats, o) {
+    const g = new THREE.Group();
+    g.add(box(mats, o.mat || 'plaster_blown', o.w || 1.0, 0.003, o.d || 0.12, 0, 0, 0, { castShadow: false }));
+    return g;
+  },
+  // A set of building boxes that can be shown and hidden as one (beats show
+  // and hide props, not boxes): `boxes` is [[slot, [x0,y0,z0], [x1,y1,z1], tile], ...]
+  // in the prop's frame, built like room.js boxes (world-tiled UVs, nothing
+  // collides). S6 H's pool kit is hidden for the run and shown for the edge.
+  boxkit(mats, o) {
+    const g = new THREE.Group();
+    for (const [slot, a, b, tile] of o.boxes || []) {
+      const geo = new THREE.BoxGeometry(b[0] - a[0], b[1] - a[1], b[2] - a[2]);
+      geo.translate((a[0] + b[0]) / 2, (a[1] + b[1]) / 2, (a[2] + b[2]) / 2);
+      applyWorldUV(geo, tile || 2.0);
+      const m = new THREE.Mesh(geo, mats.get(slot));
+      m.castShadow = false;
+      m.receiveShadow = true;
+      g.add(m);
+    }
+    return g;
+  },
   // ---- polish: S5-S6 desk / garage -- end ----
   //
   // ---- polish: S7 descent -- begin (that scene's new props go between these lines) ----
