@@ -10,11 +10,23 @@ Persistent context for working in this repo. Start at [[README|README.md]]'s Map
 
 ## What this is
 
-**ninety-nine**: a static-web narrative game (no build step). The player is an intern at a company that is fake (rendered low-poly PS1) inside a building that is real (rendered photoreal) — see Canon below. [[docs/Design Docs|docs/]] holds the 4 source-of-truth specs (Doc 1 logic, Doc 2 asset generation, Doc 3 minigame UX, Doc 4 technical build); [[ninety-nine/src/Source Code|ninety-nine/src/]] implements them. **The game is 3D-only**: every scene is a live three.js set from `ninety-nine/data/rooms.json` played through `src/stage/` as camera shots; Doc 2's generated stills and clips and Doc 4 §5's video pool no longer exist (the docs describe what they replaced). A parallel [[blender/Blender Pipeline|blender/]] pipeline hand-builds 3D versions of the same environments, and `ninety-nine/tools/higgsfield_scene.py` rebuilds every set in the Higgsfield 3D scene builder (Blender 5.2) with the open-source catalog props and the same camera moves.
+**ninety-nine**: a static-web narrative game (no build step). The player is an intern at a company that is fake (rendered low-poly PS1) inside a building that is real (rendered photoreal) — see Canon below. [[docs/Design Docs|docs/]] holds the 4 source-of-truth specs: Doc 1 logic, Doc 2 asset generation, Doc 3 mini-game UX (**retired** 2026-10-03), Doc 4 technical build. [[ninety-nine/src/Source Code|ninety-nine/src/]] implements them; where the build has moved on, a dated amendment note sits at the top of the spec's section.
+
+**The game is one continuous first-person walk.** The player spawns in the apartment and walks, without a cut, through one building of live three.js rooms from `ninety-nine/data/rooms.json`:
+
+- [[ninety-nine/src/world/World|src/world/]] places each room in one world space. When a choice is made, it joins the next room behind a doorway through a `CN_*` connector; the door seals behind him and the room he left is dropped.
+- Each scene's two choices are **threshold zones** in its room. Walking into one commits the choice (`src/director.js`). Friction comes from how he moves (hesitation, doubling back).
+- There are no mini-games, no choice buttons and no fades to black between rooms. The camera is taken from him only for carried moments: sitting at the computer, the call, the cab's descent, the fall into the pool, the chute, the endings' pull-backs.
+
+Doc 2's generated stills and clips, Doc 4 §5's video pool and Doc 3's mini-games no longer exist (the docs describe what they replaced). A parallel [[blender/Blender Pipeline|blender/]] pipeline hand-builds 3D versions of the same environments, and `ninety-nine/tools/higgsfield_scene.py` rebuilds every set in the Higgsfield 3D scene builder (Blender 5.2) with the open-source catalog props and the same camera moves. Those projects predate the continuous building and are stale until rebuilt ([[blender/higgsfield/REBUILD_NOTE|REBUILD_NOTE]]).
 
 ## Naming scheme
 
 Sets, audio and scene folders follow `S{n}_{C|H}` (Doc 2 §1 / Doc 4 §4; the old `_{IMG_IN|IMG_OUT|VID|TRN}` suffixes named the removed stills and clips -- their roles are now the set's `in` / `out` poses and its `loop` / `leave` + `arrive` shots). `C` = compliant/succumb render, `H` = hostile/resist render. `S0_X` is the branchless prologue. Endings are `SE_{ASSIM|EXPUL|PEND|RETAINED}`; extra sets are `SET_{STREET|DIVE}`.
+
+Connectors, the passages the continuous building joins rooms with, are `CN_{NAME}`: `CN_STAIRS_APT`, `CN_VESTIBULE`, `CN_CORRIDOR_OFFICE`, `CN_CORRIDOR_SERVICE`, `CN_STAIRS_CONCRETE`, `CN_CORRIDOR_DOWN`, `CN_RAMP_DOWN`, `CN_CHUTE`. They have no scene, no render, no clock and no slip, and they only run level or down (C3).
+
+Several keys are **aliases** of one room, so the scene changes where the player stands: `S2_*` is `S1_*`, `S6_C` is `S5_C` (the desk room carries S5's and S6's thresholds), `S7_H` is `S6_H`, `SE_RETAINED` is `SE_ASSIM` and `SE_EXPUL` is `S8_H`. S8 H's scene is played in `SET_DIVE`; `S8_H` is the store the chute lets out into.
 
 The spine (Doc 1 §4) — scene number → name → what C/H actually mean there:
 
@@ -54,9 +66,19 @@ A file/folder named e.g. `S5_H` is always "the parking garage," `S4_C` is always
 ## Workflow
 
 - Run the game: `.claude/launch.json` → `ninety-nine` config (`python ninety-nine/tools/dev_server.py 8000`). Plain `python -m http.server` won't work (no-cache headers + HTTP Range support are required — see [[ninety-nine/App Overview|App Overview]]).
-- Run tests: open `ninety-nine/test/index.html` through that same dev server (fetches are same-origin). No Node/CI on this machine — see [[ninety-nine/test/Tests|Tests]]. Preview a walkable room without playing to it: `ninety-nine/test/rooms.html?room=S5_H`.
-- Sets are data: edit `ninety-nine/tools/build_rooms.py` and re-run it, never `data/rooms.json` by hand. A scene's camera moves are that set's `shots`; `scenes.json` only names a `room` and a `shot` per sequence entry.
-- The Blender copies of the sets live in Higgsfield 3D scene-builder projects (`blender/higgsfield/projects.json`); `python ninety-nine/tools/higgsfield_scene.py <ROOM> build|imports|place|proof` prints what the scene-builder MCP tools take. Rebuild a project after changing a set in `build_rooms.py`.
+- Run tests: open `ninety-nine/test/index.html` through that same dev server (fetches are same-origin). No Node/CI on this machine — see [[ninety-nine/test/Tests|Tests]].
+- Preview a room without playing to it: `ninety-nine/test/rooms.html?room=S5_H` plays a shot (`&shot=in`), and `&walk=1` walks it alone (connectors too).
+- Start the game part-way (dev only): `ninety-nine/index.html?start=S5&render=H` puts the candidate just inside that scene's room, with a score that gives that render, and starts the drone. `?autopilot=SSRRSSRR` walks him through by himself (`src/dev/autopilot.js`): one letter per scene S1–S8, S to succumb, R to resist. It follows a navgrid built from the rooms' colliders, with A*. Extra options are `&seed=H` (answer the form NOT WILLING), `&bail=S4` and `&speed=2.5`, and it combines with `?start=`. It logs `[autopilot]` lines to the console.
+- Sets are data: edit `ninety-nine/tools/build_rooms.py` and re-run it, never `data/rooms.json` by hand.
+  - A room's doorways are `door()` calls: a wall, an offset along it, a size, and a kind (`door` / `glass` / `curtain` / `shutter` / `slide` / `open`).
+  - Its threshold zones are `zone()` calls, and extra join points are `anchor()` calls. `entry` names the doorway a connector arrives through. Connectors are the `cn_*` builders.
+  - `check_room()` fails the build when a door runs off or overlaps on its wall, a zone is off the floor or inside a solid box, a room has no entry, an alias changes more than `ALIAS_KEYS` (spawn, name, shots, notes), or hands appear anywhere but `S0_X` / `SE_PEND`.
+  - A set's `shots` are now the carried moments, the endings' pull-backs, and the `in` / `out` / `leave` / `arrive` poses the Higgsfield proofs render.
+- Choices are data too: `ninety-nine/data/scenes.json` (hand-edited) names, per scene and render, the room, `next`, the ambience, music and captions, the `onEnter` beats, and the two `thresholds`.
+  - A threshold (succumb / resist) gives its label, its zone(s) in that room, the `exit` door and the `via` connector it opens, `setFlag`, `sfxCue`, `beat` and `approach`. `beatZones` are non-choice moments, and `bumpCount` counts pushes on a locked door.
+  - Keep its zone and door names in step with `build_rooms.py`; the director only warns in the console when one is missing.
+  - `data/endings.json` gives each ending's room, zone, `autoSeconds`, pull-back shot and `routes`. [[ninety-nine/assets/Scene Flow|Scene Flow]] walks all of it in order.
+- The Blender copies of the sets live in Higgsfield 3D scene-builder projects (`blender/higgsfield/projects.json`); `python ninety-nine/tools/higgsfield_scene.py <ROOM> build|imports|place|proof` prints what the scene-builder MCP tools take. Rebuild a project after changing a set in `build_rooms.py`. All of them are stale since the continuous building: the tool must first learn doorways, `floorY`, pitched boxes, hidden props and the new prop builders, as listed in [[blender/higgsfield/REBUILD_NOTE|REBUILD_NOTE]]. Until then it strips the runtime-only keys and warns about props it cannot build.
 - Music is generated (`ninety-nine/src/music.js`), not a file — nothing under `assets/aud` is music, and nothing there needs a licence.
 
 ## Docs-as-vault

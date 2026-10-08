@@ -140,6 +140,8 @@ Every clock, on every wall, in every render. It is the same clock.
 
 ## 4. THE SPINE
 
+> **Amendment, 2026-10-03.** The choices in this table are walked, not clicked. Each scene's two choices are **threshold zones** in its room (`thresholds` in `ninety-nine/data/scenes.json`, zones in `data/rooms.json`). Stepping into one commits it, still through `commitChoice()` and still ±1. The game is one continuous first-person walk: the next scene's room is joined behind the door the threshold opens, in the render the score picks. The **Mini-game column is retired**: the mini-games were removed at the author's request. **Friction now comes from movement**: hesitation before committing, and doubling back between the two thresholds (`src/friction.js`). Friction still feeds only `fracture()` (§2.3). The spine, the render rules and the ending resolution are unchanged. The walked flow is in [[ninety-nine/assets/Scene Flow|Scene Flow]].
+
 | # | Scene | Compliant render | Hostile render | Choice (Succumb / Resist) | Mini-game |
 |---|---|---|---|---|---|
 | S0 | THE UPLOAD | Apartment, portal, dawn commute | *(no branch)* | n/a | n/a |
@@ -156,6 +158,10 @@ Every clock, on every wall, in every render. It is the same clock.
 ---
 
 ## 5. SCENE BREAKDOWNS
+
+> **Amendment, 2026-10-03.** Every scene below is played on foot in one continuous building, with each choice a place to walk to (§4's amendment). The **Mini-game** lines are retired, and the asset IDs name stills and clips that were removed when the game became 3D-only. Two details changed:
+> - **`SAW_HARLOWE` is set by approaching the Harlowe terminal** (S5 C). Walking up to the second desk wakes its screen and sets the flag, whatever he commits to afterwards; it no longer depends on waking it before stapling.
+> - **The low-poly hands in the S8 H dive were removed** at the author's request. His hands now appear only in S0, when he sits at the computer, and in the PENDING REVIEW ending.
 
 Asset IDs follow the canonical scheme (Doc 2, §1; Doc 4, §4):
 `S{n}_{C|H}_{IMG_IN|IMG_OUT|VID|TRN}`

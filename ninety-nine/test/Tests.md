@@ -8,21 +8,26 @@ tags: [game-code]
 
 In-browser test suite (no Node on this machine, so it's a fetch-and-assert harness, not a CI script).
 
+> **Stale since 2026-10-03.** The suite still tests the cinematic build that the continuous walk replaced. Until it is ported, several cases will not load or will fail:
+> - `index.html` still lists `minigame.leak.js` and `minigame.hold.js`, which were deleted with the mini-games.
+> - `logic.spine.js`, `rooms.validate.js` and `stage.shots.js` import the removed `src/router.js` (`planTransition`, `roomOfEntry`, `choiceEntryIndex`…), so they fail to load.
+> - `manifest.validate.js` and `rooms.validate.js` check the old data model: per-scene sequence entries and choice blocks, mini-game modules, every key a scene+render / ending / `SET_*` (`CN_*` keys fail), and in/out/loop/leave/arrive shots in every room (connectors have only `in`).
+>
+> The pure checks (`canon.text.js`, `audio.drone.js`, `audio.mix.js`, and the `state.js` parts of `logic.spine.js`) still hold. What a port should test now: thresholds and zones (`src/spine.js`, `director._debug()`), the attach maths (`src/world/anchors.js` is pure), and `build_rooms.py`'s `check_room()` rules. The `?autopilot=` walkthrough (`src/dev/autopilot.js`) drives the real game end to end.
+
 - **`harness.js`** — tiny browser-based test runner; every assertion expressible as "run this pure function and check the output" or "fetch a URL and check it" runs here.
 - **`index.html`** — the page that loads the harness and all cases.
-- **`rooms.html`** — not a test: a dev preview that walks any room from `data/rooms.json` without playing to it (`?room=S5_H`).
+- **`rooms.html`** — not a test: a dev preview that plays a shot of any room from `data/rooms.json`, or walks it alone (`?room=S5_H`, `&shot=in`, `&walk=1`), connectors included.
 
-## `cases/` (11 files)
-- **`logic.spine.js`** — Doc 4 §11.1 acceptance tests + Doc 1 §7.2's four worked runs + the full 256-path sweep. Pure `state.js` logic, plus `router.js`'s `pickTransition()`/`planTransition()` (which spine edges can flip render, and that a flip never plays a walk into the wrong room).
-- **`canon.text.js`** — Doc 4 §11.2: C4 check ("the word 'you' appears exactly once in the entire game").
-- **`manifest.validate.js`** — Doc 4 §4.2's validator: "file exists" becomes `fetch(url, {method:'HEAD'})` returning 200 (no Node `fs`).
-- **`minigame.leak.js`** — mounts/unmounts every minigame 50x, asserts listener/timer counts return to baseline.
-- **`minigame.hold.js`** — the hold-to-act modes (MG-05 H THE RUN, MG-07 H THE BREATH) against a stub `services.scene`: each mounts a full-layer child that takes the press (`#minigame-layer` itself is `pointer-events: none`, which is why "hold to run" used to do nothing), does not complete on its own, pauses the room on mount and resumes/pauses it with the hold, and completes at depletion with the documented friction (0.3 unbroken, +0.15 per rest); timers run 40x for the depletion cases.
+## `cases/` (7 files)
+- **`logic.spine.js`** — Doc 4 §11.1 acceptance tests, Doc 1 §7.2's four worked runs and the full 256-path sweep: pure `state.js` logic. It also has transition checks against the removed `router.js` (see above).
+- **`canon.text.js`** — Doc 4 §11.2: the C4 check ("the word 'you' appears exactly once in the entire game"), plus the S0 form's three WILLING / NOT WILLING pairs.
+- **`manifest.validate.js`** — Doc 4 §4.2's validator: "file exists" becomes `fetch(url, {method:'HEAD'})` returning 200 (no Node `fs`). Still written against the sequence-entry `scenes.json`.
 - **`audio.drone.js`** — Doc 4 §11.3 drone-continuity check (`osc.start()` called exactly once); the real by-ear gate still has to happen manually.
-- **`video.audiotrack.js`** — asserts every video file has no audio track (audio is engine-side only, Doc 4 §7/§8.3). Reads as a failure in a Chromium build without H.264 (headless shells); that is the codec, not the files.
-- **`video.faststart.js`** — asserts every clip's `moov` (index) sits ahead of `mdat` (frames), read from the first 64 KB via a Range request; codec-independent. Ten delivered transition clips shipped with the index at the end, which made a `<video>` abort and re-request the tail before it could show a frame — `tools/faststart.py` rewrites them.
 - **`audio.mix.js`** — the mix pass: bed trims pull the 17 dB loudness spread into a window, one-shot trims go the right way, every `music` mood in `scenes.json` exists, nothing plays before the gesture.
-- **`renderer.softloop.js`** — `renderer.js` against stubbed `<video>` elements: a choice clicked inside a soft-loop re-arm's 400ms settle must not let the old room loop re-arm itself over the transition (the race that made transitions vanish and the next scene start late); `emptied` releases a pending wait; `stopAt`/`startAt` sub-range playback.
-- **`rooms.validate.js`** — `data/rooms.json`: keys map to real scene+render, aliases resolve, prop types have builders, spawns sit inside the shell, C3 (no open sides without fog/box), C8 (one clock per room), one 99 slip per room after S1; plus `choiceEntryIndex()`.
+- **`rooms.validate.js`** — `data/rooms.json`: keys map to real scene+render, aliases resolve, prop types have builders, spawns sit inside the shell, C3 (no open sides without fog/box), C8 (one clock per room), one 99 slip per room after S1; plus the removed `choiceEntryIndex()`.
+- **`stage.shots.js`** — the stage against the real data: every room builds (with box fallbacks when the prop library is absent), every shot plays to its end on a stubbed clock, and `screenRect()` finds the terminal. It runs headless as a smoke test of the data and the shot maths. It still imports `router.js`.
+
+The mini-game cases (`minigame.leak.js`, `minigame.hold.js`) were deleted with the mini-games. `video.audiotrack.js`, `video.faststart.js` and `renderer.softloop.js` went earlier, with the clips.
 
 Headless: `python tools/dev_server.py 8000`, then drive `/test/` with Playwright (this repo has no Node CI, but any machine with Chromium can run the page).
