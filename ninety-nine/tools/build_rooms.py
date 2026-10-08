@@ -345,6 +345,10 @@ def waiting_room(hostile):
     boxes.append({"min": [-2.45, 2.95, -D / 2], "max": [2.45, H, -4.25], "mat": wall, "collide": False, "tile": WALL_TILE})
     for sx in (-1, 1):  # the booth's side walls back to the glass, the counter between them
         boxes.append({"min": [min(sx * 2.3, sx * 2.45), 0, -D / 2], "max": [max(sx * 2.3, sx * 2.45), 2.95, -4.8], "mat": wall, "tile": WALL_TILE})
+    # a thin spine inside the counter body: changes nothing for the player, but
+    # the dev autopilot's navgrid (rays cast from inside a box miss its faces)
+    # otherwise reads the counter as a walkable corridor into the booth
+    boxes.append({"min": [-2.28, 0, -4.71], "max": [2.28, 1.0, -4.69], "mat": "plaster_dark", "invisible": True, "shadow": False})
     # its back wall, darker than the room's, so the glass reads clear and she reads against it
     boxes.append({"min": [-2.3, 0, -D / 2], "max": [2.3, 2.95, -D / 2 + 0.03], "mat": "plaster_dark", "collide": False, "tile": WALL_TILE})
     with open(os.path.join(HERE, "..", "text", "system.json"), encoding="utf-8") as fh:
