@@ -938,12 +938,14 @@ def apartment():
     W, H, D = 4.6, 2.6, 5.0
     props = [
         # the desk is the building's (photoreal wood, Doc 1 §5 S0 / Doc 2 S0_X_IMG_IN)
-        prop("homedesk", [0.2, 0, -D / 2 + 0.75], w=1.5, d=0.7, mat="wood"),
+        prop("homedesk", [0.2, 0, -D / 2 + 0.75], w=1.5, d=0.7, mat="wood", tile=2.4),
         prop("monitor", [0.3, 0.75, -D / 2 + 0.62], on=True, name="terminal"),
         prop("keyboard", [0.3, 0.75, -D / 2 + 1.02]),
         prop("hands", [0.3, 0.76, -D / 2 + 1.1], name="hands", hidden=True),  # shown when he sits (C6)
         prop("mug", [-0.35, 0.75, -D / 2 + 0.95]),
-        glb("lib_tablelamp", [-0.45, 0.75, -D / 2 + 0.55], fallback="lamp", scale=0.8),
+        # his desk lamp: low-poly, its light the building's (the glow inside
+        # the shade, the pool on the desk, the wall above it)
+        prop("desklamp", [-0.45, 0.75, -D / 2 + 0.55], rot=20),
         glb("lib_books", [0.85, 0.75, -D / 2 + 0.6], rot=15, fallback=None, scale=0.8),
         prop("papers", [0.74, 0.75, -D / 2 + 1.0], rot=-14, h=0.012),
         glb("lib_chair_wood", [0.3, 0, -D / 2 + 1.65], rot=180, fallback="chair", collide=True),
@@ -953,7 +955,7 @@ def apartment():
         # the way out, before it opens: light from the stairwell under the door
         prop("doorglow", [-1.3, 0, D / 2 - 0.02], rot=180, w=1.1),
         # dust in the CRT's light (Doc 2 S0_X)
-        prop("dust", [0.3, 0.9, -D / 2 + 1.35], n=26, w=0.6, h=0.55, d=0.7, size=0.0045, opacity=0.4),
+        prop("dust", [0.3, 0.9, -D / 2 + 1.35], n=26, w=0.6, h=0.55, d=0.7, size=0.0035, opacity=0.45),
     ]
     rec = {
         "name": "THE UPLOAD",
@@ -968,7 +970,7 @@ def apartment():
         "sun": {"from": [0.3, 2.4, 2.2], "color": "#a9c3d6", "intensity": 0.2},
         "lights": [
             {"type": "point", "pos": [0.3, 1.1, -D / 2 + 0.9], "color": "#bcd4e2", "intensity": 5.5, "distance": 5, "flicker": 0.08},
-            {"type": "point", "pos": [-0.45, 1.3, -D / 2 + 0.6], "color": "#ffc27a", "intensity": 2.2, "distance": 4},
+            {"type": "point", "pos": [-0.45, 1.01, -D / 2 + 0.55], "color": "#ffc27a", "intensity": 1.1, "distance": 4},
             {"type": "point", "pos": [-1.3, 0.18, D / 2 - 0.25], "color": "#ffcf8a", "intensity": 1.2, "distance": 2.4},
         ],
         "fog": {"color": "#050607", "near": 2.5, "far": 10},
@@ -990,7 +992,8 @@ def apartment():
     # ACCEPTED. The window cannot be closed: the camera pushes into the screen's glow and the room goes.
     s["leave"] = {"from": "out", "to": pose([0.3, 1.1, -D / 2 + 0.9], [0.3, 0.98, -D / 2 + 0.62], fov=40), "seconds": 2.6, "ease": "in", "fadeOut": 1.0}
     # Carried: sitting down at the computer, leaning in to the form, standing up to go.
-    s["sit"] = pose([0.3, 1.17, -1.0], [0.3, 0.88, -1.7], fov=54)
+    # (the hands on the keys sit in the bottom of this frame, C6)
+    s["sit"] = pose([0.3, 1.2, -0.98], [0.3, 0.9, -1.62], fov=56)
     s["lean"] = pose([0.3, 1.10, -1.25], [0.3, 1.02, -1.70], fov=46)
     # stand ends clear of the chair (its face at z -0.63, his radius 0.35), facing the door
     s["stand"] = pose([0.3, 1.60, -0.15], [-1.3, 1.25, 2.5], fov=68)
@@ -1064,8 +1067,10 @@ def street():
                          mat="lp_car%d" % (2 + i), len=4.4, w=1.8, scale=1.45))
     # C8: the street's one clock, on a post at the near end, facing him as he
     # comes out (south half: never in a frame with the lobby's clock).
+    # A street clock is a big one: the same handless clock at 1.6x, its rim
+    # (0.24 x 1.6) resting in the post's cradle (top at h + 0.14).
     props.append(prop("clockpost", [-W / 2 + 1.5, PAVE, 21.0], h=2.8))
-    props.append(prop("clock", [-W / 2 + 1.5, PAVE + 2.8 + 0.26, 21.0]))
+    props.append(prop("clock", [-W / 2 + 1.5, PAVE + 2.8 + 0.14 + 0.24 * 1.6, 21.0], scale=1.6))
     # Track C motif 2: the first 99, on the asphalt before the tower's step.
     props.append(prop("slip", [0.4, 0.004, -D / 2 + 4.4], rot=30))
 
@@ -1114,9 +1119,9 @@ def street():
         {"min": [-12, 0, TZ + 3.2], "max": [12, 0.15, TZ + 3.8], "mat": "marble_light", "floor": True, "tile": 2.5},
         # the base, its face cut for the doors; it casts, so the joined
         # vestibule and lobby behind it are not lit by the street's sun
-        {"min": [-16, 0, TZ - WALL_T], "max": [-1.3, 9.0, TZ], "mat": "concrete", "tile": 2.2},
-        {"min": [1.3, 0, TZ - WALL_T], "max": [16, 9.0, TZ], "mat": "concrete", "tile": 2.2},
-        {"min": [-1.3, 3.2, TZ - WALL_T], "max": [1.3, 9.0, TZ], "mat": "concrete", "tile": 2.2},
+        {"min": [-16, 0, TZ - WALL_T], "max": [-1.3, 9.0, TZ], "mat": "concrete", "tile": 4.5},
+        {"min": [1.3, 0, TZ - WALL_T], "max": [16, 9.0, TZ], "mat": "concrete", "tile": 4.5},
+        {"min": [-1.3, 3.2, TZ - WALL_T], "max": [1.3, 9.0, TZ], "mat": "concrete", "tile": 4.5},
         # dark stone surround to the doors
         {"min": [-1.75, 0.3, TZ], "max": [-1.3, 3.55, TZ + 0.12], "mat": "marble", "tile": 1.5},
         {"min": [1.3, 0.3, TZ], "max": [1.75, 3.55, TZ + 0.12], "mat": "marble", "tile": 1.5},
@@ -1156,7 +1161,7 @@ def street():
     # the brass address plate beside the doors (wordless; the label says it)
     props.append(prop("fluoro", [-1.6, 3.93, TZ + 1.3], w=0.9, d=0.22))
     props.append(prop("fluoro", [1.6, 3.93, TZ + 1.3], w=0.9, d=0.22))
-    props.append(prop("wallplate", [2.15, 1.55, TZ + 0.015], w=0.5, h=0.32, mat="lp_brass"))
+    props.append(prop("addressplate", [2.15, 1.55, TZ], w=0.5, h=0.32))
     lights.append({"type": "point", "pos": [0, 3.5, TZ + 1.4], "color": "#ffe2b8", "intensity": 5, "distance": 8})
     # his building: windows on the end wall, a lamp over his door
     props.append(prop("facade", [0, 0, D / 2], rot=180, w=2 * FX, h=18, d=0.3, mat="brick", trim="plaster_blown", body=False, plinth=False, ground="none", groundH=3.0))
@@ -1174,9 +1179,9 @@ def street():
         "boxes": boxes,
         # dawn: a low orange sun behind him on the street's axis (C2: shadows
         # down the street at the tower), warm haze, a sky that is all haze
-        "ambient": {"color": "#f2c9a2", "intensity": 0.34},
-        "hemisphere": {"sky": "#f4c48e", "ground": "#4a3a2c", "intensity": 0.75},
-        "sun": {"from": [0.0, 21.0, 64.0], "color": "#ffb36e", "intensity": 3.0},
+        "ambient": {"color": "#f2c9a2", "intensity": 0.36},
+        "hemisphere": {"sky": "#f4c48e", "ground": "#4a3a2c", "intensity": 0.95},
+        "sun": {"from": [0.0, 22.5, 64.0], "color": "#ffb36e", "intensity": 3.2},
         "lights": lights,
         "fog": {"color": "#dcab7c", "near": 16, "far": 95},
         "background": "#dcab7c",

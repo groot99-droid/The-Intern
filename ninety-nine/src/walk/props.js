@@ -518,20 +518,20 @@ const BUILDERS = {
   // ... photoreal"), world-tiled so the grain does not stretch per face.
   homedesk(mats, o) {
     const g = new THREE.Group();
-    const w = o.w || 1.5, d = o.d || 0.7, m = o.mat || 'wood';
+    const w = o.w || 1.5, d = o.d || 0.7, m = o.mat || 'wood', tile = o.tile || 0.9;
     const top = box(mats, m, w, 0.04, d, 0, 0.71, 0, { collide: true });
-    applyWorldUV(top.geometry, 0.9);
+    applyWorldUV(top.geometry, tile);
     g.add(top);
     for (const [x, z] of [[-w / 2 + 0.04, -d / 2 + 0.04], [w / 2 - 0.04, -d / 2 + 0.04], [-w / 2 + 0.04, d / 2 - 0.04], [w / 2 - 0.04, d / 2 - 0.04]]) {
       const leg = box(mats, m, 0.05, 0.71, 0.05, x, 0, z);
-      applyWorldUV(leg.geometry, 0.9);
+      applyWorldUV(leg.geometry, tile);
       g.add(leg);
     }
     const apron = box(mats, m, w - 0.1, 0.1, 0.02, 0, 0.61, -d / 2 + 0.03, { castShadow: false });
-    applyWorldUV(apron.geometry, 0.9);
+    applyWorldUV(apron.geometry, tile);
     g.add(apron);
     const drawer = box(mats, m, 0.44, 0.13, 0.02, w / 2 - 0.3, 0.57, d / 2 - 0.01);
-    applyWorldUV(drawer.geometry, 0.9);
+    applyWorldUV(drawer.geometry, tile);
     g.add(drawer);
     g.add(box(mats, 'lp_dark', 0.09, 0.015, 0.012, w / 2 - 0.3, 0.63, d / 2 + 0.005, { castShadow: false }));
     const body = box(mats, 'lp_dark', w, 0.72, d, 0, 0, 0, { castShadow: false });
@@ -579,16 +579,99 @@ const BUILDERS = {
   dust(mats, o) {
     const n = o.n || 40, w = o.w || 0.5, h = o.h || 0.5, d = o.d || 0.7;
     const pos = new Float32Array(n * 3);
+    const home = new Float32Array(n * 3);
     let s = o.seed || 7;
     const rnd = () => { s = (s * 16807) % 2147483647; return s / 2147483647; };
     for (let i = 0; i < n; i++) { pos[3 * i] = (rnd() - 0.5) * w; pos[3 * i + 1] = rnd() * h; pos[3 * i + 2] = (rnd() - 0.5) * d; }
+    home.set(pos);
     const geo = new THREE.BufferGeometry();
     geo.setAttribute('position', new THREE.BufferAttribute(pos, 3));
-    const mat = new THREE.PointsMaterial({ color: new THREE.Color(o.color || '#cfe2ea'), size: o.size || 0.006, sizeAttenuation: true, transparent: true, opacity: o.opacity || 0.55, blending: THREE.AdditiveBlending, depthWrite: false });
+    // soft round motes, not square points: a small radial falloff as the map
+    const cv = document.createElement('canvas');
+    cv.width = cv.height = 32;
+    const cx = cv.getContext('2d');
+    const grad = cx.createRadialGradient(16, 16, 0, 16, 16, 16);
+    grad.addColorStop(0, 'rgba(255,255,255,1)');
+    grad.addColorStop(0.35, 'rgba(255,255,255,0.45)');
+    grad.addColorStop(1, 'rgba(255,255,255,0)');
+    cx.fillStyle = grad;
+    cx.fillRect(0, 0, 32, 32);
+    const tex = new THREE.CanvasTexture(cv);
+    tex.colorSpace = THREE.SRGBColorSpace;
+    const mat = new THREE.PointsMaterial({ color: new THREE.Color(o.color || '#cfe2ea'), map: tex, size: o.size || 0.006, sizeAttenuation: true, transparent: true, opacity: o.opacity || 0.55, blending: THREE.AdditiveBlending, depthWrite: false });
     mat.userData.owned = true;
     const pts = new THREE.Points(geo, mat);
+    // they hang in the CRT's light and drift, a few millimetres, very slowly
+    const drift = o.drift === undefined ? 0.012 : o.drift;
+    if (drift > 0) {
+      const attr = geo.getAttribute('position');
+      pts.onBeforeRender = () => {
+        const t = performance.now() / 1000;
+        for (let i = 0; i < n; i++) {
+          attr.array[3 * i] = home[3 * i] + Math.sin(t * 0.13 + i * 1.7) * drift;
+          attr.array[3 * i + 1] = home[3 * i + 1] + Math.sin(t * 0.09 + i * 2.3) * drift;
+          attr.array[3 * i + 2] = home[3 * i + 2] + Math.cos(t * 0.11 + i * 0.9) * drift;
+        }
+        attr.needsUpdate = true;
+      };
+    }
     const g = new THREE.Group();
     g.add(pts);
+    return g;
+  },
+  // His desk lamp (S0): low-poly like everything he owns -- a weighted base,
+  // a stem, an open cone shade. The light is the building's (C1): the
+  // inside of the shade and the bulb glow, a soft halo, and the room's own
+  // point light (placed by the room inside the shade, about y 0.27 here),
+  // which pools on the desk and climbs the wall without blowing the shade
+  // out. Shade centre at y 0.3.
+  desklamp(mats, o) {
+    const g = new THREE.Group();
+    const shadeSlot = o.shade || 'lp_beige';
+    g.add(cylinder(mats, 'lp_dark', 0.075, 0.025, 0, 0, 0, 10));
+    g.add(box(mats, 'lp_dark', 0.016, 0.24, 0.016, 0, 0.025, 0));
+    g.add(box(mats, 'lp_dark', 0.05, 0.016, 0.016, 0, 0.255, 0, { castShadow: false })); // the yoke
+    const coneGeo = new THREE.CylinderGeometry(0.065, 0.12, 0.15, 12, 1, true);
+    const outer = new THREE.Mesh(coneGeo, mats.get(shadeSlot));
+    outer.position.y = 0.3;
+    outer.castShadow = true;
+    outer.receiveShadow = true;
+    g.add(outer);
+    // inside of the shade: lit by the bulb, so it glows, warmer at the mouth
+    const inGeo = new THREE.CylinderGeometry(0.063, 0.118, 0.148, 12, 1, true);
+    const ip = inGeo.getAttribute('position');
+    const col = new Float32Array(ip.count * 3);
+    const hot = new THREE.Color(o.glow || '#ffd9a0'), dim = hot.clone().multiplyScalar(0.45);
+    for (let i = 0; i < ip.count; i++) { const c = ip.getY(i) < 0 ? hot : dim; col[3 * i] = c.r; col[3 * i + 1] = c.g; col[3 * i + 2] = c.b; }
+    inGeo.setAttribute('color', new THREE.BufferAttribute(col, 3));
+    const inMat = new THREE.MeshBasicMaterial({ vertexColors: true, side: THREE.BackSide });
+    inMat.userData.owned = true;
+    const inner = new THREE.Mesh(inGeo, inMat);
+    inner.position.y = 0.3;
+    g.add(inner);
+    const bulbMat = new THREE.MeshBasicMaterial({ color: new THREE.Color('#fff4e0') });
+    bulbMat.userData.owned = true;
+    const bulb = new THREE.Mesh(new THREE.SphereGeometry(0.028, 8, 6), bulbMat);
+    bulb.position.y = 0.27;
+    g.add(bulb);
+    // the halo around the mouth of the shade: always faces the eye
+    const cv = document.createElement('canvas');
+    cv.width = cv.height = 64;
+    const cx = cv.getContext('2d');
+    const grad = cx.createRadialGradient(32, 32, 0, 32, 32, 32);
+    grad.addColorStop(0, 'rgba(255,255,255,0.9)');
+    grad.addColorStop(0.3, 'rgba(255,255,255,0.25)');
+    grad.addColorStop(1, 'rgba(255,255,255,0)');
+    cx.fillStyle = grad;
+    cx.fillRect(0, 0, 64, 64);
+    const tex = new THREE.CanvasTexture(cv);
+    tex.colorSpace = THREE.SRGBColorSpace;
+    const haloMat = new THREE.SpriteMaterial({ map: tex, color: hot, transparent: true, opacity: o.halo === undefined ? 0.5 : o.halo, blending: THREE.AdditiveBlending, depthWrite: false });
+    haloMat.userData.owned = true;
+    const halo = new THREE.Sprite(haloMat);
+    halo.position.y = 0.24;
+    halo.scale.setScalar(o.haloSize || 0.42);
+    g.add(halo);
     return g;
   },
   // A street facade (SET_STREET): the building's, so photoreal (C1: brick,
@@ -766,6 +849,21 @@ const BUILDERS = {
     const glow = new THREE.Mesh(new THREE.PlaneGeometry(o.glow || 1.1, (o.glow || 1.1) * 0.7), mats.get('glow_sodium'));
     glow.rotation.x = Math.PI / 2; glow.position.y = -0.04;
     g.add(glow);
+    return g;
+  },
+  // The company's address plate beside the tower doors (SET_STREET): a
+  // brass plate on a dark backing, four standoff bolts and three engraved
+  // bars where the letters would be -- wordless (the zone label carries
+  // "666 HALLAM ROW."). Low-poly: company signage. Front faces +z; y is
+  // the plate's centre.
+  addressplate(mats, o) {
+    const g = new THREE.Group();
+    const w = o.w || 0.5, h = o.h || 0.32;
+    g.add(box(mats, 'lp_dark', w + 0.06, h + 0.06, 0.02, 0, -(h + 0.06) / 2, 0.01, { castShadow: false }));
+    g.add(box(mats, o.mat || 'lp_brass', w, h, 0.012, 0, -h / 2, 0.026, { castShadow: false }));
+    for (const [x, y] of [[-1, -1], [1, -1], [-1, 1], [1, 1]]) g.add(box(mats, 'lp_chrome', 0.022, 0.022, 0.01, x * (w / 2 - 0.035), y * (h / 2 - 0.035) - 0.011, 0.036, { castShadow: false }));
+    const bars = [[0.62, 0.075], [0.8, 0.0], [0.5, -0.07]];
+    for (const [f, y] of bars) g.add(box(mats, 'lp_dark', w * f, 0.026, 0.004, 0, y * (h / 0.32) - 0.013, 0.033, { castShadow: false }));
     return g;
   },
   // ---- polish: S0 + street -- end ----

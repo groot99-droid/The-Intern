@@ -233,11 +233,11 @@
      "type": "point",
      "pos": [
       -0.45,
-      1.3,
-      -1.9
+      1.01,
+      -1.95
      ],
      "color": "#ffc27a",
-     "intensity": 2.2,
+     "intensity": 1.1,
      "distance": 4
     },
     {
@@ -274,7 +274,8 @@
      ],
      "w": 1.5,
      "d": 0.7,
-     "mat": "wood"
+     "mat": "wood",
+     "tile": 2.4
     },
     {
      "type": "monitor",
@@ -313,15 +314,13 @@
      ]
     },
     {
-     "type": "glb",
+     "type": "desklamp",
      "pos": [
       -0.45,
       0.75,
       -1.95
      ],
-     "node": "lib_tablelamp",
-     "scale": 0.8,
-     "fallback": "lamp"
+     "rot": 20
     },
     {
      "type": "glb",
@@ -396,8 +395,8 @@
      "w": 0.6,
      "h": 0.55,
      "d": 0.7,
-     "size": 0.0045,
-     "opacity": 0.4
+     "size": 0.0035,
+     "opacity": 0.45
     }
    ],
    "footstep": {
@@ -508,15 +507,15 @@
     "sit": {
      "pos": [
       0.3,
-      1.17,
-      -1.0
+      1.2,
+      -0.98
      ],
      "look": [
       0.3,
-      0.88,
-      -1.7
+      0.9,
+      -1.62
      ],
-     "fov": 54
+     "fov": 56
     },
     "lean": {
      "pos": [
@@ -1204,7 +1203,7 @@
       -32.0
      ],
      "mat": "concrete",
-     "tile": 2.2
+     "tile": 4.5
     },
     {
      "min": [
@@ -1218,7 +1217,7 @@
       -32.0
      ],
      "mat": "concrete",
-     "tile": 2.2
+     "tile": 4.5
     },
     {
      "min": [
@@ -1232,7 +1231,7 @@
       -32.0
      ],
      "mat": "concrete",
-     "tile": 2.2
+     "tile": 4.5
     },
     {
      "min": [
@@ -2312,21 +2311,21 @@
    ],
    "ambient": {
     "color": "#f2c9a2",
-    "intensity": 0.34
+    "intensity": 0.36
    },
    "hemisphere": {
     "sky": "#f4c48e",
     "ground": "#4a3a2c",
-    "intensity": 0.75
+    "intensity": 0.95
    },
    "sun": {
     "from": [
      0.0,
-     21.0,
+     22.5,
      64.0
     ],
     "color": "#ffb36e",
-    "intensity": 3.0
+    "intensity": 3.2
    },
    "lights": [
     {
@@ -2960,9 +2959,10 @@
      "type": "clock",
      "pos": [
       -7.5,
-      3.2,
+      3.464,
       21.0
-     ]
+     ],
+     "scale": 1.6
     },
     {
      "type": "slip",
@@ -2994,15 +2994,14 @@
      "d": 0.22
     },
     {
-     "type": "wallplate",
+     "type": "addressplate",
      "pos": [
       2.15,
       1.55,
-      -31.985
+      -32.0
      ],
      "w": 0.5,
-     "h": 0.32,
-     "mat": "lp_brass"
+     "h": 0.32
     },
     {
      "type": "facade",
