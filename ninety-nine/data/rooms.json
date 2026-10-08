@@ -13476,47 +13476,78 @@
    ],
    "floor": "grate",
    "wall": "rust",
-   "ceiling": "grate",
+   "ceiling": "rust",
    "tile": {
-    "floor": 1.0,
-    "wall": 1.5,
-    "ceiling": 1.0
+    "floor": 0.9,
+    "wall": 2.0,
+    "ceiling": 2.0
+   },
+   "skirt": {
+    "mat": "grate",
+    "h": 0.3,
+    "t": 0.02,
+    "tile": 0.9
    },
    "ambient": {
     "color": "#ffd9a8",
-    "intensity": 0.25
+    "intensity": 0.16
    },
    "sun": {
     "from": [
      0.4,
      3.0,
-     2.5
+     3.6
     ],
     "color": "#ffd9a8",
-    "intensity": 0.7
+    "intensity": 0.45
    },
    "lights": [
     {
      "type": "point",
      "pos": [
       0,
-      2.35,
-      0.2
+      2.18,
+      0.0
      ],
      "color": "#ffcf9a",
-     "intensity": 6,
-     "distance": 6,
+     "intensity": 7.5,
+     "distance": 6.5,
      "flicker": 0.2
+    },
+    {
+     "type": "point",
+     "pos": [
+      1.3199999999999998,
+      1.39,
+      -0.49
+     ],
+     "color": "#33ff77",
+     "intensity": 1.1,
+     "distance": 1.4,
+     "id": "button_glow"
+    },
+    {
+     "type": "point",
+     "pos": [
+      0.0,
+      2.25,
+      1.5
+     ],
+     "color": "#ff9a3a",
+     "intensity": 0.5,
+     "distance": 1.1
     }
    ],
    "fog": {
     "color": "#0a0705",
-    "near": 2,
-    "far": 9
+    "near": 2.5,
+    "far": 10
    },
+   "exposure": 1.1,
+   "vignette": 0.62,
    "spawn": [
     0,
-    1.0,
+    0.6,
     0
    ],
    "holdEntry": true,
@@ -13524,26 +13555,28 @@
     {
      "type": "panel",
      "pos": [
-      1.45,
+      1.475,
       0.7,
-      0.5
+      -0.64
      ],
-     "rot": -90
+     "rot": -90,
+     "name": "panel"
     },
     {
      "type": "clock",
      "pos": [
-      0,
-      1.9,
-      -1.67
-     ]
+      -1.41,
+      1.92,
+      0.05
+     ],
+     "rot": 90
     },
     {
      "type": "slip",
      "pos": [
-      -0.6,
+      -0.55,
       0.004,
-      -0.9
+      0.75
      ],
      "rot": 200
     },
@@ -13552,9 +13585,728 @@
      "pos": [
       0,
       2.3,
-      0.2
+      0.0
      ],
-     "node": "lib_cagelamp"
+     "node": "lib_cagelamp",
+     "fallback": "cagebulb"
+    },
+    {
+     "type": "floorind",
+     "pos": [
+      0.0,
+      2.33,
+      1.7
+     ],
+     "rot": 180,
+     "ghost": true,
+     "name": "ind_face"
+    },
+    {
+     "type": "floorind",
+     "pos": [
+      0.0,
+      2.33,
+      1.7
+     ],
+     "rot": 180,
+     "text": " --",
+     "name": "ind_dash"
+    },
+    {
+     "type": "floorind",
+     "pos": [
+      0.0,
+      2.33,
+      1.7
+     ],
+     "rot": 180,
+     "text": " b1",
+     "name": "ind_b1",
+     "hidden": true
+    },
+    {
+     "type": "floorind",
+     "pos": [
+      0.0,
+      2.33,
+      1.7
+     ],
+     "rot": 180,
+     "text": " b2",
+     "name": "ind_b2",
+     "hidden": true
+    },
+    {
+     "type": "floorind",
+     "pos": [
+      0.0,
+      2.33,
+      1.7
+     ],
+     "rot": 180,
+     "text": " b7",
+     "name": "ind_b7",
+     "hidden": true
+    },
+    {
+     "type": "floorind",
+     "pos": [
+      0.0,
+      2.33,
+      1.7
+     ],
+     "rot": 180,
+     "text": "b12",
+     "name": "ind_b12",
+     "hidden": true
+    },
+    {
+     "type": "floorind",
+     "pos": [
+      0.0,
+      2.33,
+      1.7
+     ],
+     "rot": 180,
+     "text": " = ",
+     "name": "ind_glyph",
+     "hidden": true
+    },
+    {
+     "type": "scissorgate",
+     "pos": [
+      0.0,
+      0,
+      1.69
+     ],
+     "rot": 180,
+     "w": 1.6,
+     "h": 2.1,
+     "ext": 0.1,
+     "link": "lp_brass",
+     "name": "gate_0"
+    },
+    {
+     "type": "scissorgate",
+     "pos": [
+      0.0,
+      0,
+      1.69
+     ],
+     "rot": 180,
+     "w": 1.6,
+     "h": 2.1,
+     "ext": 0.55,
+     "link": "lp_brass",
+     "name": "gate_1",
+     "hidden": true
+    },
+    {
+     "type": "scissorgate",
+     "pos": [
+      0.0,
+      0,
+      1.69
+     ],
+     "rot": 180,
+     "w": 1.6,
+     "h": 2.1,
+     "ext": 1.0,
+     "link": "lp_brass",
+     "name": "gate_2",
+     "hidden": true
+    }
+   ],
+   "boxes": [
+    {
+     "min": [
+      -1.475,
+      0.34,
+      -1.7
+     ],
+     "max": [
+      -0.756,
+      1.29,
+      -1.644
+     ],
+     "mat": "grate",
+     "tile": 0.5,
+     "collide": false
+    },
+    {
+     "min": [
+      -1.475,
+      1.33,
+      -1.7
+     ],
+     "max": [
+      -0.756,
+      2.28,
+      -1.652
+     ],
+     "mat": "grate",
+     "tile": 0.5,
+     "collide": false
+    },
+    {
+     "min": [
+      -0.731,
+      0.34,
+      -1.7
+     ],
+     "max": [
+      -0.013,
+      1.29,
+      -1.654
+     ],
+     "mat": "grate",
+     "tile": 0.5,
+     "collide": false
+    },
+    {
+     "min": [
+      -0.731,
+      1.33,
+      -1.7
+     ],
+     "max": [
+      -0.013,
+      2.28,
+      -1.643
+     ],
+     "mat": "grate",
+     "tile": 0.5,
+     "collide": false
+    },
+    {
+     "min": [
+      0.012,
+      0.34,
+      -1.7
+     ],
+     "max": [
+      0.731,
+      1.29,
+      -1.656
+     ],
+     "mat": "grate",
+     "tile": 0.5,
+     "collide": false
+    },
+    {
+     "min": [
+      0.012,
+      1.33,
+      -1.7
+     ],
+     "max": [
+      0.731,
+      2.28,
+      -1.649
+     ],
+     "mat": "grate",
+     "tile": 0.5,
+     "collide": false,
+     "pitch": 5.0
+    },
+    {
+     "min": [
+      0.756,
+      0.34,
+      -1.7
+     ],
+     "max": [
+      1.475,
+      1.29,
+      -1.648
+     ],
+     "mat": "grate",
+     "tile": 0.5,
+     "collide": false
+    },
+    {
+     "min": [
+      0.756,
+      1.33,
+      -1.7
+     ],
+     "max": [
+      1.475,
+      2.28,
+      -1.647
+     ],
+     "mat": "grate",
+     "tile": 0.5,
+     "collide": false
+    },
+    {
+     "min": [
+      -1.5,
+      0.34,
+      -1.625
+     ],
+     "max": [
+      -1.455,
+      1.29,
+      -0.985
+     ],
+     "mat": "grate",
+     "tile": 0.5,
+     "collide": false
+    },
+    {
+     "min": [
+      -1.5,
+      1.33,
+      -1.625
+     ],
+     "max": [
+      -1.447,
+      2.28,
+      -0.985
+     ],
+     "mat": "grate",
+     "tile": 0.5,
+     "collide": false
+    },
+    {
+     "min": [
+      -1.5,
+      0.34,
+      -0.96
+     ],
+     "max": [
+      -1.449,
+      1.29,
+      -0.32
+     ],
+     "mat": "grate",
+     "tile": 0.5,
+     "collide": false
+    },
+    {
+     "min": [
+      -1.5,
+      1.33,
+      -0.96
+     ],
+     "max": [
+      -1.443,
+      2.28,
+      -0.32
+     ],
+     "mat": "grate",
+     "tile": 0.5,
+     "collide": false
+    },
+    {
+     "min": [
+      -1.5,
+      0.34,
+      -0.295
+     ],
+     "max": [
+      -1.457,
+      1.29,
+      0.345
+     ],
+     "mat": "grate",
+     "tile": 0.5,
+     "collide": false
+    },
+    {
+     "min": [
+      -1.5,
+      1.33,
+      -0.295
+     ],
+     "max": [
+      -1.441,
+      2.28,
+      0.345
+     ],
+     "mat": "grate",
+     "tile": 0.5,
+     "collide": false
+    },
+    {
+     "min": [
+      -1.5,
+      0.34,
+      0.37
+     ],
+     "max": [
+      -1.455,
+      1.29,
+      1.01
+     ],
+     "mat": "grate",
+     "tile": 0.5,
+     "collide": false
+    },
+    {
+     "min": [
+      -1.5,
+      1.33,
+      0.37
+     ],
+     "max": [
+      -1.443,
+      2.28,
+      1.01
+     ],
+     "mat": "grate",
+     "tile": 0.5,
+     "collide": false
+    },
+    {
+     "min": [
+      -1.5,
+      0.34,
+      1.035
+     ],
+     "max": [
+      -1.449,
+      1.29,
+      1.675
+     ],
+     "mat": "grate",
+     "tile": 0.5,
+     "collide": false
+    },
+    {
+     "min": [
+      -1.5,
+      1.33,
+      1.035
+     ],
+     "max": [
+      -1.443,
+      2.28,
+      1.675
+     ],
+     "mat": "grate",
+     "tile": 0.5,
+     "collide": false
+    },
+    {
+     "min": [
+      1.455,
+      0.34,
+      -1.625
+     ],
+     "max": [
+      1.5,
+      1.29,
+      -0.985
+     ],
+     "mat": "grate",
+     "tile": 0.5,
+     "collide": false
+    },
+    {
+     "min": [
+      1.452,
+      1.33,
+      -1.625
+     ],
+     "max": [
+      1.5,
+      2.28,
+      -0.985
+     ],
+     "mat": "grate",
+     "tile": 0.5,
+     "collide": false
+    },
+    {
+     "min": [
+      1.456,
+      0.34,
+      -0.295
+     ],
+     "max": [
+      1.5,
+      1.29,
+      0.345
+     ],
+     "mat": "grate",
+     "tile": 0.5,
+     "collide": false
+    },
+    {
+     "min": [
+      1.444,
+      1.33,
+      -0.295
+     ],
+     "max": [
+      1.5,
+      2.28,
+      0.345
+     ],
+     "mat": "grate",
+     "tile": 0.5,
+     "collide": false
+    },
+    {
+     "min": [
+      1.448,
+      0.34,
+      0.37
+     ],
+     "max": [
+      1.5,
+      1.29,
+      1.01
+     ],
+     "mat": "grate",
+     "tile": 0.5,
+     "collide": false
+    },
+    {
+     "min": [
+      1.454,
+      1.33,
+      0.37
+     ],
+     "max": [
+      1.5,
+      2.28,
+      1.01
+     ],
+     "mat": "grate",
+     "tile": 0.5,
+     "collide": false
+    },
+    {
+     "min": [
+      1.455,
+      0.34,
+      1.035
+     ],
+     "max": [
+      1.5,
+      1.29,
+      1.675
+     ],
+     "mat": "grate",
+     "tile": 0.5,
+     "collide": false
+    },
+    {
+     "min": [
+      1.457,
+      1.33,
+      1.035
+     ],
+     "max": [
+      1.5,
+      2.28,
+      1.675
+     ],
+     "mat": "grate",
+     "tile": 0.5,
+     "collide": false
+    },
+    {
+     "min": [
+      -1.425,
+      0.34,
+      1.65
+     ],
+     "max": [
+      -0.94,
+      1.29,
+      1.7
+     ],
+     "mat": "grate",
+     "tile": 0.5,
+     "collide": false
+    },
+    {
+     "min": [
+      -1.425,
+      1.33,
+      1.65
+     ],
+     "max": [
+      -0.94,
+      2.28,
+      1.7
+     ],
+     "mat": "grate",
+     "tile": 0.5,
+     "collide": false
+    },
+    {
+     "min": [
+      0.94,
+      0.34,
+      1.65
+     ],
+     "max": [
+      1.425,
+      1.29,
+      1.7
+     ],
+     "mat": "grate",
+     "tile": 0.5,
+     "collide": false
+    },
+    {
+     "min": [
+      0.94,
+      1.33,
+      1.65
+     ],
+     "max": [
+      1.425,
+      2.28,
+      1.7
+     ],
+     "mat": "grate",
+     "tile": 0.5,
+     "collide": false
+    },
+    {
+     "min": [
+      -1.45,
+      0.95,
+      -1.5799999999999998
+     ],
+     "max": [
+      -1.39,
+      1.07,
+      -0.2
+     ],
+     "mat": "rust",
+     "tile": 1.0,
+     "collide": false
+    },
+    {
+     "min": [
+      -1.45,
+      0.9199999999999999,
+      -0.18
+     ],
+     "max": [
+      -1.39,
+      1.04,
+      1.65
+     ],
+     "mat": "rust",
+     "tile": 1.0,
+     "collide": false,
+     "pitch": 1.6
+    },
+    {
+     "min": [
+      -1.45,
+      0.95,
+      -1.65
+     ],
+     "max": [
+      1.45,
+      1.07,
+      -1.5899999999999999
+     ],
+     "mat": "rust",
+     "tile": 1.0,
+     "collide": false
+    },
+    {
+     "min": [
+      1.39,
+      0.95,
+      -1.5799999999999998
+     ],
+     "max": [
+      1.45,
+      1.07,
+      -0.94
+     ],
+     "mat": "rust",
+     "tile": 1.0,
+     "collide": false
+    },
+    {
+     "min": [
+      1.39,
+      0.95,
+      -0.34
+     ],
+     "max": [
+      1.45,
+      1.07,
+      1.65
+     ],
+     "mat": "rust",
+     "tile": 1.0,
+     "collide": false
+    },
+    {
+     "min": [
+      1.48,
+      0.6,
+      -0.9299999999999999
+     ],
+     "max": [
+      1.5,
+      2.0,
+      -0.35000000000000003
+     ],
+     "mat": "grate",
+     "tile": 0.9,
+     "collide": false
+    },
+    {
+     "min": [
+      -0.86,
+      0,
+      1.54
+     ],
+     "max": [
+      0.86,
+      0.012,
+      1.7
+     ],
+     "mat": "rust",
+     "tile": 0.8,
+     "collide": false,
+     "shadow": false
+    },
+    {
+     "min": [
+      -1.5,
+      2.5100000000000002,
+      -0.9199999999999999
+     ],
+     "max": [
+      1.5,
+      2.6,
+      -0.78
+     ],
+     "mat": "rust",
+     "tile": 1.2,
+     "collide": false,
+     "shadow": false
+    },
+    {
+     "min": [
+      -1.5,
+      2.5100000000000002,
+      0.78
+     ],
+     "max": [
+      1.5,
+      2.6,
+      0.9199999999999999
+     ],
+     "mat": "rust",
+     "tile": 1.2,
+     "collide": false,
+     "shadow": false
     }
    ],
    "footstep": {
@@ -13564,26 +14316,26 @@
    "shots": {
     "in": {
      "pos": [
-      0.0,
+      -0.35,
       1.6,
-      1.0
+      -1.15
      ],
      "look": [
-      0.0,
-      1.35,
-      -5.0
+      0.1,
+      1.45,
+      3.7
      ]
     },
     "out": {
      "pos": [
-      0.0,
+      0.55,
       1.6,
-      0.4
+      -0.6
      ],
      "look": [
       0.0,
-      1.35,
-      -5.6
+      1.95,
+      1.7
      ]
     },
     "loop": {
@@ -13592,40 +14344,51 @@
      "seconds": 10.0,
      "pingpong": true,
      "ease": "inout",
-     "sway": 0.05
+     "sway": 0.0
     },
     "leave": {
      "from": "out",
      "to": {
       "pos": [
-       0,
-       -1.4,
-       0.4
+       0.2,
+       1.6,
+       0.9
       ],
       "look": [
-       0,
-       -6.0,
-       -1.5
+       0.0,
+       1.5,
+       4.7
       ]
      },
-     "seconds": 3.2,
+     "seconds": 3.0,
      "ease": "in",
-     "fadeOut": 1.4
+     "fadeOut": 1.1
     },
     "arrive": {
      "from": {
       "pos": [
        0.0,
        1.6,
-       2.8
+       3.3
       ],
       "look": [
        0.0,
-       1.35,
-       -3.2
+       1.5,
+       -1.7
       ]
      },
-     "to": "in",
+     "to": {
+      "pos": [
+       0.0,
+       1.6,
+       0.4
+      ],
+      "look": [
+       0.0,
+       1.45,
+       -1.7
+      ]
+     },
      "seconds": 3.0,
      "ease": "out",
      "fadeIn": 1.0
@@ -13639,49 +14402,61 @@
      "w": 1.6,
      "h": 2.2,
      "kind": "slide",
-     "mat": "lp_rust"
+     "mat": "lp_dark",
+     "sill": "rust",
+     "open": true
     }
    ],
    "entry": "cab",
    "zones": [
     {
-     "name": "cab_center",
+     "name": "cab_inside",
      "pos": [
       0.0,
       -0.6
      ],
-     "r": 0.9,
-     "ring": 0.9,
+     "r": 0.5,
+     "ring": 0.5,
+     "box": [
+      [
+       -1.5,
+       -1.7
+      ],
+      [
+       1.5,
+       0.3
+      ]
+     ],
      "silent": true
     },
     {
      "name": "panel",
      "pos": [
       0.95,
-      0.5
+      -0.49
      ],
-     "r": 0.45,
-     "ring": 1.6,
+     "r": 0.42,
+     "ring": 1.8,
      "labelAt": [
-      1.3,
-      1.55,
-      0.5
+      1.38,
+      2.0,
+      -0.64
      ]
     },
     {
      "name": "doorway",
      "pos": [
       0.0,
-      2.05
+      1.9
      ],
-     "r": 0.5,
-     "ring": 1.2,
+     "r": 0.45,
+     "ring": 1.4,
      "labelAt": [
       0.0,
-      2.35,
-      1.75
+      2.0,
+      1.95
      ],
-     "armAfter": "cab_center"
+     "armAfter": "cab_inside"
     }
    ],
    "id": "S7_C"

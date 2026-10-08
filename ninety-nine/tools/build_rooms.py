@@ -783,37 +783,155 @@ def garage(depth=44.0, open_north=False):
 
 
 def freight_elevator():
+    """S7 C, THE DESCENT (Doc 1 §5 S7, Doc 2 S7_C): a damaged freight cab,
+    3.0 x 3.4 m, entered through its front doors (S), which stay open
+    behind him until he chooses (holdEntry).
+
+    The building's, photoreal (C1): the rust shell, the diamond-plate floor
+    and kick band, the quilted steel padding (one pad peeling), the dented
+    bumper rails, the caged bulb's light. The company's, low-poly: the
+    panel of 66 buttons with one lit, the scissor gate, the segmented floor
+    indicator over the doors, the door leaves.
+
+    DESCEND is the one lit button, on the right-hand wall in the rear third
+    (ahead and to the right on the way in, its green spilling on the rust).
+    REFUSE is back at the open doors, armed only once he has been inside,
+    so walking in never refuses. Either way the cab goes down: the beats in
+    scenes.json draw the gate, close the doors (DESCEND only -- REFUSE rides
+    with them open), step the indicator B1, B2, B7, B12 and the glyph at
+    uneven intervals and move the cab, and the same doors open below."""
     W, H, D = 3.0, 2.6, 3.4
+    hx, hz = W / 2, D / 2
+    rnd = random.Random(77)
+    boxes = []
+    PAD = 0.05   # quilt thickness
+    GAP = 0.025  # the seam between pads
+    rows = [(0.34, 1.29), (1.33, 2.28)]
+
+    def pads_x(z_face, inward, x0, x1, n, peel=None):
+        """A run of pads on a wall facing +z/-z, between x0 and x1."""
+        w = (x1 - x0 - (n - 1) * GAP) / n
+        for i in range(n):
+            a = x0 + i * (w + GAP)
+            for j, (y0, y1) in enumerate(rows):
+                t = PAD + rnd.uniform(-0.008, 0.01)
+                zz = sorted([z_face, z_face + inward * t])
+                b = {"min": [round(a, 3), y0, round(zz[0], 3)], "max": [round(a + w, 3), y1, round(zz[1], 3)],
+                     "mat": "grate", "tile": 0.5, "collide": False}
+                if peel == (i, j):
+                    b["pitch"] = 5.0  # its top has come away from the wall
+                boxes.append(b)
+
+    def pads_z(x_face, inward, z0, z1, n, skip=()):
+        """A run of pads on a wall facing +x/-x, between z0 and z1."""
+        w = (z1 - z0 - (n - 1) * GAP) / n
+        centres = []
+        for i in range(n):
+            a = z0 + i * (w + GAP)
+            centres.append(a + w / 2)
+            if i in skip:
+                continue
+            for (y0, y1) in rows:
+                t = PAD + rnd.uniform(-0.008, 0.01)
+                xx = sorted([x_face, x_face + inward * t])
+                boxes.append({"min": [round(xx[0], 3), y0, round(a, 3)], "max": [round(xx[1], 3), y1, round(a + w, 3)],
+                              "mat": "grate", "tile": 0.5, "collide": False})
+        return centres
+
+    # the quilt: the rear wall (one pad peeling), both side walls, the two
+    # returns beside the doors; the right-hand wall leaves a bay bare for
+    # the panel
+    pads_x(-hz, 1, -hx + GAP, hx - GAP, 4, peel=(2, 1))
+    z0, z1 = -hz + PAD + GAP, hz - GAP
+    pads_z(-hx, 1, z0, z1, 5)
+    centres = pads_z(hx, -1, z0, z1, 5, skip=(1,))
+    pz = round(centres[1], 3)  # the panel's bay
+    for sx in (-1, 1):
+        a, b = sorted([sx * (hx - PAD - GAP), sx * 0.94])
+        for (y0, y1) in rows:
+            boxes.append({"min": [round(a, 3), y0, hz - PAD], "max": [round(b, 3), y1, hz], "mat": "grate", "tile": 0.5, "collide": False})
+    # dented bumper rails over the quilt (low enough to stay out of the
+    # collision rays' way: none of this collides; the shell does)
+    R0, R1 = 0.95, 1.07
+    boxes.append({"min": [-hx + PAD, R0, -hz + PAD + 0.07], "max": [-hx + PAD + 0.06, R1, -0.2], "mat": "rust", "tile": 1.0, "collide": False})
+    boxes.append({"min": [-hx + PAD, R0 - 0.03, -0.18], "max": [-hx + PAD + 0.06, R1 - 0.03, hz - 0.05], "mat": "rust", "tile": 1.0, "collide": False, "pitch": 1.6})
+    boxes.append({"min": [-hx + PAD, R0, -hz + PAD], "max": [hx - PAD, R1, -hz + PAD + 0.06], "mat": "rust", "tile": 1.0, "collide": False})
+    boxes.append({"min": [hx - PAD - 0.06, R0, -hz + PAD + 0.07], "max": [hx - PAD, R1, pz - 0.3], "mat": "rust", "tile": 1.0, "collide": False})
+    boxes.append({"min": [hx - PAD - 0.06, R0, pz + 0.3], "max": [hx - PAD, R1, hz - 0.05], "mat": "rust", "tile": 1.0, "collide": False})
+    # the panel's steel surround, the sill plate inside the doors (REFUSE's
+    # line), two ceiling ribs (a solid lid: no hatch, no way up -- C3)
+    boxes.append({"min": [hx - 0.02, 0.6, pz - 0.29], "max": [hx, 2.0, pz + 0.29], "mat": "grate", "tile": 0.9, "collide": False})
+    boxes.append({"min": [-0.86, 0, hz - 0.16], "max": [0.86, 0.012, hz], "mat": "rust", "tile": 0.8, "collide": False, "shadow": False})
+    for z in (-0.85, 0.85):
+        boxes.append({"min": [-hx, H - 0.09, z - 0.07], "max": [hx, H, z + 0.07], "mat": "rust", "tile": 1.2, "collide": False, "shadow": False})
+
+    lit = 41  # the one lit button (props.js panel: column 5, row 6)
+    bx, by = -0.15 + (lit % 6) * 0.06, 0.7 + 0.1 + (lit // 6) * 0.095 + 0.02
+    button = [hx - 0.06, round(by, 3), round(pz + bx, 3)]
+    ind = [0.0, 2.33, hz]  # the indicator, over the doors, facing in
     rec = {
         "name": "THE DESCENT",
         "size": [W, H, D],
-        "floor": "grate", "wall": "rust", "ceiling": "grate",
-        "tile": {"floor": 1.0, "wall": 1.5, "ceiling": 1.0},
-        "ambient": {"color": "#ffd9a8", "intensity": 0.25},
-        "sun": {"from": [0.4, 3.0, 2.5], "color": "#ffd9a8", "intensity": 0.7},
-        "lights": [{"type": "point", "pos": [0, H - 0.25, 0.2], "color": "#ffcf9a", "intensity": 6, "distance": 6, "flicker": 0.2}],
-        "fog": {"color": "#0a0705", "near": 2, "far": 9},
-        "spawn": [0, 1.0, 0],
+        "floor": "grate", "wall": "rust", "ceiling": "rust",
+        "tile": {"floor": 0.9, "wall": 2.0, "ceiling": 2.0},
+        "skirt": {"mat": "grate", "h": 0.3, "t": 0.02, "tile": 0.9},  # diamond-plate kick band
+        "ambient": {"color": "#ffd9a8", "intensity": 0.16},
+        # C2: from the doors' side, aimed at the core
+        "sun": {"from": [0.4, 3.0, 3.6], "color": "#ffd9a8", "intensity": 0.45},
+        "lights": [
+            # the caged bulb
+            {"type": "point", "pos": [0, H - 0.42, 0.0], "color": "#ffcf9a", "intensity": 7.5, "distance": 6.5, "flicker": 0.2},
+            # the lit button's real light on the real metal
+            {"type": "point", "pos": [button[0] - 0.12, button[1], button[2]], "color": "#33ff77", "intensity": 1.1, "distance": 1.4, "id": "button_glow"},
+            # the indicator's amber on the lintel
+            {"type": "point", "pos": [0.0, 2.25, hz - 0.2], "color": "#ff9a3a", "intensity": 0.5, "distance": 1.1},
+        ],
+        "fog": {"color": "#0a0705", "near": 2.5, "far": 10},
+        "exposure": 1.1,
+        "vignette": 0.62,
+        "spawn": [0, 0.6, 0],
         "holdEntry": True,  # the cab doors stay open behind him until he chooses
         "props": [
-            prop("panel", [W / 2 - 0.05, 0.7, 0.5], rot=-90),
-            prop("clock", [0, 1.9, -D / 2 + 0.03]),
-            prop("slip", [-0.6, 0.004, -0.9], rot=200),
-            glb("lib_cagelamp", [0, H - 0.3, 0.2], fallback=None),
+            prop("panel", [hx - 0.025, 0.7, pz], rot=-90, name="panel"),
+            prop("clock", [-hx + PAD + 0.04, 1.92, 0.05], rot=90),
+            prop("slip", [-0.55, 0.004, 0.75], rot=200),
+            glb("lib_cagelamp", [0, H - 0.3, 0.0], fallback="cagebulb"),
+            # the floor indicator: a housing with its dark segments, and one
+            # lit layer per reading; the beats show one and hide the last
+            prop("floorind", ind, rot=180, ghost=True, name="ind_face"),
+            prop("floorind", ind, rot=180, text=" --", name="ind_dash"),
+            prop("floorind", ind, rot=180, text=" b1", name="ind_b1", hidden=True),
+            prop("floorind", ind, rot=180, text=" b2", name="ind_b2", hidden=True),
+            prop("floorind", ind, rot=180, text=" b7", name="ind_b7", hidden=True),
+            prop("floorind", ind, rot=180, text="b12", name="ind_b12", hidden=True),
+            prop("floorind", ind, rot=180, text=" = ", name="ind_glyph", hidden=True),
+            # the scissor gate just inside the doors, folded against the
+            # jamb on arrival; three frames of its close
+            prop("scissorgate", [0.0, 0, hz - 0.01], rot=180, w=1.6, h=2.1, ext=0.1, link="lp_brass", name="gate_0"),
+            prop("scissorgate", [0.0, 0, hz - 0.01], rot=180, w=1.6, h=2.1, ext=0.55, link="lp_brass", name="gate_1", hidden=True),
+            prop("scissorgate", [0.0, 0, hz - 0.01], rot=180, w=1.6, h=2.1, ext=1.0, link="lp_brass", name="gate_2", hidden=True),
         ],
+        "boxes": boxes,
         "footstep": {"filterHz": 1800, "gain": 0.12},
     }
     s = shots_for(rec, out_dist=0.6, leave_dist=1.0, loop_seconds=10.0)
-    # The cab descends: the camera stays, the cab shakes (sway), and the
-    # leave shot drops the camera through the grate floor into black (C3).
-    s["loop"]["sway"] = 0.05
-    s["leave"] = {"from": "out", "to": pose([0, -1.4, 0.4], [0, -6.0, -1.5]), "seconds": 3.2, "ease": "in", "fadeOut": 1.4}
+    # IMG_IN: from the back of the cab, the doors open onto the dark;
+    # IMG_OUT: at the panel, the gate and the doors shut, the indicator.
+    # Doc 2 KLING C: the camera does not move, the cab does not shake --
+    # the ride itself is the cab moving (scenes.json `ride`), never a shot.
+    s["in"] = pose([-0.35, EYE, -1.15], [0.1, 1.45, hz + 2.0])
+    s["out"] = pose([0.55, EYE, -0.6], [0.0, 1.95, hz])
+    s["loop"] = {"from": "in", "to": "out", "seconds": 10.0, "pingpong": True, "ease": "inout", "sway": 0.0}
+    s["leave"] = {"from": "out", "to": pose([0.2, EYE, 0.9], [0.0, 1.5, hz + 3.0]), "seconds": 3.0, "ease": "in", "fadeOut": 1.1}
+    s["arrive"] = {"from": pose([0.0, EYE, hz + 1.6], [0.0, 1.5, -hz]), "to": pose([0.0, EYE, 0.4], [0.0, 1.45, -hz]), "seconds": 3.0, "ease": "out", "fadeIn": 1.0}
     rec["shots"] = s
-    door(rec, "cab", "S", 0.0, w=1.6, h=2.2, kind="slide", mat="lp_rust")
+    door(rec, "cab", "S", 0.0, w=1.6, h=2.2, kind="slide", mat="lp_dark", sill="rust", open=True)
     rec["entry"] = "cab"
-    zone(rec, "cab_center", [0.0, -0.6], r=0.9, ring=0.9, silent=True)
-    zone(rec, "panel", [0.95, 0.5], r=0.45, ring=1.6, label_at=[1.3, 1.55, 0.5])
-    zone(rec, "doorway", [0.0, 2.05], r=0.5, ring=1.2, armAfter="cab_center", label_at=[0.0, 2.35, 1.75])
+    # REFUSE arms once he has been inside the cab: walking in through the
+    # doorway must never read as refusing it
+    zone(rec, "cab_inside", [0.0, -0.6], r=0.5, ring=0.5, box=[[-hx, -hz], [hx, 0.3]], silent=True)
+    zone(rec, "panel", [0.95, button[2]], r=0.42, ring=1.8, label_at=[hx - 0.12, 2.0, pz])
+    zone(rec, "doorway", [0.0, 1.9], r=0.45, ring=1.4, armAfter="cab_inside", label_at=[0.0, 2.0, 1.95])
     return rec
 
 

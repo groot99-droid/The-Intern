@@ -529,6 +529,118 @@ const BUILDERS = {
   // ---- polish: S5-S6 desk / garage -- end ----
   //
   // ---- polish: S7 descent -- begin (that scene's new props go between these lines) ----
+  // The cab's floor indicator (Doc 2 S7_C: "a floor indicator with a
+  // segmented display"): three 7-segment cells in a dark housing, facing
+  // +z, origin at the bottom centre of its back. `ghost` draws the housing
+  // and every unlit segment; `text` (three characters, one per cell, ' ' for
+  // a dark cell) draws only the lit segments, so the beats step the display
+  // by showing one lit layer and hiding the last (B1, B2, B7, B12 and '='
+  // -- three bars, the glyph that is not a number). Each layer is one merged
+  // mesh per material, not a mesh per segment.
+  floorind(mats, o) {
+    const g = new THREE.Group();
+    const SEG = { 0: 'abcdef', 1: 'bc', 2: 'abged', 3: 'abgcd', 4: 'fgbc', 5: 'afgcd', 6: 'afgedc', 7: 'abc', 8: 'abcdefg', 9: 'abcdfg', b: 'cdefg', '-': 'g', '=': 'adg', ' ': '' };
+    const W = 0.48, H = 0.2, pitch = 0.12, dw = 0.064, dh = 0.112, st = 0.014, cy = H / 2;
+    const merge = (parts, slot, opts = {}) => {
+      if (!parts.length) return;
+      const pos = [], nor = [];
+      for (const p of parts) {
+        const q = p.index ? p.toNonIndexed() : p;
+        pos.push(...q.attributes.position.array);
+        nor.push(...q.attributes.normal.array);
+      }
+      const geo = new THREE.BufferGeometry();
+      geo.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3));
+      geo.setAttribute('normal', new THREE.Float32BufferAttribute(nor, 3));
+      const m = new THREE.Mesh(geo, mats.get(slot));
+      m.castShadow = !!opts.shadow;
+      m.receiveShadow = true;
+      g.add(m);
+    };
+    const part = (w, h, d, x, y, z) => new THREE.BoxGeometry(w, h, d).translate(x, y, z);
+    const segs = (cx, letters, z, d) => {
+      const out = [];
+      const at = { a: [0, dh / 2, true], d: [0, -dh / 2, true], g: [0, 0, true], b: [dw / 2, dh / 4, false], c: [dw / 2, -dh / 4, false], e: [-dw / 2, -dh / 4, false], f: [-dw / 2, dh / 4, false] };
+      for (const L of letters) {
+        const [sx, sy, horiz] = at[L];
+        out.push(horiz ? part(dw - st, st, d, cx + sx, cy + sy, z) : part(st, dh / 2 - st, d, cx + sx, cy + sy, z));
+      }
+      return out;
+    };
+    if (o.ghost) {
+      merge([part(W, H, 0.05, 0, cy, 0.025), part(W + 0.04, 0.02, 0.06, 0, H + 0.01, 0.03), part(W + 0.04, 0.02, 0.06, 0, -0.01, 0.03)], 'lp_dark', { shadow: true });
+      merge([part(W - 0.06, H - 0.05, 0.004, 0, cy, 0.052)], 'lp_black');
+      let ghost = [];
+      for (let i = 0; i < 3; i++) ghost = ghost.concat(segs((i - 1) * pitch, 'abcdefg', 0.056, 0.003));
+      merge(ghost, 'lp_dark');
+    }
+    if (o.text) {
+      let lit = [];
+      const t = String(o.text).padStart(3, ' ').slice(-3);
+      for (let i = 0; i < 3; i++) lit = lit.concat(segs((i - 1) * pitch, SEG[t[i]] || '', 0.059, 0.005));
+      merge(lit, o.mat || 'lp_sodium');
+    }
+    return g;
+  },
+  // The cab's scissor gate (Doc 2 S7_C: low-poly, "scissor gate closed"):
+  // vertical bars joined by tiers of crossed links, folded against the
+  // jamb at x = -w/2 and drawn across the opening by `ext` (0.1 folded ..
+  // 1 shut). Three placements at three `ext`s, shown one after another,
+  // are its PS1 stop-motion close (C5's four-frame logic). Visual only: the
+  // doorway's own leaf is what blocks. Faces +z, origin at the floor.
+  scissorgate(mats, o) {
+    const g = new THREE.Group();
+    const w = o.w || 1.6, h = o.h || 2.1, bars = o.bars || 7, tiers = o.tiers || 2;
+    const ext = Math.min(1, Math.max(0.06, o.ext === undefined ? 0.1 : o.ext));
+    const span = w * ext, x0 = -w / 2;
+    const merge = (parts, slot) => {
+      const pos = [], nor = [];
+      for (const p of parts) {
+        const q = p.index ? p.toNonIndexed() : p;
+        pos.push(...q.attributes.position.array);
+        nor.push(...q.attributes.normal.array);
+      }
+      const geo = new THREE.BufferGeometry();
+      geo.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3));
+      geo.setAttribute('normal', new THREE.Float32BufferAttribute(nor, 3));
+      const m = new THREE.Mesh(geo, mats.get(slot));
+      m.castShadow = true;
+      m.receiveShadow = true;
+      g.add(m);
+    };
+    const bay = span / (bars - 1);
+    const lo = 0.12, hi = h - 0.06, th = (hi - lo) / tiers;
+    const uprights = [];
+    for (let i = 0; i < bars; i++) uprights.push(new THREE.BoxGeometry(0.026, h - 0.04, 0.026).translate(x0 + i * bay, (h - 0.04) / 2 + 0.02, 0.016));
+    uprights.push(new THREE.BoxGeometry(w + 0.08, 0.05, 0.06).translate(0, h + 0.025, 0.02)); // the top track
+    uprights.push(new THREE.BoxGeometry(span + 0.04, 0.03, 0.04).translate(x0 + span / 2, 0.035, 0.016)); // the foot rail
+    const links = [];
+    const len = Math.hypot(bay, th), ang = Math.atan2(bay, th);
+    for (let i = 0; i < bars - 1; i++) {
+      for (let k = 0; k < tiers; k++) {
+        for (const s of [-1, 1]) links.push(new THREE.BoxGeometry(0.018, len, 0.01).rotateZ(s * ang).translate(x0 + (i + 0.5) * bay, lo + (k + 0.5) * th, 0.036 + (s > 0 ? 0.012 : 0)));
+      }
+    }
+    merge(uprights, o.mat || 'lp_dark');
+    merge(links, o.link || 'lp_grey');
+    return g;
+  },
+  // A caged bulb under the cab's ceiling (the fallback for the catalog's
+  // cage lamp): a ceiling plate, the bulb and its wire guard. Origin at the
+  // bottom of the guard, like the catalog model; `h` is how far up the
+  // ceiling is.
+  cagebulb(mats, o) {
+    const g = new THREE.Group();
+    const h = o.h || 0.3;
+    g.add(box(mats, 'lp_dark', 0.22, 0.03, 0.22, 0, h - 0.03, 0, { castShadow: false }));
+    g.add(box(mats, 'lp_fluoro', 0.09, 0.12, 0.09, 0, h - 0.17, 0, { castShadow: false }));
+    for (const [x, z] of [[-0.08, -0.08], [0.08, -0.08], [-0.08, 0.08], [0.08, 0.08]]) g.add(box(mats, 'lp_dark', 0.012, h - 0.03, 0.012, x, 0, z, { castShadow: false }));
+    g.add(box(mats, 'lp_dark', 0.18, 0.012, 0.18, 0, 0, 0, { castShadow: false }));
+    const glow = new THREE.Mesh(new THREE.PlaneGeometry(0.8, 0.8), mats.get('glow_fluoro'));
+    glow.rotation.x = Math.PI / 2; glow.position.y = 0.02;
+    g.add(glow);
+    return g;
+  },
   // ---- polish: S7 descent -- end ----
   //
   // ---- polish: S8 + endings -- begin (that scene's new props go between these lines) ----

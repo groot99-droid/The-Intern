@@ -671,19 +671,93 @@
               "via": "CN_CORRIDOR_OFFICE",
               "beat": [
                 {
-                  "sfxCue": "keyboard-press"
+                  "sfxCue": "deadbolt",
+                  "waitMs": 300
                 },
                 {
-                  "seal": true
+                  "lookAt": "ind_face",
+                  "lookY": -0.62,
+                  "seconds": 1.4
                 },
                 {
-                  "waitMs": 1300
+                  "sfxCue": "door-rattle",
+                  "show": "gate_1",
+                  "hide": "gate_0",
+                  "waitMs": 170
+                },
+                {
+                  "sfxCue": "door-rattle",
+                  "show": "gate_2",
+                  "hide": "gate_1",
+                  "waitMs": 500
+                },
+                {
+                  "sfxCue": "metal-tear-screech",
+                  "seal": true,
+                  "waitMs": 1100
+                },
+                {
+                  "sfxCue": "door-thud",
+                  "show": "ind_b1",
+                  "hide": "ind_dash",
+                  "waitMs": 900
+                },
+                {
+                  "lookAt": "ind_face",
+                  "lookY": -0.62,
+                  "seconds": 0.5
                 },
                 {
                   "ride": {
-                    "drop": 14,
-                    "seconds": 11
+                    "drop": 3.0,
+                    "seconds": 2.1,
+                    "shake": 0
                   }
+                },
+                {
+                  "show": "ind_b2",
+                  "hide": "ind_b1",
+                  "ride": {
+                    "drop": 7.5,
+                    "seconds": 2.9,
+                    "shake": 0
+                  }
+                },
+                {
+                  "show": "ind_b7",
+                  "hide": "ind_b2",
+                  "ride": {
+                    "drop": 6.0,
+                    "seconds": 1.6,
+                    "shake": 0
+                  }
+                },
+                {
+                  "show": "ind_b12",
+                  "hide": "ind_b7",
+                  "ride": {
+                    "drop": 3.5,
+                    "seconds": 2.7,
+                    "shake": 0
+                  }
+                },
+                {
+                  "sfxCue": "door-thud",
+                  "show": "ind_glyph",
+                  "hide": "ind_b12",
+                  "waitMs": 1500
+                },
+                {
+                  "sfxCue": "door-rattle",
+                  "show": "gate_1",
+                  "hide": "gate_2",
+                  "waitMs": 170
+                },
+                {
+                  "sfxCue": "door-rattle",
+                  "show": "gate_0",
+                  "hide": "gate_1",
+                  "waitMs": 450
                 }
               ]
             },
@@ -692,31 +766,95 @@
               "zone": "doorway",
               "exit": "cab",
               "via": "CN_CORRIDOR_OFFICE",
+              "approach": [
+                {
+                  "sfxCue": "door-buzz"
+                }
+              ],
               "beat": [
                 {
                   "caption": "elevator.refuse",
-                  "holdMs": 3400
+                  "holdMs": 3800,
+                  "sfxCue": "door-buzz"
                 },
                 {
                   "moveTo": {
                     "pos": [
                       0.0,
-                      0.2
+                      0.6
                     ],
                     "seconds": 0.9
                   }
                 },
                 {
-                  "seal": true
+                  "sfxCue": [
+                    "door-thud",
+                    "door-rattle"
+                  ],
+                  "show": "gate_2",
+                  "hide": "gate_0"
                 },
                 {
-                  "waitMs": 1300
+                  "lookAt": "ind_face",
+                  "lookY": -0.5,
+                  "seconds": 0.9
                 },
                 {
+                  "show": "ind_b1",
+                  "hide": "ind_dash",
                   "ride": {
-                    "drop": 14,
-                    "seconds": 11
+                    "drop": 3.0,
+                    "seconds": 2.1,
+                    "shake": 0
                   }
+                },
+                {
+                  "show": "ind_b2",
+                  "hide": "ind_b1",
+                  "ride": {
+                    "drop": 7.5,
+                    "seconds": 2.9,
+                    "shake": 0
+                  }
+                },
+                {
+                  "show": "ind_b7",
+                  "hide": "ind_b2",
+                  "ride": {
+                    "drop": 6.0,
+                    "seconds": 1.6,
+                    "shake": 0
+                  }
+                },
+                {
+                  "sfxCue": "metal-tear-screech",
+                  "show": "ind_b12",
+                  "hide": "ind_b7",
+                  "close": "cab",
+                  "seconds": 0.7,
+                  "ride": {
+                    "drop": 3.5,
+                    "seconds": 2.7,
+                    "shake": 0
+                  }
+                },
+                {
+                  "sfxCue": "door-thud",
+                  "show": "ind_glyph",
+                  "hide": "ind_b12",
+                  "waitMs": 1500
+                },
+                {
+                  "sfxCue": "door-rattle",
+                  "show": "gate_1",
+                  "hide": "gate_2",
+                  "waitMs": 170
+                },
+                {
+                  "sfxCue": "door-rattle",
+                  "show": "gate_0",
+                  "hide": "gate_1",
+                  "waitMs": 450
                 }
               ]
             }
@@ -732,7 +870,22 @@
               "label": "JUMP",
               "zone": "gap",
               "exit": "drop",
-              "via": "fall"
+              "via": "fall",
+              "approach": [
+                {
+                  "sfxCue": "concrete-grains",
+                  "waitMs": 2800
+                },
+                {
+                  "sfxCue": "concrete-grains"
+                }
+              ],
+              "beat": [
+                {
+                  "sfxCue": "concrete-grains",
+                  "waitMs": 250
+                }
+              ]
             },
             "resist": {
               "label": "TURN BACK",
@@ -741,13 +894,22 @@
               "via": "fall",
               "beat": [
                 {
-                  "sfxCue": "concrete-grains"
+                  "sfxCue": [
+                    "door-thud",
+                    "concrete-grains"
+                  ],
+                  "caption": "edge.only",
+                  "holdMs": 3200
                 },
                 {
                   "shake": {
-                    "seconds": 1.4,
+                    "seconds": 1.6,
                     "amount": 0.05
                   }
+                },
+                {
+                  "sfxCue": "concrete-grains",
+                  "waitMs": 400
                 }
               ]
             }
