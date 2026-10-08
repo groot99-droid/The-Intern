@@ -931,7 +931,9 @@ def freight_elevator():
     # doorway must never read as refusing it
     zone(rec, "cab_inside", [0.0, -0.6], r=0.5, ring=0.5, box=[[-hx, -hz], [hx, 0.3]], silent=True)
     zone(rec, "panel", [0.95, button[2]], r=0.42, ring=1.8, label_at=[hx - 0.12, 2.0, pz])
-    zone(rec, "doorway", [0.0, 1.9], r=0.45, ring=1.4, armAfter="cab_inside", label_at=[0.0, 2.0, 1.95])
+    # the whole doorway, jamb to jamb, from just inside the gate line out
+    # into the landing: there is no slipping out past it once armed
+    zone(rec, "doorway", [0.0, 1.95], r=0.45, ring=1.0, box=[[-0.8, 1.55], [0.8, 2.5]], armAfter="cab_inside", label_at=[0.0, 2.0, 1.95])
     return rec
 
 
