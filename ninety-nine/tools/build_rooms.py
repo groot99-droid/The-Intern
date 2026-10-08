@@ -636,8 +636,8 @@ def desk_void(monitor_on=False):
         {"type": "point", "pos": [0, H - 0.45, 0.1], "color": "#fff0d8", "intensity": 1.1, "distance": 3.0},
         {"type": "point", "pos": [0.32, 1.15, 0.25], "color": "#7ad9a0", "intensity": 3, "distance": 3.5, "id": "terminal_glow", "off": not monitor_on},
         {"type": "point", "pos": [3.75, 1.15, -1.9], "color": "#8fb0d8", "intensity": 2.6, "distance": 3.5, "id": "harlowe_glow", "off": True},
-        {"type": "point", "pos": [-3.45, 1.5, -2.7], "color": "#33ff77", "intensity": 2.4, "distance": 4.5, "id": "tube_lamp", "off": True},
-        {"type": "point", "pos": [4.3, 1.7, 2.8], "color": "#ff3a2a", "intensity": 2.2, "distance": 4.5, "id": "flag_lamp", "off": True},
+        {"type": "point", "pos": [-3.4, 1.55, -2.85], "color": "#33ff77", "intensity": 1.3, "distance": 4.0, "id": "tube_lamp", "off": True},
+        {"type": "point", "pos": [4.35, 1.75, 2.85], "color": "#ff3a2a", "intensity": 1.3, "distance": 4.0, "id": "flag_lamp", "off": True},
     ]
     rec = {
         "name": "THE REQUISITION" if monitor_on else "THE DESK",
@@ -675,13 +675,13 @@ def desk_void(monitor_on=False):
     rec["entry"] = "front"
     # S5: STAPLE at the chair (the label over the stapler) / WAKE THE TERMINAL
     # at Harlowe's desk (coming near it wakes the screen: scenes.json `approach`)
-    zone(rec, "desk", [0.0, 0.95], r=0.45, ring=2.6, label_at=[-0.46, 1.2, 0.06])
+    zone(rec, "desk", [0.0, 1.05], r=0.5, ring=2.6, label_at=[-0.46, 1.2, 0.06])
     zone(rec, "terminal", [3.7, -1.25], r=0.5, ring=2.6, label_at=[3.75, 1.5, -2.4])
     # S6: ORDER at the tube station / FLAG at the call box; READ (no label, never
     # commits) sits him back down in front of the requisition
     zone(rec, "tube", [-3.17, -2.5], r=0.5, ring=2.6, label_at=[-3.8, 2.25, -3.0])
     zone(rec, "flagbox", [3.97, 2.59], r=0.5, ring=2.6, label_at=[4.6, 2.05, 3.0])
-    zone(rec, "read", [0.0, 0.95], r=0.45, ring=2.0, label_at=[0.32, 1.45, -0.17])
+    zone(rec, "read", [0.0, 1.05], r=0.5, ring=2.0, label_at=[0.32, 1.45, -0.17])
     return rec
 
 
