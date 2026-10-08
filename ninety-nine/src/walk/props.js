@@ -772,7 +772,7 @@ const BUILDERS = {
     const g = new THREE.Group();
     const h = o.h || 2.6;
     const kind = o.kind || 'ahead';
-    g.add(cylinder(mats, 'lp_grey', 0.035, h, 0, 0, 0, 6));
+    g.add(cylinder(mats, 'lp_grey', 0.035, h, 0, 0, 0, 6, { collide: true })); // he walks round it, not through it
     if (kind === 'ahead' || kind === 'noparking') {
       const disc = (slot, r, z) => {
         const c = new THREE.Mesh(new THREE.CylinderGeometry(r, r, 0.02, 14), mats.get(slot));

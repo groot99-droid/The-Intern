@@ -1173,6 +1173,10 @@ def street():
     props.append(prop("lampglow", [0, 2.95, D / 2 - 0.25], w=0.3, d=0.16, glow=0.8))
     props.append(prop("wallplate", [0, 2.9, D / 2 - 0.14], w=0.36, h=0.14, mat="lp_dark"))
     lights.append({"type": "point", "pos": [0, 2.7, D / 2 - 0.6], "color": "#ffd9a0", "intensity": 1.6, "distance": 5})
+    # dawn through his open street door, up the stairs he comes down: just
+    # inside the doorway, on the stairs' bottom landing (the street is joined
+    # and its lights fade up as he starts down -- night turns to dawn there)
+    lights.append({"type": "point", "pos": [0, 1.7, D / 2 + 0.9], "color": "#ffc48a", "intensity": 3.2, "distance": 8})
 
     rec = {
         "name": "THE COMMUTE",

@@ -2429,6 +2429,17 @@
      "color": "#ffd9a0",
      "intensity": 1.6,
      "distance": 5
+    },
+    {
+     "type": "point",
+     "pos": [
+      0,
+      1.7,
+      32.9
+     ],
+     "color": "#ffc48a",
+     "intensity": 3.2,
+     "distance": 8
     }
    ],
    "fog": {
