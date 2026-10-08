@@ -539,8 +539,8 @@ def cubicle_floor():
     rec = {
         "name": "THE FLOOR",
         "size": [W, H, D],
-        "floor": "carpet", "wall": "plaster", "ceiling": "ceiling_tile",
-        "tile": {"floor": 1.2, "wall": 2.0, "ceiling": 1.2},
+        "floor": "carpet", "wall": "plaster_blown", "ceiling": "ceiling_tile",
+        "tile": {"floor": 1.2, "wall": 3.0, "ceiling": 1.2},
         "skirt": {"mat": "plaster_dark", "h": 0.1, "t": 0.02},
         "ambient": {"color": "#e6ecdc", "intensity": 0.22},
         "sun": {"from": [2.0, 5.0, 24.0], "color": "#f2f6ea", "intensity": 0.4},

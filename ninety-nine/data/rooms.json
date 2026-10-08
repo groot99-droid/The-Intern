@@ -4223,11 +4223,11 @@
     38.0
    ],
    "floor": "carpet",
-   "wall": "plaster",
+   "wall": "plaster_blown",
    "ceiling": "ceiling_tile",
    "tile": {
     "floor": 1.2,
-    "wall": 2.0,
+    "wall": 3.0,
     "ceiling": 1.2
    },
    "skirt": {
