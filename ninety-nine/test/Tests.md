@@ -6,28 +6,42 @@ tags: [game-code]
 
 ← [[ninety-nine/App Overview|App Overview]]
 
-In-browser test suite (no Node on this machine, so it's a fetch-and-assert harness, not a CI script).
+In-browser test suite (no Node on this machine, so it's a fetch-and-assert harness, not a CI script). Everything checkable as "run this pure function", "fetch this URL" or "build this room and look at it" runs here, against the continuous walk: thresholds and zones ([[ninety-nine/src/Source Code|src/spine.js]], `director._debug()`), the attach maths ([[ninety-nine/src/world/World|src/world/anchors.js]] is pure), `build_rooms.py`'s `check_room()` rules re-checked on the shipped `rooms.json`, and the director end to end.
 
-> **Stale since 2026-10-03.** The suite still tests the cinematic build that the continuous walk replaced. Until it is ported, several cases will not load or will fail:
-> - `index.html` still lists `minigame.leak.js` and `minigame.hold.js`, which were deleted with the mini-games.
-> - `logic.spine.js`, `rooms.validate.js` and `stage.shots.js` import the removed `src/router.js` (`planTransition`, `roomOfEntry`, `choiceEntryIndex`…), so they fail to load.
-> - `manifest.validate.js` and `rooms.validate.js` check the old data model: per-scene sequence entries and choice blocks, mini-game modules, every key a scene+render / ending / `SET_*` (`CN_*` keys fail), and in/out/loop/leave/arrive shots in every room (connectors have only `in`).
->
-> The pure checks (`canon.text.js`, `audio.drone.js`, `audio.mix.js`, and the `state.js` parts of `logic.spine.js`) still hold. What a port should test now: thresholds and zones (`src/spine.js`, `director._debug()`), the attach maths (`src/world/anchors.js` is pure), and `build_rooms.py`'s `check_room()` rules. The `?autopilot=` walkthrough (`src/dev/autopilot.js`) drives the real game end to end.
+- **[[ninety-nine/test/harness.js|harness.js]]** — tiny browser-based test runner: `runCase(name, fn)`, `assert`, `assertEqual`, `loadAndRunCase(path)`, `renderResults()`. A case module that will not load (a missing file, or a module it imports that is gone) is a failure, never a skip.
+- **[[ninety-nine/test/index.html|index.html]]** — the page that loads the harness and runs every case below, then shows the results and the manual checklist (what Doc 4 says cannot be automated). `?only=friction,world.anchors` runs just those cases. When it finishes it sets `window.__TEST_RESULTS__ = { passed, failed, results }` for the optional runner.
+- **[[ninety-nine/test/rooms.html|rooms.html]]** — not a test: a dev preview that plays a shot of any room from `data/rooms.json`, or walks it alone (`?room=S5_H`, `&shot=in`, `&walk=1`), connectors included.
 
-- **`harness.js`** — tiny browser-based test runner; every assertion expressible as "run this pure function and check the output" or "fetch a URL and check it" runs here.
-- **`index.html`** — the page that loads the harness and all cases.
-- **`rooms.html`** — not a test: a dev preview that plays a shot of any room from `data/rooms.json`, or walks it alone (`?room=S5_H`, `&shot=in`, `&walk=1`), connectors included.
+## How to run it
 
-## `cases/` (7 files)
-- **`logic.spine.js`** — Doc 4 §11.1 acceptance tests, Doc 1 §7.2's four worked runs and the full 256-path sweep: pure `state.js` logic. It also has transition checks against the removed `router.js` (see above).
-- **`canon.text.js`** — Doc 4 §11.2: the C4 check ("the word 'you' appears exactly once in the entire game"), plus the S0 form's three WILLING / NOT WILLING pairs.
-- **`manifest.validate.js`** — Doc 4 §4.2's validator: "file exists" becomes `fetch(url, {method:'HEAD'})` returning 200 (no Node `fs`). Still written against the sequence-entry `scenes.json`.
-- **`audio.drone.js`** — Doc 4 §11.3 drone-continuity check (`osc.start()` called exactly once); the real by-ear gate still has to happen manually.
-- **`audio.mix.js`** — the mix pass: bed trims pull the 17 dB loudness spread into a window, one-shot trims go the right way, every `music` mood in `scenes.json` exists, nothing plays before the gesture.
-- **`rooms.validate.js`** — `data/rooms.json`: keys map to real scene+render, aliases resolve, prop types have builders, spawns sit inside the shell, C3 (no open sides without fog/box), C8 (one clock per room), one 99 slip per room after S1; plus the removed `choiceEntryIndex()`.
-- **`stage.shots.js`** — the stage against the real data: every room builds (with box fallbacks when the prop library is absent), every shot plays to its end on a stubbed clock, and `screenRect()` finds the terminal. It runs headless as a smoke test of the data and the shot maths. It still imports `router.js`.
+1. `python tools/dev_server.py 8000` from `ninety-nine/` (plain `python -m http.server` caches the modules; see [[ninety-nine/tools/dev_server.py|dev_server.py]]).
+2. Open `http://localhost:8000/test/`. The pure cases finish in about a second. The WebGL cases (`stage.shots`, `world.reach`, `director.flow`) take seconds on a GPU; in a software renderer the whole page takes about a minute and a half.
+3. Green means every row passed. A WebGL case in a browser without WebGL reports one passing "skipped" row instead of failing.
+
+## `cases/` (11 files)
+
+Pure (no WebGL):
+
+- **[[ninety-nine/test/cases/logic.spine.js|logic.spine.js]]** — Doc 4 §11.1 acceptance tests, Doc 1 §7.2's four worked runs and the 256-path sweep (27 / 27 / 202), render tracking (19 / 27 / 202 / 8 RETAINED), `peekRenderFor` == `renderFor`, the S0 intake seed, EARLY_EXIT, DEBUG_RESUME false. Then `spine.js`: `outcomesFor()` predicts the room behind every threshold (and the ending after S8) on all 256 paths × both seeds; renders flip only on S0→S1, S2→S3, S4→S5, S6→S7; every branch has one `next`; `zonesOf` / `baseOf` / `cloneState`.
+- **[[ninety-nine/test/cases/friction.js|friction.js]]** — `friction.js`: the hesitation curve (0 before t0, full after t1), alternations between the two thresholds with the debounce, the value bounded 0..1, inactive time ignored.
+- **[[ninety-nine/test/cases/world.anchors.js|world.anchors.js]]** — `world/anchors.js`: every wall pairing (N/S/E/W exit × N/S/E/W entry) lands the entry on the exit facing back with the room beyond the door; a room → connector → room chain carries the drop; vertical anchors coincide without the turn; `doorAnchor()` on each wall; the real S4_C → stairwell → S5_H chain.
+- **[[ninety-nine/test/cases/canon.text.js|canon.text.js]]** — Doc 4 §11.2: the C4 check ("the word 'you' appears exactly once in the entire game"): none in company copy (the manager's line excepted), one per ending card in its signoff, none in any threshold / beat-zone / S0 label in `scenes.json`, none in the new `system.json` keys; plus the S0 form's three WILLING / NOT WILLING pairs.
+- **[[ninety-nine/test/cases/manifest.validate.js|manifest.validate.js]]** — Doc 4 §4.2's validator ("file exists" becomes `fetch(url, {method:'HEAD'})`): one `next` per scene; the schema (an unknown branch / threshold / beat key fails: the director would ignore it); every room, zone, exit door and `CN_*` connector exists; every threshold that can lead out of its room has an exit and a connector (or falls, or names `to`); every door / prop / light / actor / shot a beat names, `bumpCount`'s door, every sfx cue, audio file and caption text key exists; no video-era or mini-game key and `src/minigames/` is gone; S0 X only, C/H elsewhere; the spine reaches E in 9 scenes; every ending's room, zone and shots.
+- **[[ninety-nine/test/cases/audio.drone.js|audio.drone.js]]** — Doc 4 §11.3 / C7: `unlock()` never starts the drone, `startDrone()` starts it exactly once (an `OscillatorNode.start` spy and the audio module's own debug hook), `advanceScene(0..8)` never throws. The real by-ear gate still has to happen manually.
+- **[[ninety-nine/test/cases/audio.mix.js|audio.mix.js]]** — the mix pass: bed trims pull the 17 dB loudness spread into a window, one-shot trims go the right way, every `music` mood in `scenes.json` exists, nothing plays before the gesture.
+- **[[ninety-nine/test/cases/rooms.validate.js|rooms.validate.js]]** — `data/rooms.json`: keys map to a scene+render, an ending, a `SET_*` or a `CN_*` connector; aliases resolve and change only spawn / shots / name; prop types have builders and spawns sit inside the shell; every room but S0_X has an entry door or anchor; doors fit their walls (unique, inside the run, no overlaps, under the ceiling); zones on the floor and out of solid boxes; connectors have a seal on the way in, an opening on the way out, and never climb; C3 (no open side without fog / box), C6 (hands only in S0_X and SE_PEND, no `reach`), C8 (one clock per set, none in a connector), one 99 slip per set after S1.
+
+WebGL:
+
+- **[[ninety-nine/test/cases/stage.shots.js|stage.shots.js]]** — the stage against the real data: every room, connectors included, builds through `stage.preview()` (box fallbacks); `world.attach()` lines a connector and the next room up door to door; S2_C's `call` shot runs its 4 s of stage time; a pingpong loop resolves at once; `holdPose()` parks and `carry()` lands; `screenRect()` finds the CRT in S0_X; doors open and close and stop / start blocking; S4_C's manager walks his path.
+- **[[ninety-nine/test/cases/world.reach.js|world.reach.js]]** — one row per room, with the real prop library: a 0.4 m navgrid raycast the way `walk/controls.js` moves (a floor under every cell; knee and chest rays, step + 0.35 m long, per step; at most 0.45 m up, 1 m down), flood-filled from 1.8 m inside the entry (the spawn for S0_X; the dive is swum in 3D), must reach every threshold zone, beat zone, ending zone and exit door's inside approach, and walk into each exit doorway once it opens. Unreachable ones are named. Controls on the flood: it never leaves the shell and never stands inside a solid.
+- **[[ninety-nine/test/cases/director.flow.js|director.flow.js]]** — the director in the real game: an iframe of `index.html?start=S3&render=C`, driven through `window.__NINETY_NINE__` by teleporting the candidate. PART THE CURTAIN commits, the curtain opens onto a corridor with S4 C already behind it, crossing it starts S4 and drops S3 and the corridor; TAKE THE SIDE DOOR does the same down a stairwell into S5 C, 3 m lower; the drone never restarts. One 60 s budget.
 
 The mini-game cases (`minigame.leak.js`, `minigame.hold.js`) were deleted with the mini-games. `video.audiotrack.js`, `video.faststart.js` and `renderer.softloop.js` went earlier, with the clips.
 
-Headless: `python tools/dev_server.py 8000`, then drive `/test/` with Playwright (this repo has no Node CI, but any machine with Chromium can run the page).
+## Optional: the Node runners (dev only)
+
+Conveniences for a machine that happens to have Node and Playwright with Chromium; nothing in the game or the suite needs them. Both start `tools/dev_server.py` on a free port unless given `--base=http://localhost:8000`, and run Chromium headless with SwiftShader WebGL (`--use-gl=angle --use-angle=swiftshader --enable-unsafe-swiftshader`). If Playwright is not on Node's require path, point `PLAYWRIGHT` at the package folder. Shared bits live in [[ninety-nine/tools/lib/devserver.cjs|tools/lib/devserver.cjs]].
+
+- **[[ninety-nine/tools/run_tests.cjs|tools/run_tests.cjs]]** — `node tools/run_tests.cjs [case ...]` opens `/test/index.html`, waits for `window.__TEST_RESULTS__`, prints every row, and exits non-zero on any failure.
+- **[[ninety-nine/tools/walkthrough.cjs|tools/walkthrough.cjs]]** — plays whole games with the autopilot (`index.html?autopilot=PLAN&seed=S&speed=3`). By default: SSSSSSSS (C) → ASSIMILATION, RRRRRRRR (H) → EXPULSION, SSSSSSSR (C) → RETAINED, SRSRSRSR (C) → PENDING, and RRRRRRRR (H) bailing at S4 → PENDING; `node tools/walkthrough.cjs SSSSSSSR --seed=C` plays one. It screenshots every scene change and the ending card into `tools/out/walkthrough/<path>/` (git-ignored) with the autopilot's log, checks the card's title against `text/endings.json` for the ending `state.js` resolves for that plan, and fails on a page or console error or 90 s without progress. In SwiftShader a path takes three to eight minutes.

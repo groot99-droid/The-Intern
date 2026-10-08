@@ -62,10 +62,12 @@ export function renderResults(container) {
   return passCount === results.length;
 }
 
-// Forward-compatible loader: cases for later phases (manifest.validate.js,
-// canon.text.js, video.audiotrack.js, minigame.leak.js) don't exist until
-// Phase 3/4/6. Missing modules are skipped with a note rather than breaking
-// the harness, mirroring router.js's minigame fallback pattern.
+// Loads one case module and runs its run(). A case that cannot be loaded
+// -- a missing file, or a module it imports that is gone (Chromium reports
+// both as "Failed to fetch dynamically imported module") -- is a FAILURE:
+// every case in test/index.html exists, so a load error is a real break
+// (a case still importing a deleted module, a syntax error), never "not
+// built yet".
 export async function loadAndRunCase(path) {
   try {
     const mod = await import(path);
@@ -74,10 +76,8 @@ export async function loadAndRunCase(path) {
     }
     await mod.run();
   } catch (e) {
-    if (e && e.message && e.message.includes('Failed to fetch dynamically imported module')) {
-      results.push({ name: path, pass: true, detail: '(skipped: not built yet)' });
-      return;
-    }
-    results.push({ name: path, pass: false, detail: (e && e.message) || String(e) });
+    const msg = (e && e.message) || String(e);
+    const hint = msg.includes('Failed to fetch dynamically imported module') ? ' (the case or a module it imports failed to load: a missing file or a syntax error)' : '';
+    results.push({ name: path, pass: false, detail: msg + hint });
   }
 }

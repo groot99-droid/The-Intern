@@ -61,6 +61,40 @@ export async function run() {
     }
   });
 
+  await runCase('C4: no "you" in any label standing in the building (thresholds, beat zones, S0 start/report, endings) or anywhere else in scenes.json / endings.json', async () => {
+    const [scenes, endings] = await Promise.all([loadJSON('../../data/scenes.json'), loadJSON('../../data/endings.json')]);
+    const labels = [];
+    for (const [sid, scene] of Object.entries(scenes.scenes)) {
+      for (const [letter, b] of Object.entries(scene.branches)) {
+        for (const [key, th] of Object.entries(b.thresholds || {})) labels.push([`${sid}.${letter}.${key}`, th.label]);
+        for (const bz of b.beatZones || []) labels.push([`${sid}.${letter}.beatZone.${bz.zone}`, bz.label]);
+        if (b.start) labels.push([`${sid}.${letter}.start`, b.start.label]);
+        if (b.report) labels.push([`${sid}.${letter}.report`, b.report.label]);
+        for (const c of b.captions || []) if (c.text) labels.push([`${sid}.${letter}.caption`, c.text]);
+      }
+    }
+    for (const [id, e] of Object.entries(endings)) if (!id.startsWith('_') && e.label) labels.push([`ending.${id}`, e.label]);
+    assert(labels.length >= 35, `expected every threshold to carry a label, found ${labels.length}`);
+    for (const [where, text] of labels) {
+      assert(typeof text === 'string' && text.trim().length > 0, `${where}: empty label`);
+      assert(!/\byou\b/i.test(text), `${where}: "${text}" says "you"`);
+    }
+    // and nothing else in either file (authoring notes, `_` keys, excepted)
+    const hits = [];
+    findYou(scenes, 'scenes', hits);
+    findYou(endings, 'endings', hits);
+    assert(hits.length === 0, `"you" in ${hits.map((h) => `${h.path}: "${h.text}"`).join(' | ')}`);
+  });
+
+  await runCase('C4: the walkable build\'s system.json keys (zone labels, screens, the box, the hundredth) exist and never say "you"', async () => {
+    const system = await loadJSON('../../text/system.json');
+    const keys = ['zone.apply', 'zone.report', 'zone.package', 'call.hundred', 'box.contents', 'posting.title', 'posting.employer', 'posting.body', 'harlowe.session', 'harlowe.draft', 'requisition.title', 'requisition.harlowe', 'portal.confirm', 'portal.accept', 'elevator.refuse', 'door.violation', 'scan.prompt'];
+    for (const k of keys) {
+      assert(typeof system[k] === 'string' && system[k].length > 0, `system.json: missing ${k}`);
+      assert(!/\byou\b/i.test(system[k]), `system.json ${k}: "${system[k]}" says "you"`);
+    }
+  });
+
   await runCase('S0 application: exactly 3 fields, each a WILLING / NOT WILLING pair', async () => {
     // Replaces the old "10 fields and no name field" assertion. The no-name
     // rule was there so S2-H's "Shaun." could be a name the company was
