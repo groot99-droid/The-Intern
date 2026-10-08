@@ -575,6 +575,7 @@
      ],
      "mat": "concrete",
      "floor": true,
+     "shadow": false,
      "tile": 2.0
     },
     {
@@ -590,6 +591,7 @@
      ],
      "mat": "concrete",
      "floor": true,
+     "shadow": false,
      "tile": 2.0
     },
     {
@@ -603,7 +605,7 @@
       0.15200000000000002,
       29.6
      ],
-     "mat": "marble_light",
+     "mat": "plaster_blown",
      "collide": false,
      "shadow": false,
      "tile": 1.0
@@ -619,7 +621,7 @@
       0.15200000000000002,
       29.6
      ],
-     "mat": "marble_light",
+     "mat": "plaster_blown",
      "collide": false,
      "shadow": false,
      "tile": 1.0
@@ -669,6 +671,7 @@
      ],
      "mat": "concrete",
      "floor": true,
+     "shadow": false,
      "tile": 2.0
     },
     {
@@ -682,7 +685,7 @@
       0.15200000000000002,
       29.88
      ],
-     "mat": "marble_light",
+     "mat": "plaster_blown",
      "collide": false,
      "shadow": false,
      "tile": 1.0

@@ -1077,18 +1077,20 @@ def street():
     # -- the street itself (photoreal: the building's)
     boxes += [
         # pavements (walkable: kerbs are climbed, controls.js eases over them)
-        {"min": [-W / 2 - 3.0, 0, -D / 2 + 3.8], "max": [-KERB, PAVE, D / 2 - 2.4], "mat": "concrete", "floor": True, "tile": 2.0},
-        {"min": [KERB, 0, -D / 2 + 3.8], "max": [W / 2 + 3.0, PAVE, D / 2 - 2.4], "mat": "concrete", "floor": True, "tile": 2.0},
+        # (they cast no shadow: a 0.14 m slab shades nothing, and its depth in
+        # the low sun's shadow map speckled the kerb stones laid over it)
+        {"min": [-W / 2 - 3.0, 0, -D / 2 + 3.8], "max": [-KERB, PAVE, D / 2 - 2.4], "mat": "concrete", "floor": True, "shadow": False, "tile": 2.0},
+        {"min": [KERB, 0, -D / 2 + 3.8], "max": [W / 2 + 3.0, PAVE, D / 2 - 2.4], "mat": "concrete", "floor": True, "shadow": False, "tile": 2.0},
         # kerb stones, a lighter edge to every pavement
-        {"min": [-KERB - 0.28, 0, -D / 2 + 3.8], "max": [-KERB + 0.02, PAVE + 0.012, D / 2 - 2.4], "mat": "marble_light", "collide": False, "shadow": False, "tile": 1.0},
-        {"min": [KERB - 0.02, 0, -D / 2 + 3.8], "max": [KERB + 0.28, PAVE + 0.012, D / 2 - 2.4], "mat": "marble_light", "collide": False, "shadow": False, "tile": 1.0},
+        {"min": [-KERB - 0.28, 0, -D / 2 + 3.8], "max": [-KERB + 0.02, PAVE + 0.012, D / 2 - 2.4], "mat": "plaster_blown", "collide": False, "shadow": False, "tile": 1.0},
+        {"min": [KERB - 0.02, 0, -D / 2 + 3.8], "max": [KERB + 0.28, PAVE + 0.012, D / 2 - 2.4], "mat": "plaster_blown", "collide": False, "shadow": False, "tile": 1.0},
         # wet gutters along both kerbs (Doc 2 S0_X)
         {"min": [-KERB, 0, -D / 2 + 3.8], "max": [-KERB + 0.55, 0.006, D / 2 - 2.4], "mat": "concrete_wet", "collide": False, "shadow": False, "tile": 1.5},
         {"min": [KERB - 0.55, 0, -D / 2 + 3.8], "max": [KERB, 0.006, D / 2 - 2.4], "mat": "concrete_wet", "collide": False, "shadow": False, "tile": 1.5},
         # the dead end he comes out into: a kerb across it and his building's
         # brick end wall with its door (the stairs from the apartment behind)
-        {"min": [-W / 2 - 3.0, 0, D / 2 - 2.4], "max": [W / 2 + 3.0, PAVE, D / 2], "mat": "concrete", "floor": True, "tile": 2.0},
-        {"min": [-KERB - 0.28, 0, D / 2 - 2.42], "max": [KERB + 0.28, PAVE + 0.012, D / 2 - 2.12], "mat": "marble_light", "collide": False, "shadow": False, "tile": 1.0},
+        {"min": [-W / 2 - 3.0, 0, D / 2 - 2.4], "max": [W / 2 + 3.0, PAVE, D / 2], "mat": "concrete", "floor": True, "shadow": False, "tile": 2.0},
+        {"min": [-KERB - 0.28, 0, D / 2 - 2.42], "max": [KERB + 0.28, PAVE + 0.012, D / 2 - 2.12], "mat": "plaster_blown", "collide": False, "shadow": False, "tile": 1.0},
         {"min": [-24, 0, D / 2], "max": [-0.6, 18, D / 2 + WALL_T], "mat": "brick", "shadow": False, "tile": 0.5},
         {"min": [0.6, 0, D / 2], "max": [24, 18, D / 2 + WALL_T], "mat": "brick", "shadow": False, "tile": 0.5},
         {"min": [-0.6, 2.34, D / 2], "max": [0.6, 18, D / 2 + WALL_T], "mat": "brick", "shadow": False, "tile": 0.5},
