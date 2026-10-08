@@ -632,6 +632,8 @@ def desk_void(monitor_on=False):
     lights = [
         # the troffer: one pool, steady, soft-edged, gone four metres out
         {"type": "spot", "pos": [0, H - 0.12, 0.1], "target": [0, 0, 0.05], "color": "#fff0d8", "intensity": 40, "distance": 10, "angle": 58, "penumbra": 0.6},
+        # the fixture's own spill on the ceiling tiles round it
+        {"type": "point", "pos": [0, H - 0.45, 0.1], "color": "#fff0d8", "intensity": 1.1, "distance": 3.0},
         {"type": "point", "pos": [0.32, 1.15, 0.25], "color": "#7ad9a0", "intensity": 3, "distance": 3.5, "id": "terminal_glow", "off": not monitor_on},
         {"type": "point", "pos": [3.75, 1.15, -1.9], "color": "#8fb0d8", "intensity": 2.6, "distance": 3.5, "id": "harlowe_glow", "off": True},
         {"type": "point", "pos": [-3.45, 1.5, -2.7], "color": "#33ff77", "intensity": 2.4, "distance": 4.5, "id": "tube_lamp", "off": True},

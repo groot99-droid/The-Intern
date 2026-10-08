@@ -9965,6 +9965,17 @@
     {
      "type": "point",
      "pos": [
+      0,
+      2.55,
+      0.1
+     ],
+     "color": "#fff0d8",
+     "intensity": 1.1,
+     "distance": 3.0
+    },
+    {
+     "type": "point",
+     "pos": [
       0.32,
       1.15,
       0.25
