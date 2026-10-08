@@ -399,6 +399,7 @@ def threshold_corridor():
         prop("velvetdrape", [0, 0, N], w=W, h=2.75, gap=1.75, pelmet=0.5, off=0.05, dress="curtain", name="velvet"),
         prop("entersign", [0, 2.8, N + 0.07], w=1.0, h=0.24, text="ENTER", sync={"color": "#33ff77", "intensity": 9}, name="entersign"),
         prop("badgescanner", [W / 2 - 0.02, 1.12, -6.05], rot=-90, name="badgereader"),
+        prop("dustmotes", [0, 0.2, N + 1.1], size=[3.8, 2.9, 1.8], count=150, sync={"color": "#33ff77", "intensity": 9}),  # dust in the green (Doc 2)
         # the way back: a plate by the glass, and its sign, dead
         prop("placard", [1.78, 1.45, D / 2 - 0.02], rot=180),
         prop("entersign", [0, 2.88, D / 2 - 0.07], rot=180, w=0.8, h=0.2, text="EXIT", on=False, name="exitsign"),

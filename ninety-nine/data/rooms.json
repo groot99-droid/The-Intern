@@ -3515,6 +3515,24 @@
      "name": "badgereader"
     },
     {
+     "type": "dustmotes",
+     "pos": [
+      0,
+      0.2,
+      -5.9
+     ],
+     "size": [
+      3.8,
+      2.9,
+      1.8
+     ],
+     "count": 150,
+     "sync": {
+      "color": "#33ff77",
+      "intensity": 9
+     }
+    },
+    {
      "type": "placard",
      "pos": [
       1.78,

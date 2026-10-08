@@ -838,6 +838,44 @@ const BUILDERS = {
         };
         return g;
       },
+      // Dust hanging in a light (Doc 2 S3 C: "dust visible in the green
+      // light"): a few hundred soft motes drifting slowly down and sideways
+      // in a box `size` [x, y, z] above the origin, catching the light as
+      // glow; with `sync` they dim and brighten with that light.
+      dustmotes(mats, o) {
+        const g = new THREE.Group();
+        const [sx, sy, sz] = o.size || [3, 2.6, 1.6];
+        const n = o.count || 180;
+        const pos = new Float32Array(n * 3), seed = new Float32Array(n * 3);
+        let sd = 11;
+        const rnd = () => { sd = (sd * 16807) % 2147483647; return sd / 2147483647; };
+        for (let i = 0; i < n * 3; i++) seed[i] = rnd();
+        const geo = new THREE.BufferGeometry();
+        geo.setAttribute('position', new THREE.BufferAttribute(pos, 3));
+        const base = o.opacity || 0.3;
+        const mat = owned(new THREE.PointsMaterial({
+          color: new THREE.Color(o.color || '#9dffbb'), size: o.pointSize || 0.012, sizeAttenuation: true, map: haloTex(),
+          transparent: true, opacity: base, blending: THREE.AdditiveBlending, depthWrite: false
+        }));
+        const pts = new THREE.Points(geo, mat);
+        pts.frustumCulled = false;
+        const k = o.sync ? lightFollower(pts, { color: o.sync.color, intensity: o.sync.intensity, pattern: o.pattern }) : null;
+        const step = (renderer, scene) => {
+          if (k && scene) mat.opacity = base * k(scene);
+          const t = performance.now() / 1000;
+          for (let i = 0; i < n; i++) {
+            const a = seed[i * 3], b = seed[i * 3 + 1], c = seed[i * 3 + 2];
+            pos[i * 3] = (a - 0.5) * sx + Math.sin(t * 0.13 + b * 6.28) * 0.12;
+            pos[i * 3 + 1] = sy * (1 - ((b + t * 0.005 * (0.4 + c)) % 1));
+            pos[i * 3 + 2] = (c - 0.5) * sz + Math.cos(t * 0.11 + a * 6.28) * 0.1;
+          }
+          geo.attributes.position.needsUpdate = true;
+        };
+        step();
+        pts.onBeforeRender = step;
+        g.add(pts);
+        return g;
+      },
       // The street from S0, seen from inside the lobby's locked glass doors
       // (Doc 1 S3 H: "the street from S0, but with no sun and no shadows at
       // all"; Doc 2: "flat grey light, and no shadows whatsoever cast by any
