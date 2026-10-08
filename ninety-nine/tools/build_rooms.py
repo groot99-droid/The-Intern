@@ -329,6 +329,9 @@ def waiting_room(hostile):
     """
     W, H, D = 14.0, 4.2, 12.0
     wall = "plaster_blown" if hostile else "plaster"
+    # One plaster tile the height of the room: the roller streaks don't jump at
+    # a seam half way up, and the scuffs stay low on the wall.
+    WALL_TILE = 4.4
     props = []
     boxes = []
     # -- reception: a booth on the core wall --------------------------------
@@ -339,14 +342,16 @@ def waiting_room(hostile):
     props.append(prop("reception", [0, 0, -4.7], w=4.6, d=0.8, h=1.05, smudges=True))
     props.append(prop("receptionist", [0, 0, -5.62], name="receptionist", tilt=36, dais=0.25, daisZ=0.07, daisD=0.9, daisW=4.5))
     props.append(prop("receptionist_jaw", [0, 0, -5.62], name="receptionist_jaw", tilt=36, dais=0.25, hidden=True))
-    boxes.append({"min": [-2.45, 2.95, -D / 2], "max": [2.45, H, -4.25], "mat": wall, "collide": False, "tile": 2.0})
+    boxes.append({"min": [-2.45, 2.95, -D / 2], "max": [2.45, H, -4.25], "mat": wall, "collide": False, "tile": WALL_TILE})
     for sx in (-1, 1):  # the booth's side walls back to the glass, the counter between them
-        boxes.append({"min": [min(sx * 2.3, sx * 2.45), 0, -D / 2], "max": [max(sx * 2.3, sx * 2.45), 2.95, -4.8], "mat": wall, "tile": 2.0})
+        boxes.append({"min": [min(sx * 2.3, sx * 2.45), 0, -D / 2], "max": [max(sx * 2.3, sx * 2.45), 2.95, -4.8], "mat": wall, "tile": WALL_TILE})
     # its back wall, darker than the room's, so the glass reads clear and she reads against it
-    boxes.append({"min": [-2.3, 0, -D / 2], "max": [2.3, 2.95, -D / 2 + 0.03], "mat": "plaster_dark", "collide": False, "tile": 2.0})
+    boxes.append({"min": [-2.3, 0, -D / 2], "max": [2.3, 2.95, -D / 2 + 0.03], "mat": "plaster_dark", "collide": False, "tile": WALL_TILE})
     with open(os.path.join(HERE, "..", "text", "system.json"), encoding="utf-8") as fh:
         placard = json.load(fh)["wait.placard"]
-    props.append(prop("notice", [0, 3.43, -4.245], w=2.3, h=0.3, text=placard))
+    # (H: a deeper plate and ink, or the blown light bleaches the words off it)
+    props.append(prop("notice", [0, 3.43, -4.245], w=2.3, h=0.3, text=placard,
+                      **({"plate": "#7a5f2a", "ink": "#140f06"} if hostile else {})))
     props.append(prop("speaker", [1.15, 2.95, -4.7]))
     props.append(prop("fluoro", [0, 2.88, -5.45], w=1.6, d=0.22))
     props.append(prop("clock", [-4.6, 2.9, -D / 2 + 0.02]))
@@ -358,14 +363,16 @@ def waiting_room(hostile):
     grid = [(-3.8, -1.4), (0.0, -1.4), (3.8, -1.4), (-3.8, 2.6), (0.0, 2.6), (3.8, 2.6)]
     props.append(prop("floorsheen", [0, 0, 0], w=W, d=D, coffers=hostile, ceiling=round(H - 0.06, 2),
                       lamps=[[lx, lz, 1.4, 0.4] for lx, lz in grid], fog=[5, 28] if hostile else [10, 36],
-                      tone="#9ba4ae" if hostile else "#aab1ba"))
+                      tone="#9ba4ae" if hostile else "#aab1ba", gain=0.4 if hostile else 0.8))
     props.append(prop("monogram", [0, 0, 0.6], r=1.5, name="mosaic"))
     props.append(prop("dust", [0, 0, 0.5], n=90, w=12, h=2.6, d=9.5, y=1.2, opacity=0.2))
     # -- the chairs -------------------------------------------------------------
-    # Accent chairs from the catalog, one flat maroon (Doc 2), low-poly (C1);
+    # Accent chairs from the catalog, one flat maroon (Doc 2: `paint` deeper
+    # than the curtain slot, which reads fire-engine red here), low-poly (C1);
     # each seat's zone is just off its front edge. (They stay `glb` props:
     # pending_room() clears the rows by that type.) H's two overturned ones
     # are `tipchair`s: the same model on its back / its side.
+    MAROON = "#45101a"
     chairs = []
     rnd = random.Random(99)
     for side in (-1, 1):
@@ -387,9 +394,9 @@ def waiting_room(hostile):
     seats = []
     for k, (x, z, rot, tip) in enumerate(chairs):
         if tip:
-            props.append(prop("tipchair", [x, 0, z], round(rot, 1), node="lib_chair", mat="lp_curtain", paint=True, tip=tip, name="chair%d" % k))
+            props.append(prop("tipchair", [x, 0, z], round(rot, 1), node="lib_chair", mat="lp_curtain", paint=MAROON, tip=tip, name="chair%d" % k))
             continue
-        props.append(glb("lib_chair", [x, 0, z], round(rot, 1), fallback="chair", mat="lp_curtain", paint=True, collide=True, name="chair%d" % k))
+        props.append(glb("lib_chair", [x, 0, z], round(rot, 1), fallback="chair", mat="lp_curtain", paint=MAROON, collide=True, name="chair%d" % k))
         # chairs face +z at rot 0 (the backrest is at the model's -z)
         fx, fz = math.sin(math.radians(rot)), math.cos(math.radians(rot))
         seats.append(("seat%d" % k, [x + 0.72 * fx, z + 0.72 * fz], [x, 1.45, z]))
@@ -420,7 +427,7 @@ def waiting_room(hostile):
         "name": "THE WAITING ROOM",
         "size": [W, H, D],
         "floor": "marble", "wall": wall, "ceiling": "plaster_blown" if hostile else "plaster_dark",
-        "tile": {"floor": 2.5, "wall": 2.0, "ceiling": 2.0},
+        "tile": {"floor": 2.5, "wall": WALL_TILE, "ceiling": 2.0},
         "skirt": {"mat": "marble", "h": 0.14, "t": 0.03, "tile": 2.5},
         "cornice": {"mat": "plaster_blown" if hostile else "plaster_dark", "h": 0.28, "t": 0.08},
         "ambient": {"color": "#fff6ea" if hostile else "#dfe6ee", "intensity": 0.7 if hostile else 0.24},
@@ -442,7 +449,9 @@ def waiting_room(hostile):
     # C3), the inner door beside the counter that buzzes open when he answers
     # the call, and a service door by the entrance that opens when he runs
     # for the locked glass. Inner and service match their connectors' 1.2 m.
-    door(rec, "front", "S", 0.0, w=2.6, h=2.9, kind="glass", locked=True)
+    # (H: tinted glass. The shared clear glass goes milky in the blown light
+    # and stops reading as the dark behind it.)
+    door(rec, "front", "S", 0.0, w=2.6, h=2.9, kind="glass", locked=True, **({"glass": "glass_dark"} if hostile else {}))
     door(rec, "inner", "N", 5.6, w=1.2, h=2.2, kind="door", locked=True, mat="lp_beige", hinge="R", panel="lp_grey")
     door(rec, "service", "S", -4.6, w=1.2, h=2.2, kind="door", locked=True, mat="lp_grey")
     rec["entry"] = "front"

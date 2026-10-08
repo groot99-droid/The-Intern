@@ -2073,7 +2073,7 @@
    "ceiling": "plaster_dark",
    "tile": {
     "floor": 2.5,
-    "wall": 2.0,
+    "wall": 4.4,
     "ceiling": 2.0
    },
    "skirt": {
@@ -2373,7 +2373,8 @@
       10,
       36
      ],
-     "tone": "#aab1ba"
+     "tone": "#aab1ba",
+     "gain": 0.8
     },
     {
      "type": "monogram",
@@ -2409,7 +2410,7 @@
      "rot": 90,
      "node": "lib_chair",
      "mat": "lp_curtain",
-     "paint": true,
+     "paint": "#45101a",
      "collide": true,
      "name": "chair0",
      "fallback": "chair"
@@ -2424,7 +2425,7 @@
      "rot": 90,
      "node": "lib_chair",
      "mat": "lp_curtain",
-     "paint": true,
+     "paint": "#45101a",
      "collide": true,
      "name": "chair1",
      "fallback": "chair"
@@ -2439,7 +2440,7 @@
      "rot": 90,
      "node": "lib_chair",
      "mat": "lp_curtain",
-     "paint": true,
+     "paint": "#45101a",
      "collide": true,
      "name": "chair2",
      "fallback": "chair"
@@ -2454,7 +2455,7 @@
      "rot": 90,
      "node": "lib_chair",
      "mat": "lp_curtain",
-     "paint": true,
+     "paint": "#45101a",
      "collide": true,
      "name": "chair3",
      "fallback": "chair"
@@ -2469,7 +2470,7 @@
      "rot": -90,
      "node": "lib_chair",
      "mat": "lp_curtain",
-     "paint": true,
+     "paint": "#45101a",
      "collide": true,
      "name": "chair4",
      "fallback": "chair"
@@ -2484,7 +2485,7 @@
      "rot": -90,
      "node": "lib_chair",
      "mat": "lp_curtain",
-     "paint": true,
+     "paint": "#45101a",
      "collide": true,
      "name": "chair5",
      "fallback": "chair"
@@ -2499,7 +2500,7 @@
      "rot": -90,
      "node": "lib_chair",
      "mat": "lp_curtain",
-     "paint": true,
+     "paint": "#45101a",
      "collide": true,
      "name": "chair6",
      "fallback": "chair"
@@ -2514,7 +2515,7 @@
      "rot": -90,
      "node": "lib_chair",
      "mat": "lp_curtain",
-     "paint": true,
+     "paint": "#45101a",
      "collide": true,
      "name": "chair7",
      "fallback": "chair"
@@ -2666,7 +2667,7 @@
      ],
      "mat": "plaster",
      "collide": false,
-     "tile": 2.0
+     "tile": 4.4
     },
     {
      "min": [
@@ -2680,7 +2681,7 @@
       -4.8
      ],
      "mat": "plaster",
-     "tile": 2.0
+     "tile": 4.4
     },
     {
      "min": [
@@ -2694,7 +2695,7 @@
       -4.8
      ],
      "mat": "plaster",
-     "tile": 2.0
+     "tile": 4.4
     },
     {
      "min": [
@@ -2709,7 +2710,7 @@
      ],
      "mat": "plaster_dark",
      "collide": false,
-     "tile": 2.0
+     "tile": 4.4
     }
    ],
    "footstep": {
@@ -3008,7 +3009,7 @@
    "ceiling": "plaster_blown",
    "tile": {
     "floor": 2.5,
-    "wall": 2.0,
+    "wall": 4.4,
     "ceiling": 2.0
    },
    "skirt": {
@@ -3248,7 +3249,9 @@
      ],
      "w": 2.3,
      "h": 0.3,
-     "text": "THE CANDIDATE WILL BE SEEN IN TURN."
+     "text": "THE CANDIDATE WILL BE SEEN IN TURN.",
+     "plate": "#7a5f2a",
+     "ink": "#140f06"
     },
     {
      "type": "speaker",
@@ -3350,7 +3353,8 @@
       5,
       28
      ],
-     "tone": "#9ba4ae"
+     "tone": "#9ba4ae",
+     "gain": 0.4
     },
     {
      "type": "monogram",
@@ -3386,7 +3390,7 @@
      "rot": 45.0,
      "node": "lib_chair",
      "mat": "lp_curtain",
-     "paint": true,
+     "paint": "#45101a",
      "collide": true,
      "name": "chair0",
      "fallback": "chair"
@@ -3401,7 +3405,7 @@
      "rot": 55.2,
      "node": "lib_chair",
      "mat": "lp_curtain",
-     "paint": true,
+     "paint": "#45101a",
      "collide": true,
      "name": "chair1",
      "fallback": "chair"
@@ -3416,7 +3420,7 @@
      "rot": 128.0,
      "node": "lib_chair",
      "mat": "lp_curtain",
-     "paint": true,
+     "paint": "#45101a",
      "collide": true,
      "name": "chair2",
      "fallback": "chair"
@@ -3431,7 +3435,7 @@
      "rot": 79.0,
      "node": "lib_chair",
      "mat": "lp_curtain",
-     "paint": true,
+     "paint": "#45101a",
      "tip": "back",
      "name": "chair3"
     },
@@ -3445,7 +3449,7 @@
      "rot": -33.7,
      "node": "lib_chair",
      "mat": "lp_curtain",
-     "paint": true,
+     "paint": "#45101a",
      "collide": true,
      "name": "chair4",
      "fallback": "chair"
@@ -3460,7 +3464,7 @@
      "rot": -64.5,
      "node": "lib_chair",
      "mat": "lp_curtain",
-     "paint": true,
+     "paint": "#45101a",
      "collide": true,
      "name": "chair5",
      "fallback": "chair"
@@ -3475,7 +3479,7 @@
      "rot": -41.0,
      "node": "lib_chair",
      "mat": "lp_curtain",
-     "paint": true,
+     "paint": "#45101a",
      "tip": "side",
      "name": "chair6"
     },
@@ -3489,7 +3493,7 @@
      "rot": -125.0,
      "node": "lib_chair",
      "mat": "lp_curtain",
-     "paint": true,
+     "paint": "#45101a",
      "collide": true,
      "name": "chair7",
      "fallback": "chair"
@@ -3690,7 +3694,7 @@
      ],
      "mat": "plaster_blown",
      "collide": false,
-     "tile": 2.0
+     "tile": 4.4
     },
     {
      "min": [
@@ -3704,7 +3708,7 @@
       -4.8
      ],
      "mat": "plaster_blown",
-     "tile": 2.0
+     "tile": 4.4
     },
     {
      "min": [
@@ -3718,7 +3722,7 @@
       -4.8
      ],
      "mat": "plaster_blown",
-     "tile": 2.0
+     "tile": 4.4
     },
     {
      "min": [
@@ -3733,7 +3737,7 @@
      ],
      "mat": "plaster_dark",
      "collide": false,
-     "tile": 2.0
+     "tile": 4.4
     }
    ],
    "footstep": {
@@ -3836,7 +3840,8 @@
      "w": 2.6,
      "h": 2.9,
      "kind": "glass",
-     "locked": true
+     "locked": true,
+     "glass": "glass_dark"
     },
     {
      "name": "inner",
@@ -4300,7 +4305,7 @@
    "ceiling": "plaster_dark",
    "tile": {
     "floor": 2.5,
-    "wall": 2.0,
+    "wall": 4.4,
     "ceiling": 2.0
    },
    "skirt": {
@@ -4611,7 +4616,8 @@
       10,
       36
      ],
-     "tone": "#aab1ba"
+     "tone": "#aab1ba",
+     "gain": 0.8
     },
     {
      "type": "monogram",
@@ -4647,7 +4653,7 @@
      "rot": 90,
      "node": "lib_chair",
      "mat": "lp_curtain",
-     "paint": true,
+     "paint": "#45101a",
      "collide": true,
      "name": "chair0",
      "fallback": "chair"
@@ -4662,7 +4668,7 @@
      "rot": 90,
      "node": "lib_chair",
      "mat": "lp_curtain",
-     "paint": true,
+     "paint": "#45101a",
      "collide": true,
      "name": "chair1",
      "fallback": "chair"
@@ -4677,7 +4683,7 @@
      "rot": 90,
      "node": "lib_chair",
      "mat": "lp_curtain",
-     "paint": true,
+     "paint": "#45101a",
      "collide": true,
      "name": "chair2",
      "fallback": "chair"
@@ -4692,7 +4698,7 @@
      "rot": 90,
      "node": "lib_chair",
      "mat": "lp_curtain",
-     "paint": true,
+     "paint": "#45101a",
      "collide": true,
      "name": "chair3",
      "fallback": "chair"
@@ -4707,7 +4713,7 @@
      "rot": -90,
      "node": "lib_chair",
      "mat": "lp_curtain",
-     "paint": true,
+     "paint": "#45101a",
      "collide": true,
      "name": "chair4",
      "fallback": "chair"
@@ -4722,7 +4728,7 @@
      "rot": -90,
      "node": "lib_chair",
      "mat": "lp_curtain",
-     "paint": true,
+     "paint": "#45101a",
      "collide": true,
      "name": "chair5",
      "fallback": "chair"
@@ -4737,7 +4743,7 @@
      "rot": -90,
      "node": "lib_chair",
      "mat": "lp_curtain",
-     "paint": true,
+     "paint": "#45101a",
      "collide": true,
      "name": "chair6",
      "fallback": "chair"
@@ -4752,7 +4758,7 @@
      "rot": -90,
      "node": "lib_chair",
      "mat": "lp_curtain",
-     "paint": true,
+     "paint": "#45101a",
      "collide": true,
      "name": "chair7",
      "fallback": "chair"
@@ -4933,7 +4939,7 @@
      ],
      "mat": "plaster",
      "collide": false,
-     "tile": 2.0
+     "tile": 4.4
     },
     {
      "min": [
@@ -4947,7 +4953,7 @@
       -4.8
      ],
      "mat": "plaster",
-     "tile": 2.0
+     "tile": 4.4
     },
     {
      "min": [
@@ -4961,7 +4967,7 @@
       -4.8
      ],
      "mat": "plaster",
-     "tile": 2.0
+     "tile": 4.4
     },
     {
      "min": [
@@ -4976,7 +4982,7 @@
      ],
      "mat": "plaster_dark",
      "collide": false,
-     "tile": 2.0
+     "tile": 4.4
     }
    ],
    "footstep": {
@@ -17663,7 +17669,7 @@
    "ceiling": "plaster_dark",
    "tile": {
     "floor": 2.5,
-    "wall": 2.0,
+    "wall": 4.4,
     "ceiling": 2.0
    },
    "skirt": {
@@ -17963,7 +17969,8 @@
       10,
       36
      ],
-     "tone": "#aab1ba"
+     "tone": "#aab1ba",
+     "gain": 0.8
     },
     {
      "type": "monogram",
@@ -18192,7 +18199,7 @@
      ],
      "mat": "plaster",
      "collide": false,
-     "tile": 2.0
+     "tile": 4.4
     },
     {
      "min": [
@@ -18206,7 +18213,7 @@
       -4.8
      ],
      "mat": "plaster",
-     "tile": 2.0
+     "tile": 4.4
     },
     {
      "min": [
@@ -18220,7 +18227,7 @@
       -4.8
      ],
      "mat": "plaster",
-     "tile": 2.0
+     "tile": 4.4
     },
     {
      "min": [
@@ -18235,7 +18242,7 @@
      ],
      "mat": "plaster_dark",
      "collide": false,
-     "tile": 2.0
+     "tile": 4.4
     }
    ],
    "footstep": {

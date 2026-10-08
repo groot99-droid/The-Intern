@@ -584,13 +584,29 @@ const BUILDERS = {
       // for it (`paint: true`) wholly in their palette slot (`mat`): the
       // library only tints a model's light surfaces 80% of the way, which
       // turned Doc 2's one flat maroon into pink. Place it after them.
+      // `paint: '#rrggbb'` paints in that colour instead of the slot's own
+      // (the same flat, vertex-snapped low-poly material, one per colour):
+      // the slot's maroon reads as fire-engine red under the lobby's light.
       palette(mats) {
         const g = new THREE.Group();
+        const tinted = new Map();
+        const paintOf = (spec) => {
+          const base = mats.get(spec.mat);
+          if (typeof spec.paint !== 'string') return base;
+          if (!tinted.has(spec.paint)) {
+            const m = own(base.clone());
+            m.color.set(spec.paint);
+            m.onBeforeCompile = base.onBeforeCompile;           // keep the PS1 vertex snap
+            m.customProgramCacheKey = base.customProgramCacheKey;
+            tinted.set(spec.paint, m);
+          }
+          return tinted.get(spec.paint);
+        };
         g.addEventListener('added', () => {
           for (const c of (g.parent ? g.parent.children : [])) {
             const spec = c.userData && c.userData.spec;
             if (!spec || !spec.paint || !spec.mat || !mats.isLowPoly(spec.mat)) continue;
-            const m = mats.get(spec.mat);
+            const m = paintOf(spec);
             c.traverse((x) => {
               if (!x.isMesh || !x.visible || Array.isArray(x.material) || !x.material.color) return;
               const k = x.material.color;
