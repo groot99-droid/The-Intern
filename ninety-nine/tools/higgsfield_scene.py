@@ -21,15 +21,29 @@ Coordinates: the game is Y-up with +z toward the entrance; Blender is Z-up.
 game (x, y, z) -> blender (x, -z, y). The glTF exporter maps Blender +Y to
 glTF -Z, so a GLB exported from one of these projects lands back in game
 coordinates unchanged.
+
+Since the game became one continuous walk, a room record also carries what
+only the running game reads (threshold zones, join anchors, the entry door,
+connector metadata); `build` strips those from the JSON it embeds. A prop
+type this port has no p_* builder for is skipped with a `# WARNING` comment
+at the top of the output (and a `skipped` list in the run's result) rather
+than failing. Doorways are NOT cut out of the walls yet, `floorY`, `pitch`
+and `hidden` are not honoured, and the projects in blender/higgsfield/ are
+stale: blender/higgsfield/REBUILD_NOTE.md says what to port and in what order.
 """
 
 import json
 import math
 import os
+import re
 import sys
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 ROOMS = os.path.join(HERE, "..", "data", "rooms.json")
+
+# Record keys only the running game reads (src/director.js, src/world/):
+# never geometry, so never embedded in the bpy code.
+RUNTIME_ONLY = ("_note", "zones", "anchors", "entry", "holdEntry", "swim", "connector", "drop")
 
 # ---------------------------------------------------------------------------
 # The bpy template. Everything between the markers runs inside Blender; the
@@ -290,6 +304,7 @@ def p_table(g, o):
     w, d = o.get("w", 2.0), o.get("d", 10.0); box(g, "glass_dark", w, 0.05, d, 0, 0.74, 0); box(g, "lp_dark", w - 0.6, 0.72, 0.5, 0, 0, -d/2 + 1.2); box(g, "lp_dark", w - 0.6, 0.72, 0.5, 0, 0, d/2 - 1.2)
 
 BUILDERS = {k[2:]: v for k, v in dict(globals()).items() if k.startswith("p_")}
+SKIPPED = []
 
 def build_prop(spec):
     t = spec["type"]
@@ -297,6 +312,8 @@ def build_prop(spec):
         return None  # placed by the catalog import (imports / place commands)
     fn = BUILDERS.get(t)
     if fn is None:
+        print("skipped prop with no p_ builder:", t, spec.get("name") or "")
+        SKIPPED.append(t)
         return None
     pos = spec.get("pos", [0, 0, 0])
     g = empty(spec.get("name") or t, pos, spec.get("rot", 0))
@@ -411,7 +428,7 @@ def build_room(rec):
     return markers
 
 markers = build_room(ROOM)
-result = {"room": ROOM.get("id"), "objects": len(bpy.data.objects), "materials": len(bpy.data.materials), "shots": markers, "frame_end": bpy.context.scene.frame_end}
+result = {"room": ROOM.get("id"), "objects": len(bpy.data.objects), "materials": len(bpy.data.materials), "shots": markers, "frame_end": bpy.context.scene.frame_end, "skipped": SKIPPED}
 '''
 
 PLACE_TEMPLATE = r'''
@@ -516,11 +533,26 @@ def quat_y(deg):
     return [0, round(math.sin(h), 6), 0, round(math.cos(h), 6)]
 
 
+def unbuilt_types(rec):
+    """Prop types in the room this port has no p_* builder for: type -> count."""
+    known = set(re.findall(r"^def p_(\w+)\(", TEMPLATE, flags=re.M))
+    out = {}
+    for p in rec.get("props", []):
+        t = p["type"]
+        if t != "glb" and t not in known:
+            out[t] = out.get(t, 0) + 1
+    return out
+
+
 def main():
     key, cmd = sys.argv[1], (sys.argv[2] if len(sys.argv) > 2 else "build")
     doc, rec = load_room(key)
     if cmd == "build":
-        slim = {k: v for k, v in rec.items() if k not in ("_note",)}
+        slim = {k: v for k, v in rec.items() if k not in RUNTIME_ONLY}
+        for t, n in sorted(unbuilt_types(rec).items()):
+            msg = "%s: no p_%s builder, %d prop(s) skipped (see blender/higgsfield/REBUILD_NOTE.md)" % (key, t, n)
+            print("# WARNING: " + msg)
+            print("higgsfield_scene.py: warning: " + msg, file=sys.stderr)
         print("ROOM_JSON = %s\n%s" % (json.dumps(json.dumps(slim)), prune(TEMPLATE, rec)))
     elif cmd == "imports":
         cat = doc["catalog"]

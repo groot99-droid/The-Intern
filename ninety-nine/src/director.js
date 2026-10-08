@@ -52,6 +52,7 @@ export function createDirector({ manifest, endings, state, stage, audio = null, 
   let links = [];          // doorways being walked through
   let beatZones = [];      // non-choice zones: APPLY, the street's door, picking up the package
   let endingWatch = null;  // the ending room, waiting for its zone
+  let endedWith = null;    // the ending the card shows, once it does
   let held = null;         // a prop in the candidate's hands (the package)
   let actorRuns = [];      // actors walking their paths
   let ride = null;         // the cab, descending
@@ -584,6 +585,7 @@ export function createDirector({ manifest, endings, state, stage, audio = null, 
   async function jumpToEnding(endingId) {
     if (ended) return;
     ended = true;
+    endedWith = endingId;
     scene = null;
     endingWatch = null;
     captions.stop();
@@ -820,6 +822,25 @@ export function createDirector({ manifest, endings, state, stage, audio = null, 
     }
   });
 
+  // Dev only: a room that holds its entry open (the cab, the store) is
+  // normally walked into, its doors open behind him until the choice. Put a
+  // connector from the previous scene behind it, as if he had just come in.
+  function devArrival(sceneId, letter, inst) {
+    const prev = manifest.scenes[manifest.spineOrder[manifest.spineOrder.indexOf(sceneId) - 1]];
+    const branches = prev ? [prev.branches[letter], ...Object.values(prev.branches)].filter(Boolean) : [];
+    let via = null;
+    for (const b of branches) for (const th of Object.values(b.thresholds || {})) if (!via && th.via) via = th.via;
+    if (!via) return;
+    let conn;
+    try { conn = world.attach(inst, inst.entryName, via, { entry: 'exit' }); } catch (err) { console.warn('[director] dev arrival:', err.message); return; }
+    conn.link = { from: null, to: inst };
+    const far = conn.room.doors.get('entry');
+    if (far && far.kind !== 'open') far.close(0.01);
+    const door = inst.room.doors.get(inst.entryName);
+    if (door) door.open(0.01);
+    links.push({ from: null, conn, dest: inst, exitName: null, seal1: true, seal2: true, boundary: true, enteredConn: true, held: true, opts: {} });
+  }
+
   // Dev only (?start=S5&render=H): put the candidate straight into a scene,
   // standing just inside its room's entry, with a score that gives that
   // render. The rest of the game plays on from there as normal.
@@ -834,7 +855,9 @@ export function createDirector({ manifest, endings, state, stage, audio = null, 
     const branch = sc.branches[L];
     await world.prebuild(branch.room);
     const inst = world.spawn(branch.room);
+    inst.entryName = inst.entryName || inst.rec.entry;
     world.setCurrent(inst);
+    if (inst.rec.holdEntry) devArrival(sceneId, L, inst);
     const e = inst.anchorsWorld[inst.entryName];
     if (inst.rec.swim) {
       const y0 = inst.matrix.elements[13];
@@ -891,11 +914,11 @@ export function createDirector({ manifest, endings, state, stage, audio = null, 
         committing: scene ? scene.committing : false,
         reached: scene ? [...scene.reached] : [],
         links: links.map((L) => {
-          const a = (inst, name) => (inst.anchorsWorld[name] ? { pos: inst.anchorsWorld[name].pos, yaw: inst.anchorsWorld[name].yaw } : null);
-          return { from: L.from.key, conn: L.conn.key, dest: L.dest.key, seal1: L.seal1, seal2: L.seal2, boundary: L.boundary, held: !!L.held, exit: a(L.from, L.exitName), connExit: a(L.conn, 'exit'), destEntry: a(L.dest, L.dest.entryName) };
+          const a = (inst, name) => (inst && name && inst.anchorsWorld[name] ? { pos: inst.anchorsWorld[name].pos, yaw: inst.anchorsWorld[name].yaw } : null);
+          return { from: L.from ? L.from.key : null, conn: L.conn.key, dest: L.dest.key, seal1: L.seal1, seal2: L.seal2, boundary: L.boundary, held: !!L.held, exit: a(L.from, L.exitName), connExit: a(L.conn, 'exit'), destEntry: a(L.dest, L.dest.entryName) };
         }),
         targets,
-        ending: endingWatch ? endingWatch.endingId : null,
+        ending: endedWith || (endingWatch ? endingWatch.endingId : null),
         ended,
         playerEnabled: player.isEnabled(),
         position: pos,
