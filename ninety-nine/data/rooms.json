@@ -4218,15 +4218,15 @@
   "S4_C": {
    "name": "THE FLOOR",
    "size": [
-    26.0,
+    24.6,
     3.0,
-    36.0
+    38.0
    ],
    "floor": "carpet",
    "wall": "plaster",
    "ceiling": "ceiling_tile",
    "tile": {
-    "floor": 1.5,
+    "floor": 1.2,
     "wall": 2.0,
     "ceiling": 1.2
    },
@@ -4236,174 +4236,188 @@
     "t": 0.02
    },
    "ambient": {
-    "color": "#e8ecff",
-    "intensity": 0.2
+    "color": "#e6ecdc",
+    "intensity": 0.22
    },
    "sun": {
     "from": [
      2.0,
      5.0,
-     22.0
+     24.0
     ],
-    "color": "#f4f6ff",
+    "color": "#f2f6ea",
     "intensity": 0.4
    },
    "lights": [
     {
      "type": "point",
      "pos": [
-      -8,
+      0,
       2.6,
-      -12
+      15
      ],
-     "color": "#eef2ff",
+     "color": "#eef4e2",
      "intensity": 11,
-     "distance": 14,
-     "flicker": 0
-    },
-    {
-     "type": "point",
-     "pos": [
-      -8,
-      2.6,
-      -4
-     ],
-     "color": "#eef2ff",
-     "intensity": 11,
-     "distance": 14,
-     "flicker": 0
-    },
-    {
-     "type": "point",
-     "pos": [
-      -8,
-      2.6,
-      4
-     ],
-     "color": "#eef2ff",
-     "intensity": 11,
-     "distance": 14,
-     "flicker": 0
-    },
-    {
-     "type": "point",
-     "pos": [
-      -8,
-      2.6,
-      12
-     ],
-     "color": "#eef2ff",
-     "intensity": 11,
-     "distance": 14,
-     "flicker": 0
+     "distance": 14
     },
     {
      "type": "point",
      "pos": [
       0,
       2.6,
-      -12
+      7
      ],
-     "color": "#eef2ff",
+     "color": "#eef4e2",
      "intensity": 11,
-     "distance": 14,
-     "flicker": 0
+     "distance": 14
     },
     {
      "type": "point",
      "pos": [
       0,
       2.6,
-      -4
+      -1
      ],
-     "color": "#eef2ff",
+     "color": "#eef4e2",
      "intensity": 11,
-     "distance": 14,
-     "flicker": 0
+     "distance": 14
     },
     {
      "type": "point",
      "pos": [
       0,
       2.6,
-      4
+      -13
      ],
-     "color": "#eef2ff",
+     "color": "#eef4e2",
      "intensity": 11,
-     "distance": 14,
-     "flicker": 0
+     "distance": 14
+    },
+    {
+     "type": "point",
+     "pos": [
+      -4.4,
+      2.6,
+      11
+     ],
+     "color": "#eef4e2",
+     "intensity": 11,
+     "distance": 14
+    },
+    {
+     "type": "point",
+     "pos": [
+      4.4,
+      2.6,
+      11
+     ],
+     "color": "#eef4e2",
+     "intensity": 11,
+     "distance": 14
+    },
+    {
+     "type": "point",
+     "pos": [
+      -4.4,
+      2.6,
+      -9
+     ],
+     "color": "#eef4e2",
+     "intensity": 11,
+     "distance": 14
+    },
+    {
+     "type": "point",
+     "pos": [
+      4.4,
+      2.6,
+      -9
+     ],
+     "color": "#eef4e2",
+     "intensity": 11,
+     "distance": 14
+    },
+    {
+     "type": "point",
+     "pos": [
+      -9.0,
+      2.6,
+      3
+     ],
+     "color": "#eef4e2",
+     "intensity": 11,
+     "distance": 14
+    },
+    {
+     "type": "point",
+     "pos": [
+      9.0,
+      2.6,
+      3
+     ],
+     "color": "#eef4e2",
+     "intensity": 11,
+     "distance": 14
+    },
+    {
+     "type": "point",
+     "pos": [
+      -9.0,
+      2.6,
+      -13
+     ],
+     "color": "#eef4e2",
+     "intensity": 11,
+     "distance": 14
+    },
+    {
+     "type": "point",
+     "pos": [
+      9.0,
+      2.6,
+      -13
+     ],
+     "color": "#eef4e2",
+     "intensity": 11,
+     "distance": 14
     },
     {
      "type": "point",
      "pos": [
       0,
       2.6,
-      12
+      -5.0
      ],
-     "color": "#eef2ff",
-     "intensity": 11,
-     "distance": 14,
-     "flicker": 0
+     "color": "#eef4e2",
+     "intensity": 12,
+     "distance": 12,
+     "flicker": 0.32,
+     "id": "hold_light"
     },
     {
      "type": "point",
      "pos": [
-      8,
-      2.6,
-      -12
+      11.950000000000001,
+      2.3,
+      0.9
      ],
-     "color": "#eef2ff",
-     "intensity": 11,
-     "distance": 14,
-     "flicker": 0
-    },
-    {
-     "type": "point",
-     "pos": [
-      8,
-      2.6,
-      -4
-     ],
-     "color": "#eef2ff",
-     "intensity": 11,
-     "distance": 14,
-     "flicker": 0
-    },
-    {
-     "type": "point",
-     "pos": [
-      8,
-      2.6,
-      4
-     ],
-     "color": "#eef2ff",
-     "intensity": 11,
-     "distance": 14,
-     "flicker": 0.12
-    },
-    {
-     "type": "point",
-     "pos": [
-      8,
-      2.6,
-      12
-     ],
-     "color": "#eef2ff",
-     "intensity": 11,
-     "distance": 14,
-     "flicker": 0
+     "color": "#d4e2ee",
+     "intensity": 5,
+     "distance": 6.5,
+     "flicker": 0.22,
+     "id": "side_light"
     }
    ],
    "fog": {
-    "color": "#b4b7b1",
-    "near": 12,
-    "far": 46
+    "color": "#b9beb1",
+    "near": 9,
+    "far": 44
    },
    "exposure": 1.0,
    "vignette": 0.45,
    "spawn": [
     0,
-    15.5,
+    17.0,
     0
    ],
    "props": [
@@ -4412,332 +4426,26 @@
      "pos": [
       -2.1,
       0,
-      -16.0
+      -16.9
      ],
      "len": 2.0
     },
     {
      "type": "partition",
      "pos": [
-      -3.1,
+      -1.1,
       0,
-      -15.0
+      -15.7
      ],
      "rot": 90,
-     "len": 2.0
+     "len": 2.4
     },
     {
      "type": "glb",
      "pos": [
       -2.1,
       0,
-      -15.45
-     ],
-     "node": "lib_desk",
-     "collide": true,
-     "fallback": "desk"
-    },
-    {
-     "type": "glb",
-     "pos": [
-      -2.1,
-      0.75,
-      -15.5
-     ],
-     "node": "lib_crt",
-     "fallback": "monitor"
-    },
-    {
-     "type": "glb",
-     "pos": [
-      -2.1,
-      0,
-      -14.65
-     ],
-     "rot": 180,
-     "node": "lib_chair_wood",
-     "fallback": "chair"
-    },
-    {
-     "type": "partition",
-     "pos": [
-      -6.7,
-      0,
-      -16.0
-     ],
-     "len": 2.0
-    },
-    {
-     "type": "partition",
-     "pos": [
-      -7.7,
-      0,
-      -15.0
-     ],
-     "rot": 90,
-     "len": 2.0
-    },
-    {
-     "type": "glb",
-     "pos": [
-      -6.7,
-      0,
-      -15.45
-     ],
-     "node": "lib_desk",
-     "collide": true,
-     "fallback": "desk"
-    },
-    {
-     "type": "glb",
-     "pos": [
-      -6.7,
-      0.75,
-      -15.5
-     ],
-     "node": "lib_crt",
-     "fallback": "monitor"
-    },
-    {
-     "type": "glb",
-     "pos": [
-      -6.7,
-      0,
-      -14.65
-     ],
-     "rot": 180,
-     "node": "lib_chair_wood",
-     "fallback": "chair"
-    },
-    {
-     "type": "partition",
-     "pos": [
-      -11.3,
-      0,
-      -16.0
-     ],
-     "len": 2.0
-    },
-    {
-     "type": "partition",
-     "pos": [
-      -12.3,
-      0,
-      -15.0
-     ],
-     "rot": 90,
-     "len": 2.0
-    },
-    {
-     "type": "glb",
-     "pos": [
-      -11.3,
-      0,
-      -15.45
-     ],
-     "node": "lib_desk",
-     "collide": true,
-     "fallback": "desk"
-    },
-    {
-     "type": "glb",
-     "pos": [
-      -11.3,
-      0.75,
-      -15.5
-     ],
-     "node": "lib_crt",
-     "fallback": "monitor"
-    },
-    {
-     "type": "glb",
-     "pos": [
-      -11.3,
-      0,
-      -14.65
-     ],
-     "rot": 180,
-     "node": "lib_chair_wood",
-     "fallback": "chair"
-    },
-    {
-     "type": "partition",
-     "pos": [
-      2.1,
-      0,
-      -16.0
-     ],
-     "len": 2.0
-    },
-    {
-     "type": "partition",
-     "pos": [
-      3.1,
-      0,
-      -15.0
-     ],
-     "rot": 90,
-     "len": 2.0
-    },
-    {
-     "type": "glb",
-     "pos": [
-      2.1,
-      0,
-      -15.45
-     ],
-     "node": "lib_desk",
-     "collide": true,
-     "fallback": "desk"
-    },
-    {
-     "type": "glb",
-     "pos": [
-      2.1,
-      0.75,
-      -15.5
-     ],
-     "node": "lib_crt",
-     "fallback": "monitor"
-    },
-    {
-     "type": "glb",
-     "pos": [
-      2.1,
-      0,
-      -14.65
-     ],
-     "rot": 180,
-     "node": "lib_chair_wood",
-     "fallback": "chair"
-    },
-    {
-     "type": "partition",
-     "pos": [
-      6.7,
-      0,
-      -16.0
-     ],
-     "len": 2.0
-    },
-    {
-     "type": "partition",
-     "pos": [
-      7.7,
-      0,
-      -15.0
-     ],
-     "rot": 90,
-     "len": 2.0
-    },
-    {
-     "type": "glb",
-     "pos": [
-      6.7,
-      0,
-      -15.45
-     ],
-     "node": "lib_desk",
-     "collide": true,
-     "fallback": "desk"
-    },
-    {
-     "type": "glb",
-     "pos": [
-      6.7,
-      0.75,
-      -15.5
-     ],
-     "node": "lib_crt",
-     "fallback": "monitor"
-    },
-    {
-     "type": "glb",
-     "pos": [
-      6.7,
-      0,
-      -14.65
-     ],
-     "rot": 180,
-     "node": "lib_chair_wood",
-     "fallback": "chair"
-    },
-    {
-     "type": "partition",
-     "pos": [
-      11.3,
-      0,
-      -16.0
-     ],
-     "len": 2.0
-    },
-    {
-     "type": "partition",
-     "pos": [
-      12.3,
-      0,
-      -15.0
-     ],
-     "rot": 90,
-     "len": 2.0
-    },
-    {
-     "type": "glb",
-     "pos": [
-      11.3,
-      0,
-      -15.45
-     ],
-     "node": "lib_desk",
-     "collide": true,
-     "fallback": "desk"
-    },
-    {
-     "type": "glb",
-     "pos": [
-      11.3,
-      0.75,
-      -15.5
-     ],
-     "node": "lib_crt",
-     "fallback": "monitor"
-    },
-    {
-     "type": "glb",
-     "pos": [
-      11.3,
-      0,
-      -14.65
-     ],
-     "rot": 180,
-     "node": "lib_chair_wood",
-     "fallback": "chair"
-    },
-    {
-     "type": "partition",
-     "pos": [
-      -2.1,
-      0,
-      -13.6
-     ],
-     "len": 2.0
-    },
-    {
-     "type": "partition",
-     "pos": [
-      -3.1,
-      0,
-      -12.6
-     ],
-     "rot": 90,
-     "len": 2.0
-    },
-    {
-     "type": "glb",
-     "pos": [
-      -2.1,
-      0,
-      -13.05
+      -16.35
      ],
      "node": "lib_desk",
      "collide": true,
@@ -4748,7 +4456,7 @@
      "pos": [
       -2.1,
       0.75,
-      -13.1
+      -16.4
      ],
      "node": "lib_crt",
      "fallback": "monitor"
@@ -4758,7 +4466,7 @@
      "pos": [
       -2.1,
       0,
-      -12.25
+      -15.55
      ],
      "rot": 180,
      "node": "lib_chair_wood",
@@ -4767,28 +4475,28 @@
     {
      "type": "partition",
      "pos": [
-      -6.7,
+      -6.65,
       0,
-      -13.6
+      -16.9
      ],
      "len": 2.0
     },
     {
      "type": "partition",
      "pos": [
-      -7.7,
+      -7.65,
       0,
-      -12.6
+      -15.7
      ],
      "rot": 90,
-     "len": 2.0
+     "len": 2.4
     },
     {
      "type": "glb",
      "pos": [
-      -6.7,
+      -6.65,
       0,
-      -13.05
+      -16.35
      ],
      "node": "lib_desk",
      "collide": true,
@@ -4797,9 +4505,9 @@
     {
      "type": "glb",
      "pos": [
-      -6.7,
+      -6.65,
       0.75,
-      -13.1
+      -16.4
      ],
      "node": "lib_crt",
      "fallback": "monitor"
@@ -4807,9 +4515,9 @@
     {
      "type": "glb",
      "pos": [
-      -6.7,
+      -6.65,
       0,
-      -12.25
+      -15.55
      ],
      "rot": 180,
      "node": "lib_chair_wood",
@@ -4820,18 +4528,8 @@
      "pos": [
       -11.3,
       0,
-      -13.6
+      -16.9
      ],
-     "len": 2.0
-    },
-    {
-     "type": "partition",
-     "pos": [
-      -12.3,
-      0,
-      -12.6
-     ],
-     "rot": 90,
      "len": 2.0
     },
     {
@@ -4839,7 +4537,7 @@
      "pos": [
       -11.3,
       0,
-      -13.05
+      -16.35
      ],
      "node": "lib_desk",
      "collide": true,
@@ -4850,7 +4548,7 @@
      "pos": [
       -11.3,
       0.75,
-      -13.1
+      -16.4
      ],
      "node": "lib_crt",
      "fallback": "monitor"
@@ -4860,7 +4558,7 @@
      "pos": [
       -11.3,
       0,
-      -12.25
+      -15.55
      ],
      "rot": 180,
      "node": "lib_chair_wood",
@@ -4871,26 +4569,26 @@
      "pos": [
       2.1,
       0,
-      -13.6
+      -16.9
      ],
      "len": 2.0
     },
     {
      "type": "partition",
      "pos": [
-      3.1,
+      1.1,
       0,
-      -12.6
+      -15.7
      ],
      "rot": 90,
-     "len": 2.0
+     "len": 2.4
     },
     {
      "type": "glb",
      "pos": [
       2.1,
       0,
-      -13.05
+      -16.35
      ],
      "node": "lib_desk",
      "collide": true,
@@ -4901,7 +4599,7 @@
      "pos": [
       2.1,
       0.75,
-      -13.1
+      -16.4
      ],
      "node": "lib_crt",
      "fallback": "monitor"
@@ -4911,7 +4609,7 @@
      "pos": [
       2.1,
       0,
-      -12.25
+      -15.55
      ],
      "rot": 180,
      "node": "lib_chair_wood",
@@ -4920,28 +4618,28 @@
     {
      "type": "partition",
      "pos": [
-      6.7,
+      6.65,
       0,
-      -13.6
+      -16.9
      ],
      "len": 2.0
     },
     {
      "type": "partition",
      "pos": [
-      7.7,
+      7.65,
       0,
-      -12.6
+      -15.7
      ],
      "rot": 90,
-     "len": 2.0
+     "len": 2.4
     },
     {
      "type": "glb",
      "pos": [
-      6.7,
+      6.65,
       0,
-      -13.05
+      -16.35
      ],
      "node": "lib_desk",
      "collide": true,
@@ -4950,9 +4648,9 @@
     {
      "type": "glb",
      "pos": [
-      6.7,
+      6.65,
       0.75,
-      -13.1
+      -16.4
      ],
      "node": "lib_crt",
      "fallback": "monitor"
@@ -4960,9 +4658,9 @@
     {
      "type": "glb",
      "pos": [
-      6.7,
+      6.65,
       0,
-      -12.25
+      -15.55
      ],
      "rot": 180,
      "node": "lib_chair_wood",
@@ -4973,18 +4671,8 @@
      "pos": [
       11.3,
       0,
-      -13.6
+      -16.9
      ],
-     "len": 2.0
-    },
-    {
-     "type": "partition",
-     "pos": [
-      12.3,
-      0,
-      -12.6
-     ],
-     "rot": 90,
      "len": 2.0
     },
     {
@@ -4992,7 +4680,7 @@
      "pos": [
       11.3,
       0,
-      -13.05
+      -16.35
      ],
      "node": "lib_desk",
      "collide": true,
@@ -5003,7 +4691,7 @@
      "pos": [
       11.3,
       0.75,
-      -13.1
+      -16.4
      ],
      "node": "lib_crt",
      "fallback": "monitor"
@@ -5013,7 +4701,7 @@
      "pos": [
       11.3,
       0,
-      -12.25
+      -15.55
      ],
      "rot": 180,
      "node": "lib_chair_wood",
@@ -5024,332 +4712,26 @@
      "pos": [
       -2.1,
       0,
-      -11.2
+      -14.5
      ],
      "len": 2.0
     },
     {
      "type": "partition",
      "pos": [
-      -3.1,
+      -1.1,
       0,
-      -10.2
+      -13.3
      ],
      "rot": 90,
-     "len": 2.0
+     "len": 2.4
     },
     {
      "type": "glb",
      "pos": [
       -2.1,
       0,
-      -10.65
-     ],
-     "node": "lib_desk",
-     "collide": true,
-     "fallback": "desk"
-    },
-    {
-     "type": "glb",
-     "pos": [
-      -2.1,
-      0.75,
-      -10.7
-     ],
-     "node": "lib_crt",
-     "fallback": "monitor"
-    },
-    {
-     "type": "glb",
-     "pos": [
-      -2.1,
-      0,
-      -9.85
-     ],
-     "rot": 180,
-     "node": "lib_chair_wood",
-     "fallback": "chair"
-    },
-    {
-     "type": "partition",
-     "pos": [
-      -6.7,
-      0,
-      -11.2
-     ],
-     "len": 2.0
-    },
-    {
-     "type": "partition",
-     "pos": [
-      -7.7,
-      0,
-      -10.2
-     ],
-     "rot": 90,
-     "len": 2.0
-    },
-    {
-     "type": "glb",
-     "pos": [
-      -6.7,
-      0,
-      -10.65
-     ],
-     "node": "lib_desk",
-     "collide": true,
-     "fallback": "desk"
-    },
-    {
-     "type": "glb",
-     "pos": [
-      -6.7,
-      0.75,
-      -10.7
-     ],
-     "node": "lib_crt",
-     "fallback": "monitor"
-    },
-    {
-     "type": "glb",
-     "pos": [
-      -6.7,
-      0,
-      -9.85
-     ],
-     "rot": 180,
-     "node": "lib_chair_wood",
-     "fallback": "chair"
-    },
-    {
-     "type": "partition",
-     "pos": [
-      -11.3,
-      0,
-      -11.2
-     ],
-     "len": 2.0
-    },
-    {
-     "type": "partition",
-     "pos": [
-      -12.3,
-      0,
-      -10.2
-     ],
-     "rot": 90,
-     "len": 2.0
-    },
-    {
-     "type": "glb",
-     "pos": [
-      -11.3,
-      0,
-      -10.65
-     ],
-     "node": "lib_desk",
-     "collide": true,
-     "fallback": "desk"
-    },
-    {
-     "type": "glb",
-     "pos": [
-      -11.3,
-      0.75,
-      -10.7
-     ],
-     "node": "lib_crt",
-     "fallback": "monitor"
-    },
-    {
-     "type": "glb",
-     "pos": [
-      -11.3,
-      0,
-      -9.85
-     ],
-     "rot": 180,
-     "node": "lib_chair_wood",
-     "fallback": "chair"
-    },
-    {
-     "type": "partition",
-     "pos": [
-      2.1,
-      0,
-      -11.2
-     ],
-     "len": 2.0
-    },
-    {
-     "type": "partition",
-     "pos": [
-      3.1,
-      0,
-      -10.2
-     ],
-     "rot": 90,
-     "len": 2.0
-    },
-    {
-     "type": "glb",
-     "pos": [
-      2.1,
-      0,
-      -10.65
-     ],
-     "node": "lib_desk",
-     "collide": true,
-     "fallback": "desk"
-    },
-    {
-     "type": "glb",
-     "pos": [
-      2.1,
-      0.75,
-      -10.7
-     ],
-     "node": "lib_crt",
-     "fallback": "monitor"
-    },
-    {
-     "type": "glb",
-     "pos": [
-      2.1,
-      0,
-      -9.85
-     ],
-     "rot": 180,
-     "node": "lib_chair_wood",
-     "fallback": "chair"
-    },
-    {
-     "type": "partition",
-     "pos": [
-      6.7,
-      0,
-      -11.2
-     ],
-     "len": 2.0
-    },
-    {
-     "type": "partition",
-     "pos": [
-      7.7,
-      0,
-      -10.2
-     ],
-     "rot": 90,
-     "len": 2.0
-    },
-    {
-     "type": "glb",
-     "pos": [
-      6.7,
-      0,
-      -10.65
-     ],
-     "node": "lib_desk",
-     "collide": true,
-     "fallback": "desk"
-    },
-    {
-     "type": "glb",
-     "pos": [
-      6.7,
-      0.75,
-      -10.7
-     ],
-     "node": "lib_crt",
-     "fallback": "monitor"
-    },
-    {
-     "type": "glb",
-     "pos": [
-      6.7,
-      0,
-      -9.85
-     ],
-     "rot": 180,
-     "node": "lib_chair_wood",
-     "fallback": "chair"
-    },
-    {
-     "type": "partition",
-     "pos": [
-      11.3,
-      0,
-      -11.2
-     ],
-     "len": 2.0
-    },
-    {
-     "type": "partition",
-     "pos": [
-      12.3,
-      0,
-      -10.2
-     ],
-     "rot": 90,
-     "len": 2.0
-    },
-    {
-     "type": "glb",
-     "pos": [
-      11.3,
-      0,
-      -10.65
-     ],
-     "node": "lib_desk",
-     "collide": true,
-     "fallback": "desk"
-    },
-    {
-     "type": "glb",
-     "pos": [
-      11.3,
-      0.75,
-      -10.7
-     ],
-     "node": "lib_crt",
-     "fallback": "monitor"
-    },
-    {
-     "type": "glb",
-     "pos": [
-      11.3,
-      0,
-      -9.85
-     ],
-     "rot": 180,
-     "node": "lib_chair_wood",
-     "fallback": "chair"
-    },
-    {
-     "type": "partition",
-     "pos": [
-      -2.1,
-      0,
-      -8.8
-     ],
-     "len": 2.0
-    },
-    {
-     "type": "partition",
-     "pos": [
-      -3.1,
-      0,
-      -7.8
-     ],
-     "rot": 90,
-     "len": 2.0
-    },
-    {
-     "type": "glb",
-     "pos": [
-      -2.1,
-      0,
-      -8.25
+      -13.95
      ],
      "node": "lib_desk",
      "collide": true,
@@ -5360,7 +4742,7 @@
      "pos": [
       -2.1,
       0.75,
-      -8.3
+      -14.0
      ],
      "node": "lib_crt",
      "fallback": "monitor"
@@ -5370,7 +4752,7 @@
      "pos": [
       -2.1,
       0,
-      -7.45
+      -13.15
      ],
      "rot": 180,
      "node": "lib_chair_wood",
@@ -5379,28 +4761,28 @@
     {
      "type": "partition",
      "pos": [
-      -6.7,
+      -6.65,
       0,
-      -8.8
+      -14.5
      ],
      "len": 2.0
     },
     {
      "type": "partition",
      "pos": [
-      -7.7,
+      -7.65,
       0,
-      -7.8
+      -13.3
      ],
      "rot": 90,
-     "len": 2.0
+     "len": 2.4
     },
     {
      "type": "glb",
      "pos": [
-      -6.7,
+      -6.65,
       0,
-      -8.25
+      -13.95
      ],
      "node": "lib_desk",
      "collide": true,
@@ -5409,9 +4791,9 @@
     {
      "type": "glb",
      "pos": [
-      -6.7,
+      -6.65,
       0.75,
-      -8.3
+      -14.0
      ],
      "node": "lib_crt",
      "fallback": "monitor"
@@ -5419,9 +4801,9 @@
     {
      "type": "glb",
      "pos": [
-      -6.7,
+      -6.65,
       0,
-      -7.45
+      -13.15
      ],
      "rot": 180,
      "node": "lib_chair_wood",
@@ -5432,18 +4814,8 @@
      "pos": [
       -11.3,
       0,
-      -8.8
+      -14.5
      ],
-     "len": 2.0
-    },
-    {
-     "type": "partition",
-     "pos": [
-      -12.3,
-      0,
-      -7.8
-     ],
-     "rot": 90,
      "len": 2.0
     },
     {
@@ -5451,7 +4823,7 @@
      "pos": [
       -11.3,
       0,
-      -8.25
+      -13.95
      ],
      "node": "lib_desk",
      "collide": true,
@@ -5462,7 +4834,7 @@
      "pos": [
       -11.3,
       0.75,
-      -8.3
+      -14.0
      ],
      "node": "lib_crt",
      "fallback": "monitor"
@@ -5472,7 +4844,7 @@
      "pos": [
       -11.3,
       0,
-      -7.45
+      -13.15
      ],
      "rot": 180,
      "node": "lib_chair_wood",
@@ -5483,26 +4855,26 @@
      "pos": [
       2.1,
       0,
-      -8.8
+      -14.5
      ],
      "len": 2.0
     },
     {
      "type": "partition",
      "pos": [
-      3.1,
+      1.1,
       0,
-      -7.8
+      -13.3
      ],
      "rot": 90,
-     "len": 2.0
+     "len": 2.4
     },
     {
      "type": "glb",
      "pos": [
       2.1,
       0,
-      -8.25
+      -13.95
      ],
      "node": "lib_desk",
      "collide": true,
@@ -5513,7 +4885,7 @@
      "pos": [
       2.1,
       0.75,
-      -8.3
+      -14.0
      ],
      "node": "lib_crt",
      "fallback": "monitor"
@@ -5523,7 +4895,7 @@
      "pos": [
       2.1,
       0,
-      -7.45
+      -13.15
      ],
      "rot": 180,
      "node": "lib_chair_wood",
@@ -5532,28 +4904,28 @@
     {
      "type": "partition",
      "pos": [
-      6.7,
+      6.65,
       0,
-      -8.8
+      -14.5
      ],
      "len": 2.0
     },
     {
      "type": "partition",
      "pos": [
-      7.7,
+      7.65,
       0,
-      -7.8
+      -13.3
      ],
      "rot": 90,
-     "len": 2.0
+     "len": 2.4
     },
     {
      "type": "glb",
      "pos": [
-      6.7,
+      6.65,
       0,
-      -8.25
+      -13.95
      ],
      "node": "lib_desk",
      "collide": true,
@@ -5562,9 +4934,9 @@
     {
      "type": "glb",
      "pos": [
-      6.7,
+      6.65,
       0.75,
-      -8.3
+      -14.0
      ],
      "node": "lib_crt",
      "fallback": "monitor"
@@ -5572,9 +4944,9 @@
     {
      "type": "glb",
      "pos": [
-      6.7,
+      6.65,
       0,
-      -7.45
+      -13.15
      ],
      "rot": 180,
      "node": "lib_chair_wood",
@@ -5585,18 +4957,8 @@
      "pos": [
       11.3,
       0,
-      -8.8
+      -14.5
      ],
-     "len": 2.0
-    },
-    {
-     "type": "partition",
-     "pos": [
-      12.3,
-      0,
-      -7.8
-     ],
-     "rot": 90,
      "len": 2.0
     },
     {
@@ -5604,7 +4966,7 @@
      "pos": [
       11.3,
       0,
-      -8.25
+      -13.95
      ],
      "node": "lib_desk",
      "collide": true,
@@ -5615,7 +4977,7 @@
      "pos": [
       11.3,
       0.75,
-      -8.3
+      -14.0
      ],
      "node": "lib_crt",
      "fallback": "monitor"
@@ -5625,7 +4987,7 @@
      "pos": [
       11.3,
       0,
-      -7.45
+      -13.15
      ],
      "rot": 180,
      "node": "lib_chair_wood",
@@ -5636,332 +4998,26 @@
      "pos": [
       -2.1,
       0,
-      -6.4
+      -12.1
      ],
      "len": 2.0
     },
     {
      "type": "partition",
      "pos": [
-      -3.1,
+      -1.1,
       0,
-      -5.4
+      -10.9
      ],
      "rot": 90,
-     "len": 2.0
+     "len": 2.4
     },
     {
      "type": "glb",
      "pos": [
       -2.1,
       0,
-      -5.85
-     ],
-     "node": "lib_desk",
-     "collide": true,
-     "fallback": "desk"
-    },
-    {
-     "type": "glb",
-     "pos": [
-      -2.1,
-      0.75,
-      -5.9
-     ],
-     "node": "lib_crt",
-     "fallback": "monitor"
-    },
-    {
-     "type": "glb",
-     "pos": [
-      -1.2,
-      0,
-      -4.8
-     ],
-     "rot": 220,
-     "node": "lib_chair_wood",
-     "fallback": "chair"
-    },
-    {
-     "type": "partition",
-     "pos": [
-      -6.7,
-      0,
-      -6.4
-     ],
-     "len": 2.0
-    },
-    {
-     "type": "partition",
-     "pos": [
-      -7.7,
-      0,
-      -5.4
-     ],
-     "rot": 90,
-     "len": 2.0
-    },
-    {
-     "type": "glb",
-     "pos": [
-      -6.7,
-      0,
-      -5.85
-     ],
-     "node": "lib_desk",
-     "collide": true,
-     "fallback": "desk"
-    },
-    {
-     "type": "glb",
-     "pos": [
-      -6.7,
-      0.75,
-      -5.9
-     ],
-     "node": "lib_crt",
-     "fallback": "monitor"
-    },
-    {
-     "type": "glb",
-     "pos": [
-      -6.7,
-      0,
-      -5.05
-     ],
-     "rot": 180,
-     "node": "lib_chair_wood",
-     "fallback": "chair"
-    },
-    {
-     "type": "partition",
-     "pos": [
-      -11.3,
-      0,
-      -6.4
-     ],
-     "len": 2.0
-    },
-    {
-     "type": "partition",
-     "pos": [
-      -12.3,
-      0,
-      -5.4
-     ],
-     "rot": 90,
-     "len": 2.0
-    },
-    {
-     "type": "glb",
-     "pos": [
-      -11.3,
-      0,
-      -5.85
-     ],
-     "node": "lib_desk",
-     "collide": true,
-     "fallback": "desk"
-    },
-    {
-     "type": "glb",
-     "pos": [
-      -11.3,
-      0.75,
-      -5.9
-     ],
-     "node": "lib_crt",
-     "fallback": "monitor"
-    },
-    {
-     "type": "glb",
-     "pos": [
-      -11.3,
-      0,
-      -5.05
-     ],
-     "rot": 180,
-     "node": "lib_chair_wood",
-     "fallback": "chair"
-    },
-    {
-     "type": "partition",
-     "pos": [
-      2.1,
-      0,
-      -6.4
-     ],
-     "len": 2.0
-    },
-    {
-     "type": "partition",
-     "pos": [
-      3.1,
-      0,
-      -5.4
-     ],
-     "rot": 90,
-     "len": 2.0
-    },
-    {
-     "type": "glb",
-     "pos": [
-      2.1,
-      0,
-      -5.85
-     ],
-     "node": "lib_desk",
-     "collide": true,
-     "fallback": "desk"
-    },
-    {
-     "type": "glb",
-     "pos": [
-      2.1,
-      0.75,
-      -5.9
-     ],
-     "node": "lib_crt",
-     "fallback": "monitor"
-    },
-    {
-     "type": "glb",
-     "pos": [
-      2.1,
-      0,
-      -5.05
-     ],
-     "rot": 180,
-     "node": "lib_chair_wood",
-     "fallback": "chair"
-    },
-    {
-     "type": "partition",
-     "pos": [
-      6.7,
-      0,
-      -6.4
-     ],
-     "len": 2.0
-    },
-    {
-     "type": "partition",
-     "pos": [
-      7.7,
-      0,
-      -5.4
-     ],
-     "rot": 90,
-     "len": 2.0
-    },
-    {
-     "type": "glb",
-     "pos": [
-      6.7,
-      0,
-      -5.85
-     ],
-     "node": "lib_desk",
-     "collide": true,
-     "fallback": "desk"
-    },
-    {
-     "type": "glb",
-     "pos": [
-      6.7,
-      0.75,
-      -5.9
-     ],
-     "node": "lib_crt",
-     "fallback": "monitor"
-    },
-    {
-     "type": "glb",
-     "pos": [
-      6.7,
-      0,
-      -5.05
-     ],
-     "rot": 180,
-     "node": "lib_chair_wood",
-     "fallback": "chair"
-    },
-    {
-     "type": "partition",
-     "pos": [
-      11.3,
-      0,
-      -6.4
-     ],
-     "len": 2.0
-    },
-    {
-     "type": "partition",
-     "pos": [
-      12.3,
-      0,
-      -5.4
-     ],
-     "rot": 90,
-     "len": 2.0
-    },
-    {
-     "type": "glb",
-     "pos": [
-      11.3,
-      0,
-      -5.85
-     ],
-     "node": "lib_desk",
-     "collide": true,
-     "fallback": "desk"
-    },
-    {
-     "type": "glb",
-     "pos": [
-      11.3,
-      0.75,
-      -5.9
-     ],
-     "node": "lib_crt",
-     "fallback": "monitor"
-    },
-    {
-     "type": "glb",
-     "pos": [
-      11.3,
-      0,
-      -5.05
-     ],
-     "rot": 180,
-     "node": "lib_chair_wood",
-     "fallback": "chair"
-    },
-    {
-     "type": "partition",
-     "pos": [
-      -2.1,
-      0,
-      -4.0
-     ],
-     "len": 2.0
-    },
-    {
-     "type": "partition",
-     "pos": [
-      -3.1,
-      0,
-      -3.0
-     ],
-     "rot": 90,
-     "len": 2.0
-    },
-    {
-     "type": "glb",
-     "pos": [
-      -2.1,
-      0,
-      -3.45
+      -11.55
      ],
      "node": "lib_desk",
      "collide": true,
@@ -5972,7 +5028,7 @@
      "pos": [
       -2.1,
       0.75,
-      -3.5
+      -11.6
      ],
      "node": "lib_crt",
      "fallback": "monitor"
@@ -5982,7 +5038,7 @@
      "pos": [
       -2.1,
       0,
-      -2.65
+      -10.75
      ],
      "rot": 180,
      "node": "lib_chair_wood",
@@ -5991,28 +5047,28 @@
     {
      "type": "partition",
      "pos": [
-      -6.7,
+      -6.65,
       0,
-      -4.0
+      -12.1
      ],
      "len": 2.0
     },
     {
      "type": "partition",
      "pos": [
-      -7.7,
+      -7.65,
       0,
-      -3.0
+      -10.9
      ],
      "rot": 90,
-     "len": 2.0
+     "len": 2.4
     },
     {
      "type": "glb",
      "pos": [
-      -6.7,
+      -6.65,
       0,
-      -3.45
+      -11.55
      ],
      "node": "lib_desk",
      "collide": true,
@@ -6021,9 +5077,9 @@
     {
      "type": "glb",
      "pos": [
-      -6.7,
+      -6.65,
       0.75,
-      -3.5
+      -11.6
      ],
      "node": "lib_crt",
      "fallback": "monitor"
@@ -6031,9 +5087,9 @@
     {
      "type": "glb",
      "pos": [
-      -6.7,
+      -6.65,
       0,
-      -2.65
+      -10.75
      ],
      "rot": 180,
      "node": "lib_chair_wood",
@@ -6044,18 +5100,8 @@
      "pos": [
       -11.3,
       0,
-      -4.0
+      -12.1
      ],
-     "len": 2.0
-    },
-    {
-     "type": "partition",
-     "pos": [
-      -12.3,
-      0,
-      -3.0
-     ],
-     "rot": 90,
      "len": 2.0
     },
     {
@@ -6063,7 +5109,7 @@
      "pos": [
       -11.3,
       0,
-      -3.45
+      -11.55
      ],
      "node": "lib_desk",
      "collide": true,
@@ -6074,7 +5120,7 @@
      "pos": [
       -11.3,
       0.75,
-      -3.5
+      -11.6
      ],
      "node": "lib_crt",
      "fallback": "monitor"
@@ -6084,7 +5130,7 @@
      "pos": [
       -11.3,
       0,
-      -2.65
+      -10.75
      ],
      "rot": 180,
      "node": "lib_chair_wood",
@@ -6095,26 +5141,26 @@
      "pos": [
       2.1,
       0,
-      -4.0
+      -12.1
      ],
      "len": 2.0
     },
     {
      "type": "partition",
      "pos": [
-      3.1,
+      1.1,
       0,
-      -3.0
+      -10.9
      ],
      "rot": 90,
-     "len": 2.0
+     "len": 2.4
     },
     {
      "type": "glb",
      "pos": [
       2.1,
       0,
-      -3.45
+      -11.55
      ],
      "node": "lib_desk",
      "collide": true,
@@ -6125,7 +5171,7 @@
      "pos": [
       2.1,
       0.75,
-      -3.5
+      -11.6
      ],
      "node": "lib_crt",
      "fallback": "monitor"
@@ -6135,7 +5181,7 @@
      "pos": [
       2.1,
       0,
-      -2.65
+      -10.75
      ],
      "rot": 180,
      "node": "lib_chair_wood",
@@ -6144,28 +5190,28 @@
     {
      "type": "partition",
      "pos": [
-      6.7,
+      6.65,
       0,
-      -4.0
+      -12.1
      ],
      "len": 2.0
     },
     {
      "type": "partition",
      "pos": [
-      7.7,
+      7.65,
       0,
-      -3.0
+      -10.9
      ],
      "rot": 90,
-     "len": 2.0
+     "len": 2.4
     },
     {
      "type": "glb",
      "pos": [
-      6.7,
+      6.65,
       0,
-      -3.45
+      -11.55
      ],
      "node": "lib_desk",
      "collide": true,
@@ -6174,9 +5220,9 @@
     {
      "type": "glb",
      "pos": [
-      6.7,
+      6.65,
       0.75,
-      -3.5
+      -11.6
      ],
      "node": "lib_crt",
      "fallback": "monitor"
@@ -6184,9 +5230,9 @@
     {
      "type": "glb",
      "pos": [
-      6.7,
+      6.65,
       0,
-      -2.65
+      -10.75
      ],
      "rot": 180,
      "node": "lib_chair_wood",
@@ -6197,18 +5243,8 @@
      "pos": [
       11.3,
       0,
-      -4.0
+      -12.1
      ],
-     "len": 2.0
-    },
-    {
-     "type": "partition",
-     "pos": [
-      12.3,
-      0,
-      -3.0
-     ],
-     "rot": 90,
      "len": 2.0
     },
     {
@@ -6216,7 +5252,7 @@
      "pos": [
       11.3,
       0,
-      -3.45
+      -11.55
      ],
      "node": "lib_desk",
      "collide": true,
@@ -6227,7 +5263,7 @@
      "pos": [
       11.3,
       0.75,
-      -3.5
+      -11.6
      ],
      "node": "lib_crt",
      "fallback": "monitor"
@@ -6237,7 +5273,7 @@
      "pos": [
       11.3,
       0,
-      -2.65
+      -10.75
      ],
      "rot": 180,
      "node": "lib_chair_wood",
@@ -6248,332 +5284,26 @@
      "pos": [
       -2.1,
       0,
-      -1.6
+      -9.7
      ],
      "len": 2.0
     },
     {
      "type": "partition",
      "pos": [
-      -3.1,
+      -1.1,
       0,
-      -0.6
+      -8.5
      ],
      "rot": 90,
-     "len": 2.0
+     "len": 2.4
     },
     {
      "type": "glb",
      "pos": [
       -2.1,
       0,
-      -1.05
-     ],
-     "node": "lib_desk",
-     "collide": true,
-     "fallback": "desk"
-    },
-    {
-     "type": "glb",
-     "pos": [
-      -2.1,
-      0.75,
-      -1.1
-     ],
-     "node": "lib_crt",
-     "fallback": "monitor"
-    },
-    {
-     "type": "glb",
-     "pos": [
-      -2.1,
-      0,
-      -0.25
-     ],
-     "rot": 180,
-     "node": "lib_chair_wood",
-     "fallback": "chair"
-    },
-    {
-     "type": "partition",
-     "pos": [
-      -6.7,
-      0,
-      -1.6
-     ],
-     "len": 2.0
-    },
-    {
-     "type": "partition",
-     "pos": [
-      -7.7,
-      0,
-      -0.6
-     ],
-     "rot": 90,
-     "len": 2.0
-    },
-    {
-     "type": "glb",
-     "pos": [
-      -6.7,
-      0,
-      -1.05
-     ],
-     "node": "lib_desk",
-     "collide": true,
-     "fallback": "desk"
-    },
-    {
-     "type": "glb",
-     "pos": [
-      -6.7,
-      0.75,
-      -1.1
-     ],
-     "node": "lib_crt",
-     "fallback": "monitor"
-    },
-    {
-     "type": "glb",
-     "pos": [
-      -6.7,
-      0,
-      -0.25
-     ],
-     "rot": 180,
-     "node": "lib_chair_wood",
-     "fallback": "chair"
-    },
-    {
-     "type": "partition",
-     "pos": [
-      -11.3,
-      0,
-      -1.6
-     ],
-     "len": 2.0
-    },
-    {
-     "type": "partition",
-     "pos": [
-      -12.3,
-      0,
-      -0.6
-     ],
-     "rot": 90,
-     "len": 2.0
-    },
-    {
-     "type": "glb",
-     "pos": [
-      -11.3,
-      0,
-      -1.05
-     ],
-     "node": "lib_desk",
-     "collide": true,
-     "fallback": "desk"
-    },
-    {
-     "type": "glb",
-     "pos": [
-      -11.3,
-      0.75,
-      -1.1
-     ],
-     "node": "lib_crt",
-     "fallback": "monitor"
-    },
-    {
-     "type": "glb",
-     "pos": [
-      -11.3,
-      0,
-      -0.25
-     ],
-     "rot": 180,
-     "node": "lib_chair_wood",
-     "fallback": "chair"
-    },
-    {
-     "type": "partition",
-     "pos": [
-      2.1,
-      0,
-      -1.6
-     ],
-     "len": 2.0
-    },
-    {
-     "type": "partition",
-     "pos": [
-      3.1,
-      0,
-      -0.6
-     ],
-     "rot": 90,
-     "len": 2.0
-    },
-    {
-     "type": "glb",
-     "pos": [
-      2.1,
-      0,
-      -1.05
-     ],
-     "node": "lib_desk",
-     "collide": true,
-     "fallback": "desk"
-    },
-    {
-     "type": "glb",
-     "pos": [
-      2.1,
-      0.75,
-      -1.1
-     ],
-     "node": "lib_crt",
-     "fallback": "monitor"
-    },
-    {
-     "type": "glb",
-     "pos": [
-      2.1,
-      0,
-      -0.25
-     ],
-     "rot": 180,
-     "node": "lib_chair_wood",
-     "fallback": "chair"
-    },
-    {
-     "type": "partition",
-     "pos": [
-      6.7,
-      0,
-      -1.6
-     ],
-     "len": 2.0
-    },
-    {
-     "type": "partition",
-     "pos": [
-      7.7,
-      0,
-      -0.6
-     ],
-     "rot": 90,
-     "len": 2.0
-    },
-    {
-     "type": "glb",
-     "pos": [
-      6.7,
-      0,
-      -1.05
-     ],
-     "node": "lib_desk",
-     "collide": true,
-     "fallback": "desk"
-    },
-    {
-     "type": "glb",
-     "pos": [
-      6.7,
-      0.75,
-      -1.1
-     ],
-     "node": "lib_crt",
-     "fallback": "monitor"
-    },
-    {
-     "type": "glb",
-     "pos": [
-      6.7,
-      0,
-      -0.25
-     ],
-     "rot": 180,
-     "node": "lib_chair_wood",
-     "fallback": "chair"
-    },
-    {
-     "type": "partition",
-     "pos": [
-      11.3,
-      0,
-      -1.6
-     ],
-     "len": 2.0
-    },
-    {
-     "type": "partition",
-     "pos": [
-      12.3,
-      0,
-      -0.6
-     ],
-     "rot": 90,
-     "len": 2.0
-    },
-    {
-     "type": "glb",
-     "pos": [
-      11.3,
-      0,
-      -1.05
-     ],
-     "node": "lib_desk",
-     "collide": true,
-     "fallback": "desk"
-    },
-    {
-     "type": "glb",
-     "pos": [
-      11.3,
-      0.75,
-      -1.1
-     ],
-     "node": "lib_crt",
-     "fallback": "monitor"
-    },
-    {
-     "type": "glb",
-     "pos": [
-      11.3,
-      0,
-      -0.25
-     ],
-     "rot": 180,
-     "node": "lib_chair_wood",
-     "fallback": "chair"
-    },
-    {
-     "type": "partition",
-     "pos": [
-      -2.1,
-      0,
-      0.8
-     ],
-     "len": 2.0
-    },
-    {
-     "type": "partition",
-     "pos": [
-      -3.1,
-      0,
-      1.8
-     ],
-     "rot": 90,
-     "len": 2.0
-    },
-    {
-     "type": "glb",
-     "pos": [
-      -2.1,
-      0,
-      1.35
+      -9.15
      ],
      "node": "lib_desk",
      "collide": true,
@@ -6584,7 +5314,7 @@
      "pos": [
       -2.1,
       0.75,
-      1.3
+      -9.2
      ],
      "node": "lib_crt",
      "fallback": "monitor"
@@ -6594,7 +5324,7 @@
      "pos": [
       -2.1,
       0,
-      2.15
+      -8.35
      ],
      "rot": 180,
      "node": "lib_chair_wood",
@@ -6603,28 +5333,28 @@
     {
      "type": "partition",
      "pos": [
-      -6.7,
+      -6.65,
       0,
-      0.8
+      -9.7
      ],
      "len": 2.0
     },
     {
      "type": "partition",
      "pos": [
-      -7.7,
+      -7.65,
       0,
-      1.8
+      -8.5
      ],
      "rot": 90,
-     "len": 2.0
+     "len": 2.4
     },
     {
      "type": "glb",
      "pos": [
-      -6.7,
+      -6.65,
       0,
-      1.35
+      -9.15
      ],
      "node": "lib_desk",
      "collide": true,
@@ -6633,9 +5363,9 @@
     {
      "type": "glb",
      "pos": [
-      -6.7,
+      -6.65,
       0.75,
-      1.3
+      -9.2
      ],
      "node": "lib_crt",
      "fallback": "monitor"
@@ -6643,9 +5373,9 @@
     {
      "type": "glb",
      "pos": [
-      -6.7,
+      -6.65,
       0,
-      2.15
+      -8.35
      ],
      "rot": 180,
      "node": "lib_chair_wood",
@@ -6656,18 +5386,8 @@
      "pos": [
       -11.3,
       0,
-      0.8
+      -9.7
      ],
-     "len": 2.0
-    },
-    {
-     "type": "partition",
-     "pos": [
-      -12.3,
-      0,
-      1.8
-     ],
-     "rot": 90,
      "len": 2.0
     },
     {
@@ -6675,7 +5395,7 @@
      "pos": [
       -11.3,
       0,
-      1.35
+      -9.15
      ],
      "node": "lib_desk",
      "collide": true,
@@ -6686,7 +5406,7 @@
      "pos": [
       -11.3,
       0.75,
-      1.3
+      -9.2
      ],
      "node": "lib_crt",
      "fallback": "monitor"
@@ -6696,7 +5416,7 @@
      "pos": [
       -11.3,
       0,
-      2.15
+      -8.35
      ],
      "rot": 180,
      "node": "lib_chair_wood",
@@ -6707,26 +5427,26 @@
      "pos": [
       2.1,
       0,
-      0.8
+      -9.7
      ],
      "len": 2.0
     },
     {
      "type": "partition",
      "pos": [
-      3.1,
+      1.1,
       0,
-      1.8
+      -8.5
      ],
      "rot": 90,
-     "len": 2.0
+     "len": 2.4
     },
     {
      "type": "glb",
      "pos": [
       2.1,
       0,
-      1.35
+      -9.15
      ],
      "node": "lib_desk",
      "collide": true,
@@ -6737,7 +5457,7 @@
      "pos": [
       2.1,
       0.75,
-      1.3
+      -9.2
      ],
      "node": "lib_crt",
      "fallback": "monitor"
@@ -6747,7 +5467,7 @@
      "pos": [
       2.1,
       0,
-      2.15
+      -8.35
      ],
      "rot": 180,
      "node": "lib_chair_wood",
@@ -6756,28 +5476,28 @@
     {
      "type": "partition",
      "pos": [
-      6.7,
+      6.65,
       0,
-      0.8
+      -9.7
      ],
      "len": 2.0
     },
     {
      "type": "partition",
      "pos": [
-      7.7,
+      7.65,
       0,
-      1.8
+      -8.5
      ],
      "rot": 90,
-     "len": 2.0
+     "len": 2.4
     },
     {
      "type": "glb",
      "pos": [
-      6.7,
+      6.65,
       0,
-      1.35
+      -9.15
      ],
      "node": "lib_desk",
      "collide": true,
@@ -6786,9 +5506,9 @@
     {
      "type": "glb",
      "pos": [
-      6.7,
+      6.65,
       0.75,
-      1.3
+      -9.2
      ],
      "node": "lib_crt",
      "fallback": "monitor"
@@ -6796,9 +5516,9 @@
     {
      "type": "glb",
      "pos": [
-      6.7,
+      6.65,
       0,
-      2.15
+      -8.35
      ],
      "rot": 180,
      "node": "lib_chair_wood",
@@ -6809,18 +5529,8 @@
      "pos": [
       11.3,
       0,
-      0.8
+      -9.7
      ],
-     "len": 2.0
-    },
-    {
-     "type": "partition",
-     "pos": [
-      12.3,
-      0,
-      1.8
-     ],
-     "rot": 90,
      "len": 2.0
     },
     {
@@ -6828,7 +5538,7 @@
      "pos": [
       11.3,
       0,
-      1.35
+      -9.15
      ],
      "node": "lib_desk",
      "collide": true,
@@ -6839,7 +5549,7 @@
      "pos": [
       11.3,
       0.75,
-      1.3
+      -9.2
      ],
      "node": "lib_crt",
      "fallback": "monitor"
@@ -6849,7 +5559,7 @@
      "pos": [
       11.3,
       0,
-      2.15
+      -8.35
      ],
      "rot": 180,
      "node": "lib_chair_wood",
@@ -6860,332 +5570,26 @@
      "pos": [
       -2.1,
       0,
-      5.6
+      -7.3
      ],
      "len": 2.0
     },
     {
      "type": "partition",
      "pos": [
-      -3.1,
+      -1.1,
       0,
-      6.6
+      -6.1
      ],
      "rot": 90,
-     "len": 2.0
+     "len": 2.4
     },
     {
      "type": "glb",
      "pos": [
       -2.1,
       0,
-      6.15
-     ],
-     "node": "lib_desk",
-     "collide": true,
-     "fallback": "desk"
-    },
-    {
-     "type": "glb",
-     "pos": [
-      -2.1,
-      0.75,
-      6.1
-     ],
-     "node": "lib_crt",
-     "fallback": "monitor"
-    },
-    {
-     "type": "glb",
-     "pos": [
-      -2.1,
-      0,
-      6.95
-     ],
-     "rot": 180,
-     "node": "lib_chair_wood",
-     "fallback": "chair"
-    },
-    {
-     "type": "partition",
-     "pos": [
-      -6.7,
-      0,
-      5.6
-     ],
-     "len": 2.0
-    },
-    {
-     "type": "partition",
-     "pos": [
-      -7.7,
-      0,
-      6.6
-     ],
-     "rot": 90,
-     "len": 2.0
-    },
-    {
-     "type": "glb",
-     "pos": [
-      -6.7,
-      0,
-      6.15
-     ],
-     "node": "lib_desk",
-     "collide": true,
-     "fallback": "desk"
-    },
-    {
-     "type": "glb",
-     "pos": [
-      -6.7,
-      0.75,
-      6.1
-     ],
-     "node": "lib_crt",
-     "fallback": "monitor"
-    },
-    {
-     "type": "glb",
-     "pos": [
-      -6.7,
-      0,
-      6.95
-     ],
-     "rot": 180,
-     "node": "lib_chair_wood",
-     "fallback": "chair"
-    },
-    {
-     "type": "partition",
-     "pos": [
-      -11.3,
-      0,
-      5.6
-     ],
-     "len": 2.0
-    },
-    {
-     "type": "partition",
-     "pos": [
-      -12.3,
-      0,
-      6.6
-     ],
-     "rot": 90,
-     "len": 2.0
-    },
-    {
-     "type": "glb",
-     "pos": [
-      -11.3,
-      0,
-      6.15
-     ],
-     "node": "lib_desk",
-     "collide": true,
-     "fallback": "desk"
-    },
-    {
-     "type": "glb",
-     "pos": [
-      -11.3,
-      0.75,
-      6.1
-     ],
-     "node": "lib_crt",
-     "fallback": "monitor"
-    },
-    {
-     "type": "glb",
-     "pos": [
-      -11.3,
-      0,
-      6.95
-     ],
-     "rot": 180,
-     "node": "lib_chair_wood",
-     "fallback": "chair"
-    },
-    {
-     "type": "partition",
-     "pos": [
-      2.1,
-      0,
-      5.6
-     ],
-     "len": 2.0
-    },
-    {
-     "type": "partition",
-     "pos": [
-      3.1,
-      0,
-      6.6
-     ],
-     "rot": 90,
-     "len": 2.0
-    },
-    {
-     "type": "glb",
-     "pos": [
-      2.1,
-      0,
-      6.15
-     ],
-     "node": "lib_desk",
-     "collide": true,
-     "fallback": "desk"
-    },
-    {
-     "type": "glb",
-     "pos": [
-      2.1,
-      0.75,
-      6.1
-     ],
-     "node": "lib_crt",
-     "fallback": "monitor"
-    },
-    {
-     "type": "glb",
-     "pos": [
-      2.1,
-      0,
-      6.95
-     ],
-     "rot": 180,
-     "node": "lib_chair_wood",
-     "fallback": "chair"
-    },
-    {
-     "type": "partition",
-     "pos": [
-      6.7,
-      0,
-      5.6
-     ],
-     "len": 2.0
-    },
-    {
-     "type": "partition",
-     "pos": [
-      7.7,
-      0,
-      6.6
-     ],
-     "rot": 90,
-     "len": 2.0
-    },
-    {
-     "type": "glb",
-     "pos": [
-      6.7,
-      0,
-      6.15
-     ],
-     "node": "lib_desk",
-     "collide": true,
-     "fallback": "desk"
-    },
-    {
-     "type": "glb",
-     "pos": [
-      6.7,
-      0.75,
-      6.1
-     ],
-     "node": "lib_crt",
-     "fallback": "monitor"
-    },
-    {
-     "type": "glb",
-     "pos": [
-      6.7,
-      0,
-      6.95
-     ],
-     "rot": 180,
-     "node": "lib_chair_wood",
-     "fallback": "chair"
-    },
-    {
-     "type": "partition",
-     "pos": [
-      11.3,
-      0,
-      5.6
-     ],
-     "len": 2.0
-    },
-    {
-     "type": "partition",
-     "pos": [
-      12.3,
-      0,
-      6.6
-     ],
-     "rot": 90,
-     "len": 2.0
-    },
-    {
-     "type": "glb",
-     "pos": [
-      11.3,
-      0,
-      6.15
-     ],
-     "node": "lib_desk",
-     "collide": true,
-     "fallback": "desk"
-    },
-    {
-     "type": "glb",
-     "pos": [
-      11.3,
-      0.75,
-      6.1
-     ],
-     "node": "lib_crt",
-     "fallback": "monitor"
-    },
-    {
-     "type": "glb",
-     "pos": [
-      11.3,
-      0,
-      6.95
-     ],
-     "rot": 180,
-     "node": "lib_chair_wood",
-     "fallback": "chair"
-    },
-    {
-     "type": "partition",
-     "pos": [
-      -2.1,
-      0,
-      8.0
-     ],
-     "len": 2.0
-    },
-    {
-     "type": "partition",
-     "pos": [
-      -3.1,
-      0,
-      9.0
-     ],
-     "rot": 90,
-     "len": 2.0
-    },
-    {
-     "type": "glb",
-     "pos": [
-      -2.1,
-      0,
-      8.55
+      -6.75
      ],
      "node": "lib_desk",
      "collide": true,
@@ -7196,7 +5600,7 @@
      "pos": [
       -2.1,
       0.75,
-      8.5
+      -6.8
      ],
      "node": "lib_crt",
      "fallback": "monitor"
@@ -7206,7 +5610,7 @@
      "pos": [
       -2.1,
       0,
-      9.35
+      -5.95
      ],
      "rot": 180,
      "node": "lib_chair_wood",
@@ -7215,28 +5619,28 @@
     {
      "type": "partition",
      "pos": [
-      -6.7,
+      -6.65,
       0,
-      8.0
+      -7.3
      ],
      "len": 2.0
     },
     {
      "type": "partition",
      "pos": [
-      -7.7,
+      -7.65,
       0,
-      9.0
+      -6.1
      ],
      "rot": 90,
-     "len": 2.0
+     "len": 2.4
     },
     {
      "type": "glb",
      "pos": [
-      -6.7,
+      -6.65,
       0,
-      8.55
+      -6.75
      ],
      "node": "lib_desk",
      "collide": true,
@@ -7245,9 +5649,9 @@
     {
      "type": "glb",
      "pos": [
-      -6.7,
+      -6.65,
       0.75,
-      8.5
+      -6.8
      ],
      "node": "lib_crt",
      "fallback": "monitor"
@@ -7255,9 +5659,9 @@
     {
      "type": "glb",
      "pos": [
-      -6.7,
+      -6.65,
       0,
-      9.35
+      -5.95
      ],
      "rot": 180,
      "node": "lib_chair_wood",
@@ -7268,18 +5672,8 @@
      "pos": [
       -11.3,
       0,
-      8.0
+      -7.3
      ],
-     "len": 2.0
-    },
-    {
-     "type": "partition",
-     "pos": [
-      -12.3,
-      0,
-      9.0
-     ],
-     "rot": 90,
      "len": 2.0
     },
     {
@@ -7287,7 +5681,7 @@
      "pos": [
       -11.3,
       0,
-      8.55
+      -6.75
      ],
      "node": "lib_desk",
      "collide": true,
@@ -7298,7 +5692,7 @@
      "pos": [
       -11.3,
       0.75,
-      8.5
+      -6.8
      ],
      "node": "lib_crt",
      "fallback": "monitor"
@@ -7308,7 +5702,7 @@
      "pos": [
       -11.3,
       0,
-      9.35
+      -5.95
      ],
      "rot": 180,
      "node": "lib_chair_wood",
@@ -7319,26 +5713,26 @@
      "pos": [
       2.1,
       0,
-      8.0
+      -7.3
      ],
      "len": 2.0
     },
     {
      "type": "partition",
      "pos": [
-      3.1,
+      1.1,
       0,
-      9.0
+      -6.1
      ],
      "rot": 90,
-     "len": 2.0
+     "len": 2.4
     },
     {
      "type": "glb",
      "pos": [
       2.1,
       0,
-      8.55
+      -6.75
      ],
      "node": "lib_desk",
      "collide": true,
@@ -7349,7 +5743,7 @@
      "pos": [
       2.1,
       0.75,
-      8.5
+      -6.8
      ],
      "node": "lib_crt",
      "fallback": "monitor"
@@ -7359,7 +5753,7 @@
      "pos": [
       2.1,
       0,
-      9.35
+      -5.95
      ],
      "rot": 180,
      "node": "lib_chair_wood",
@@ -7368,28 +5762,28 @@
     {
      "type": "partition",
      "pos": [
-      6.7,
+      6.65,
       0,
-      8.0
+      -7.3
      ],
      "len": 2.0
     },
     {
      "type": "partition",
      "pos": [
-      7.7,
+      7.65,
       0,
-      9.0
+      -6.1
      ],
      "rot": 90,
-     "len": 2.0
+     "len": 2.4
     },
     {
      "type": "glb",
      "pos": [
-      6.7,
+      6.65,
       0,
-      8.55
+      -6.75
      ],
      "node": "lib_desk",
      "collide": true,
@@ -7398,9 +5792,9 @@
     {
      "type": "glb",
      "pos": [
-      6.7,
+      6.65,
       0.75,
-      8.5
+      -6.8
      ],
      "node": "lib_crt",
      "fallback": "monitor"
@@ -7408,9 +5802,9 @@
     {
      "type": "glb",
      "pos": [
-      6.7,
+      6.65,
       0,
-      9.35
+      -5.95
      ],
      "rot": 180,
      "node": "lib_chair_wood",
@@ -7421,18 +5815,8 @@
      "pos": [
       11.3,
       0,
-      8.0
+      -7.3
      ],
-     "len": 2.0
-    },
-    {
-     "type": "partition",
-     "pos": [
-      12.3,
-      0,
-      9.0
-     ],
-     "rot": 90,
      "len": 2.0
     },
     {
@@ -7440,7 +5824,7 @@
      "pos": [
       11.3,
       0,
-      8.55
+      -6.75
      ],
      "node": "lib_desk",
      "collide": true,
@@ -7451,7 +5835,7 @@
      "pos": [
       11.3,
       0.75,
-      8.5
+      -6.8
      ],
      "node": "lib_crt",
      "fallback": "monitor"
@@ -7461,7 +5845,7 @@
      "pos": [
       11.3,
       0,
-      9.35
+      -5.95
      ],
      "rot": 180,
      "node": "lib_chair_wood",
@@ -7472,332 +5856,26 @@
      "pos": [
       -2.1,
       0,
-      10.4
+      -4.9
      ],
      "len": 2.0
     },
     {
      "type": "partition",
      "pos": [
-      -3.1,
+      -1.1,
       0,
-      11.4
+      -3.7
      ],
      "rot": 90,
-     "len": 2.0
+     "len": 2.4
     },
     {
      "type": "glb",
      "pos": [
       -2.1,
       0,
-      10.95
-     ],
-     "node": "lib_desk",
-     "collide": true,
-     "fallback": "desk"
-    },
-    {
-     "type": "glb",
-     "pos": [
-      -2.1,
-      0.75,
-      10.9
-     ],
-     "node": "lib_crt",
-     "fallback": "monitor"
-    },
-    {
-     "type": "glb",
-     "pos": [
-      -2.1,
-      0,
-      11.75
-     ],
-     "rot": 180,
-     "node": "lib_chair_wood",
-     "fallback": "chair"
-    },
-    {
-     "type": "partition",
-     "pos": [
-      -6.7,
-      0,
-      10.4
-     ],
-     "len": 2.0
-    },
-    {
-     "type": "partition",
-     "pos": [
-      -7.7,
-      0,
-      11.4
-     ],
-     "rot": 90,
-     "len": 2.0
-    },
-    {
-     "type": "glb",
-     "pos": [
-      -6.7,
-      0,
-      10.95
-     ],
-     "node": "lib_desk",
-     "collide": true,
-     "fallback": "desk"
-    },
-    {
-     "type": "glb",
-     "pos": [
-      -6.7,
-      0.75,
-      10.9
-     ],
-     "node": "lib_crt",
-     "fallback": "monitor"
-    },
-    {
-     "type": "glb",
-     "pos": [
-      -6.7,
-      0,
-      11.75
-     ],
-     "rot": 180,
-     "node": "lib_chair_wood",
-     "fallback": "chair"
-    },
-    {
-     "type": "partition",
-     "pos": [
-      -11.3,
-      0,
-      10.4
-     ],
-     "len": 2.0
-    },
-    {
-     "type": "partition",
-     "pos": [
-      -12.3,
-      0,
-      11.4
-     ],
-     "rot": 90,
-     "len": 2.0
-    },
-    {
-     "type": "glb",
-     "pos": [
-      -11.3,
-      0,
-      10.95
-     ],
-     "node": "lib_desk",
-     "collide": true,
-     "fallback": "desk"
-    },
-    {
-     "type": "glb",
-     "pos": [
-      -11.3,
-      0.75,
-      10.9
-     ],
-     "node": "lib_crt",
-     "fallback": "monitor"
-    },
-    {
-     "type": "glb",
-     "pos": [
-      -11.3,
-      0,
-      11.75
-     ],
-     "rot": 180,
-     "node": "lib_chair_wood",
-     "fallback": "chair"
-    },
-    {
-     "type": "partition",
-     "pos": [
-      2.1,
-      0,
-      10.4
-     ],
-     "len": 2.0
-    },
-    {
-     "type": "partition",
-     "pos": [
-      3.1,
-      0,
-      11.4
-     ],
-     "rot": 90,
-     "len": 2.0
-    },
-    {
-     "type": "glb",
-     "pos": [
-      2.1,
-      0,
-      10.95
-     ],
-     "node": "lib_desk",
-     "collide": true,
-     "fallback": "desk"
-    },
-    {
-     "type": "glb",
-     "pos": [
-      2.1,
-      0.75,
-      10.9
-     ],
-     "node": "lib_crt",
-     "fallback": "monitor"
-    },
-    {
-     "type": "glb",
-     "pos": [
-      2.1,
-      0,
-      11.75
-     ],
-     "rot": 180,
-     "node": "lib_chair_wood",
-     "fallback": "chair"
-    },
-    {
-     "type": "partition",
-     "pos": [
-      6.7,
-      0,
-      10.4
-     ],
-     "len": 2.0
-    },
-    {
-     "type": "partition",
-     "pos": [
-      7.7,
-      0,
-      11.4
-     ],
-     "rot": 90,
-     "len": 2.0
-    },
-    {
-     "type": "glb",
-     "pos": [
-      6.7,
-      0,
-      10.95
-     ],
-     "node": "lib_desk",
-     "collide": true,
-     "fallback": "desk"
-    },
-    {
-     "type": "glb",
-     "pos": [
-      6.7,
-      0.75,
-      10.9
-     ],
-     "node": "lib_crt",
-     "fallback": "monitor"
-    },
-    {
-     "type": "glb",
-     "pos": [
-      6.7,
-      0,
-      11.75
-     ],
-     "rot": 180,
-     "node": "lib_chair_wood",
-     "fallback": "chair"
-    },
-    {
-     "type": "partition",
-     "pos": [
-      11.3,
-      0,
-      10.4
-     ],
-     "len": 2.0
-    },
-    {
-     "type": "partition",
-     "pos": [
-      12.3,
-      0,
-      11.4
-     ],
-     "rot": 90,
-     "len": 2.0
-    },
-    {
-     "type": "glb",
-     "pos": [
-      11.3,
-      0,
-      10.95
-     ],
-     "node": "lib_desk",
-     "collide": true,
-     "fallback": "desk"
-    },
-    {
-     "type": "glb",
-     "pos": [
-      11.3,
-      0.75,
-      10.9
-     ],
-     "node": "lib_crt",
-     "fallback": "monitor"
-    },
-    {
-     "type": "glb",
-     "pos": [
-      11.3,
-      0,
-      11.75
-     ],
-     "rot": 180,
-     "node": "lib_chair_wood",
-     "fallback": "chair"
-    },
-    {
-     "type": "partition",
-     "pos": [
-      -2.1,
-      0,
-      12.8
-     ],
-     "len": 2.0
-    },
-    {
-     "type": "partition",
-     "pos": [
-      -3.1,
-      0,
-      13.8
-     ],
-     "rot": 90,
-     "len": 2.0
-    },
-    {
-     "type": "glb",
-     "pos": [
-      -2.1,
-      0,
-      13.35
+      -4.35
      ],
      "node": "lib_desk",
      "collide": true,
@@ -7808,7 +5886,7 @@
      "pos": [
       -2.1,
       0.75,
-      13.3
+      -4.4
      ],
      "node": "lib_crt",
      "fallback": "monitor"
@@ -7818,7 +5896,7 @@
      "pos": [
       -2.1,
       0,
-      14.15
+      -3.55
      ],
      "rot": 180,
      "node": "lib_chair_wood",
@@ -7827,28 +5905,28 @@
     {
      "type": "partition",
      "pos": [
-      -6.7,
+      -6.65,
       0,
-      12.8
+      -4.9
      ],
      "len": 2.0
     },
     {
      "type": "partition",
      "pos": [
-      -7.7,
+      -7.65,
       0,
-      13.8
+      -3.7
      ],
      "rot": 90,
-     "len": 2.0
+     "len": 2.4
     },
     {
      "type": "glb",
      "pos": [
-      -6.7,
+      -6.65,
       0,
-      13.35
+      -4.35
      ],
      "node": "lib_desk",
      "collide": true,
@@ -7857,9 +5935,9 @@
     {
      "type": "glb",
      "pos": [
-      -6.7,
+      -6.65,
       0.75,
-      13.3
+      -4.4
      ],
      "node": "lib_crt",
      "fallback": "monitor"
@@ -7867,9 +5945,9 @@
     {
      "type": "glb",
      "pos": [
-      -6.7,
+      -6.65,
       0,
-      14.15
+      -3.55
      ],
      "rot": 180,
      "node": "lib_chair_wood",
@@ -7880,18 +5958,8 @@
      "pos": [
       -11.3,
       0,
-      12.8
+      -4.9
      ],
-     "len": 2.0
-    },
-    {
-     "type": "partition",
-     "pos": [
-      -12.3,
-      0,
-      13.8
-     ],
-     "rot": 90,
      "len": 2.0
     },
     {
@@ -7899,7 +5967,7 @@
      "pos": [
       -11.3,
       0,
-      13.35
+      -4.35
      ],
      "node": "lib_desk",
      "collide": true,
@@ -7910,7 +5978,7 @@
      "pos": [
       -11.3,
       0.75,
-      13.3
+      -4.4
      ],
      "node": "lib_crt",
      "fallback": "monitor"
@@ -7920,7 +5988,7 @@
      "pos": [
       -11.3,
       0,
-      14.15
+      -3.55
      ],
      "rot": 180,
      "node": "lib_chair_wood",
@@ -7931,26 +5999,26 @@
      "pos": [
       2.1,
       0,
-      12.8
+      -4.9
      ],
      "len": 2.0
     },
     {
      "type": "partition",
      "pos": [
-      3.1,
+      1.1,
       0,
-      13.8
+      -3.7
      ],
      "rot": 90,
-     "len": 2.0
+     "len": 2.4
     },
     {
      "type": "glb",
      "pos": [
       2.1,
       0,
-      13.35
+      -4.35
      ],
      "node": "lib_desk",
      "collide": true,
@@ -7961,7 +6029,7 @@
      "pos": [
       2.1,
       0.75,
-      13.3
+      -4.4
      ],
      "node": "lib_crt",
      "fallback": "monitor"
@@ -7971,7 +6039,7 @@
      "pos": [
       2.1,
       0,
-      14.15
+      -3.55
      ],
      "rot": 180,
      "node": "lib_chair_wood",
@@ -7980,28 +6048,28 @@
     {
      "type": "partition",
      "pos": [
-      6.7,
+      6.65,
       0,
-      12.8
+      -4.9
      ],
      "len": 2.0
     },
     {
      "type": "partition",
      "pos": [
-      7.7,
+      7.65,
       0,
-      13.8
+      -3.7
      ],
      "rot": 90,
-     "len": 2.0
+     "len": 2.4
     },
     {
      "type": "glb",
      "pos": [
-      6.7,
+      6.65,
       0,
-      13.35
+      -4.35
      ],
      "node": "lib_desk",
      "collide": true,
@@ -8010,9 +6078,9 @@
     {
      "type": "glb",
      "pos": [
-      6.7,
+      6.65,
       0.75,
-      13.3
+      -4.4
      ],
      "node": "lib_crt",
      "fallback": "monitor"
@@ -8020,9 +6088,9 @@
     {
      "type": "glb",
      "pos": [
-      6.7,
+      6.65,
       0,
-      14.15
+      -3.55
      ],
      "rot": 180,
      "node": "lib_chair_wood",
@@ -8033,18 +6101,8 @@
      "pos": [
       11.3,
       0,
-      12.8
+      -4.9
      ],
-     "len": 2.0
-    },
-    {
-     "type": "partition",
-     "pos": [
-      12.3,
-      0,
-      13.8
-     ],
-     "rot": 90,
      "len": 2.0
     },
     {
@@ -8052,7 +6110,7 @@
      "pos": [
       11.3,
       0,
-      13.35
+      -4.35
      ],
      "node": "lib_desk",
      "collide": true,
@@ -8063,7 +6121,7 @@
      "pos": [
       11.3,
       0.75,
-      13.3
+      -4.4
      ],
      "node": "lib_crt",
      "fallback": "monitor"
@@ -8073,7 +6131,7 @@
      "pos": [
       11.3,
       0,
-      14.15
+      -3.55
      ],
      "rot": 180,
      "node": "lib_chair_wood",
@@ -8084,16 +6142,16 @@
      "pos": [
       -2.1,
       0,
-      15.2
+      -2.5
      ],
      "len": 2.0
     },
     {
      "type": "partition",
      "pos": [
-      -3.1,
+      -1.1,
       0,
-      16.2
+      -1.5
      ],
      "rot": 90,
      "len": 2.0
@@ -8103,7 +6161,7 @@
      "pos": [
       -2.1,
       0,
-      15.75
+      -1.95
      ],
      "node": "lib_desk",
      "collide": true,
@@ -8114,7 +6172,7 @@
      "pos": [
       -2.1,
       0.75,
-      15.7
+      -2.0
      ],
      "node": "lib_crt",
      "fallback": "monitor"
@@ -8124,7 +6182,7 @@
      "pos": [
       -2.1,
       0,
-      16.55
+      -1.15
      ],
      "rot": 180,
      "node": "lib_chair_wood",
@@ -8133,18 +6191,18 @@
     {
      "type": "partition",
      "pos": [
-      -6.7,
+      -6.65,
       0,
-      15.2
+      -2.5
      ],
      "len": 2.0
     },
     {
      "type": "partition",
      "pos": [
-      -7.7,
+      -7.65,
       0,
-      16.2
+      -1.5
      ],
      "rot": 90,
      "len": 2.0
@@ -8152,9 +6210,9 @@
     {
      "type": "glb",
      "pos": [
-      -6.7,
+      -6.65,
       0,
-      15.75
+      -1.95
      ],
      "node": "lib_desk",
      "collide": true,
@@ -8163,9 +6221,9 @@
     {
      "type": "glb",
      "pos": [
-      -6.7,
+      -6.65,
       0.75,
-      15.7
+      -2.0
      ],
      "node": "lib_crt",
      "fallback": "monitor"
@@ -8173,9 +6231,9 @@
     {
      "type": "glb",
      "pos": [
-      -6.7,
+      -6.65,
       0,
-      16.55
+      -1.15
      ],
      "rot": 180,
      "node": "lib_chair_wood",
@@ -8186,18 +6244,8 @@
      "pos": [
       -11.3,
       0,
-      15.2
+      -2.5
      ],
-     "len": 2.0
-    },
-    {
-     "type": "partition",
-     "pos": [
-      -12.3,
-      0,
-      16.2
-     ],
-     "rot": 90,
      "len": 2.0
     },
     {
@@ -8205,7 +6253,7 @@
      "pos": [
       -11.3,
       0,
-      15.75
+      -1.95
      ],
      "node": "lib_desk",
      "collide": true,
@@ -8216,7 +6264,7 @@
      "pos": [
       -11.3,
       0.75,
-      15.7
+      -2.0
      ],
      "node": "lib_crt",
      "fallback": "monitor"
@@ -8226,7 +6274,7 @@
      "pos": [
       -11.3,
       0,
-      16.55
+      -1.15
      ],
      "rot": 180,
      "node": "lib_chair_wood",
@@ -8237,16 +6285,16 @@
      "pos": [
       2.1,
       0,
-      15.2
+      -2.5
      ],
      "len": 2.0
     },
     {
      "type": "partition",
      "pos": [
-      3.1,
+      1.1,
       0,
-      16.2
+      -1.5
      ],
      "rot": 90,
      "len": 2.0
@@ -8256,7 +6304,7 @@
      "pos": [
       2.1,
       0,
-      15.75
+      -1.95
      ],
      "node": "lib_desk",
      "collide": true,
@@ -8267,7 +6315,293 @@
      "pos": [
       2.1,
       0.75,
-      15.7
+      -2.0
+     ],
+     "node": "lib_crt",
+     "fallback": "monitor"
+    },
+    {
+     "type": "glb",
+     "pos": [
+      2.65,
+      0,
+      -0.75
+     ],
+     "rot": 222,
+     "node": "lib_chair_wood",
+     "fallback": "chair"
+    },
+    {
+     "type": "partition",
+     "pos": [
+      6.65,
+      0,
+      -2.5
+     ],
+     "len": 2.0
+    },
+    {
+     "type": "partition",
+     "pos": [
+      7.65,
+      0,
+      -1.5
+     ],
+     "rot": 90,
+     "len": 2.0
+    },
+    {
+     "type": "glb",
+     "pos": [
+      6.65,
+      0,
+      -1.95
+     ],
+     "node": "lib_desk",
+     "collide": true,
+     "fallback": "desk"
+    },
+    {
+     "type": "glb",
+     "pos": [
+      6.65,
+      0.75,
+      -2.0
+     ],
+     "node": "lib_crt",
+     "fallback": "monitor"
+    },
+    {
+     "type": "glb",
+     "pos": [
+      6.65,
+      0,
+      -1.15
+     ],
+     "rot": 180,
+     "node": "lib_chair_wood",
+     "fallback": "chair"
+    },
+    {
+     "type": "partition",
+     "pos": [
+      11.3,
+      0,
+      -2.5
+     ],
+     "len": 2.0
+    },
+    {
+     "type": "glb",
+     "pos": [
+      11.3,
+      0,
+      -1.95
+     ],
+     "node": "lib_desk",
+     "collide": true,
+     "fallback": "desk"
+    },
+    {
+     "type": "glb",
+     "pos": [
+      11.3,
+      0.75,
+      -2.0
+     ],
+     "node": "lib_crt",
+     "fallback": "monitor"
+    },
+    {
+     "type": "glb",
+     "pos": [
+      11.3,
+      0,
+      -1.15
+     ],
+     "rot": 180,
+     "node": "lib_chair_wood",
+     "fallback": "chair"
+    },
+    {
+     "type": "partition",
+     "pos": [
+      -2.1,
+      0,
+      2.3
+     ],
+     "len": 2.0
+    },
+    {
+     "type": "partition",
+     "pos": [
+      -1.1,
+      0,
+      3.5
+     ],
+     "rot": 90,
+     "len": 2.4
+    },
+    {
+     "type": "glb",
+     "pos": [
+      -2.1,
+      0,
+      2.85
+     ],
+     "node": "lib_desk",
+     "collide": true,
+     "fallback": "desk"
+    },
+    {
+     "type": "glb",
+     "pos": [
+      -2.1,
+      0.75,
+      2.8
+     ],
+     "node": "lib_crt",
+     "fallback": "monitor"
+    },
+    {
+     "type": "glb",
+     "pos": [
+      -2.1,
+      0,
+      3.65
+     ],
+     "rot": 180,
+     "node": "lib_chair_wood",
+     "fallback": "chair"
+    },
+    {
+     "type": "partition",
+     "pos": [
+      -6.65,
+      0,
+      2.3
+     ],
+     "len": 2.0
+    },
+    {
+     "type": "partition",
+     "pos": [
+      -7.65,
+      0,
+      3.5
+     ],
+     "rot": 90,
+     "len": 2.4
+    },
+    {
+     "type": "glb",
+     "pos": [
+      -6.65,
+      0,
+      2.85
+     ],
+     "node": "lib_desk",
+     "collide": true,
+     "fallback": "desk"
+    },
+    {
+     "type": "glb",
+     "pos": [
+      -6.65,
+      0.75,
+      2.8
+     ],
+     "node": "lib_crt",
+     "fallback": "monitor"
+    },
+    {
+     "type": "glb",
+     "pos": [
+      -6.65,
+      0,
+      3.65
+     ],
+     "rot": 180,
+     "node": "lib_chair_wood",
+     "fallback": "chair"
+    },
+    {
+     "type": "partition",
+     "pos": [
+      -11.3,
+      0,
+      2.3
+     ],
+     "len": 2.0
+    },
+    {
+     "type": "glb",
+     "pos": [
+      -11.3,
+      0,
+      2.85
+     ],
+     "node": "lib_desk",
+     "collide": true,
+     "fallback": "desk"
+    },
+    {
+     "type": "glb",
+     "pos": [
+      -11.3,
+      0.75,
+      2.8
+     ],
+     "node": "lib_crt",
+     "fallback": "monitor"
+    },
+    {
+     "type": "glb",
+     "pos": [
+      -11.3,
+      0,
+      3.65
+     ],
+     "rot": 180,
+     "node": "lib_chair_wood",
+     "fallback": "chair"
+    },
+    {
+     "type": "partition",
+     "pos": [
+      2.1,
+      0,
+      2.3
+     ],
+     "len": 2.0
+    },
+    {
+     "type": "partition",
+     "pos": [
+      1.1,
+      0,
+      3.5
+     ],
+     "rot": 90,
+     "len": 2.4
+    },
+    {
+     "type": "glb",
+     "pos": [
+      2.1,
+      0,
+      2.85
+     ],
+     "node": "lib_desk",
+     "collide": true,
+     "fallback": "desk"
+    },
+    {
+     "type": "glb",
+     "pos": [
+      2.1,
+      0.75,
+      2.8
      ],
      "node": "lib_crt",
      "fallback": "monitor"
@@ -8277,7 +6611,7 @@
      "pos": [
       2.1,
       0,
-      16.55
+      3.65
      ],
      "rot": 180,
      "node": "lib_chair_wood",
@@ -8286,28 +6620,28 @@
     {
      "type": "partition",
      "pos": [
-      6.7,
+      6.65,
       0,
-      15.2
+      2.3
      ],
      "len": 2.0
     },
     {
      "type": "partition",
      "pos": [
-      7.7,
+      7.65,
       0,
-      16.2
+      3.5
      ],
      "rot": 90,
-     "len": 2.0
+     "len": 2.4
     },
     {
      "type": "glb",
      "pos": [
-      6.7,
+      6.65,
       0,
-      15.75
+      2.85
      ],
      "node": "lib_desk",
      "collide": true,
@@ -8316,9 +6650,9 @@
     {
      "type": "glb",
      "pos": [
-      6.7,
+      6.65,
       0.75,
-      15.7
+      2.8
      ],
      "node": "lib_crt",
      "fallback": "monitor"
@@ -8326,9 +6660,9 @@
     {
      "type": "glb",
      "pos": [
-      6.7,
+      6.65,
       0,
-      16.55
+      3.65
      ],
      "rot": 180,
      "node": "lib_chair_wood",
@@ -8339,18 +6673,8 @@
      "pos": [
       11.3,
       0,
-      15.2
+      2.3
      ],
-     "len": 2.0
-    },
-    {
-     "type": "partition",
-     "pos": [
-      12.3,
-      0,
-      16.2
-     ],
-     "rot": 90,
      "len": 2.0
     },
     {
@@ -8358,7 +6682,7 @@
      "pos": [
       11.3,
       0,
-      15.75
+      2.85
      ],
      "node": "lib_desk",
      "collide": true,
@@ -8369,7 +6693,7 @@
      "pos": [
       11.3,
       0.75,
-      15.7
+      2.8
      ],
      "node": "lib_crt",
      "fallback": "monitor"
@@ -8379,7 +6703,1437 @@
      "pos": [
       11.3,
       0,
-      16.55
+      3.65
+     ],
+     "rot": 180,
+     "node": "lib_chair_wood",
+     "fallback": "chair"
+    },
+    {
+     "type": "partition",
+     "pos": [
+      -2.1,
+      0,
+      4.7
+     ],
+     "len": 2.0
+    },
+    {
+     "type": "partition",
+     "pos": [
+      -1.1,
+      0,
+      5.9
+     ],
+     "rot": 90,
+     "len": 2.4
+    },
+    {
+     "type": "glb",
+     "pos": [
+      -2.1,
+      0,
+      5.25
+     ],
+     "node": "lib_desk",
+     "collide": true,
+     "fallback": "desk"
+    },
+    {
+     "type": "glb",
+     "pos": [
+      -2.1,
+      0.75,
+      5.2
+     ],
+     "node": "lib_crt",
+     "fallback": "monitor"
+    },
+    {
+     "type": "glb",
+     "pos": [
+      -2.1,
+      0,
+      6.05
+     ],
+     "rot": 180,
+     "node": "lib_chair_wood",
+     "fallback": "chair"
+    },
+    {
+     "type": "partition",
+     "pos": [
+      -6.65,
+      0,
+      4.7
+     ],
+     "len": 2.0
+    },
+    {
+     "type": "partition",
+     "pos": [
+      -7.65,
+      0,
+      5.9
+     ],
+     "rot": 90,
+     "len": 2.4
+    },
+    {
+     "type": "glb",
+     "pos": [
+      -6.65,
+      0,
+      5.25
+     ],
+     "node": "lib_desk",
+     "collide": true,
+     "fallback": "desk"
+    },
+    {
+     "type": "glb",
+     "pos": [
+      -6.65,
+      0.75,
+      5.2
+     ],
+     "node": "lib_crt",
+     "fallback": "monitor"
+    },
+    {
+     "type": "glb",
+     "pos": [
+      -6.65,
+      0,
+      6.05
+     ],
+     "rot": 180,
+     "node": "lib_chair_wood",
+     "fallback": "chair"
+    },
+    {
+     "type": "partition",
+     "pos": [
+      -11.3,
+      0,
+      4.7
+     ],
+     "len": 2.0
+    },
+    {
+     "type": "glb",
+     "pos": [
+      -11.3,
+      0,
+      5.25
+     ],
+     "node": "lib_desk",
+     "collide": true,
+     "fallback": "desk"
+    },
+    {
+     "type": "glb",
+     "pos": [
+      -11.3,
+      0.75,
+      5.2
+     ],
+     "node": "lib_crt",
+     "fallback": "monitor"
+    },
+    {
+     "type": "glb",
+     "pos": [
+      -11.3,
+      0,
+      6.05
+     ],
+     "rot": 180,
+     "node": "lib_chair_wood",
+     "fallback": "chair"
+    },
+    {
+     "type": "partition",
+     "pos": [
+      2.1,
+      0,
+      4.7
+     ],
+     "len": 2.0
+    },
+    {
+     "type": "partition",
+     "pos": [
+      1.1,
+      0,
+      5.9
+     ],
+     "rot": 90,
+     "len": 2.4
+    },
+    {
+     "type": "glb",
+     "pos": [
+      2.1,
+      0,
+      5.25
+     ],
+     "node": "lib_desk",
+     "collide": true,
+     "fallback": "desk"
+    },
+    {
+     "type": "glb",
+     "pos": [
+      2.1,
+      0.75,
+      5.2
+     ],
+     "node": "lib_crt",
+     "fallback": "monitor"
+    },
+    {
+     "type": "glb",
+     "pos": [
+      2.1,
+      0,
+      6.05
+     ],
+     "rot": 180,
+     "node": "lib_chair_wood",
+     "fallback": "chair"
+    },
+    {
+     "type": "partition",
+     "pos": [
+      6.65,
+      0,
+      4.7
+     ],
+     "len": 2.0
+    },
+    {
+     "type": "partition",
+     "pos": [
+      7.65,
+      0,
+      5.9
+     ],
+     "rot": 90,
+     "len": 2.4
+    },
+    {
+     "type": "glb",
+     "pos": [
+      6.65,
+      0,
+      5.25
+     ],
+     "node": "lib_desk",
+     "collide": true,
+     "fallback": "desk"
+    },
+    {
+     "type": "glb",
+     "pos": [
+      6.65,
+      0.75,
+      5.2
+     ],
+     "node": "lib_crt",
+     "fallback": "monitor"
+    },
+    {
+     "type": "glb",
+     "pos": [
+      6.65,
+      0,
+      6.05
+     ],
+     "rot": 180,
+     "node": "lib_chair_wood",
+     "fallback": "chair"
+    },
+    {
+     "type": "partition",
+     "pos": [
+      11.3,
+      0,
+      4.7
+     ],
+     "len": 2.0
+    },
+    {
+     "type": "glb",
+     "pos": [
+      11.3,
+      0,
+      5.25
+     ],
+     "node": "lib_desk",
+     "collide": true,
+     "fallback": "desk"
+    },
+    {
+     "type": "glb",
+     "pos": [
+      11.3,
+      0.75,
+      5.2
+     ],
+     "node": "lib_crt",
+     "fallback": "monitor"
+    },
+    {
+     "type": "glb",
+     "pos": [
+      11.3,
+      0,
+      6.05
+     ],
+     "rot": 180,
+     "node": "lib_chair_wood",
+     "fallback": "chair"
+    },
+    {
+     "type": "partition",
+     "pos": [
+      -2.1,
+      0,
+      7.1
+     ],
+     "len": 2.0
+    },
+    {
+     "type": "partition",
+     "pos": [
+      -1.1,
+      0,
+      8.3
+     ],
+     "rot": 90,
+     "len": 2.4
+    },
+    {
+     "type": "glb",
+     "pos": [
+      -2.1,
+      0,
+      7.65
+     ],
+     "node": "lib_desk",
+     "collide": true,
+     "fallback": "desk"
+    },
+    {
+     "type": "glb",
+     "pos": [
+      -2.1,
+      0.75,
+      7.6
+     ],
+     "node": "lib_crt",
+     "fallback": "monitor"
+    },
+    {
+     "type": "glb",
+     "pos": [
+      -2.1,
+      0,
+      8.45
+     ],
+     "rot": 180,
+     "node": "lib_chair_wood",
+     "fallback": "chair"
+    },
+    {
+     "type": "partition",
+     "pos": [
+      -6.65,
+      0,
+      7.1
+     ],
+     "len": 2.0
+    },
+    {
+     "type": "partition",
+     "pos": [
+      -7.65,
+      0,
+      8.3
+     ],
+     "rot": 90,
+     "len": 2.4
+    },
+    {
+     "type": "glb",
+     "pos": [
+      -6.65,
+      0,
+      7.65
+     ],
+     "node": "lib_desk",
+     "collide": true,
+     "fallback": "desk"
+    },
+    {
+     "type": "glb",
+     "pos": [
+      -6.65,
+      0.75,
+      7.6
+     ],
+     "node": "lib_crt",
+     "fallback": "monitor"
+    },
+    {
+     "type": "glb",
+     "pos": [
+      -6.65,
+      0,
+      8.45
+     ],
+     "rot": 180,
+     "node": "lib_chair_wood",
+     "fallback": "chair"
+    },
+    {
+     "type": "partition",
+     "pos": [
+      -11.3,
+      0,
+      7.1
+     ],
+     "len": 2.0
+    },
+    {
+     "type": "glb",
+     "pos": [
+      -11.3,
+      0,
+      7.65
+     ],
+     "node": "lib_desk",
+     "collide": true,
+     "fallback": "desk"
+    },
+    {
+     "type": "glb",
+     "pos": [
+      -11.3,
+      0.75,
+      7.6
+     ],
+     "node": "lib_crt",
+     "fallback": "monitor"
+    },
+    {
+     "type": "glb",
+     "pos": [
+      -11.3,
+      0,
+      8.45
+     ],
+     "rot": 180,
+     "node": "lib_chair_wood",
+     "fallback": "chair"
+    },
+    {
+     "type": "partition",
+     "pos": [
+      2.1,
+      0,
+      7.1
+     ],
+     "len": 2.0
+    },
+    {
+     "type": "partition",
+     "pos": [
+      1.1,
+      0,
+      8.3
+     ],
+     "rot": 90,
+     "len": 2.4
+    },
+    {
+     "type": "glb",
+     "pos": [
+      2.1,
+      0,
+      7.65
+     ],
+     "node": "lib_desk",
+     "collide": true,
+     "fallback": "desk"
+    },
+    {
+     "type": "glb",
+     "pos": [
+      2.1,
+      0.75,
+      7.6
+     ],
+     "node": "lib_crt",
+     "fallback": "monitor"
+    },
+    {
+     "type": "glb",
+     "pos": [
+      2.1,
+      0,
+      8.45
+     ],
+     "rot": 180,
+     "node": "lib_chair_wood",
+     "fallback": "chair"
+    },
+    {
+     "type": "partition",
+     "pos": [
+      6.65,
+      0,
+      7.1
+     ],
+     "len": 2.0
+    },
+    {
+     "type": "partition",
+     "pos": [
+      7.65,
+      0,
+      8.3
+     ],
+     "rot": 90,
+     "len": 2.4
+    },
+    {
+     "type": "glb",
+     "pos": [
+      6.65,
+      0,
+      7.65
+     ],
+     "node": "lib_desk",
+     "collide": true,
+     "fallback": "desk"
+    },
+    {
+     "type": "glb",
+     "pos": [
+      6.65,
+      0.75,
+      7.6
+     ],
+     "node": "lib_crt",
+     "fallback": "monitor"
+    },
+    {
+     "type": "glb",
+     "pos": [
+      6.65,
+      0,
+      8.45
+     ],
+     "rot": 180,
+     "node": "lib_chair_wood",
+     "fallback": "chair"
+    },
+    {
+     "type": "partition",
+     "pos": [
+      11.3,
+      0,
+      7.1
+     ],
+     "len": 2.0
+    },
+    {
+     "type": "glb",
+     "pos": [
+      11.3,
+      0,
+      7.65
+     ],
+     "node": "lib_desk",
+     "collide": true,
+     "fallback": "desk"
+    },
+    {
+     "type": "glb",
+     "pos": [
+      11.3,
+      0.75,
+      7.6
+     ],
+     "node": "lib_crt",
+     "fallback": "monitor"
+    },
+    {
+     "type": "glb",
+     "pos": [
+      11.3,
+      0,
+      8.45
+     ],
+     "rot": 180,
+     "node": "lib_chair_wood",
+     "fallback": "chair"
+    },
+    {
+     "type": "partition",
+     "pos": [
+      -2.1,
+      0,
+      9.5
+     ],
+     "len": 2.0
+    },
+    {
+     "type": "partition",
+     "pos": [
+      -1.1,
+      0,
+      10.7
+     ],
+     "rot": 90,
+     "len": 2.4
+    },
+    {
+     "type": "glb",
+     "pos": [
+      -2.1,
+      0,
+      10.05
+     ],
+     "node": "lib_desk",
+     "collide": true,
+     "fallback": "desk"
+    },
+    {
+     "type": "glb",
+     "pos": [
+      -2.1,
+      0.75,
+      10.0
+     ],
+     "node": "lib_crt",
+     "fallback": "monitor"
+    },
+    {
+     "type": "glb",
+     "pos": [
+      -2.1,
+      0,
+      10.85
+     ],
+     "rot": 180,
+     "node": "lib_chair_wood",
+     "fallback": "chair"
+    },
+    {
+     "type": "partition",
+     "pos": [
+      -6.65,
+      0,
+      9.5
+     ],
+     "len": 2.0
+    },
+    {
+     "type": "partition",
+     "pos": [
+      -7.65,
+      0,
+      10.7
+     ],
+     "rot": 90,
+     "len": 2.4
+    },
+    {
+     "type": "glb",
+     "pos": [
+      -6.65,
+      0,
+      10.05
+     ],
+     "node": "lib_desk",
+     "collide": true,
+     "fallback": "desk"
+    },
+    {
+     "type": "glb",
+     "pos": [
+      -6.65,
+      0.75,
+      10.0
+     ],
+     "node": "lib_crt",
+     "fallback": "monitor"
+    },
+    {
+     "type": "glb",
+     "pos": [
+      -6.65,
+      0,
+      10.85
+     ],
+     "rot": 180,
+     "node": "lib_chair_wood",
+     "fallback": "chair"
+    },
+    {
+     "type": "partition",
+     "pos": [
+      -11.3,
+      0,
+      9.5
+     ],
+     "len": 2.0
+    },
+    {
+     "type": "glb",
+     "pos": [
+      -11.3,
+      0,
+      10.05
+     ],
+     "node": "lib_desk",
+     "collide": true,
+     "fallback": "desk"
+    },
+    {
+     "type": "glb",
+     "pos": [
+      -11.3,
+      0.75,
+      10.0
+     ],
+     "node": "lib_crt",
+     "fallback": "monitor"
+    },
+    {
+     "type": "glb",
+     "pos": [
+      -11.3,
+      0,
+      10.85
+     ],
+     "rot": 180,
+     "node": "lib_chair_wood",
+     "fallback": "chair"
+    },
+    {
+     "type": "partition",
+     "pos": [
+      2.1,
+      0,
+      9.5
+     ],
+     "len": 2.0
+    },
+    {
+     "type": "partition",
+     "pos": [
+      1.1,
+      0,
+      10.7
+     ],
+     "rot": 90,
+     "len": 2.4
+    },
+    {
+     "type": "glb",
+     "pos": [
+      2.1,
+      0,
+      10.05
+     ],
+     "node": "lib_desk",
+     "collide": true,
+     "fallback": "desk"
+    },
+    {
+     "type": "glb",
+     "pos": [
+      2.1,
+      0.75,
+      10.0
+     ],
+     "node": "lib_crt",
+     "fallback": "monitor"
+    },
+    {
+     "type": "glb",
+     "pos": [
+      2.1,
+      0,
+      10.85
+     ],
+     "rot": 180,
+     "node": "lib_chair_wood",
+     "fallback": "chair"
+    },
+    {
+     "type": "partition",
+     "pos": [
+      6.65,
+      0,
+      9.5
+     ],
+     "len": 2.0
+    },
+    {
+     "type": "partition",
+     "pos": [
+      7.65,
+      0,
+      10.7
+     ],
+     "rot": 90,
+     "len": 2.4
+    },
+    {
+     "type": "glb",
+     "pos": [
+      6.65,
+      0,
+      10.05
+     ],
+     "node": "lib_desk",
+     "collide": true,
+     "fallback": "desk"
+    },
+    {
+     "type": "glb",
+     "pos": [
+      6.65,
+      0.75,
+      10.0
+     ],
+     "node": "lib_crt",
+     "fallback": "monitor"
+    },
+    {
+     "type": "glb",
+     "pos": [
+      6.65,
+      0,
+      10.85
+     ],
+     "rot": 180,
+     "node": "lib_chair_wood",
+     "fallback": "chair"
+    },
+    {
+     "type": "partition",
+     "pos": [
+      11.3,
+      0,
+      9.5
+     ],
+     "len": 2.0
+    },
+    {
+     "type": "glb",
+     "pos": [
+      11.3,
+      0,
+      10.05
+     ],
+     "node": "lib_desk",
+     "collide": true,
+     "fallback": "desk"
+    },
+    {
+     "type": "glb",
+     "pos": [
+      11.3,
+      0.75,
+      10.0
+     ],
+     "node": "lib_crt",
+     "fallback": "monitor"
+    },
+    {
+     "type": "glb",
+     "pos": [
+      11.3,
+      0,
+      10.85
+     ],
+     "rot": 180,
+     "node": "lib_chair_wood",
+     "fallback": "chair"
+    },
+    {
+     "type": "partition",
+     "pos": [
+      -2.1,
+      0,
+      11.9
+     ],
+     "len": 2.0
+    },
+    {
+     "type": "partition",
+     "pos": [
+      -1.1,
+      0,
+      13.1
+     ],
+     "rot": 90,
+     "len": 2.4
+    },
+    {
+     "type": "glb",
+     "pos": [
+      -2.1,
+      0,
+      12.45
+     ],
+     "node": "lib_desk",
+     "collide": true,
+     "fallback": "desk"
+    },
+    {
+     "type": "glb",
+     "pos": [
+      -2.1,
+      0.75,
+      12.4
+     ],
+     "node": "lib_crt",
+     "fallback": "monitor"
+    },
+    {
+     "type": "glb",
+     "pos": [
+      -2.1,
+      0,
+      13.25
+     ],
+     "rot": 180,
+     "node": "lib_chair_wood",
+     "fallback": "chair"
+    },
+    {
+     "type": "partition",
+     "pos": [
+      -6.65,
+      0,
+      11.9
+     ],
+     "len": 2.0
+    },
+    {
+     "type": "partition",
+     "pos": [
+      -7.65,
+      0,
+      13.1
+     ],
+     "rot": 90,
+     "len": 2.4
+    },
+    {
+     "type": "glb",
+     "pos": [
+      -6.65,
+      0,
+      12.45
+     ],
+     "node": "lib_desk",
+     "collide": true,
+     "fallback": "desk"
+    },
+    {
+     "type": "glb",
+     "pos": [
+      -6.65,
+      0.75,
+      12.4
+     ],
+     "node": "lib_crt",
+     "fallback": "monitor"
+    },
+    {
+     "type": "glb",
+     "pos": [
+      -6.65,
+      0,
+      13.25
+     ],
+     "rot": 180,
+     "node": "lib_chair_wood",
+     "fallback": "chair"
+    },
+    {
+     "type": "partition",
+     "pos": [
+      -11.3,
+      0,
+      11.9
+     ],
+     "len": 2.0
+    },
+    {
+     "type": "glb",
+     "pos": [
+      -11.3,
+      0,
+      12.45
+     ],
+     "node": "lib_desk",
+     "collide": true,
+     "fallback": "desk"
+    },
+    {
+     "type": "glb",
+     "pos": [
+      -11.3,
+      0.75,
+      12.4
+     ],
+     "node": "lib_crt",
+     "fallback": "monitor"
+    },
+    {
+     "type": "glb",
+     "pos": [
+      -11.3,
+      0,
+      13.25
+     ],
+     "rot": 180,
+     "node": "lib_chair_wood",
+     "fallback": "chair"
+    },
+    {
+     "type": "partition",
+     "pos": [
+      2.1,
+      0,
+      11.9
+     ],
+     "len": 2.0
+    },
+    {
+     "type": "partition",
+     "pos": [
+      1.1,
+      0,
+      13.1
+     ],
+     "rot": 90,
+     "len": 2.4
+    },
+    {
+     "type": "glb",
+     "pos": [
+      2.1,
+      0,
+      12.45
+     ],
+     "node": "lib_desk",
+     "collide": true,
+     "fallback": "desk"
+    },
+    {
+     "type": "glb",
+     "pos": [
+      2.1,
+      0.75,
+      12.4
+     ],
+     "node": "lib_crt",
+     "fallback": "monitor"
+    },
+    {
+     "type": "glb",
+     "pos": [
+      2.1,
+      0,
+      13.25
+     ],
+     "rot": 180,
+     "node": "lib_chair_wood",
+     "fallback": "chair"
+    },
+    {
+     "type": "partition",
+     "pos": [
+      6.65,
+      0,
+      11.9
+     ],
+     "len": 2.0
+    },
+    {
+     "type": "partition",
+     "pos": [
+      7.65,
+      0,
+      13.1
+     ],
+     "rot": 90,
+     "len": 2.4
+    },
+    {
+     "type": "glb",
+     "pos": [
+      6.65,
+      0,
+      12.45
+     ],
+     "node": "lib_desk",
+     "collide": true,
+     "fallback": "desk"
+    },
+    {
+     "type": "glb",
+     "pos": [
+      6.65,
+      0.75,
+      12.4
+     ],
+     "node": "lib_crt",
+     "fallback": "monitor"
+    },
+    {
+     "type": "glb",
+     "pos": [
+      6.65,
+      0,
+      13.25
+     ],
+     "rot": 180,
+     "node": "lib_chair_wood",
+     "fallback": "chair"
+    },
+    {
+     "type": "partition",
+     "pos": [
+      11.3,
+      0,
+      11.9
+     ],
+     "len": 2.0
+    },
+    {
+     "type": "glb",
+     "pos": [
+      11.3,
+      0,
+      12.45
+     ],
+     "node": "lib_desk",
+     "collide": true,
+     "fallback": "desk"
+    },
+    {
+     "type": "glb",
+     "pos": [
+      11.3,
+      0.75,
+      12.4
+     ],
+     "node": "lib_crt",
+     "fallback": "monitor"
+    },
+    {
+     "type": "glb",
+     "pos": [
+      11.3,
+      0,
+      13.25
+     ],
+     "rot": 180,
+     "node": "lib_chair_wood",
+     "fallback": "chair"
+    },
+    {
+     "type": "partition",
+     "pos": [
+      -2.1,
+      0,
+      14.3
+     ],
+     "len": 2.0
+    },
+    {
+     "type": "partition",
+     "pos": [
+      -1.1,
+      0,
+      15.3
+     ],
+     "rot": 90,
+     "len": 2.0
+    },
+    {
+     "type": "glb",
+     "pos": [
+      -2.1,
+      0,
+      14.85
+     ],
+     "node": "lib_desk",
+     "collide": true,
+     "fallback": "desk"
+    },
+    {
+     "type": "glb",
+     "pos": [
+      -2.1,
+      0.75,
+      14.8
+     ],
+     "node": "lib_crt",
+     "fallback": "monitor"
+    },
+    {
+     "type": "glb",
+     "pos": [
+      -2.1,
+      0,
+      15.65
+     ],
+     "rot": 180,
+     "node": "lib_chair_wood",
+     "fallback": "chair"
+    },
+    {
+     "type": "partition",
+     "pos": [
+      -6.65,
+      0,
+      14.3
+     ],
+     "len": 2.0
+    },
+    {
+     "type": "partition",
+     "pos": [
+      -7.65,
+      0,
+      15.3
+     ],
+     "rot": 90,
+     "len": 2.0
+    },
+    {
+     "type": "glb",
+     "pos": [
+      -6.65,
+      0,
+      14.85
+     ],
+     "node": "lib_desk",
+     "collide": true,
+     "fallback": "desk"
+    },
+    {
+     "type": "glb",
+     "pos": [
+      -6.65,
+      0.75,
+      14.8
+     ],
+     "node": "lib_crt",
+     "fallback": "monitor"
+    },
+    {
+     "type": "glb",
+     "pos": [
+      -6.65,
+      0,
+      15.65
+     ],
+     "rot": 180,
+     "node": "lib_chair_wood",
+     "fallback": "chair"
+    },
+    {
+     "type": "partition",
+     "pos": [
+      -11.3,
+      0,
+      14.3
+     ],
+     "len": 2.0
+    },
+    {
+     "type": "glb",
+     "pos": [
+      -11.3,
+      0,
+      14.85
+     ],
+     "node": "lib_desk",
+     "collide": true,
+     "fallback": "desk"
+    },
+    {
+     "type": "glb",
+     "pos": [
+      -11.3,
+      0.75,
+      14.8
+     ],
+     "node": "lib_crt",
+     "fallback": "monitor"
+    },
+    {
+     "type": "glb",
+     "pos": [
+      -11.3,
+      0,
+      15.65
+     ],
+     "rot": 180,
+     "node": "lib_chair_wood",
+     "fallback": "chair"
+    },
+    {
+     "type": "partition",
+     "pos": [
+      2.1,
+      0,
+      14.3
+     ],
+     "len": 2.0
+    },
+    {
+     "type": "partition",
+     "pos": [
+      1.1,
+      0,
+      15.3
+     ],
+     "rot": 90,
+     "len": 2.0
+    },
+    {
+     "type": "glb",
+     "pos": [
+      2.1,
+      0,
+      14.85
+     ],
+     "node": "lib_desk",
+     "collide": true,
+     "fallback": "desk"
+    },
+    {
+     "type": "glb",
+     "pos": [
+      2.1,
+      0.75,
+      14.8
+     ],
+     "node": "lib_crt",
+     "fallback": "monitor"
+    },
+    {
+     "type": "glb",
+     "pos": [
+      2.1,
+      0,
+      15.65
+     ],
+     "rot": 180,
+     "node": "lib_chair_wood",
+     "fallback": "chair"
+    },
+    {
+     "type": "partition",
+     "pos": [
+      6.65,
+      0,
+      14.3
+     ],
+     "len": 2.0
+    },
+    {
+     "type": "partition",
+     "pos": [
+      7.65,
+      0,
+      15.3
+     ],
+     "rot": 90,
+     "len": 2.0
+    },
+    {
+     "type": "glb",
+     "pos": [
+      6.65,
+      0,
+      14.85
+     ],
+     "node": "lib_desk",
+     "collide": true,
+     "fallback": "desk"
+    },
+    {
+     "type": "glb",
+     "pos": [
+      6.65,
+      0.75,
+      14.8
+     ],
+     "node": "lib_crt",
+     "fallback": "monitor"
+    },
+    {
+     "type": "glb",
+     "pos": [
+      6.65,
+      0,
+      15.65
+     ],
+     "rot": 180,
+     "node": "lib_chair_wood",
+     "fallback": "chair"
+    },
+    {
+     "type": "partition",
+     "pos": [
+      11.3,
+      0,
+      14.3
+     ],
+     "len": 2.0
+    },
+    {
+     "type": "glb",
+     "pos": [
+      11.3,
+      0,
+      14.85
+     ],
+     "node": "lib_desk",
+     "collide": true,
+     "fallback": "desk"
+    },
+    {
+     "type": "glb",
+     "pos": [
+      11.3,
+      0.75,
+      14.8
+     ],
+     "node": "lib_crt",
+     "fallback": "monitor"
+    },
+    {
+     "type": "glb",
+     "pos": [
+      11.3,
+      0,
+      15.65
      ],
      "rot": 180,
      "node": "lib_chair_wood",
@@ -8388,670 +8142,564 @@
     {
      "type": "fluoro",
      "pos": [
-      -12,
+      0.0,
       2.94,
-      -16
+      -17
      ],
      "w": 1.2,
-     "d": 0.3
+     "d": 0.6
     },
     {
      "type": "fluoro",
      "pos": [
-      -12,
+      0.0,
       2.94,
-      -12
+      -13
      ],
      "w": 1.2,
-     "d": 0.3
+     "d": 0.6
     },
     {
      "type": "fluoro",
      "pos": [
-      -12,
+      0.0,
       2.94,
-      -8
+      -9
      ],
      "w": 1.2,
-     "d": 0.3
+     "d": 0.6
     },
     {
      "type": "fluoro",
      "pos": [
-      -12,
+      0.0,
       2.94,
-      -4
+      -5
      ],
      "w": 1.2,
-     "d": 0.3
+     "d": 0.6,
+     "name": "hold_troffer"
     },
     {
      "type": "fluoro",
      "pos": [
-      -12,
+      0.0,
       2.94,
-      0
+      -1
      ],
      "w": 1.2,
-     "d": 0.3
+     "d": 0.6
     },
     {
      "type": "fluoro",
      "pos": [
-      -12,
+      0.0,
       2.94,
-      4
+      3
      ],
      "w": 1.2,
-     "d": 0.3
+     "d": 0.6
     },
     {
      "type": "fluoro",
      "pos": [
-      -12,
+      0.0,
       2.94,
-      8
+      7
      ],
      "w": 1.2,
-     "d": 0.3
+     "d": 0.6
     },
     {
      "type": "fluoro",
      "pos": [
-      -12,
+      0.0,
       2.94,
-      12
+      11
      ],
      "w": 1.2,
-     "d": 0.3
+     "d": 0.6
     },
     {
      "type": "fluoro",
      "pos": [
-      -12,
+      0.0,
       2.94,
-      16
+      15
      ],
      "w": 1.2,
-     "d": 0.3
+     "d": 0.6
     },
     {
      "type": "fluoro",
      "pos": [
-      -8,
+      -4.4,
       2.94,
-      -16
+      -17
      ],
      "w": 1.2,
-     "d": 0.3
+     "d": 0.6
     },
     {
      "type": "fluoro",
      "pos": [
-      -8,
+      -4.4,
       2.94,
-      -12
+      -13
      ],
      "w": 1.2,
-     "d": 0.3
+     "d": 0.6
     },
     {
      "type": "fluoro",
      "pos": [
-      -8,
+      -4.4,
       2.94,
-      -8
+      -9
      ],
      "w": 1.2,
-     "d": 0.3
+     "d": 0.6
     },
     {
      "type": "fluoro",
      "pos": [
-      -8,
+      -4.4,
       2.94,
-      -4
+      -5
      ],
      "w": 1.2,
-     "d": 0.3
+     "d": 0.6
     },
     {
      "type": "fluoro",
      "pos": [
-      -8,
+      -4.4,
       2.94,
-      0
+      -1
      ],
      "w": 1.2,
-     "d": 0.3
+     "d": 0.6
     },
     {
      "type": "fluoro",
      "pos": [
-      -8,
+      -4.4,
       2.94,
-      4
+      3
      ],
      "w": 1.2,
-     "d": 0.3
+     "d": 0.6
     },
     {
      "type": "fluoro",
      "pos": [
-      -8,
+      -4.4,
       2.94,
-      8
+      7
      ],
      "w": 1.2,
-     "d": 0.3
+     "d": 0.6
     },
     {
      "type": "fluoro",
      "pos": [
-      -8,
+      -4.4,
       2.94,
-      12
+      11
      ],
      "w": 1.2,
-     "d": 0.3
+     "d": 0.6
     },
     {
      "type": "fluoro",
      "pos": [
-      -8,
+      -4.4,
       2.94,
-      16
+      15
      ],
      "w": 1.2,
-     "d": 0.3
+     "d": 0.6
     },
     {
      "type": "fluoro",
      "pos": [
-      -4,
+      4.4,
       2.94,
-      -16
+      -17
      ],
      "w": 1.2,
-     "d": 0.3
+     "d": 0.6
     },
     {
      "type": "fluoro",
      "pos": [
-      -4,
+      4.4,
       2.94,
-      -12
+      -13
      ],
      "w": 1.2,
-     "d": 0.3
+     "d": 0.6
     },
     {
      "type": "fluoro",
      "pos": [
-      -4,
+      4.4,
       2.94,
-      -8
+      -9
      ],
      "w": 1.2,
-     "d": 0.3
+     "d": 0.6
     },
     {
      "type": "fluoro",
      "pos": [
-      -4,
+      4.4,
       2.94,
-      -4
+      -5
      ],
      "w": 1.2,
-     "d": 0.3
+     "d": 0.6
     },
     {
      "type": "fluoro",
      "pos": [
-      -4,
+      4.4,
       2.94,
-      0
+      -1
      ],
      "w": 1.2,
-     "d": 0.3
+     "d": 0.6
     },
     {
      "type": "fluoro",
      "pos": [
-      -4,
+      4.4,
       2.94,
-      4
+      3
      ],
      "w": 1.2,
-     "d": 0.3
+     "d": 0.6
     },
     {
      "type": "fluoro",
      "pos": [
-      -4,
+      4.4,
       2.94,
-      8
+      7
      ],
      "w": 1.2,
-     "d": 0.3
+     "d": 0.6
     },
     {
      "type": "fluoro",
      "pos": [
-      -4,
+      4.4,
       2.94,
-      12
+      11
      ],
      "w": 1.2,
-     "d": 0.3
+     "d": 0.6
     },
     {
      "type": "fluoro",
      "pos": [
-      -4,
+      4.4,
       2.94,
-      16
+      15
      ],
      "w": 1.2,
-     "d": 0.3
+     "d": 0.6
     },
     {
      "type": "fluoro",
      "pos": [
-      0,
+      -9.0,
       2.94,
-      -16
+      -17
      ],
      "w": 1.2,
-     "d": 0.3
+     "d": 0.6
     },
     {
      "type": "fluoro",
      "pos": [
-      0,
+      -9.0,
       2.94,
-      -12
+      -13
      ],
      "w": 1.2,
-     "d": 0.3
+     "d": 0.6
     },
     {
      "type": "fluoro",
      "pos": [
-      0,
+      -9.0,
       2.94,
-      -8
+      -9
      ],
      "w": 1.2,
-     "d": 0.3
+     "d": 0.6
     },
     {
      "type": "fluoro",
      "pos": [
-      0,
+      -9.0,
       2.94,
-      -4
+      -5
      ],
      "w": 1.2,
-     "d": 0.3
+     "d": 0.6
     },
     {
      "type": "fluoro",
      "pos": [
-      0,
+      -9.0,
       2.94,
-      0
+      -1
      ],
      "w": 1.2,
-     "d": 0.3
+     "d": 0.6
     },
     {
      "type": "fluoro",
      "pos": [
-      0,
+      -9.0,
       2.94,
-      4
+      3
      ],
      "w": 1.2,
-     "d": 0.3
+     "d": 0.6
     },
     {
      "type": "fluoro",
      "pos": [
-      0,
+      -9.0,
       2.94,
-      8
+      7
      ],
      "w": 1.2,
-     "d": 0.3
+     "d": 0.6
     },
     {
      "type": "fluoro",
      "pos": [
-      0,
+      -9.0,
       2.94,
-      12
+      11
      ],
      "w": 1.2,
-     "d": 0.3
+     "d": 0.6
     },
     {
      "type": "fluoro",
      "pos": [
-      0,
+      -9.0,
       2.94,
-      16
+      15
      ],
      "w": 1.2,
-     "d": 0.3
+     "d": 0.6
     },
     {
      "type": "fluoro",
      "pos": [
-      4,
+      9.0,
       2.94,
-      -16
+      -17
      ],
      "w": 1.2,
-     "d": 0.3
+     "d": 0.6
     },
     {
      "type": "fluoro",
      "pos": [
-      4,
+      9.0,
       2.94,
-      -12
+      -13
      ],
      "w": 1.2,
-     "d": 0.3
+     "d": 0.6
     },
     {
      "type": "fluoro",
      "pos": [
-      4,
+      9.0,
       2.94,
-      -8
+      -9
      ],
      "w": 1.2,
-     "d": 0.3
+     "d": 0.6
     },
     {
      "type": "fluoro",
      "pos": [
-      4,
+      9.0,
       2.94,
-      -4
+      -5
      ],
      "w": 1.2,
-     "d": 0.3
+     "d": 0.6
     },
     {
      "type": "fluoro",
      "pos": [
-      4,
+      9.0,
       2.94,
-      0
+      -1
      ],
      "w": 1.2,
-     "d": 0.3
+     "d": 0.6
     },
     {
      "type": "fluoro",
      "pos": [
-      4,
+      9.0,
       2.94,
-      4
+      3
      ],
      "w": 1.2,
-     "d": 0.3
+     "d": 0.6
     },
     {
      "type": "fluoro",
      "pos": [
-      4,
+      9.0,
       2.94,
-      8
+      7
      ],
      "w": 1.2,
-     "d": 0.3
+     "d": 0.6
     },
     {
      "type": "fluoro",
      "pos": [
-      4,
+      9.0,
       2.94,
-      12
+      11
      ],
      "w": 1.2,
-     "d": 0.3
+     "d": 0.6
     },
     {
      "type": "fluoro",
      "pos": [
-      4,
+      9.0,
       2.94,
-      16
+      15
      ],
      "w": 1.2,
-     "d": 0.3
+     "d": 0.6
     },
     {
-     "type": "fluoro",
-     "pos": [
-      8,
-      2.94,
-      -16
-     ],
-     "w": 1.2,
-     "d": 0.3
-    },
-    {
-     "type": "fluoro",
-     "pos": [
-      8,
-      2.94,
-      -12
-     ],
-     "w": 1.2,
-     "d": 0.3
-    },
-    {
-     "type": "fluoro",
-     "pos": [
-      8,
-      2.94,
-      -8
-     ],
-     "w": 1.2,
-     "d": 0.3
-    },
-    {
-     "type": "fluoro",
-     "pos": [
-      8,
-      2.94,
-      -4
-     ],
-     "w": 1.2,
-     "d": 0.3
-    },
-    {
-     "type": "fluoro",
-     "pos": [
-      8,
-      2.94,
-      0
-     ],
-     "w": 1.2,
-     "d": 0.3
-    },
-    {
-     "type": "fluoro",
-     "pos": [
-      8,
-      2.94,
-      4
-     ],
-     "w": 1.2,
-     "d": 0.3
-    },
-    {
-     "type": "fluoro",
-     "pos": [
-      8,
-      2.94,
-      8
-     ],
-     "w": 1.2,
-     "d": 0.3
-    },
-    {
-     "type": "fluoro",
-     "pos": [
-      8,
-      2.94,
-      12
-     ],
-     "w": 1.2,
-     "d": 0.3
-    },
-    {
-     "type": "fluoro",
-     "pos": [
-      8,
-      2.94,
-      16
-     ],
-     "w": 1.2,
-     "d": 0.3
-    },
-    {
-     "type": "fluoro",
-     "pos": [
-      12,
-      2.94,
-      -16
-     ],
-     "w": 1.2,
-     "d": 0.3
-    },
-    {
-     "type": "fluoro",
-     "pos": [
-      12,
-      2.94,
-      -12
-     ],
-     "w": 1.2,
-     "d": 0.3
-    },
-    {
-     "type": "fluoro",
-     "pos": [
-      12,
-      2.94,
-      -8
-     ],
-     "w": 1.2,
-     "d": 0.3
-    },
-    {
-     "type": "fluoro",
-     "pos": [
-      12,
-      2.94,
-      -4
-     ],
-     "w": 1.2,
-     "d": 0.3
-    },
-    {
-     "type": "fluoro",
-     "pos": [
-      12,
-      2.94,
-      0
-     ],
-     "w": 1.2,
-     "d": 0.3
-    },
-    {
-     "type": "fluoro",
-     "pos": [
-      12,
-      2.94,
-      4
-     ],
-     "w": 1.2,
-     "d": 0.3
-    },
-    {
-     "type": "fluoro",
-     "pos": [
-      12,
-      2.94,
-      8
-     ],
-     "w": 1.2,
-     "d": 0.3
-    },
-    {
-     "type": "fluoro",
-     "pos": [
-      12,
-      2.94,
-      12
-     ],
-     "w": 1.2,
-     "d": 0.3
-    },
-    {
-     "type": "fluoro",
-     "pos": [
-      12,
-      2.94,
-      16
-     ],
-     "w": 1.2,
-     "d": 0.3
-    },
-    {
-     "type": "figure",
+     "type": "manager",
      "pos": [
       0,
       0,
-      -9.0
+      -12.0
      ],
      "face": "blur",
      "tie": true,
+     "offer": true,
      "name": "manager"
     },
     {
-     "type": "papers",
+     "type": "evidence",
      "pos": [
-      0.32,
-      0.86,
-      -8.86
+      -0.3,
+      1.205,
+      -11.53
      ],
-     "mat": "plaster_blown",
+     "tilt": 14,
      "name": "evidence"
     },
     {
-     "type": "clock",
+     "type": "dust",
      "pos": [
-      4.0,
-      2.4,
-      -17.98
-     ]
+      0,
+      0,
+      -4.5
+     ],
+     "w": 2.0,
+     "h": 2.6,
+     "d": 4.0,
+     "n": 180,
+     "seed": 3
+    },
+    {
+     "type": "dust",
+     "pos": [
+      0,
+      0,
+      16.6
+     ],
+     "w": 6.0,
+     "h": 2.6,
+     "d": 3.6,
+     "n": 240,
+     "seed": 9
+    },
+    {
+     "type": "bulkhead",
+     "pos": [
+      12.29,
+      2.62,
+      0.9
+     ],
+     "rot": -90
+    },
+    {
+     "type": "lightspill",
+     "pos": [
+      12.28,
+      0,
+      0.9
+     ],
+     "rot": -90,
+     "w": 1.1,
+     "w2": 1.6,
+     "len": 0.9,
+     "color": "#cfdcea",
+     "strength": 0.16
+    },
+    {
+     "type": "placard",
+     "pos": [
+      12.28,
+      1.5,
+      2.0
+     ],
+     "rot": -90
     },
     {
      "type": "slip",
      "pos": [
-      1.1,
+      11.55,
       0.004,
-      -3.8
+      1.35
      ],
-     "rot": 12
+     "rot": 24
+    },
+    {
+     "type": "dust",
+     "pos": [
+      11.1,
+      0,
+      0.9
+     ],
+     "w": 2.2,
+     "h": 2.6,
+     "d": 2.6,
+     "n": 120,
+     "seed": 5
+    },
+    {
+     "type": "clock",
+     "pos": [
+      -12.27,
+      2.3,
+      0.9
+     ],
+     "rot": 90
     }
    ],
    "footstep": {
@@ -9063,16 +8711,17 @@
      "path": [
       [
        0,
-       -9.0
+       -12.0
       ],
       [
        0,
-       6.0
+       -5.0
       ]
      ],
      "carry": [
       "evidence"
-     ]
+     ],
+     "face": false
     }
    },
    "shots": {
@@ -9080,24 +8729,24 @@
      "pos": [
       0.0,
       1.6,
-      15.5
+      17.0
      ],
      "look": [
       0.0,
       1.35,
-      9.5
+      11.0
      ]
     },
     "out": {
      "pos": [
       0.0,
       1.6,
-      12.5
+      14.0
      ],
      "look": [
       0.0,
       1.35,
-      6.5
+      8.0
      ]
     },
     "loop": {
@@ -9114,12 +8763,12 @@
       "pos": [
        0.0,
        1.6,
-       2.5
+       4.0
       ],
       "look": [
        0.0,
        1.35,
-       -3.5
+       -2.0
       ]
      },
      "seconds": 3.0,
@@ -9131,12 +8780,12 @@
       "pos": [
        0.0,
        1.6,
-       17.3
+       18.8
       ],
       "look": [
        0.0,
        1.35,
-       11.3
+       12.8
       ]
      },
      "to": "in",
@@ -9168,12 +8817,14 @@
     {
      "name": "side",
      "wall": "E",
-     "x": 3.9,
-     "w": 1.0,
+     "x": 0.9,
+     "w": 1.2,
      "h": 2.2,
      "kind": "door",
      "locked": true,
-     "mat": "lp_grey"
+     "mat": "lp_grey",
+     "panel": "lp_dark",
+     "hinge": "L"
     }
    ],
    "entry": "front",
@@ -9182,15 +8833,10 @@
      "name": "manager",
      "pos": [
       0.0,
-      -8.1
+      -11.1
      ],
-     "r": 0.85,
+     "r": 0.8,
      "ring": 3.5,
-     "labelAt": [
-      0.0,
-      2.25,
-      -9.0
-     ],
      "actor": "manager",
      "offset": [
       0.0,
@@ -9200,15 +8846,15 @@
     {
      "name": "side_door",
      "pos": [
-      12.0,
-      3.9
+      11.75,
+      0.9
      ],
      "r": 0.6,
      "ring": 3.0,
      "labelAt": [
-      12.9,
-      2.5,
-      3.9
+      12.0,
+      2.62,
+      0.9
      ]
     }
    ],
@@ -9236,8 +8882,8 @@
     "tile": 1.6
    },
    "ambient": {
-    "color": "#dfe6dc",
-    "intensity": 0.14
+    "color": "#e2d9c6",
+    "intensity": 0.12
    },
    "sun": {
     "from": [
@@ -9245,103 +8891,121 @@
      4.5,
      20.0
     ],
-    "color": "#dfe6dc",
-    "intensity": 0.7
+    "color": "#e6dcc6",
+    "intensity": 0.6
    },
    "lights": [
     {
      "type": "point",
      "pos": [
       0,
-      2.7,
+      2.58,
       -15
      ],
-     "color": "#dfe6dc",
+     "color": "#ecdcbc",
      "intensity": 7,
-     "distance": 9,
-     "flicker": 0
+     "distance": 9.5
     },
     {
      "type": "point",
      "pos": [
       0,
-      2.7,
+      2.58,
       -10
      ],
-     "color": "#dfe6dc",
+     "color": "#ecdcbc",
      "intensity": 7,
-     "distance": 9,
-     "flicker": 0
+     "distance": 9.5
     },
     {
      "type": "point",
      "pos": [
       0,
-      2.7,
+      2.58,
       -5
      ],
-     "color": "#dfe6dc",
+     "color": "#ecdcbc",
      "intensity": 7,
-     "distance": 9,
-     "flicker": 0.3
+     "distance": 9.5
     },
     {
      "type": "point",
      "pos": [
       0,
-      2.7,
+      2.58,
       0
      ],
-     "color": "#dfe6dc",
+     "color": "#ecdcbc",
      "intensity": 7,
-     "distance": 9,
-     "flicker": 0
+     "distance": 9.5
     },
     {
      "type": "point",
      "pos": [
       0,
-      2.7,
+      2.58,
       5
      ],
-     "color": "#dfe6dc",
+     "color": "#ecdcbc",
      "intensity": 7,
-     "distance": 9,
-     "flicker": 0
+     "distance": 9.5
     },
     {
      "type": "point",
      "pos": [
       0,
-      2.7,
+      2.58,
       10
      ],
-     "color": "#dfe6dc",
+     "color": "#ecdcbc",
      "intensity": 7,
-     "distance": 9,
-     "flicker": 0.3
+     "distance": 9.5
     },
     {
      "type": "point",
      "pos": [
       0,
-      2.7,
+      2.58,
       15
      ],
-     "color": "#dfe6dc",
+     "color": "#ecdcbc",
      "intensity": 7,
-     "distance": 9,
-     "flicker": 0
+     "distance": 9.5
+    },
+    {
+     "type": "point",
+     "pos": [
+      0,
+      2.6,
+      -17.4
+     ],
+     "color": "#ecdcbc",
+     "intensity": 6,
+     "distance": 6,
+     "id": "end_bulb",
+     "off": true
+    },
+    {
+     "type": "point",
+     "pos": [
+      -1.35,
+      0.7,
+      -5.65
+     ],
+     "color": "#bccbda",
+     "intensity": 4.2,
+     "distance": 3.6,
+     "id": "ajar_spill"
     }
    ],
    "fog": {
-    "color": "#101211",
-    "near": 6,
-    "far": 30
+    "color": "#45423a",
+    "near": 4,
+    "far": 38
    },
    "spawn": [
     0,
-    15.5,
+    16.4,
     0
    ],
    "props": [
@@ -9364,28 +9028,6 @@
      "rot": -90
     },
     {
-     "type": "glb",
-     "pos": [
-      1.15,
-      0,
-      -16.6
-     ],
-     "rot": -90,
-     "node": "lib_basin",
-     "collide": true,
-     "fallback": "mopsink"
-    },
-    {
-     "type": "fluoro",
-     "pos": [
-      0,
-      2.94,
-      -15.0
-     ],
-     "w": 1.2,
-     "d": 0.25
-    },
-    {
      "type": "door",
      "pos": [
       -1.54,
@@ -9404,24 +9046,6 @@
      "rot": -90
     },
     {
-     "type": "drain",
-     "pos": [
-      0,
-      0.002,
-      -9.5
-     ]
-    },
-    {
-     "type": "fluoro",
-     "pos": [
-      0,
-      2.94,
-      -10.5
-     ],
-     "w": 1.2,
-     "d": 0.25
-    },
-    {
      "type": "door",
      "pos": [
       1.54,
@@ -9429,28 +9053,6 @@
       -3.8
      ],
      "rot": -90
-    },
-    {
-     "type": "glb",
-     "pos": [
-      1.15,
-      0,
-      -7.6
-     ],
-     "rot": -90,
-     "node": "lib_basin",
-     "collide": true,
-     "fallback": "mopsink"
-    },
-    {
-     "type": "fluoro",
-     "pos": [
-      0,
-      2.94,
-      -6.0
-     ],
-     "w": 1.2,
-     "d": 0.25
     },
     {
      "type": "door",
@@ -9471,16 +9073,6 @@
      "rot": -90
     },
     {
-     "type": "fluoro",
-     "pos": [
-      0,
-      2.94,
-      -1.5
-     ],
-     "w": 1.2,
-     "d": 0.25
-    },
-    {
      "type": "door",
      "pos": [
       -1.54,
@@ -9499,36 +9091,6 @@
      "rot": -90
     },
     {
-     "type": "glb",
-     "pos": [
-      1.15,
-      0,
-      1.4
-     ],
-     "rot": -90,
-     "node": "lib_basin",
-     "collide": true,
-     "fallback": "mopsink"
-    },
-    {
-     "type": "drain",
-     "pos": [
-      0,
-      0.002,
-      4.0
-     ]
-    },
-    {
-     "type": "fluoro",
-     "pos": [
-      0,
-      2.94,
-      3.0
-     ],
-     "w": 1.2,
-     "d": 0.25
-    },
-    {
      "type": "door",
      "pos": [
       -1.54,
@@ -9545,16 +9107,6 @@
       9.7
      ],
      "rot": -90
-    },
-    {
-     "type": "fluoro",
-     "pos": [
-      0,
-      2.94,
-      7.5
-     ],
-     "w": 1.2,
-     "d": 0.25
     },
     {
      "type": "door",
@@ -9577,9 +9129,9 @@
     {
      "type": "glb",
      "pos": [
-      1.15,
+      1.35,
       0,
-      10.4
+      -10.55
      ],
      "rot": -90,
      "node": "lib_basin",
@@ -9587,21 +9139,158 @@
      "fallback": "mopsink"
     },
     {
-     "type": "fluoro",
+     "type": "glb",
      "pos": [
+      1.35,
       0,
-      2.94,
-      12.0
+      2.95
      ],
-     "w": 1.2,
-     "d": 0.25
+     "rot": -90,
+     "node": "lib_basin",
+     "collide": true,
+     "fallback": "mopsink"
     },
     {
-     "type": "figure",
+     "type": "glb",
+     "pos": [
+      1.35,
+      0,
+      11.95
+     ],
+     "rot": -90,
+     "node": "lib_basin",
+     "collide": true,
+     "fallback": "mopsink"
+    },
+    {
+     "type": "mopsink",
+     "pos": [
+      -1.2,
+      0,
+      -12.75
+     ]
+    },
+    {
+     "type": "mopsink",
+     "pos": [
+      1.05,
+      0,
+      17.55
+     ]
+    },
+    {
+     "type": "mopbucket",
+     "pos": [
+      -1.05,
+      0,
+      9.1
+     ],
+     "rot": 20
+    },
+    {
+     "type": "handtruck",
+     "pos": [
+      1.22,
+      0,
+      7.0
+     ],
+     "rot": -80
+    },
+    {
+     "type": "drain",
+     "pos": [
+      0,
+      0.002,
+      12.4
+     ]
+    },
+    {
+     "type": "puddle",
+     "pos": [
+      0.15,
+      0,
+      12.2
+     ],
+     "w": 1.1,
+     "d": 0.8,
+     "seed": 3
+    },
+    {
+     "type": "drain",
+     "pos": [
+      0,
+      0.002,
+      4.0
+     ]
+    },
+    {
+     "type": "puddle",
+     "pos": [
+      0.15,
+      0,
+      3.8
+     ],
+     "w": 1.5,
+     "d": 0.9,
+     "seed": 7
+    },
+    {
+     "type": "drain",
+     "pos": [
+      0,
+      0.002,
+      -9.5
+     ]
+    },
+    {
+     "type": "puddle",
+     "pos": [
+      0.15,
+      0,
+      -9.7
+     ],
+     "w": 1.2,
+     "d": 0.75,
+     "seed": 11
+    },
+    {
+     "type": "puddle",
+     "pos": [
+      -0.9,
+      0,
+      0.6
+     ],
+     "w": 0.9,
+     "d": 0.5,
+     "seed": 19
+    },
+    {
+     "type": "puddle",
+     "pos": [
+      0.7,
+      0,
+      -14.2
+     ],
+     "w": 1.0,
+     "d": 0.6,
+     "seed": 23
+    },
+    {
+     "type": "steam",
      "pos": [
       0,
       0,
-      -16.8
+      4.0
+     ],
+     "w": 0.6,
+     "h": 1.4
+    },
+    {
+     "type": "manager",
+     "pos": [
+      0.0,
+      0,
+      -5.5
      ],
      "rot": 180,
      "face": "blur",
@@ -9609,11 +9298,22 @@
      "name": "manager"
     },
     {
+     "type": "evidence",
+     "pos": [
+      0.05,
+      0.002,
+      -16.8
+     ],
+     "rot": 168,
+     "name": "evidence_h",
+     "hidden": true
+    },
+    {
      "type": "slip",
      "pos": [
-      -0.7,
+      -1.22,
       0.004,
-      4.0
+      -5.68
      ],
      "rot": -30
     },
@@ -9773,35 +9473,207 @@
      "len": 6.0,
      "r": 0.05,
      "mat": "lp_dark"
+    },
+    {
+     "type": "cagebulb",
+     "pos": [
+      0,
+      3.0,
+      -15
+     ],
+     "drop": 0.16
+    },
+    {
+     "type": "cagebulb",
+     "pos": [
+      0,
+      3.0,
+      -10
+     ],
+     "drop": 0.16
+    },
+    {
+     "type": "cagebulb",
+     "pos": [
+      0,
+      3.0,
+      -5
+     ],
+     "drop": 0.16
+    },
+    {
+     "type": "cagebulb",
+     "pos": [
+      0,
+      3.0,
+      0
+     ],
+     "drop": 0.16
+    },
+    {
+     "type": "cagebulb",
+     "pos": [
+      0,
+      3.0,
+      5
+     ],
+     "drop": 0.16
+    },
+    {
+     "type": "cagebulb",
+     "pos": [
+      0,
+      3.0,
+      10
+     ],
+     "drop": 0.16
+    },
+    {
+     "type": "cagebulb",
+     "pos": [
+      0,
+      3.0,
+      15
+     ],
+     "drop": 0.16
+    },
+    {
+     "type": "cagebulb",
+     "pos": [
+      0,
+      3.0,
+      -17.55
+     ],
+     "drop": 0.12,
+     "lit": false,
+     "name": "end_cage_off"
+    },
+    {
+     "type": "cagebulb",
+     "pos": [
+      0,
+      3.0,
+      -17.55
+     ],
+     "drop": 0.12,
+     "name": "end_cage_on",
+     "hidden": true
+    },
+    {
+     "type": "lightspill",
+     "pos": [
+      -1.58,
+      0,
+      -5.7
+     ],
+     "rot": 90,
+     "w": 0.4,
+     "w2": 1.3,
+     "len": 1.5,
+     "color": "#c4d2e0",
+     "strength": 0.4
+    }
+   ],
+   "boxes": [
+    {
+     "min": [
+      -1.6,
+      0,
+      -7.15
+     ],
+     "max": [
+      -0.9800000000000001,
+      1.2,
+      -6.58
+     ],
+     "mat": "paint_green",
+     "tile": 1.6
+    },
+    {
+     "min": [
+      -1.6,
+      1.2,
+      -7.15
+     ],
+     "max": [
+      -0.9800000000000001,
+      3.0,
+      -6.58
+     ],
+     "mat": "cinderblock",
+     "tile": 1.6
+    },
+    {
+     "min": [
+      -1.6,
+      0,
+      -5.42
+     ],
+     "max": [
+      -0.9800000000000001,
+      1.2,
+      -4.85
+     ],
+     "mat": "paint_green",
+     "tile": 1.6
+    },
+    {
+     "min": [
+      -1.6,
+      1.2,
+      -5.42
+     ],
+     "max": [
+      -0.9800000000000001,
+      3.0,
+      -4.85
+     ],
+     "mat": "cinderblock",
+     "tile": 1.6
     }
    ],
    "footstep": {
     "filterHz": 900,
     "gain": 0.1
    },
+   "actors": {
+    "manager": {
+     "path": [
+      [
+       0.0,
+       -5.5
+      ],
+      [
+       0.0,
+       -19.0
+      ]
+     ],
+     "face": false
+    }
+   },
    "shots": {
     "in": {
      "pos": [
       0.0,
       1.6,
-      15.5
+      16.4
      ],
      "look": [
       0.0,
       1.35,
-      9.5
+      10.4
      ]
     },
     "out": {
      "pos": [
       0.0,
       1.6,
-      11.5
+      12.4
      ],
      "look": [
       0.0,
       1.35,
-      5.5
+      6.4
      ]
     },
     "loop": {
@@ -9818,12 +9690,12 @@
       "pos": [
        0.0,
        1.6,
-       1.5
+       2.4
       ],
       "look": [
        0.0,
        1.35,
-       -4.5
+       -3.6
       ]
      },
      "seconds": 3.0,
@@ -9835,12 +9707,12 @@
       "pos": [
        0.0,
        1.6,
-       17.3
+       18.2
       ],
       "look": [
        0.0,
        1.35,
-       11.3
+       12.2
       ]
      },
      "to": "in",
@@ -9867,7 +9739,8 @@
      "h": 2.2,
      "kind": "door",
      "locked": true,
-     "mat": "lp_grey"
+     "mat": "lp_beige",
+     "panel": "lp_dark"
     },
     {
      "name": "ajar",
@@ -9877,38 +9750,220 @@
      "h": 2.1,
      "kind": "door",
      "locked": true,
-     "ajar": 0.22,
+     "ajar": 0.3,
      "mat": "lp_beige",
-     "hinge": "L"
+     "panel": "lp_dark",
+     "hinge": "R"
     }
    ],
    "entry": "front",
    "zones": [
     {
+     "name": "band_0",
+     "pos": [
+      0.0,
+      14.5
+     ],
+     "r": -0.8,
+     "ring": -0.1,
+     "box": [
+      [
+       -1.6,
+       14.2
+      ],
+      [
+       1.6,
+       14.8
+      ]
+     ],
+     "silent": true
+    },
+    {
+     "name": "band_1",
+     "pos": [
+      0.0,
+      13.0
+     ],
+     "r": -0.8,
+     "ring": -0.1,
+     "box": [
+      [
+       -1.6,
+       12.7
+      ],
+      [
+       1.6,
+       13.3
+      ]
+     ],
+     "silent": true
+    },
+    {
+     "name": "band_2",
+     "pos": [
+      0.0,
+      11.5
+     ],
+     "r": -0.8,
+     "ring": -0.1,
+     "box": [
+      [
+       -1.6,
+       11.2
+      ],
+      [
+       1.6,
+       11.8
+      ]
+     ],
+     "silent": true
+    },
+    {
+     "name": "band_3",
+     "pos": [
+      0.0,
+      10.0
+     ],
+     "r": -0.8,
+     "ring": -0.1,
+     "box": [
+      [
+       -1.6,
+       9.7
+      ],
+      [
+       1.6,
+       10.3
+      ]
+     ],
+     "silent": true
+    },
+    {
+     "name": "band_4",
+     "pos": [
+      0.0,
+      8.5
+     ],
+     "r": -0.8,
+     "ring": -0.1,
+     "box": [
+      [
+       -1.6,
+       8.2
+      ],
+      [
+       1.6,
+       8.8
+      ]
+     ],
+     "silent": true
+    },
+    {
+     "name": "band_5",
+     "pos": [
+      0.0,
+      7.0
+     ],
+     "r": -0.8,
+     "ring": -0.1,
+     "box": [
+      [
+       -1.6,
+       6.7
+      ],
+      [
+       1.6,
+       7.3
+      ]
+     ],
+     "silent": true
+    },
+    {
+     "name": "band_6",
+     "pos": [
+      0.0,
+      5.5
+     ],
+     "r": -0.8,
+     "ring": -0.1,
+     "box": [
+      [
+       -1.6,
+       5.2
+      ],
+      [
+       1.6,
+       5.8
+      ]
+     ],
+     "silent": true
+    },
+    {
+     "name": "band_7",
+     "pos": [
+      0.0,
+      4.0
+     ],
+     "r": -0.8,
+     "ring": -0.1,
+     "box": [
+      [
+       -1.6,
+       3.7
+      ],
+      [
+       1.6,
+       4.3
+      ]
+     ],
+     "silent": true
+    },
+    {
+     "name": "band_8",
+     "pos": [
+      0.0,
+      2.5
+     ],
+     "r": -0.8,
+     "ring": -0.1,
+     "box": [
+      [
+       -1.6,
+       2.2
+      ],
+      [
+       1.6,
+       2.8
+      ]
+     ],
+     "silent": true
+    },
+    {
      "name": "far_end",
      "pos": [
       0.0,
-      -15.0
+      -16.35
      ],
-     "r": 0.75,
+     "r": 0.7,
      "ring": 4.0,
      "labelAt": [
       0.0,
-      2.3,
-      -16.6
-     ]
+      1.35,
+      -16.8
+     ],
+     "armAfter": "band_8"
     },
     {
      "name": "ajar",
      "pos": [
-      -0.85,
+      -1.15,
       -6.0
      ],
-     "r": 0.55,
+     "r": 0.38,
      "ring": 2.6,
      "labelAt": [
-      -1.4,
-      2.35,
+      -1.35,
+      2.4,
       -6.0
      ]
     }

@@ -409,7 +409,7 @@
             {
               "actor": {
                 "name": "manager",
-                "speed": 0.55
+                "speed": 0.62
               }
             }
           ],
@@ -420,18 +420,46 @@
               "exit": "back",
               "via": "CN_CORRIDOR_OFFICE",
               "sfxCue": "paper-handoff",
-              "beat": [
+              "approach": [
                 {
                   "caption": "manager.line",
                   "className": "scene-caption-receptionist",
-                  "holdMs": 3400
-                },
+                  "holdMs": 3800
+                }
+              ],
+              "beat": [
                 {
                   "hide": "evidence",
-                  "hold": "papers"
+                  "hold": "evidence"
                 },
                 {
-                  "waitMs": 1400
+                  "waitMs": 1700
+                },
+                {
+                  "hide": "manager",
+                  "light": {
+                    "id": "hold_light",
+                    "on": false
+                  }
+                },
+                {
+                  "hide": "hold_troffer"
+                },
+                {
+                  "waitMs": 240
+                },
+                {
+                  "show": "hold_troffer",
+                  "light": {
+                    "id": "hold_light",
+                    "on": true
+                  }
+                },
+                {
+                  "waitMs": 800
+                },
+                {
+                  "sfxCue": "deadbolt"
                 }
               ]
             },
@@ -439,7 +467,19 @@
               "label": "TAKE THE SIDE DOOR",
               "zone": "side_door",
               "exit": "side",
-              "via": "CN_STAIRS_CONCRETE"
+              "via": "CN_STAIRS_CONCRETE",
+              "sfxCue": "deadbolt",
+              "beat": [
+                {
+                  "moveTo": {
+                    "pos": [
+                      10.8,
+                      0.9
+                    ],
+                    "seconds": 0.7
+                  }
+                }
+              ]
             }
           }
         },
@@ -447,6 +487,169 @@
           "room": "S4_H",
           "next": "S5",
           "ambience": "S4_H_AMB.wav",
+          "beatZones": [
+            {
+              "zone": "band_0",
+              "label": "THE CORRIDOR",
+              "beat": [
+                {
+                  "actor": {
+                    "name": "manager",
+                    "from": 0.0,
+                    "to": 0.1111,
+                    "speed": 3.2
+                  }
+                }
+              ]
+            },
+            {
+              "zone": "band_1",
+              "label": "THE CORRIDOR",
+              "beat": [
+                {
+                  "oneShot": "S4_H_SFX_FOOTSTEPS.wav",
+                  "actor": {
+                    "name": "manager",
+                    "from": 0.1111,
+                    "to": 0.2222,
+                    "speed": 3.2
+                  }
+                }
+              ]
+            },
+            {
+              "zone": "band_2",
+              "label": "THE CORRIDOR",
+              "beat": [
+                {
+                  "actor": {
+                    "name": "manager",
+                    "from": 0.2222,
+                    "to": 0.3333,
+                    "speed": 3.2
+                  }
+                }
+              ]
+            },
+            {
+              "zone": "band_3",
+              "label": "THE CORRIDOR",
+              "beat": [
+                {
+                  "actor": {
+                    "name": "manager",
+                    "from": 0.3333,
+                    "to": 0.4444,
+                    "speed": 3.2
+                  }
+                }
+              ]
+            },
+            {
+              "zone": "band_4",
+              "label": "THE CORRIDOR",
+              "beat": [
+                {
+                  "actor": {
+                    "name": "manager",
+                    "from": 0.4444,
+                    "to": 0.5556,
+                    "speed": 3.2
+                  }
+                }
+              ]
+            },
+            {
+              "zone": "band_5",
+              "label": "THE CORRIDOR",
+              "beat": [
+                {
+                  "oneShot": "S4_H_SFX_FOOTSTEPS.wav",
+                  "actor": {
+                    "name": "manager",
+                    "from": 0.5556,
+                    "to": 0.6667,
+                    "speed": 3.2
+                  }
+                }
+              ]
+            },
+            {
+              "zone": "band_6",
+              "label": "THE CORRIDOR",
+              "beat": [
+                {
+                  "actor": {
+                    "name": "manager",
+                    "from": 0.6667,
+                    "to": 0.7778,
+                    "speed": 3.2
+                  }
+                }
+              ]
+            },
+            {
+              "zone": "band_7",
+              "label": "THE CORRIDOR",
+              "beat": [
+                {
+                  "actor": {
+                    "name": "manager",
+                    "from": 0.7778,
+                    "to": 0.8889,
+                    "speed": 3.2
+                  }
+                }
+              ]
+            },
+            {
+              "zone": "band_8",
+              "label": "THE CORRIDOR",
+              "beat": [
+                {
+                  "show": "evidence_h"
+                },
+                {
+                  "open": "far",
+                  "seconds": 0.9
+                },
+                {
+                  "waitMs": 500
+                },
+                {
+                  "actor": {
+                    "name": "manager",
+                    "from": 0.8889,
+                    "to": 1,
+                    "speed": 1.1
+                  }
+                },
+                {
+                  "waitMs": 1500
+                },
+                {
+                  "hide": "manager"
+                },
+                {
+                  "close": "far",
+                  "seconds": 1.1
+                },
+                {
+                  "waitMs": 700
+                },
+                {
+                  "show": "end_cage_on",
+                  "light": {
+                    "id": "end_bulb",
+                    "on": true
+                  }
+                },
+                {
+                  "hide": "end_cage_off"
+                }
+              ]
+            }
+          ],
           "thresholds": {
             "succumb": {
               "label": "TAKE THE PAPERS",
@@ -455,13 +658,11 @@
               "via": "CN_CORRIDOR_SERVICE",
               "beat": [
                 {
-                  "oneShot": "S4_H_SFX_FOOTSTEPS.wav"
+                  "hide": "evidence_h",
+                  "hold": "evidence"
                 },
                 {
-                  "hide": "manager"
-                },
-                {
-                  "waitMs": 900
+                  "waitMs": 1100
                 }
               ]
             },
@@ -469,7 +670,18 @@
               "label": "TAKE THE SIDE DOOR",
               "zone": "ajar",
               "exit": "ajar",
-              "via": "CN_STAIRS_CONCRETE"
+              "via": "CN_STAIRS_CONCRETE",
+              "beat": [
+                {
+                  "moveTo": {
+                    "pos": [
+                      -0.3,
+                      -5.6
+                    ],
+                    "seconds": 0.7
+                  }
+                }
+              ]
             }
           }
         }
