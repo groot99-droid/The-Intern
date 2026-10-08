@@ -520,6 +520,475 @@ const BUILDERS = {
   // ---- polish: S1-S2 waiting room -- end ----
   //
   // ---- polish: S3 threshold -- begin (that scene's new props go between these lines) ----
+  // S3 THE THRESHOLD (Doc 1 §5 S3, Doc 2 S3): the velvet that hangs round
+  // the curtain doorway, the green ENTER sign on its 2.3 s cycle, the badge
+  // reader's red laser slot, his handprints on the lobby glass, and the
+  // street seen through that glass with no sun and no shadows. Materials
+  // made here belong to the room (userData.owned): room.js frees them when
+  // the room is dropped. Helpers are kept private in this closure.
+  ...(() => {
+    const owned = (m) => { m.userData.owned = true; return m; };
+    const canvasTex = (w, h, draw) => {
+      const c = document.createElement('canvas');
+      c.width = w; c.height = h;
+      draw(c.getContext('2d'), w, h);
+      const t = new THREE.CanvasTexture(c);
+      t.colorSpace = THREE.SRGBColorSpace;
+      return t;
+    };
+    // a soft round glow (white, alpha falling off), tinted by the material
+    const haloTex = () => canvasTex(128, 128, (ctx, w, h) => {
+      const gr = ctx.createRadialGradient(w / 2, h / 2, 0, w / 2, h / 2, w / 2);
+      gr.addColorStop(0, 'rgba(255,255,255,1)');
+      gr.addColorStop(0.35, 'rgba(255,255,255,0.45)');
+      gr.addColorStop(1, 'rgba(255,255,255,0)');
+      ctx.fillStyle = gr;
+      ctx.fillRect(0, 0, w, h);
+    });
+    const additive = (color, opacity, map = null) => owned(new THREE.MeshBasicMaterial({
+      color: new THREE.Color(color), map, transparent: true, opacity,
+      blending: THREE.AdditiveBlending, depthWrite: false, side: THREE.DoubleSide, fog: false
+    }));
+    // The light pool (src/world/lights.js) hands the room's light specs to
+    // a fixed set of PointLights each frame. A lit prop that must pulse with
+    // its light (the ENTER sign with its green) finds the pool light of that
+    // colour nearest to it and follows its intensity, so the two can never
+    // drift apart; without one it runs the same cycle on its own clock.
+    const lightFollower = (mesh, { color, intensity, pattern }) => {
+      const want = new THREE.Color(color);
+      const here = new THREE.Vector3();
+      let light = null;
+      let frame = 0;
+      return (scene) => {
+        if (intensity && (frame++ % 30 === 0 || !light || !light.parent)) {
+          mesh.getWorldPosition(here);
+          light = null;
+          let best = 3.0;
+          for (const c of scene.children) {
+            if (!c.isPointLight || c.intensity <= 0) continue;
+            if (Math.abs(c.color.r - want.r) + Math.abs(c.color.g - want.g) + Math.abs(c.color.b - want.b) > 0.03) continue;
+            const d = c.position.distanceTo(here);
+            if (d < best) { best = d; light = c; }
+          }
+        }
+        if (light) return Math.min(1.2, light.intensity / intensity);
+        const p = pattern || { period: 2.3, duty: 0.86, low: 0.1 };
+        const u = ((performance.now() / 1000) % p.period) / p.period;
+        return u < p.duty ? 1 : p.low;
+      };
+    };
+    // vertical pile for the velvet: dark streaks on deep red
+    const pileTex = () => {
+      const t = canvasTex(256, 64, (ctx, w, h) => {
+        ctx.fillStyle = '#7a1424';
+        ctx.fillRect(0, 0, w, h);
+        let s = 7;
+        const rnd = () => { s = (s * 16807) % 2147483647; return s / 2147483647; };
+        for (let x = 0; x < w; x++) {
+          const v = rnd();
+          ctx.fillStyle = v < 0.5 ? `rgba(20,0,6,${(0.5 - v) * 0.22})` : `rgba(255,140,150,${(v - 0.5) * 0.05})`;
+          ctx.fillRect(x, 0, 1, h);
+        }
+      });
+      t.wrapS = t.wrapT = THREE.RepeatWrapping;
+      return t;
+    };
+    const smooth = (a, b, x) => { const t = Math.min(1, Math.max(0, (x - a) / (b - a))); return t * t * (3 - 2 * t); };
+
+    return {
+      // The velvet round a curtain doorway (S3 C's corridor end, the lobby's
+      // far corner in S3 H): a fold-pleated drape either side of the
+      // doorway (`gap`), a pelmet across the top hiding the doorway curtain's
+      // rod, a brass trim. Photoreal (Doc 1 S3: "heavy red velvet curtain,
+      // photoreal"), it sways a centimetre or two though there is no air.
+      // `dress` names the doorway (doors.js kind curtain) that opens in the
+      // middle: its two halves are hung with the same velvet (their stepped
+      // box folds hidden), so the part that parts is the part that matches;
+      // the halves still squash to the jambs when the door opens, and its
+      // blocking body is untouched. Origin: the wall's inner face, centred;
+      // +z into the room.
+      velvetdrape(mats, o) {
+        const g = new THREE.Group();
+        const w = o.w || 4.0, h = o.h || 3.0, gap = o.gap || 0;
+        const fold = o.fold || 0.22, depth = o.depth || 0.06;
+        const pelH = o.pelmet === undefined ? 0.5 : o.pelmet;
+        const off = o.off === undefined ? 0.02 : o.off; // clear of a wainscot or skirt
+        const map = pileTex();
+        map.repeat.set(2, 1);
+        const mat = owned(new THREE.MeshPhysicalMaterial({
+          color: new THREE.Color('#d0c4c4'), map, roughness: 0.88, metalness: 0,
+          sheen: 0.75, sheenRoughness: 0.5, sheenColor: new THREE.Color('#b8344c'), side: THREE.DoubleSide
+        }));
+        const sways = [];
+        // a pleated panel from x0 to x1 (folds `amp` deep, `z0` off its plane)
+        const panel = (x0, x1, y0, y1, amp, z0, sway, parent = g) => {
+          const pw = x1 - x0, ph = y1 - y0;
+          const segX = Math.max(8, Math.round(Math.abs(pw) / fold * 6));
+          const geo = new THREE.PlaneGeometry(Math.abs(pw), ph, segX, 8);
+          const p = geo.attributes.position;
+          const uv = geo.attributes.uv;
+          const cx = (x0 + x1) / 2;
+          for (let i = 0; i < p.count; i++) {
+            const lx = p.getX(i) + cx;
+            const v = (p.getY(i) + ph / 2) / ph; // 0 bottom .. 1 top
+            const k = 0.8 + 0.2 * (1 - v);
+            p.setZ(i, z0 + amp * k * (1 + Math.sin(lx / fold * Math.PI * 2 + 0.6 * Math.sin(lx * 1.7))));
+            uv.setX(i, lx / 1.2);
+          }
+          geo.translate(cx, (y0 + y1) / 2, 0);
+          geo.computeVertexNormals();
+          const m = new THREE.Mesh(geo, mat);
+          m.castShadow = true;
+          m.receiveShadow = true;
+          parent.add(m);
+          if (sway) sways.push({ m, base: Float32Array.from(p.array), y0, ph });
+          return m;
+        };
+        const top = h;
+        if (gap > 0) {
+          panel(-w / 2, -gap / 2, 0, top, depth, off, true);
+          panel(gap / 2, w / 2, 0, top, depth, off, true);
+        } else panel(-w / 2, w / 2, 0, top, depth, off, true);
+        if (pelH > 0) {
+          // pelmet: shallower pleats, standing proud of the drapes
+          const pz = off + depth * 2 + 0.05;
+          panel(-w / 2 - 0.04, w / 2 + 0.04, top - pelH, top, depth * 0.45, pz, false);
+          g.add(box(mats, 'lp_brass', w + 0.1, 0.022, 0.025, 0, top - pelH - 0.012, pz + depth * 0.9 + 0.015, { castShadow: false }));
+          g.add(box(mats, 'lp_dark', w + 0.1, 0.04, pz + depth + 0.03, 0, top - 0.02, (pz + depth + 0.03) / 2, { castShadow: false }));
+        } else {
+          g.add(box(mats, 'lp_brass', w + 0.1, 0.04, 0.04, 0, top, off + 0.04, { castShadow: false }));
+        }
+        // hang the doorway's two halves with the velvet (once it is in the room)
+        const dress = () => {
+          const door = g.parent && g.parent.children.find((c) => c.name === `door:${o.dress}`);
+          if (!door) return;
+          const plain = mats.get(o.dressMat || 'lp_curtain');
+          for (const half of door.children) {
+            if (!half.isGroup) continue;
+            const folds = half.children.filter((c) => c.isMesh && c.material === plain);
+            if (!folds.length) continue;
+            const s = Math.sign(half.position.x) || 1; // which jamb this half hangs from
+            const hw = Math.abs(half.position.x);
+            const fh = folds[0].geometry.parameters ? folds[0].geometry.parameters.height : top;
+            for (const f of folds) f.visible = false;
+            panel(s * 0.06, -s * (hw + 0.04), 0, fh, depth, 0.02, true, half);
+          }
+        };
+        const phase = (o.pos ? o.pos[0] * 1.3 : 0);
+        let dressed = !o.dress;
+        const swayAmp = o.sway === undefined ? 0.014 : o.sway;
+        let lastFrame = -1;
+        const tick = (renderer) => {
+          const f = renderer.info.render.frame;
+          if (f === lastFrame) return; // once a frame, whichever panel is drawn first
+          lastFrame = f;
+          if (!dressed && g.parent) { dressed = true; dress(); }
+          if (!swayAmp) return;
+          const t = performance.now() / 1000;
+          for (const sw of sways) {
+            const p = sw.m.geometry.attributes.position;
+            for (let i = 0; i < p.count; i++) {
+              const v = (sw.base[i * 3 + 1] - sw.y0) / sw.ph;
+              const fall = Math.pow(1 - v, 1.6);
+              const x = sw.base[i * 3];
+              p.array[i * 3 + 2] = sw.base[i * 3 + 2] + swayAmp * fall * (Math.sin(t * 0.83 + x * 1.9 + phase) * 0.7 + Math.sin(t * 0.37 - x * 0.7) * 0.3);
+            }
+            p.needsUpdate = true;
+          }
+        };
+        g.traverse((c) => { if (c.isMesh && c.material === mat) c.onBeforeRender = tick; });
+        return g;
+      },
+      // The ENTER sign (Doc 1 S3: "a hyper-real green ENTER sign on a
+      // 2.3-second flicker cycle"; Doc 2: "blocky housing with a crisp
+      // photoreal glow"). The housing is company signage, low-poly (C1); the
+      // letters and their glow are light. `sync: {color, intensity}` ties the
+      // face to the room's light of that colour (see lightFollower). `on:
+      // false` is the same sign, dead (S3 H). Text never says "you" (C4).
+      entersign(mats, o) {
+        const g = new THREE.Group();
+        const w = o.w || 1.0, h = o.h || 0.26, lit = o.on !== false;
+        g.add(box(mats, 'lp_dark', w + 0.1, h + 0.1, 0.12, 0, 0, 0));
+        g.add(box(mats, 'lp_grey', w + 0.14, 0.025, 0.14, 0, h + 0.1, 0, { castShadow: false }));
+        const tex = canvasTex(512, Math.max(64, Math.round(512 * h / w)), (ctx, cw, ch) => {
+          ctx.fillStyle = lit ? '#031208' : '#0c100d';
+          ctx.fillRect(0, 0, cw, ch);
+          ctx.font = `900 ${Math.round(ch * 0.78)}px "Arial Black", Impact, "Helvetica Neue", sans-serif`;
+          ctx.textAlign = 'center';
+          ctx.textBaseline = 'middle';
+          const word = (o.text || 'ENTER').split('').join(String.fromCharCode(8202));
+          if (lit) {
+            ctx.shadowColor = 'rgba(80,255,140,0.9)';
+            ctx.shadowBlur = ch * 0.12;
+            ctx.fillStyle = '#9dffbf';
+          } else ctx.fillStyle = '#1d3326';
+          ctx.fillText(word, cw / 2, ch * 0.54);
+        });
+        const faceMat = owned(new THREE.MeshBasicMaterial({ map: tex }));
+        const face = new THREE.Mesh(new THREE.PlaneGeometry(w, h), faceMat);
+        face.position.set(0, 0.05 + h / 2, 0.062);
+        g.add(face);
+        if (!lit) return g;
+        const haloMat = additive('#2dff6e', 0.3, haloTex());
+        const halo = new THREE.Mesh(new THREE.PlaneGeometry(w * 2.4, h * 5.5), haloMat);
+        halo.position.set(0, 0.05 + h / 2, 0.075);
+        halo.renderOrder = 3;
+        g.add(halo);
+        const k = lightFollower(face, { color: (o.sync && o.sync.color) || '#33ff77', intensity: o.sync ? o.sync.intensity : 0, pattern: o.pattern });
+        face.onBeforeRender = (renderer, scene) => {
+          const v = k(scene);
+          faceMat.color.setScalar(0.18 + 1.5 * v);
+          haloMat.opacity = 0.34 * v;
+        };
+        return g;
+      },
+      // The badge reader beside the curtain: a low-poly box (C1) with a red
+      // laser slot that is real light (Doc 1 S3) -- a bright slit, its bloom
+      // on the photoreal wall, and a faint fan of red that sweeps the
+      // corridor slowly (PRESENT CANDIDATE FOR READING). `fan: false` drops
+      // the fan. Origin: on the wall at the reader's foot; +z out of the wall.
+      badgescanner(mats, o) {
+        const g = new THREE.Group();
+        g.add(box(mats, 'lp_grey', 0.15, 0.27, 0.05, 0, 0, 0));
+        g.add(box(mats, 'lp_dark', 0.12, 0.075, 0.012, 0, 0.165, 0.028, { castShadow: false }));
+        g.add(box(mats, 'lp_black', 0.1, 0.08, 0.008, 0, 0.045, 0.026, { castShadow: false }));
+        const red = owned(new THREE.MeshBasicMaterial({ color: new THREE.Color('#ff2a18').multiplyScalar(1.6) }));
+        const slot = new THREE.Mesh(new THREE.BoxGeometry(0.09, 0.008, 0.006), red);
+        slot.position.set(0, 0.2, 0.036);
+        g.add(slot);
+        const led = new THREE.Mesh(new THREE.BoxGeometry(0.012, 0.012, 0.006), red);
+        led.position.set(0.05, 0.25, 0.028);
+        g.add(led);
+        const bloom = new THREE.Mesh(new THREE.PlaneGeometry(0.55, 0.42), additive('#ff2a18', 0.26, haloTex()));
+        bloom.position.set(0, 0.2, 0.004);
+        bloom.renderOrder = 3;
+        g.add(bloom);
+        if (o.fan !== false) {
+          // a horizontal sheet of red out of the slot, fading with distance
+          const L = o.reach || 1.1, spread = o.spread || 0.45;
+          const geo = new THREE.BufferGeometry();
+          geo.setAttribute('position', new THREE.Float32BufferAttribute([0, 0, 0, -spread, 0, L, spread, 0, L], 3));
+          geo.setAttribute('color', new THREE.Float32BufferAttribute([0.9, 0.08, 0.04, 0, 0, 0, 0, 0, 0], 3));
+          const fanMat = additive('#ffffff', 0.22);
+          fanMat.vertexColors = true;
+          const fan = new THREE.Mesh(geo, fanMat);
+          const pivot = new THREE.Group();
+          pivot.position.set(0, 0.2, 0.04);
+          pivot.add(fan);
+          g.add(pivot);
+          fan.renderOrder = 3;
+          fan.onBeforeRender = () => {
+            const t = performance.now() / 1000;
+            pivot.rotation.x = 0.32 + Math.sin(t * 1.4) * 0.22; // tilted down toward a chest, sweeping
+          };
+        }
+        return g;
+      },
+      // A smeared handprint on glass (Doc 2 S3_H_IMG_OUT: "a smeared
+      // handprint on the glass at chest height, and one more further left,
+      // and one further left again"). Fades in over half a second whenever it
+      // is shown (a `show` beat). `flip` for the other hand. Origin: the print's
+      // centre; it faces +z.
+      handprint(mats, o) {
+        const g = new THREE.Group();
+        const tex = canvasTex(256, 256, (ctx, w, h) => {
+          ctx.clearRect(0, 0, w, h);
+          const blob = (x, y, rx, ry, a, rot = 0) => {
+            ctx.save();
+            ctx.translate(x, y);
+            ctx.rotate(rot);
+            const gr = ctx.createRadialGradient(0, 0, 0, 0, 0, 1);
+            gr.addColorStop(0, `rgba(235,238,240,${a})`);
+            gr.addColorStop(0.7, `rgba(235,238,240,${a * 0.6})`);
+            gr.addColorStop(1, 'rgba(235,238,240,0)');
+            ctx.scale(rx, ry);
+            ctx.fillStyle = gr;
+            ctx.beginPath();
+            ctx.arc(0, 0, 1, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.restore();
+          };
+          // a palm laid flat and dragged down: the heel, the ridge under the
+          // fingers, the thumb, four fingertips -- greasy, soft, smeared
+          if ('filter' in ctx) ctx.filter = 'blur(4px)';
+          const hand = (dy, a) => {
+            blob(130, 186 + dy, 44, 34, a);
+            blob(122, 136 + dy, 56, 19, a * 0.7);
+            blob(70, 160 + dy, 13, 24, a * 0.55, -0.7);
+            [[88, 66, -0.2], [116, 50, -0.05], [144, 54, 0.08], [170, 74, 0.22]].forEach(([x, y, r]) => {
+              blob(x, y + dy, 10, 15, a * 0.8, r);
+              blob(x + 3, y + 34 + dy, 8, 13, a * 0.35, r);
+            });
+          };
+          for (const [dy, a] of [[40, 0.05], [28, 0.08], [16, 0.12], [6, 0.18], [0, 0.26]]) hand(dy, a);
+        });
+        const base = o.opacity === undefined ? 0.45 : o.opacity;
+        const mat = owned(new THREE.MeshBasicMaterial({ map: tex, transparent: true, opacity: base, depthWrite: false, fog: false }));
+        const m = new THREE.Mesh(new THREE.PlaneGeometry(o.size || 0.22, (o.size || 0.22) * 1.2), mat);
+        if (o.flip) m.scale.x = -1;
+        m.rotation.z = THREE.MathUtils.degToRad(o.tilt || 0);
+        m.renderOrder = 2;
+        g.add(m);
+        let last = -1e9, start = 0;
+        m.onBeforeRender = () => {
+          const now = performance.now();
+          if (now - last > 400) start = now; // was hidden: fade in again
+          last = now;
+          mat.opacity = base * Math.min(1, (now - start) / 500);
+        };
+        return g;
+      },
+      // The street from S0, seen from inside the lobby's locked glass doors
+      // (Doc 1 S3 H: "the street from S0, but with no sun and no shadows at
+      // all"; Doc 2: "flat grey light, and no shadows whatsoever cast by any
+      // object outside"). Not a room and not lit: one unlit mesh, every face
+      // given a flat overcast shade, fading to grey with distance, closed on
+      // every side and above by the same grey so no sky is ever in frame
+      // (C3), nothing in it casting or taking a shadow, nothing that moves.
+      // Laid out as SET_STREET is, the tower's doors on these doors: the
+      // forecourt and step, the road running away with pavements, facades,
+      // parked cars, dead lamps. No clock and no slip (C8, motif 2).
+      // Origin: the outer face of the lobby wall at the doors' centre, floor
+      // level; +z away from the building.
+      deadstreet(mats, o) {
+        const X = o.halfWidth || 12, Z = o.depth || 46, TOP = o.top || 18;
+        const grey = new THREE.Color(o.grey || '#5e6164');
+        const near = o.fadeNear === undefined ? 3 : o.fadeNear, far = o.fadeFar || 44;
+        const pos = [], col = [], idx = [];
+        const c = new THREE.Color();
+        const add = (x0, y0, z0, x1, y1, z1, hex, { fade = true, seg = 4 } = {}) => {
+          // long boxes are cut along z so the fade follows distance
+          const n = Math.max(1, Math.ceil((z1 - z0) / seg));
+          const base = new THREE.Color(hex);
+          for (let k = 0; k < n; k++) {
+            const za = z0 + (z1 - z0) * k / n, zb = z0 + (z1 - z0) * (k + 1) / n;
+            const geo = new THREE.BoxGeometry(x1 - x0, y1 - y0, zb - za);
+            geo.translate((x0 + x1) / 2, (y0 + y1) / 2, (za + zb) / 2);
+            const p = geo.attributes.position, nm = geo.attributes.normal;
+            const off = pos.length / 3;
+            for (let i = 0; i < p.count; i++) {
+              const ny = nm.getY(i), nx = nm.getX(i);
+              const shade = ny > 0.5 ? 1.0 : ny < -0.5 ? 0.62 : Math.abs(nx) > 0.5 ? 0.8 : 0.88;
+              c.copy(base).multiplyScalar(shade);
+              if (fade) c.lerp(grey, Math.pow(smooth(near, far, p.getZ(i)), 0.75));
+              pos.push(p.getX(i), p.getY(i), p.getZ(i));
+              col.push(c.r, c.g, c.b);
+            }
+            for (const q of geo.index.array) idx.push(q + off);
+            geo.dispose();
+          }
+        };
+        // ground: the forecourt and step (the tower's), the road, pavements
+        add(-X, -0.3, 0, X, 0, 3.2, '#827f78');
+        add(-X, -0.3, 3.2, X, -0.15, 3.8, '#78756f');
+        add(-6.4, -0.34, 3.8, 6.4, -0.3, Z, '#36373a');
+        for (let z = 6; z < Z - 2; z += 5) add(-0.07, -0.3, z, 0.07, -0.296, z + 2.2, '#7a7974');
+        for (const s of [-1, 1]) {
+          add(s > 0 ? 6.4 : -X, -0.3, 3.8, s > 0 ? X : -6.4, -0.16, Z, '#6b6a66');
+          add(s > 0 ? 6.4 : -6.55, -0.3, 3.8, s > 0 ? 6.55 : -6.4, -0.15, Z, '#7c7b76');
+        }
+        // facades either side, the street's inner faces at x = +-8
+        const fac = ['#5a504a', '#64615b', '#56514d', '#605a54', '#5b5650'];
+        let i = 0;
+        for (let z = 0; z < Z + 5; z += 10, i++) {
+          for (const s of [-1, 1]) {
+            // the two sides' blocks are staggered by half a block
+            const za = Math.max(0, s > 0 ? z - 5 : z), zb = Math.min(Z, (s > 0 ? z - 5 : z) + 10);
+            if (zb - za < 1) continue;
+            const ht = Math.min(TOP, 13 + ((i * 3 + (s > 0 ? 2 : 0)) % 4) * 2.5);
+            const x0 = s > 0 ? 8 : -X, x1 = s > 0 ? X : -8;
+            add(x0, -0.16, za, x1, ht, zb, fac[(i + (s > 0 ? 2 : 0)) % fac.length]);
+            const face = s > 0 ? 8 : -8;
+            for (let y = 3.0; y < ht - 1.2; y += 3.4) add(face - 0.03, y, za + 0.6, face + 0.03, y + 1.3, zb - 0.6, '#2c2f33');
+            if (zb - za > 4) add(face - 0.04, -0.16, za + 1.2, face + 0.04, 2.5, za + 3.2, '#26282b'); // a street door
+          }
+        }
+        // the tower's canopy over the doors, on two posts
+        add(-4.6, 3.3, 0, 4.6, 3.6, 4.4, '#45474a', { fade: false });
+        for (const s of [-1, 1]) add(s * 4.2 - 0.07, -0.3, 4.0, s * 4.2 + 0.07, 3.3, 4.14, '#393b3e', { fade: false });
+        // parked cars, low-poly, colourless in this light
+        const cars = [[5.3, 16, '#4c5155'], [-5.3, 30, '#62604e'], [5.3, 44, '#584846']];
+        for (const [x, z, col0] of cars) {
+          if (z > Z - 2) continue;
+          add(x - 0.9, -0.12, z - 2.2, x + 0.9, 0.42, z + 2.2, col0);
+          add(x - 0.75, 0.42, z - 1.0, x + 0.75, 0.9, z + 0.9, col0);
+          add(x - 0.76, 0.5, z - 0.95, x + 0.76, 0.84, z + 0.85, '#2a2d30');
+          for (const [wx, wz] of [[-0.82, -1.4], [0.82, -1.4], [-0.82, 1.4], [0.82, 1.4]]) add(x + wx - 0.12, -0.3, z + wz - 0.33, x + wx + 0.12, 0.06, z + wz + 0.33, '#1c1d1e');
+        }
+        // dead lamps, a traffic light, a hydrant, a bin
+        const lamp = (x, z, s) => {
+          add(x - 0.07, -0.16, z - 0.07, x + 0.07, 5.0, z + 0.07, '#2e3032');
+          add(Math.min(x, x + s * 1.2), 4.9, z - 0.05, Math.max(x, x + s * 1.2), 5.0, z + 0.05, '#2e3032');
+          add(x + s * 1.1 - 0.15, 4.75, z - 0.25, x + s * 1.1 + 0.15, 4.9, z + 0.25, '#3a3c3e');
+        };
+        for (const z of [10, 26, 42]) if (z < Z - 1) lamp(-7.6, z, 1);
+        for (const z of [18, 34]) if (z < Z - 1) lamp(7.6, z, -1);
+        add(7.3, -0.16, 8.93, 7.44, 3.6, 9.07, '#2e3032');
+        add(7.2, 2.7, 8.8, 7.55, 3.6, 9.2, '#232527');
+        add(-7.35, -0.16, 35.8, -7.05, 0.55, 36.1, '#4e3a35');
+        add(6.85, -0.16, 28.7, 7.35, 0.75, 29.2, '#3a3d3a');
+        // the grey that closes it: either side, the far end, overhead
+        add(-X - 0.2, -0.4, 0, -X, TOP, Z, o.grey || '#5e6164', { fade: false });
+        add(X, -0.4, 0, X + 0.2, TOP, Z, o.grey || '#5e6164', { fade: false });
+        add(-X - 0.2, -0.4, Z, X + 0.2, TOP, Z + 0.2, o.grey || '#5e6164', { fade: false });
+        add(-X - 0.2, TOP, 0, X + 0.2, TOP + 0.2, Z + 0.2, o.grey || '#5e6164', { fade: false });
+        const geo = new THREE.BufferGeometry();
+        geo.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3));
+        geo.setAttribute('color', new THREE.Float32BufferAttribute(col, 3));
+        geo.setIndex(idx);
+        const mat = owned(new THREE.MeshBasicMaterial({ vertexColors: true, fog: false }));
+        const lvl = o.level === undefined ? 1 : o.level;
+        mat.color.setScalar(lvl);
+        const mesh = new THREE.Mesh(geo, mat);
+        mesh.castShadow = false;
+        mesh.receiveShadow = false;
+        mesh.visible = !o.showFrom; // until the hook below has seen where the eye is
+        const g = new THREE.Group();
+        g.add(mesh);
+        // A hook drawn every frame (a degenerate triangle, culled never):
+        // `showFrom` [x0, z0, x1, z1] is where, in the room's own frame, the
+        // street may be seen from -- the lobby and its entry corridor. From
+        // anywhere else (the lobby before this one, whose glass looks the
+        // same way once this room is joined behind it) it is not drawn.
+        // `dressGlass` names the doorway it is seen through: its panes (the
+        // shared 'glass' slot, milky at 22 %) are given a clear pane of their
+        // own, so the street is seen and the glass is still there in its
+        // highlights. The panes keep casting shadow (no daylight patch).
+        const hookGeo = new THREE.BufferGeometry();
+        hookGeo.setAttribute('position', new THREE.Float32BufferAttribute([0, 0, 0, 0, 0, 0, 0, 0, 0], 3));
+        const hook = new THREE.Mesh(hookGeo, owned(new THREE.MeshBasicMaterial({ colorWrite: false, depthWrite: false, depthTest: false })));
+        hook.frustumCulled = false;
+        hook.castShadow = false;
+        g.add(hook);
+        const rect = o.showFrom || null;
+        const inv = new THREE.Matrix4();
+        const eye = new THREE.Vector3();
+        let dressed = !o.dressGlass;
+        hook.onBeforeRender = (renderer, scene, camera) => {
+          const room = g.parent;
+          if (!room) return;
+          if (!dressed) {
+            dressed = true;
+            const door = room.children.find((ch) => ch.name === `door:${o.dressGlass}`);
+            if (door) {
+              const milky = mats.get('glass');
+              const clear = owned(new THREE.MeshStandardMaterial({
+                color: new THREE.Color('#c9d6da'), roughness: 0.04, metalness: 0.1,
+                transparent: true, opacity: o.glassOpacity || 0.07, depthWrite: false
+              }));
+              door.traverse((ch) => { if (ch.isMesh && ch.material === milky) ch.material = clear; });
+            }
+          }
+          if (rect) {
+            inv.copy(room.matrixWorld).invert();
+            eye.setFromMatrixPosition(camera.matrixWorld).applyMatrix4(inv);
+            mesh.visible = eye.x >= rect[0] && eye.x <= rect[2] && eye.z >= rect[1] && eye.z <= rect[3];
+          }
+        };
+        return g;
+      }
+    };
+  })(),
   // ---- polish: S3 threshold -- end ----
   //
   // ---- polish: S4 floor -- begin (that scene's new props go between these lines) ----

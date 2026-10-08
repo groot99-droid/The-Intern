@@ -294,7 +294,9 @@
               ],
               "beat": [
                 {
-                  "sfxCue": "curtain-rustle"
+                  "sfxCue": "curtain-rustle",
+                  "caption": "scan.pass",
+                  "holdMs": 2400
                 },
                 {
                   "open": "curtain",
@@ -311,25 +313,20 @@
               "beat": [
                 {
                   "rattle": "glass",
-                  "sfxCue": "door-rattle"
-                },
-                {
+                  "sfxCue": "door-rattle",
                   "waitMs": 700
                 },
                 {
                   "rattle": "glass",
-                  "sfxCue": "door-rattle"
+                  "sfxCue": "door-rattle",
+                  "waitMs": 900
                 },
                 {
-                  "waitMs": 700
-                },
-                {
+                  "sfxCue": "speaker-click",
                   "caption": "door.violation",
                   "className": "scene-caption-receptionist",
-                  "holdMs": 3400
-                },
-                {
-                  "waitMs": 2000
+                  "holdMs": 3400,
+                  "waitMs": 2200
                 },
                 {
                   "sfxCue": "door-buzz"
@@ -342,6 +339,12 @@
           "room": "S3_H",
           "next": "S4",
           "ambience": "S3_H_AMB.wav",
+          "bumpCount": {
+            "door": "front",
+            "at": 31,
+            "caption": "door.counted",
+            "setFlag": "COUNTED_DOOR"
+          },
           "thresholds": {
             "succumb": {
               "label": "PART THE CURTAIN",
@@ -367,25 +370,27 @@
               "beat": [
                 {
                   "rattle": "front",
-                  "sfxCue": "door-rattle"
-                },
-                {
+                  "sfxCue": "door-rattle",
+                  "show": "handprint1",
                   "waitMs": 700
                 },
                 {
                   "rattle": "front",
-                  "sfxCue": "door-rattle"
+                  "sfxCue": "door-rattle",
+                  "show": "handprint2",
+                  "waitMs": 700
                 },
                 {
-                  "waitMs": 700
+                  "rattle": "front",
+                  "sfxCue": "door-rattle",
+                  "show": "handprint3",
+                  "waitMs": 1100
                 },
                 {
                   "caption": "door.violation",
                   "className": "scene-caption-receptionist",
-                  "holdMs": 3400
-                },
-                {
-                  "waitMs": 2000
+                  "holdMs": 3400,
+                  "waitMs": 2400
                 },
                 {
                   "sfxCue": "door-buzz"
