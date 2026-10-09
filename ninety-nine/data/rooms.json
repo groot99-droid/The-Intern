@@ -5222,9 +5222,9 @@
    },
    "skirt": {
     "mat": "marble",
-    "h": 0.12,
+    "h": 0.92,
     "t": 0.03,
-    "tile": 2.5
+    "tile": 0.9
    },
    "cornice": {
     "mat": "plaster_dark",
@@ -5233,7 +5233,7 @@
    },
    "ambient": {
     "color": "#ffe6d0",
-    "intensity": 0.22
+    "intensity": 0.2
    },
    "sun": {
     "from": [
@@ -5242,85 +5242,170 @@
      8.0
     ],
     "color": "#ffe0c0",
-    "intensity": 0.8
+    "intensity": 0.7
    },
    "lights": [
     {
      "type": "point",
      "pos": [
       0,
-      3.1,
-      3.5
+      3.05,
+      3.6
      ],
      "color": "#ffdfb8",
-     "intensity": 14,
-     "distance": 12
+     "intensity": 13,
+     "distance": 11
     },
     {
      "type": "point",
      "pos": [
       0,
-      3.1,
-      -1.0
+      3.05,
+      -1.4
      ],
      "color": "#ffdfb8",
-     "intensity": 14,
-     "distance": 12
+     "intensity": 9,
+     "distance": 9
     },
     {
      "type": "point",
      "pos": [
       0,
-      2.9,
+      2.55,
       -6.4
      ],
      "color": "#33ff77",
      "intensity": 9,
-     "distance": 6,
+     "distance": 6.5,
      "pattern": {
       "period": 2.3,
       "duty": 0.86,
       "low": 0.1
      }
+    },
+    {
+     "type": "point",
+     "pos": [
+      1.8,
+      1.35,
+      -6.05
+     ],
+     "color": "#ff3020",
+     "intensity": 1.6,
+     "distance": 1.9
     }
    ],
    "fog": {
     "color": "#120f0e",
-    "near": 4,
-    "far": 22
+    "near": 5,
+    "far": 26
    },
+   "vignette": 0.6,
    "spawn": [
     0,
-    5.6,
+    4.4,
     0
    ],
    "props": [
     {
-     "type": "sign",
+     "type": "velvetdrape",
      "pos": [
       0,
-      3.12,
-      -6.94
+      0,
+      -7.0
      ],
-     "w": 1.0,
-     "h": 0.28,
-     "name": "enter_sign"
+     "w": 4.2,
+     "h": 2.75,
+     "gap": 1.75,
+     "pelmet": 0.5,
+     "off": 0.05,
+     "dress": "curtain",
+     "name": "velvet"
     },
     {
-     "type": "badgereader",
+     "type": "entersign",
      "pos": [
-      2.06,
-      1.25,
-      -4.6
+      0,
+      2.8,
+      -6.93
      ],
-     "rot": -90
+     "w": 1.0,
+     "h": 0.24,
+     "text": "ENTER",
+     "sync": {
+      "color": "#33ff77",
+      "intensity": 9
+     },
+     "name": "entersign"
+    },
+    {
+     "type": "badgescanner",
+     "pos": [
+      2.08,
+      1.12,
+      -6.05
+     ],
+     "rot": -90,
+     "name": "badgereader"
+    },
+    {
+     "type": "dustmotes",
+     "pos": [
+      0,
+      0.2,
+      -5.9
+     ],
+     "size": [
+      3.8,
+      2.9,
+      1.8
+     ],
+     "count": 150,
+     "sync": {
+      "color": "#33ff77",
+      "intensity": 9
+     }
+    },
+    {
+     "type": "curtainvoid",
+     "pos": [
+      0,
+      0,
+      -7.1
+     ],
+     "w": 3.0,
+     "h": 3.2,
+     "name": "curtain_void"
+    },
+    {
+     "type": "placard",
+     "pos": [
+      1.78,
+      1.45,
+      6.98
+     ],
+     "rot": 180
+    },
+    {
+     "type": "entersign",
+     "pos": [
+      0,
+      2.88,
+      6.93
+     ],
+     "rot": 180,
+     "w": 0.8,
+     "h": 0.2,
+     "text": "EXIT",
+     "on": false,
+     "name": "exitsign"
     },
     {
      "type": "clock",
      "pos": [
       -2.07,
-      2.4,
-      2.0
+      2.45,
+      1.2
      ],
      "rot": 90
     },
@@ -5337,11 +5422,31 @@
      "type": "glb",
      "pos": [
       1.9,
-      2.9,
-      -3.0
+      2.95,
+      -2.4
      ],
      "rot": -135,
      "node": "lib_camera"
+    },
+    {
+     "type": "fluoro",
+     "pos": [
+      0,
+      3.36,
+      3.6
+     ],
+     "w": 0.5,
+     "d": 0.5
+    },
+    {
+     "type": "fluoro",
+     "pos": [
+      0,
+      3.36,
+      -1.4
+     ],
+     "w": 0.5,
+     "d": 0.5
     }
    ],
    "footstep": {
@@ -5353,24 +5458,24 @@
      "pos": [
       0.0,
       1.6,
-      5.6
+      4.4
      ],
      "look": [
       0.0,
       1.35,
-      -0.4
+      -1.6
      ]
     },
     "out": {
      "pos": [
       0.0,
       1.6,
-      1.6
+      -0.16
      ],
      "look": [
       0.0,
       1.35,
-      -4.4
+      -6.16
      ]
     },
     "loop": {
@@ -5387,12 +5492,12 @@
       "pos": [
        0.0,
        1.6,
-       -5.8
+       -6.8
       ],
       "look": [
        0.0,
        1.35,
-       -11.8
+       -12.8
       ]
      },
      "seconds": 3.4,
@@ -5404,12 +5509,12 @@
       "pos": [
        0.0,
        1.6,
-       7.4
+       6.2
       ],
       "look": [
        0.0,
        1.35,
-       1.4
+       0.2
       ]
      },
      "to": "in",
@@ -5423,8 +5528,8 @@
      "name": "curtain",
      "wall": "N",
      "x": 0.0,
-     "w": 2.4,
-     "h": 2.9,
+     "w": 1.8,
+     "h": 2.4,
      "kind": "curtain",
      "locked": true
     },
@@ -5435,14 +5540,15 @@
      "w": 2.4,
      "h": 2.8,
      "kind": "glass",
-     "locked": true
+     "locked": true,
+     "glass": "glass_dark"
     },
     {
      "name": "side",
      "wall": "E",
-     "x": 4.6,
+     "x": 1.2,
      "w": 1.2,
-     "h": 2.2,
+     "h": 2.3,
      "kind": "door",
      "mat": "lp_beige",
      "hinge": "R"
@@ -5450,12 +5556,14 @@
     {
      "name": "service",
      "wall": "W",
-     "x": 4.0,
-     "w": 1.0,
-     "h": 2.1,
+     "x": 5.4,
+     "w": 1.2,
+     "h": 2.2,
      "kind": "door",
      "locked": true,
-     "mat": "lp_grey"
+     "mat": "plaster_dark",
+     "frame": "plaster_dark",
+     "hinge": "R"
     }
    ],
    "entry": "side",
@@ -5464,28 +5572,38 @@
      "name": "curtain",
      "pos": [
       0.0,
-      -5.95
+      -6.05
      ],
-     "r": 0.7,
-     "ring": 3.2,
+     "r": 0.6,
+     "ring": 3.0,
      "labelAt": [
       0.0,
-      2.55,
-      -6.8
+      2.0,
+      -6.75
      ]
     },
     {
      "name": "glass",
      "pos": [
       0.0,
-      6.0
+      6.45
      ],
-     "r": 0.7,
-     "ring": 2.4,
+     "r": 0.5,
+     "ring": 2.2,
      "labelAt": [
       0.0,
-      2.45,
-      6.85
+      2.0,
+      6.88
+     ],
+     "box": [
+      [
+       -1.25,
+       6.05
+      ],
+      [
+       1.25,
+       6.9
+      ]
      ]
     }
    ],
@@ -5632,24 +5750,13 @@
      "id": "service_lamp",
      "off": true,
      "pos": [
-      -4.6,
+      -6.55,
       2.3,
-      5.55
+      3.8
      ],
      "color": "#3dff7a",
      "intensity": 2.4,
      "distance": 3.2
-    },
-    {
-     "type": "point",
-     "pos": [
-      0,
-      2.2,
-      7.5
-     ],
-     "color": "#3a4652",
-     "intensity": 4,
-     "distance": 6
     }
    ],
    "fog": {
@@ -6030,18 +6137,6 @@
      "d": 0.4
     },
     {
-     "type": "backing",
-     "pos": [
-      0,
-      0,
-      6.37
-     ],
-     "w": 2.9,
-     "h": 3.1,
-     "name": "front_dark",
-     "hidden": true
-    },
-    {
      "type": "doorlamp",
      "pos": [
       5.6,
@@ -6065,22 +6160,22 @@
     {
      "type": "doorlamp",
      "pos": [
-      -4.6,
+      -6.98,
       2.46,
-      5.98
+      3.8
      ],
-     "rot": 180,
+     "rot": 90,
      "lens": "red",
      "name": "service_lamp_red"
     },
     {
      "type": "doorlamp",
      "pos": [
-      -4.6,
+      -6.98,
       2.46,
-      5.98
+      3.8
      ],
-     "rot": 180,
+     "rot": 90,
      "lens": "green",
      "name": "service_lamp_green",
      "hidden": true
@@ -6094,9 +6189,48 @@
      ]
     },
     {
+     "type": "velvetdrape",
+     "pos": [
+      -5.4,
+      0,
+      -6.0
+     ],
+     "w": 3.0,
+     "h": 3.25,
+     "gap": 1.75,
+     "pelmet": 0.6,
+     "off": 0.05,
+     "dress": "curtain",
+     "name": "velvet"
+    },
+    {
+     "type": "entersign",
+     "pos": [
+      -5.4,
+      3.36,
+      -5.93
+     ],
+     "w": 0.9,
+     "h": 0.22,
+     "text": "ENTER",
+     "on": false,
+     "name": "entersign"
+    },
+    {
+     "type": "curtainvoid",
+     "pos": [
+      -5.4,
+      0,
+      -6.1
+     ],
+     "w": 3.0,
+     "h": 3.2,
+     "name": "curtain_void"
+    },
+    {
      "type": "placard",
      "pos": [
-      2.2,
+      2.15,
       1.5,
       5.98
      ],
@@ -6114,13 +6248,110 @@
     {
      "type": "glb",
      "pos": [
-      -6.3,
+      -6.25,
       0,
-      5.0
+      5.25
      ],
-     "rot": 90,
+     "rot": 180,
      "node": "lib_payphone",
-     "collide": true
+     "collide": true,
+     "mat": "lp_grey"
+    },
+    {
+     "type": "handprint",
+     "pos": [
+      -0.42,
+      1.37,
+      6.103
+     ],
+     "rot": 180,
+     "tilt": -8,
+     "flip": false,
+     "name": "handprint1",
+     "hidden": true
+    },
+    {
+     "type": "handprint",
+     "pos": [
+      0.34,
+      1.31,
+      6.103
+     ],
+     "rot": 180,
+     "tilt": 6,
+     "flip": true,
+     "name": "handprint2",
+     "hidden": true
+    },
+    {
+     "type": "handprint",
+     "pos": [
+      0.98,
+      1.24,
+      6.103
+     ],
+     "rot": 180,
+     "tilt": 14,
+     "flip": false,
+     "name": "handprint3",
+     "hidden": true
+    },
+    {
+     "type": "handprint",
+     "pos": [
+      -0.95,
+      1.29,
+      6.103
+     ],
+     "rot": 180,
+     "tilt": -13,
+     "flip": true,
+     "name": "handprint4",
+     "hidden": true
+    },
+    {
+     "type": "handprint",
+     "pos": [
+      0.66,
+      1.52,
+      6.103
+     ],
+     "rot": 180,
+     "tilt": 4,
+     "flip": false,
+     "name": "handprint5",
+     "hidden": true
+    },
+    {
+     "type": "handprint",
+     "pos": [
+      -0.21,
+      1.17,
+      6.103
+     ],
+     "rot": 180,
+     "tilt": 9,
+     "flip": true,
+     "name": "handprint6",
+     "hidden": true
+    },
+    {
+     "type": "deadstreet",
+     "pos": [
+      0.0,
+      0,
+      6.3
+     ],
+     "level": 0.62,
+     "grey": "#54575a",
+     "dressGlass": "front",
+     "showFrom": [
+      -7.3,
+      -6.3,
+      13.3,
+      6.0
+     ],
+     "name": "street"
     }
    ],
    "boxes": [
@@ -6272,6 +6503,47 @@
      "fadeIn": 1.0
     }
    },
+   "entry": "side",
+   "zones": [
+    {
+     "name": "glass",
+     "pos": [
+      0.0,
+      5.5
+     ],
+     "r": 0.5,
+     "ring": 2.8,
+     "labelAt": [
+      0.0,
+      2.05,
+      5.95
+     ],
+     "box": [
+      [
+       -1.4,
+       5.15
+      ],
+      [
+       1.4,
+       5.9
+      ]
+     ]
+    },
+    {
+     "name": "curtain",
+     "pos": [
+      -5.4,
+      -5.22
+     ],
+     "r": 0.6,
+     "ring": 2.6,
+     "labelAt": [
+      -5.4,
+      2.0,
+      -5.75
+     ]
+    }
+   ],
    "doors": [
     {
      "name": "front",
@@ -6281,6 +6553,36 @@
      "h": 2.9,
      "kind": "glass",
      "locked": true
+    },
+    {
+     "name": "curtain",
+     "wall": "N",
+     "x": -5.4,
+     "w": 1.8,
+     "h": 2.6,
+     "kind": "curtain",
+     "locked": true
+    },
+    {
+     "name": "side",
+     "wall": "E",
+     "x": 3.0,
+     "w": 1.2,
+     "h": 2.3,
+     "kind": "door",
+     "mat": "lp_beige",
+     "hinge": "R"
+    },
+    {
+     "name": "service",
+     "wall": "W",
+     "x": 3.8,
+     "w": 1.2,
+     "h": 2.2,
+     "kind": "door",
+     "locked": true,
+     "mat": "lp_grey",
+     "hinge": "R"
     },
     {
      "name": "inner",
@@ -6293,300 +6595,6 @@
      "mat": "lp_beige",
      "hinge": "R",
      "panel": "lp_grey"
-    },
-    {
-     "name": "service",
-     "wall": "S",
-     "x": -4.6,
-     "w": 1.2,
-     "h": 2.2,
-     "kind": "door",
-     "locked": true,
-     "mat": "lp_grey"
-    },
-    {
-     "name": "curtain",
-     "wall": "N",
-     "x": -5.6,
-     "w": 2.0,
-     "h": 2.9,
-     "kind": "curtain",
-     "locked": true
-    },
-    {
-     "name": "side",
-     "wall": "E",
-     "x": 3.0,
-     "w": 1.2,
-     "h": 2.2,
-     "kind": "door",
-     "mat": "lp_beige",
-     "hinge": "R"
-    }
-   ],
-   "entry": "side",
-   "zones": [
-    {
-     "name": "seat0",
-     "pos": [
-      -4.48,
-      -2.8
-     ],
-     "r": 0.35,
-     "ring": 1.7,
-     "labelAt": [
-      -5.2,
-      1.45,
-      -2.8
-     ],
-     "seat": {
-      "pos": [
-       -5.14,
-       -2.8
-      ],
-      "face": [
-       1.0,
-       0.0
-      ]
-     }
-    },
-    {
-     "name": "seat1",
-     "pos": [
-      -4.48,
-      -1.3
-     ],
-     "r": 0.35,
-     "ring": 1.7,
-     "labelAt": [
-      -5.2,
-      1.45,
-      -1.3
-     ],
-     "seat": {
-      "pos": [
-       -5.14,
-       -1.3
-      ],
-      "face": [
-       1.0,
-       0.0
-      ]
-     }
-    },
-    {
-     "name": "seat2",
-     "pos": [
-      -4.48,
-      0.2
-     ],
-     "r": 0.35,
-     "ring": 1.7,
-     "labelAt": [
-      -5.2,
-      1.45,
-      0.2
-     ],
-     "seat": {
-      "pos": [
-       -5.14,
-       0.2
-      ],
-      "face": [
-       1.0,
-       0.0
-      ]
-     }
-    },
-    {
-     "name": "seat3",
-     "pos": [
-      -4.48,
-      1.7
-     ],
-     "r": 0.35,
-     "ring": 1.7,
-     "labelAt": [
-      -5.2,
-      1.45,
-      1.7
-     ],
-     "seat": {
-      "pos": [
-       -5.14,
-       1.7
-      ],
-      "face": [
-       1.0,
-       0.0
-      ]
-     }
-    },
-    {
-     "name": "seat4",
-     "pos": [
-      4.48,
-      -2.8
-     ],
-     "r": 0.35,
-     "ring": 1.7,
-     "labelAt": [
-      5.2,
-      1.45,
-      -2.8
-     ],
-     "seat": {
-      "pos": [
-       5.14,
-       -2.8
-      ],
-      "face": [
-       -1.0,
-       0.0
-      ]
-     }
-    },
-    {
-     "name": "seat5",
-     "pos": [
-      4.48,
-      -1.3
-     ],
-     "r": 0.35,
-     "ring": 1.7,
-     "labelAt": [
-      5.2,
-      1.45,
-      -1.3
-     ],
-     "seat": {
-      "pos": [
-       5.14,
-       -1.3
-      ],
-      "face": [
-       -1.0,
-       0.0
-      ]
-     }
-    },
-    {
-     "name": "seat6",
-     "pos": [
-      4.48,
-      0.2
-     ],
-     "r": 0.35,
-     "ring": 1.7,
-     "labelAt": [
-      5.2,
-      1.45,
-      0.2
-     ],
-     "seat": {
-      "pos": [
-       5.14,
-       0.2
-      ],
-      "face": [
-       -1.0,
-       0.0
-      ]
-     }
-    },
-    {
-     "name": "seat7",
-     "pos": [
-      4.48,
-      1.7
-     ],
-     "r": 0.35,
-     "ring": 1.7,
-     "labelAt": [
-      5.2,
-      1.45,
-      1.7
-     ],
-     "seat": {
-      "pos": [
-       5.14,
-       1.7
-      ],
-      "face": [
-       -1.0,
-       0.0
-      ]
-     }
-    },
-    {
-     "name": "counter",
-     "pos": [
-      -1.3,
-      -3.72
-     ],
-     "r": 0.5,
-     "ring": 2.2,
-     "labelAt": [
-      -1.3,
-      2.05,
-      -4.2
-     ]
-    },
-    {
-     "name": "inner_door",
-     "pos": [
-      5.6,
-      -5.1
-     ],
-     "r": 0.6,
-     "ring": 3.0,
-     "labelAt": [
-      5.6,
-      1.55,
-      -5.85
-     ]
-    },
-    {
-     "name": "front_doors",
-     "pos": [
-      0.0,
-      4.95
-     ],
-     "r": 0.75,
-     "ring": 3.2,
-     "labelAt": [
-      0.0,
-      2.05,
-      5.85
-     ]
-    },
-    {
-     "name": "glass",
-     "pos": [
-      0.0,
-      4.95
-     ],
-     "r": 0.75,
-     "ring": 3.0,
-     "labelAt": [
-      0.0,
-      3.2,
-      5.9
-     ]
-    },
-    {
-     "name": "curtain",
-     "pos": [
-      -5.6,
-      -4.95
-     ],
-     "r": 0.7,
-     "ring": 3.0,
-     "labelAt": [
-      -5.6,
-      2.6,
-      -5.85
-     ]
     }
    ],
    "id": "S3_H"

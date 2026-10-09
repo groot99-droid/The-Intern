@@ -488,77 +488,191 @@ def waiting_room(hostile, dark_front=None):
 
 
 def threshold_corridor():
+    """S3 C, THE THRESHOLD (Doc 1 §5 S3, Doc 2 S3_C): a short corridor off
+    the lobby, red carpet, a dark marble wainscot, ending in a heavy red
+    velvet curtain under a green ENTER sign on its 2.3 s cycle, the badge
+    reader's red laser slot beside it. The other way, the lobby's glass
+    doors, locked, smoked, black behind, a dead EXIT over them. He comes in
+    by a side door a little toward the glass, facing the clock; the curtain
+    is to his right, the glass to his left. A service door beside the glass
+    opens when the glass refuses (TRY THE DOOR)."""
     W, H, D = 4.2, 3.4, 14.0
+    N = -D / 2  # the curtain wall's inner face
     props = [
-        prop("sign", [0, 3.12, -D / 2 + 0.06], w=1.0, h=0.28, name="enter_sign"),
-        prop("badgereader", [W / 2 - 0.04, 1.25, -4.6], rot=-90),
-        prop("clock", [-W / 2 + 0.03, 2.4, 2.0], rot=90),
+        # the curtain wall: velvet either side of the curtain doorway and a
+        # pelmet over it (the doorway's own curtain is dressed to match),
+        # the sign above, the reader beside
+        prop("velvetdrape", [0, 0, N], w=W, h=2.75, gap=1.75, pelmet=0.5, off=0.05, dress="curtain", name="velvet"),
+        prop("entersign", [0, 2.8, N + 0.07], w=1.0, h=0.24, text="ENTER", sync={"color": "#33ff77", "intensity": 9}, name="entersign"),
+        prop("badgescanner", [W / 2 - 0.02, 1.12, -6.05], rot=-90, name="badgereader"),
+        prop("dustmotes", [0, 0.2, N + 1.1], size=[3.8, 2.9, 1.8], count=150, sync={"color": "#33ff77", "intensity": 9}),  # dust in the green (Doc 2)
+        # behind the curtain, pure black (Doc 2): a one-sided black inside
+        # the wall's depth, so the passage is not seen until he is through
+        prop("curtainvoid", [0, 0, N - 0.1], w=3.0, h=3.2, name="curtain_void"),
+        # the way back: a plate by the glass, and its sign, dead
+        prop("placard", [1.78, 1.45, D / 2 - 0.02], rot=180),
+        prop("entersign", [0, 2.88, D / 2 - 0.07], rot=180, w=0.8, h=0.2, text="EXIT", on=False, name="exitsign"),
+        prop("clock", [-W / 2 + 0.03, 2.45, 1.2], rot=90),  # what he faces coming in (C8)
         prop("slip", [0.9, 0.004, -3.2], rot=25),
-        glb("lib_camera", [W / 2 - 0.2, 2.9, -3.0], rot=-135, fallback=None),
+        glb("lib_camera", [W / 2 - 0.2, 2.95, -2.4], rot=-135, fallback=None),
+        # the two warm downlights' fittings (the building's, C1)
+        prop("fluoro", [0, H - 0.04, 3.6], w=0.5, d=0.5),
+        prop("fluoro", [0, H - 0.04, -1.4], w=0.5, d=0.5),
     ]
     lights = [
-        {"type": "point", "pos": [0, H - 0.3, 3.5], "color": "#ffdfb8", "intensity": 14, "distance": 12},
-        {"type": "point", "pos": [0, H - 0.3, -1.0], "color": "#ffdfb8", "intensity": 14, "distance": 12},
-        # the ENTER sign's green, on its 2.3 s cycle (Doc 1 S3)
-        {"type": "point", "pos": [0, 2.9, -D / 2 + 0.6], "color": "#33ff77", "intensity": 9, "distance": 6, "pattern": {"period": 2.3, "duty": 0.86, "low": 0.1}},
+        {"type": "point", "pos": [0, H - 0.35, 3.6], "color": "#ffdfb8", "intensity": 13, "distance": 11},
+        {"type": "point", "pos": [0, H - 0.35, -1.4], "color": "#ffdfb8", "intensity": 9, "distance": 9},
+        # the ENTER sign's green, on its 2.3 s cycle (Doc 1 S3); the sign's
+        # face follows this light (props.js entersign `sync`)
+        {"type": "point", "pos": [0, 2.55, N + 0.6], "color": "#33ff77", "intensity": 9, "distance": 6.5, "pattern": {"period": 2.3, "duty": 0.86, "low": 0.1}},
+        # the reader's laser slot, bleeding red onto the wall beside the curtain
+        {"type": "point", "pos": [W / 2 - 0.3, 1.35, -6.05], "color": "#ff3020", "intensity": 1.6, "distance": 1.9},
     ]
     rec = {
         "name": "THE THRESHOLD",
         "size": [W, H, D],
         "floor": "carpet_red", "wall": "plaster_dark", "ceiling": "plaster_dark",
         "tile": {"floor": 1.5, "wall": 2.0, "ceiling": 2.0},
-        "skirt": {"mat": "marble", "h": 0.12, "t": 0.03, "tile": 2.5},
+        "skirt": {"mat": "marble", "h": 0.92, "t": 0.03, "tile": 0.9},
         "cornice": {"mat": "plaster_dark", "h": 0.22, "t": 0.06},
-        "ambient": {"color": "#ffe6d0", "intensity": 0.22},
-        "sun": {"from": [0.5, 5.5, 8.0], "color": "#ffe0c0", "intensity": 0.8},
+        "ambient": {"color": "#ffe6d0", "intensity": 0.2},
+        "sun": {"from": [0.5, 5.5, 8.0], "color": "#ffe0c0", "intensity": 0.7},
         "lights": lights,
-        "fog": {"color": "#120f0e", "near": 4, "far": 22},
-        "spawn": [0, 5.6, 0],
+        "fog": {"color": "#120f0e", "near": 5, "far": 26},
+        "vignette": 0.6,
+        "spawn": [0, 4.4, 0],
         "props": props,
         "footstep": {"filterHz": 500, "gain": 0.06},
     }
-    rec["shots"] = shots_for(rec, out_dist=4.0, leave_dist=11.4)
+    rec["shots"] = shots_for(rec, out_dist=7.5, leave_dist=11.2)
     rec["shots"]["leave"]["seconds"] = 3.4  # through the curtain
-    # Both thresholds in the one corridor: the curtain under the ENTER sign
-    # ahead, the lobby's locked glass doors behind. The candidate comes in
-    # by a side door; a service door opposite opens when the glass refuses.
-    door(rec, "curtain", "N", 0.0, w=2.4, h=2.9, kind="curtain", locked=True)
-    door(rec, "glass", "S", 0.0, w=2.4, h=2.8, kind="glass", locked=True)
-    door(rec, "side", "E", 4.6, w=1.2, h=2.2, kind="door", mat="lp_beige", hinge="R")
-    door(rec, "service", "W", 4.0, w=1.0, h=2.1, kind="door", locked=True, mat="lp_grey")
+    # Doorways. The curtain is a curtain doorway that parts (doors.js),
+    # dressed in the drape's velvet; its rod hides behind the pelmet. The
+    # glass is the lobby's, smoked. The service door is in the wall's own
+    # plaster beside the glass, hinged away from it so it opens toward him.
+    door(rec, "curtain", "N", 0.0, w=1.8, h=2.4, kind="curtain", locked=True)
+    door(rec, "glass", "S", 0.0, w=2.4, h=2.8, kind="glass", locked=True, glass="glass_dark")
+    door(rec, "side", "E", 1.2, w=1.2, h=2.3, kind="door", mat="lp_beige", hinge="R")
+    door(rec, "service", "W", 5.4, w=1.2, h=2.2, kind="door", locked=True, mat="plaster_dark", frame="plaster_dark", hinge="R")
     rec["entry"] = "side"
-    zone(rec, "curtain", [0.0, -5.95], r=0.7, ring=3.2, label_at=[0.0, 2.55, -6.8])
-    zone(rec, "glass", [0.0, 6.0], r=0.7, ring=2.4, label_at=[0.0, 2.45, 6.85])
+    # PART THE CURTAIN: at the curtain, under the sign, the reader beside.
+    # TRY THE DOOR: the whole width of the glass, so it is the glass he walks
+    # into that commits it (and not the plate beside it). Arriving at
+    # (0.8, 1.2) he is 7 m from the one and 4.8 m from the other, outside
+    # both labels' rings.
+    zone(rec, "curtain", [0.0, -6.05], r=0.6, ring=3.0, label_at=[0.0, 2.0, -6.75])
+    zone(rec, "glass", [0.0, 6.45], r=0.5, ring=2.2, box=[[-1.25, 6.05], [1.25, 6.9]], label_at=[0.0, 2.0, 6.88])
     return rec
 
 
 def lobby_doors():
+    """S3 H, THE LOBBY DOORS (Doc 1 §5 S3 H, Doc 2 S3_H): back in the lobby,
+    at its glass doors, locked. Through them the street from S0 with no sun
+    and no shadows at all (props.js `deadstreet`: unlit, closed in grey on
+    every side and above, so no sky, C3). The red curtain is here too, in
+    the far corner, its ENTER sign dead. He comes in by a side door off the
+    call. TRY THE DOOR: the glass rattles, his handprints stay on it, the
+    receptionist speaks without raising her head, and the building opens a
+    service door on the west wall instead; every push after that is counted
+    (scenes.json `bumpCount`, COUNTED_DOOR at thirty-one)."""
     rec = waiting_room(False)
     rec["name"] = "THE LOBBY DOORS"
     W, H, D = rec["size"]
-    rec["props"].append(prop("placard", [2.2, 1.5, D / 2 - 0.02], rot=180))
-    # the curtain is here too, at the far end, where the clock was
+    # The lobby again, with its own doorways, zones and entry: S1's stay as
+    # sealed doors where they do not collide with these, except on the
+    # street wall (only the glass there); nothing of S1's outside the shell
+    # comes with it (what lies past the glass is this room's own).
+    inherited = rec.pop("doors", [])
+    rec["zones"] = []
+    inside = lambda p: abs(p[0]) <= W / 2 + 0.05 and abs(p[-1]) <= D / 2 + 0.05
+    rec["props"] = [p for p in rec["props"] if inside(p["pos"])]
+    rec["boxes"] = [b for b in rec.get("boxes", []) if inside(b["min"]) and inside(b["max"])]
+    rec["lights"] = [l for l in rec["lights"] if inside(l["pos"])]
+    front = next((d for d in inherited if d["name"] == "front" and d["wall"] == "S"), None)
+    if front:
+        inherited.remove(front)
+        front = {k: v for k, v in front.items() if k not in ("open", "ajar")}
+        front["locked"] = True
+        rec.setdefault("doors", []).append(front)
+    else:
+        front = door(rec, "front", "S", 0.0, w=2.6, h=2.9, kind="glass", locked=True)
+    fx, fw, fh = front["x"], front["w"], front["h"]
+    door(rec, "curtain", "N", -5.4, w=1.8, h=2.6, kind="curtain", locked=True)
+    door(rec, "side", "E", 3.0, w=1.2, h=2.3, kind="door", mat="lp_beige", hinge="R")
+    door(rec, "service", "W", 3.8, w=1.2, h=2.2, kind="door", locked=True, mat="lp_grey", hinge="R")
+    mine = list(rec["doors"])
+    dropped = []
+    for d in inherited:
+        if d["wall"] == "S" or any(m["wall"] == d["wall"] and d["x"] - d["w"] / 2 < m["x"] + m["w"] / 2 + 0.3 and d["x"] + d["w"] / 2 > m["x"] - m["w"] / 2 - 0.3 for m in mine):
+            dropped.append(d["name"])
+            continue
+        d = {k: v for k, v in d.items() if k not in ("open", "ajar")}
+        d["locked"] = True
+        if any(m["name"] == d["name"] for m in mine):
+            d["name"] = d["name"] + "_s1"
+        rec["doors"].append(d)
+    # S1 hangs a lamp over a door (props `<door>_lamp_red|green`, light
+    # `<door>_lamp`, switched by the beats). A door of S1's that is not here
+    # takes its lamp with it, or hands it to this room's door of that name
+    # (the service door: red until TRY THE DOOR opens it), so no lamp is left
+    # on a bare wall.
+    def over(d, up, out):
+        y = round(d.get("y", 0) + d["h"] + up, 3)
+        return {"N": ([d["x"], y, -D / 2 + out], 0), "S": ([d["x"], y, D / 2 - out], 180),
+                "E": ([W / 2 - out, y, d["x"]], -90), "W": ([-W / 2 + out, y, d["x"]], 90)}[d["wall"]]
+    for nm in dropped:
+        to = next((m for m in mine if m["name"] == nm), None)
+        for p in [p for p in rec["props"] if str(p.get("name", "")).startswith(nm + "_lamp_")]:
+            if to:
+                p["pos"], p["rot"] = over(to, 0.26, 0.02)
+            else:
+                rec["props"].remove(p)
+        for li in [li for li in rec["lights"] if li.get("id") == nm + "_lamp"]:
+            if to:
+                li["pos"] = over(to, 0.1, 0.45)[0]
+            else:
+                rec["lights"].remove(li)
+    rec["entry"] = "side"
     for p in rec["props"]:
         if p["type"] == "clock":
             p["pos"] = [-2.9, 2.9, -D / 2 + 0.02]
-    rec["props"].append(prop("slip", [0.6, 0.004, D / 2 - 1.2], rot=15))  # one 99, at the foot of the locked doors
-    rec["props"].append(glb("lib_payphone", [-W / 2 + 0.7, 0, D / 2 - 1.0], rot=90, fallback=None, collide=True))
+            p.pop("rot", None)
+    # the curtain in the far corner, dressed as S3 C's, its sign dead
+    rec["props"].append(prop("velvetdrape", [-5.4, 0, -D / 2], w=3.0, h=3.25, gap=1.75, pelmet=0.6, off=0.05, dress="curtain", name="velvet"))
+    rec["props"].append(prop("entersign", [-5.4, 3.36, -D / 2 + 0.07], w=0.9, h=0.22, text="ENTER", on=False, name="entersign"))
+    rec["props"].append(prop("curtainvoid", [-5.4, 0, -D / 2 - 0.1], w=3.0, h=3.2, name="curtain_void"))
+    # the doors' plate, the one 99 at their foot, the payphone in the corner
+    rec["props"].append(prop("placard", [fx + fw / 2 + 0.85, 1.5, D / 2 - 0.02], rot=180))
+    rec["props"].append(prop("slip", [fx + 0.6, 0.004, D / 2 - 1.2], rot=15))
+    rec["props"].append(glb("lib_payphone", [-W / 2 + 0.75, 0, D / 2 - 0.75], rot=180, fallback=None, collide=True, mat="lp_grey"))
+    # his handprints, left on the glass as he tries it, each further left
+    # (Doc 2 S3_H_IMG_OUT); the first three shown by the TRY THE DOOR beats,
+    # the rest by the pushes after it (scenes.json bumpCount `show`)
+    gz = D / 2 + WALL_T / 2 - 0.047
+    prints = ((fx - 0.42, 1.37, -8), (fx + 0.34, 1.31, 6), (fx + 0.98, 1.24, 14),
+              (fx - 0.95, 1.29, -13), (fx + 0.66, 1.52, 4), (fx - 0.21, 1.17, 9))
+    for i, (px, py, tilt) in enumerate(prints):
+        rec["props"].append(prop("handprint", [px, py, gz], rot=180, tilt=tilt, flip=(i % 2 == 1), name="handprint%d" % (i + 1), hidden=True))
+    # the street through the glass: no sun, no shadow, nothing moving
+    # (drawn only while the eye is in this lobby or its entry corridor, so
+    # the lobby before, whose glass faces this way once joined, never sees it)
+    rec["props"].append(prop("deadstreet", [fx, 0, D / 2 + WALL_T], level=0.62, grey="#54575a", dressGlass="front", showFrom=[-W / 2 - WALL_T, -D / 2 - WALL_T, W / 2 + 6.3, D / 2], name="street"))
     rec["spawn"] = [0, 1.5, 180]
     rec["ambient"]["intensity"] = 0.3
     rec["fog"] = {"color": "#0b0a09", "near": 8, "far": 30}
-    rec["lights"].append({"type": "point", "pos": [0, 2.2, D / 2 + 1.5], "color": "#3a4652", "intensity": 4, "distance": 6})
     rec["shots"] = shots_for(rec, out_dist=2.2, leave_dist=3.6)
     # Locked: the leave shot turns from the doors back toward the room's dark
     # (the receptionist's line lands here), then black.
     rec["shots"]["leave"] = {"from": "out", "to": pose([0, EYE, 2.6], [0, 1.2, -D / 2]), "seconds": 3.4, "ease": "inout", "fadeOut": 1.2}
     rec["shots"].pop("call", None)
-    # TRY THE DOOR is the lobby's own glass (front); PART THE CURTAIN is a
-    # curtain doorway in the far corner. In by a side door from the call.
-    door(rec, "curtain", "N", -5.6, w=2.0, h=2.9, kind="curtain", locked=True)
-    door(rec, "side", "E", 3.0, w=1.2, h=2.2, kind="door", mat="lp_beige", hinge="R")
-    rec["entry"] = "side"
-    zone(rec, "glass", [0.0, 4.95], r=0.75, ring=3.0, label_at=[0.0, 3.2, 5.9])
-    zone(rec, "curtain", [-5.6, -4.95], r=0.7, ring=3.0, label_at=[-5.6, 2.6, -5.85])
+    # TRY THE DOOR: the whole width of the glass. PART THE CURTAIN: at the
+    # curtain in the far corner. Arriving by the side door at (5.7, 3.0)
+    # he is 5.8 m from the one and 13.7 m from the other.
+    # The words stand on the glass and on the velvet, low enough to stay in
+    # view until he is in the zone (over the lintel they left the top of the
+    # screen a step before the commit).
+    zone(rec, "glass", [fx, D / 2 - 0.5], r=0.5, ring=2.8, box=[[round(fx - fw / 2 - 0.1, 3), D / 2 - 0.85], [round(fx + fw / 2 + 0.1, 3), D / 2 - 0.1]], label_at=[fx, 2.05, D / 2 - 0.05])
+    zone(rec, "curtain", [-5.4, -D / 2 + 0.78], r=0.6, ring=2.6, label_at=[-5.4, 2.0, -D / 2 + 0.25])
     return rec
 
 

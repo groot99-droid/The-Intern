@@ -453,20 +453,23 @@
               "zone": "curtain",
               "exit": "curtain",
               "via": "CN_CORRIDOR_OFFICE",
+              "viaDark": true,
               "approach": [
                 {
                   "caption": "scan.prompt",
-                  "holdMs": 2600
+                  "holdMs": 1800
                 }
               ],
               "beat": [
                 {
-                  "sfxCue": "curtain-rustle"
-                },
-                {
+                  "sfxCue": "curtain-rustle",
                   "open": "curtain",
                   "seconds": 1.6,
                   "await": true
+                },
+                {
+                  "caption": "scan.pass",
+                  "holdMs": 2600
                 }
               ]
             },
@@ -478,25 +481,20 @@
               "beat": [
                 {
                   "rattle": "glass",
-                  "sfxCue": "door-rattle"
-                },
-                {
+                  "sfxCue": "door-rattle",
                   "waitMs": 700
                 },
                 {
                   "rattle": "glass",
-                  "sfxCue": "door-rattle"
+                  "sfxCue": "door-rattle",
+                  "waitMs": 900
                 },
                 {
-                  "waitMs": 700
-                },
-                {
+                  "sfxCue": "speaker-click",
                   "caption": "door.violation",
                   "className": "scene-caption-receptionist",
-                  "holdMs": 3400
-                },
-                {
-                  "waitMs": 2000
+                  "holdMs": 3400,
+                  "waitMs": 2200
                 },
                 {
                   "sfxCue": "door-buzz"
@@ -509,12 +507,25 @@
           "room": "S3_H",
           "next": "S4",
           "ambience": "S3_H_AMB.wav",
+          "bumpCount": {
+            "door": "front",
+            "at": 31,
+            "caption": "door.counted",
+            "setFlag": "COUNTED_DOOR",
+            "friction": 0.5,
+            "show": {
+              "6": "handprint4",
+              "14": "handprint5",
+              "22": "handprint6"
+            }
+          },
           "thresholds": {
             "succumb": {
               "label": "PART THE CURTAIN",
               "zone": "curtain",
               "exit": "curtain",
               "via": "CN_CORRIDOR_SERVICE",
+              "viaDark": true,
               "beat": [
                 {
                   "sfxCue": "curtain-rustle"
@@ -534,28 +545,46 @@
               "beat": [
                 {
                   "rattle": "front",
-                  "sfxCue": "door-rattle"
-                },
-                {
+                  "sfxCue": "door-rattle",
+                  "show": "handprint1",
                   "waitMs": 700
                 },
                 {
                   "rattle": "front",
-                  "sfxCue": "door-rattle"
+                  "sfxCue": "door-rattle",
+                  "show": "handprint2",
+                  "waitMs": 700
                 },
                 {
-                  "waitMs": 700
+                  "rattle": "front",
+                  "sfxCue": "door-rattle",
+                  "show": "handprint3",
+                  "waitMs": 1100
                 },
                 {
                   "caption": "door.violation",
                   "className": "scene-caption-receptionist",
-                  "holdMs": 3400
+                  "holdMs": 3400,
+                  "show": "receptionist_jaw",
+                  "waitMs": 2400
                 },
                 {
-                  "waitMs": 2000
+                  "hide": "receptionist_jaw"
                 },
                 {
                   "sfxCue": "door-buzz"
+                },
+                {
+                  "hide": "service_lamp_red"
+                },
+                {
+                  "show": "service_lamp_green"
+                },
+                {
+                  "light": {
+                    "id": "service_lamp",
+                    "on": true
+                  }
                 }
               ]
             }
