@@ -261,7 +261,9 @@ export function createWorld({ scene, mats, library, rooms, lightPool = {} }) {
     if (current) {
       const p = progress(current, playerPos || current.center);
       if (p !== null && current.link) {
-        const from = current.link.from ? current.link.from.env : current.env;
+        // once the room behind is dropped the corridor keeps its atmosphere
+        // (openWay records it), instead of the connector's own dark env
+        const from = current.link.from ? current.link.from.env : (current.link.fromEnv || current.env);
         const to = current.link.to ? current.link.to.env : current.env;
         envTarget = blendEnv(from, to, smooth(p));
       } else envTarget = current.env;
@@ -274,6 +276,7 @@ export function createWorld({ scene, mats, library, rooms, lightPool = {} }) {
       if (!inst.group.visible || inst.lightLevel < 0.01) continue;
       const tier = inst === current ? 0 : (current && current.link && (current.link.from === inst || current.link.to === inst)) || (inst.link && inst.link.from === current) ? 1 : 2;
       for (const s of inst.lights) {
+        if (s.off && !(s.lvl > 0)) { s.lvl = 0; continue; } // a dark lamp holds no slot (and fades up from dark)
         s.scale = inst.lightLevel;
         const d = playerPos ? Math.hypot(s.world[0] - playerPos[0], s.world[1] - playerPos[1], s.world[2] - playerPos[2]) : 0;
         s.rank = tier * 10000 + d;

@@ -121,7 +121,9 @@ export function createControls(camera, domElement, getCollidables, { onBump = nu
 
   // Blocked along one axis? Two heights: chest (the old ray) and knee.
   function blockedAxis(x, z, feetY, dir, dist, walls) {
-    for (const h of swim ? [0] : [1.0, 0.45]) {
+    // knee, chest and head height: a lintel lower than the eye (the store's
+    // 1.1 m hatch) must stop him, not let the camera through the wall
+    for (const h of swim ? [0] : [1.0, 0.45, 1.5]) {
       rayOrigin.set(x, swim ? camera.position.y : feetY + h, z);
       const hit = firstHit(rayOrigin, dir, dist, walls);
       if (hit) return hit;

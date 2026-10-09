@@ -98,13 +98,17 @@ export function createDirector({ manifest, endings, state, stage, audio = null, 
     const g = inst.room.named.get(name) || (inst.room.boxesById && inst.room.boxesById.get(name));
     if (g) g.visible = on;
   }
-  function setLight(inst, id, on) {
-    for (const s of inst.lights) if (s.id === id) s.off = !on;
+  function setLight(inst, id, on, seconds = 0) {
+    for (const s of inst.lights) if (s.id === id) { s.off = !on; s.fadeS = seconds || 0; }
   }
 
-  function holdProp(type) {
+  function holdProp(type, from = null) {
     dropHeld();
-    const g = buildProp(stage.mats, { type, pos: [0, 0, 0] });
+    const base = typeof type === 'string' ? { type } : { ...type };
+    // handed over: keep the material of the prop it replaces (`hide` in the
+    // same beat) -- the evidence stays photoreal paper (C1), not company paper
+    if (from && from.type === base.type && from.mat && !base.mat) base.mat = from.mat;
+    const g = buildProp(stage.mats, { ...base, pos: [0, 0, 0] });
     if (!g) return;
     // carried low and to the right, small in the frame
     g.position.set(0.24, -0.5, -0.75);
@@ -139,10 +143,16 @@ export function createDirector({ manifest, endings, state, stage, audio = null, 
       { text: text('harlowe.draft'), size: 18, color: '#ffffff' }
     ] }),
     requisition: () => {
-      const rows = (library && library.manifest && library.manifest.rows) || [];
-      return { bg: '#0a0f0c', fg: '#9fe8bf', size: 15, lines: [{ text: text('requisition.title'), size: 17, bold: true, gap: 10 }]
-        .concat(rows.slice(0, 11).map((r) => ({ text: `${r.num}  ${r.item}  ${r.qty} ${r.unit}`, size: 14, gap: 2 })))
-        .concat(state.flags.has('SAW_HARLOWE') ? [{ text: `019  ${text('requisition.harlowe')}`, size: 14, color: '#f0e0a0' }] : []) };
+      // Doc 1 §6.3: the mundane rows run all the way down; row 019 is
+      // Harlowe's, in another hand, only for a candidate who read his draft.
+      // The company copy never names him (text/endings.json _harloweNote).
+      const m = (library && library.manifest) || {};
+      const rows = m.rows || [];
+      const hr = m.harloweRow;
+      const lines = [{ text: text('requisition.title'), size: 15, bold: true, gap: 6 }]
+        .concat(rows.map((r) => ({ text: `${r.num}  ${r.item}  ${r.qty} ${r.unit}`, size: 11, gap: 1 })));
+      if (hr && state.flags.has(hr.requiresFlag || 'SAW_HARLOWE')) lines.push({ text: `${hr.num}  ${hr.item}`, size: 14, color: '#f0e0a0', font: '"Bradley Hand", "Segoe Script", "Comic Sans MS", cursive', gap: 0 });
+      return { bg: '#0a0f0c', fg: '#9fe8bf', size: 11, lines };
     }
   };
 
@@ -179,13 +189,13 @@ export function createDirector({ manifest, endings, state, stage, audio = null, 
       if (b.rattle) { const d = inst.room.doors.get(b.rattle); if (d) d.rattle(); }
       if (b.show) setVisible(inst, b.show, true);
       if (b.hide) setVisible(inst, b.hide, false);
-      if (b.light) setLight(inst, b.light.id, b.light.on !== false);
+      if (b.light) setLight(inst, b.light.id, b.light.on !== false, b.light.seconds);
       if (b.screen) {
         if (b.screen.page) drawScreen(inst, b.screen.prop, PAGES[b.screen.page]());
         else screenPower(inst, b.screen.prop, b.screen.on !== false, stage.mats);
       }
       if (b.setFlag) state.flags.add(b.setFlag);
-      if (b.hold) holdProp(b.hold);
+      if (b.hold) { const src = b.hide && inst.room.named.get(b.hide); holdProp(b.hold, src && src.userData ? src.userData.spec : null); }
       if (b.drop) dropHeld();
       if (b.actor) startActor(inst, b.actor);
       if (b.seal) sealHeldEntry(inst);
@@ -313,7 +323,7 @@ export function createDirector({ manifest, endings, state, stage, audio = null, 
   function openWay(fromInst, exitName, viaKey, toKey, opts = {}) {
     const conn = world.attach(fromInst, exitName, viaKey);
     const dest = world.attach(conn, 'exit', toKey, { entry: opts.entry || null });
-    conn.link = { from: fromInst, to: dest };
+    conn.link = { from: fromInst, to: dest, fromEnv: fromInst.env };
     dest.lightLevel = 0;
     dest.lightTarget = 0;
     conn.lightLevel = 0;
@@ -372,7 +382,9 @@ export function createDirector({ manifest, endings, state, stage, audio = null, 
     }
     if (!L.seal2 && cur === L.dest) {
       const e = L.dest.anchorsWorld[L.dest.entryName];
-      if (!e || dist2(pos, e.pos) > ARRIVE_SEAL_M) {
+      // a room that holds its entry open (the cab) holds it from the moment
+      // he is inside: DESCEND is nearer the doorway than the seal distance
+      if (L.dest.rec.holdEntry || !e || dist2(pos, e.pos) > ARRIVE_SEAL_M) {
         L.seal2 = true;
         if (L.dest.rec.holdEntry) {
           L.held = true; // the cab's doors stay open until the choice
@@ -397,7 +409,8 @@ export function createDirector({ manifest, endings, state, stage, audio = null, 
   // A room that holds its entry open (the cab) closes it when the choice is made.
   function sealHeldEntry(inst) {
     for (const L of links.slice()) {
-      if (L.dest !== inst || !L.held) continue;
+      if (L.dest !== inst || !(L.held || (!L.seal2 && inst.rec.holdEntry))) continue;
+      L.seal2 = true;
       const door = inst.room.doors.get(inst.entryName);
       if (door && door.kind !== 'open') door.close(1.0);
       L.held = false;
@@ -533,6 +546,7 @@ export function createDirector({ manifest, endings, state, stage, audio = null, 
     stage.setPlayerActive(false);
     player.setSwim(null);
     await world.prebuild(storeKey);
+    if (gone()) return null;
     const chute = world.attach(dive, 'grate', 'CN_CHUTE', { entry: 'top' });
     const store = world.attach(chute, 'exit', storeKey);
     chute.link = { from: dive, to: store };
@@ -545,14 +559,17 @@ export function createDirector({ manifest, endings, state, stage, audio = null, 
     const top = chute.anchorsWorld.top.pos;
     const ex = chute.anchorsWorld.exit.pos;
     await stage.carry({ pos: [top[0], top[1] - 0.2, top[2]], look: [ex[0], ex[1] + 0.4, ex[2]], space: 'world' }, { seconds: 0.7, ease: 'in' });
+    if (gone()) return store;
     dropRoom(dive);
     world.setCurrent(chute);
     const land = store.rec.shots.land;
     const landFrom = world.poseToWorld(store, land.from);
     await stage.carry({ pos: [ex[0], ex[1] + 0.45, ex[2]], look: landFrom.look, space: 'world' }, { seconds: 1.5, ease: 'in' });
+    if (gone()) return store;
     if (audio) audio.playAmbience('S8_H_AMB_STORE.wav', { crossfadeMs: 900 });
     world.setCurrent(store);
     await stage.playShot(store, 'land');
+    if (gone()) return store;
     world.remove(chute);
     stage.releaseShot();
     player.enable();
@@ -567,7 +584,7 @@ export function createDirector({ manifest, endings, state, stage, audio = null, 
     const ending = endings[endingId];
     if (th.to && world.baseOf(th.to) !== sc.inst.base) {
       const store = await chuteTo(sc.inst, th.to);
-      if (!gone()) arriveForEnding(store, endingId, ending);
+      if (store && !gone()) arriveForEnding(store, endingId, ending);
       return;
     }
     if (world.baseOf(ending.room) === sc.inst.base) { arriveForEnding(sc.inst, endingId, ending); return; }
@@ -636,10 +653,15 @@ export function createDirector({ manifest, endings, state, stage, audio = null, 
 
   function positionLayer(layer, rect) {
     if (!rect) return;
-    layer.style.left = `${(rect.x * 100).toFixed(2)}%`;
-    layer.style.top = `${(rect.y * 100).toFixed(2)}%`;
-    layer.style.width = `${(rect.w * 100).toFixed(2)}%`;
-    layer.style.height = `${(rect.h * 100).toFixed(2)}%`;
+    // clipped to the viewport: on a portrait phone the CRT is wider than the
+    // screen, and the answers must stay readable
+    const x0 = Math.max(0, rect.x), y0 = Math.max(0, rect.y);
+    const x1 = Math.min(1, rect.x + rect.w), y1 = Math.min(1, rect.y + rect.h);
+    if (x1 <= x0 || y1 <= y0) return;
+    layer.style.left = `${(x0 * 100).toFixed(2)}%`;
+    layer.style.top = `${(y0 * 100).toFixed(2)}%`;
+    layer.style.width = `${((x1 - x0) * 100).toFixed(2)}%`;
+    layer.style.height = `${((y1 - y0) * 100).toFixed(2)}%`;
   }
 
   function showHint() {
@@ -651,24 +673,28 @@ export function createDirector({ manifest, endings, state, stage, audio = null, 
     setTimeout(() => hint && hint.classList.add('walk-hint-out'), 9000);
   }
 
+  // A touch's pointerdown/touchstart do not grant user activation (only
+  // pointerup / touchend / click / keydown do), so listen for all of them
+  // and stop only once the context is actually running.
   function unlockOnGesture(branch) {
-    const once = () => {
-      document.removeEventListener('pointerdown', once, true);
-      document.removeEventListener('keydown', once, true);
-      document.removeEventListener('touchstart', once, true);
-      if (!audio) return;
+    const types = ['pointerdown', 'pointerup', 'touchend', 'click', 'keydown'];
+    const off = () => types.forEach((t) => document.removeEventListener(t, on, true));
+    const on = () => {
+      if (!audio) { off(); return; }
       audio.unlock();
       if (!gone() && scene && scene.id === 'S0' && world.current() && world.current().base === world.baseOf(branch.room)) audio.playAmbience(branch.ambience);
+      const ctx = audio.getContext && audio.getContext();
+      if (!ctx || ctx.state === 'running') off();
+      else if (ctx.resume) ctx.resume().then(() => { if (ctx.state === 'running') off(); }).catch(() => {});
     };
-    document.addEventListener('pointerdown', once, true);
-    document.addEventListener('keydown', once, true);
-    document.addEventListener('touchstart', once, true);
+    types.forEach((t) => document.addEventListener(t, on, true));
   }
 
   async function startS0() {
     const branch = manifest.scenes.S0.branches.X;
     state.sceneIndex = 0;
     await world.prebuild(branch.room);
+    if (gone()) return;
     const apt = world.spawn(branch.room);
     world.setCurrent(apt);
     const sp = apt.room.spawn;
@@ -688,8 +714,9 @@ export function createDirector({ manifest, endings, state, stage, audio = null, 
     player.disable({ releasePointer: true });
     stage.setPlayerActive(false);
     if (hint) hint.classList.add('walk-hint-out');
-    await stage.carry(apt.rec.shots[branch.start.sit], { inst: apt, seconds: 1.6 });
     setVisible(apt, 'hands', true);
+    await stage.carry(apt.rec.shots[branch.start.sit], { inst: apt, seconds: 1.6 });
+    if (gone()) return;
     await stage.carry(apt.rec.shots[branch.start.lean], { inst: apt, seconds: 1.2 });
     if (gone()) return;
     // The form, laid over the CRT's screen (application.js).
@@ -726,8 +753,10 @@ export function createDirector({ manifest, endings, state, stage, audio = null, 
     await wait(2600);
     if (gone()) return;
     await world.prebuild(branch.out.to);
+    if (gone()) return;
     sfxPlay('deadbolt');
     await stage.carry(apt.rec.shots[branch.start.stand], { inst: apt, seconds: 2.2 });
+    if (gone()) return;
     setVisible(apt, 'hands', false);
     stage.releaseShot();
     player.enable();

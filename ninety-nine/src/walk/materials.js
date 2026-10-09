@@ -22,6 +22,18 @@
 
 import * as THREE from '../../vendor/three/three.module.js';
 
+// three's derivative bump mapping divides by the screen-space tangent frame:
+// on a face seen edge-on (a kerb's side, a lane line's edge, fDet -> 0) the
+// gradient blows up into white sparkles. Fade the bump out at grazing angles
+// instead, for every material that uses one.
+{
+  const OLD = 'vec3 vGrad = sign( fDet ) * ( dHdxy.x * R1 + dHdxy.y * R2 );\n\t\treturn normalize( abs( fDet ) * surf_norm - vGrad );';
+  const NEW = 'vec3 vGrad = sign( fDet ) * ( dHdxy.x * R1 + dHdxy.y * R2 );\n\t\tvec3 vB = abs( fDet ) * surf_norm - vGrad;\n\t\tfloat lB = length( vB );\n\t\tvec3 bumped = lB > 1e-6 ? vB / lB : surf_norm;\n\t\treturn normalize( mix( surf_norm, bumped, smoothstep( 0.02, 0.15, abs( fDet ) ) ) );';
+  const chunk = THREE.ShaderChunk.bumpmap_pars_fragment;
+  if (chunk.includes(OLD)) THREE.ShaderChunk.bumpmap_pars_fragment = chunk.replace(OLD, NEW);
+  else console.warn('materials.js: bumpmap chunk changed; the grazing-angle guard is not applied');
+}
+
 const TEX_SIZE = 512;
 
 // ---- tiny deterministic noise ------------------------------------------

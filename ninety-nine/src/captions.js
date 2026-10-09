@@ -12,6 +12,12 @@ export function createCaptions(container, library) {
 
   function show(text, { holdMs = 2600, className = '' } = {}) {
     if (gone || !text) return;
+    // one line at a time: a new caption fades out whatever is still up (they
+    // all sit at the same spot and would overlap)
+    for (const old of container.querySelectorAll('.scene-caption:not(.scene-caption-out)')) {
+      old.classList.add('scene-caption-out');
+      setTimeout(() => old.remove(), 700);
+    }
     const el = document.createElement('div');
     el.className = `scene-caption ${className}`.trim();
     el.textContent = text;

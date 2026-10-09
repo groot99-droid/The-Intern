@@ -29,6 +29,7 @@ html, body {
   position: relative;
   width: 100vw;
   height: 100vh;
+  height: 100dvh; /* the visible viewport on phones with a URL bar */
 }
 
 #ending-card, #boot-error {
@@ -47,6 +48,9 @@ html, body {
   inset: 0;
   background: #000;
   overflow: hidden;
+  /* the touch joystick and drag-to-look own every touch on the stage: no
+     browser scroll, pinch or pull-to-refresh taking the pointer away */
+  touch-action: none;
   --chroma-drift: 0deg;
 }
 #scene-layer .stage-canvas {
@@ -55,6 +59,7 @@ html, body {
   width: 100% !important;
   height: 100% !important;
   display: block;
+  touch-action: none;
   filter: hue-rotate(var(--chroma-drift));
 }
 
@@ -206,7 +211,8 @@ html, body {
 .application-tile {
   position: absolute;
   transform: translate(-50%, -50%);
-  width: 64%;
+  /* the tiles sit at 28% / 72%: no wider than the gap, long answers wrap */
+  width: 40%;
   padding: 0.6rem 0.9rem;
   background: #ffffff;
   color: #1a1a1a;

@@ -131,6 +131,7 @@ export function createStage(container, { rooms = null, audio = null, sfx = null,
   let fadeTarget = 1;
   let fadeSpeed = 0;        // per second
   let playerActive = false;
+  let blackingOut = false;
   // His shadow (Doc 1 S0: "every shadow, his included, points at the
   // tower"): a body nobody sees that only casts, at his feet while he walks.
   const shadowBody = new THREE.Mesh(new THREE.CylinderGeometry(0.2, 0.17, 1.72, 10), new THREE.MeshBasicMaterial({ colorWrite: false, depthWrite: false }));
@@ -252,17 +253,20 @@ export function createStage(container, { rooms = null, audio = null, sfx = null,
     } else {
       tmpLook.set(a.look[0] + (b.look[0] - a.look[0]) * e, a.look[1] + (b.look[1] - a.look[1]) * e, a.look[2] + (b.look[2] - a.look[2]) * e);
     }
+    // a held move ends dead still: the sway and shake clock stops where the
+    // move arrived (endings.json: "a dead-still holdSeconds")
+    const te = shot.stillAt !== undefined ? shot.stillAt : elapsed;
     if (shot.sway) {
       const s = shot.sway;
-      tmpPos.y += Math.sin(elapsed * 0.9) * s;
-      tmpPos.x += Math.sin(elapsed * 0.53 + 1.0) * s * 0.6;
-      tmpLook.x += Math.sin(elapsed * 0.37) * s * 2.5;
-      tmpLook.y += Math.cos(elapsed * 0.61) * s * 1.5;
+      tmpPos.y += Math.sin(te * 0.9) * s;
+      tmpPos.x += Math.sin(te * 0.53 + 1.0) * s * 0.6;
+      tmpLook.x += Math.sin(te * 0.37) * s * 2.5;
+      tmpLook.y += Math.cos(te * 0.61) * s * 1.5;
     }
     if (shot.shake) {
       const k = shot.shake * (1 - u * 0.3);
-      tmpPos.x += (Math.sin(elapsed * 37) + Math.sin(elapsed * 23)) * 0.5 * k;
-      tmpPos.y += Math.sin(elapsed * 41) * k;
+      tmpPos.x += (Math.sin(te * 37) + Math.sin(te * 23)) * 0.5 * k;
+      tmpPos.y += Math.sin(te * 41) * k;
     }
     camera.position.copy(tmpPos);
     camera.lookAt(tmpLook);
@@ -276,6 +280,7 @@ export function createStage(container, { rooms = null, audio = null, sfx = null,
 
     if (!shot.pingpong && shot.t >= 1 && !shot.done) {
       shot.done = true;
+      shot.stillAt = elapsed;
       const r = shot.resolve;
       shot.resolve = null;
       if (!shot.hold) shot = null;
@@ -285,6 +290,9 @@ export function createStage(container, { rooms = null, audio = null, sfx = null,
 
   function startMove(from, to, def) {
     if (shot && shot.resolve) { const r = shot.resolve; shot.resolve = null; r(); } // supersede: the old move releases its waiter
+    // once the ending's blackout has begun nothing moves the camera or lifts
+    // the fade (a carried beat still in flight resolves at once)
+    if (blackingOut || destroyed) return Promise.resolve();
     fadeTarget = 1; fadeSpeed = 0;
     if (def.fadeIn) fade = 0;
     return new Promise((resolve) => {
@@ -328,7 +336,7 @@ export function createStage(container, { rooms = null, audio = null, sfx = null,
   }
 
   async function holdPose(ref, pose) {
-    if (destroyed) return;
+    if (destroyed || blackingOut) return;
     let inst = instOf(ref);
     if (!inst && typeof ref === 'string') inst = await preview(ref);
     if (shot && shot.resolve) { const r = shot.resolve; shot.resolve = null; r(); }
@@ -420,9 +428,11 @@ export function createStage(container, { rooms = null, audio = null, sfx = null,
     shot = null;
     fade = 1; fadeTarget = 1; fadeSpeed = 0;
     camera.fov = WALK_FOV; camera.updateProjectionMatrix();
-    player.teleport(s.x, inst.rec.floorY || 0, s.z, s.yaw);
+    // a connector is entered at its sill (y 0): its floorY is the bottom of the flight
+    player.teleport(s.x, inst.rec.connector ? 0 : (inst.rec.floorY || 0), s.z, s.yaw);
     player.enable();
     playerActive = true;
+    blackingOut = false;
     if (audio) audio.resumeIfSuspended();
     return inst;
   }
@@ -453,11 +463,17 @@ export function createStage(container, { rooms = null, audio = null, sfx = null,
     // compile the programs of what was just placed (a door opening onto a
     // new room) before he looks at it, not on the frame he does
     warm() {
+      const prev = renderer.getRenderTarget();
       try {
+        // programs are keyed by the output colour space: compile for the
+        // float target the scene is drawn into, not the screen
+        renderer.setRenderTarget(target);
         const parallel = renderer.compileAsync && renderer.extensions.has('KHR_parallel_shader_compile');
         const p = parallel ? renderer.compileAsync(scene, camera) : renderer.compile(scene, camera);
         if (p && p.catch) p.catch(() => {});
-      } catch (e) { /* a warm-up is only ever an optimisation */ }
+      } catch (e) { /* a warm-up is only ever an optimisation */ } finally {
+        renderer.setRenderTarget(prev);
+      }
     },
     // before the world updates its lights and env: anything that moves a room
     onPreFrame(fn) { preFrameHooks.add(fn); return () => preFrameHooks.delete(fn); },
@@ -466,6 +482,7 @@ export function createStage(container, { rooms = null, audio = null, sfx = null,
     record(key) { return rooms ? resolveRecord(rooms, key) : null; },
     fadeTo(value, seconds) { setFade(value, seconds); return new Promise((r) => setTimeout(r, seconds * 1000)); },
     async blackout(seconds = 1.2) {
+      blackingOut = true;
       playerActive = false;
       player.disable({ releasePointer: true });
       await this.fadeTo(0, seconds);

@@ -17968,10 +17968,10 @@
    "alias": "S6_H",
    "spawn": [
     0,
-    -9.5,
+    -21.5,
     0
    ],
-   "_note": "The same edge, one step closer: S7 H plays the `lean` shot here.",
+   "_note": "The same edge, one step closer: S7 H plays the `lean` shot here (spawn: 2.5 m short of the lip, facing it).",
    "id": "S7_H"
   },
   "S8_C": {

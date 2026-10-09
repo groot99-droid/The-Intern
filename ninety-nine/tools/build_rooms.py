@@ -1940,7 +1940,7 @@ def check_room(k, r):
 
 def build():
     import re
-    edge_room = garage(depth=24.0, open_north=True)
+    edge_room = garage(depth=48.0, open_north=True)
     rooms = {
         "S0_X": apartment(),
         "SET_STREET": street(),
@@ -1957,7 +1957,7 @@ def build():
         "S6_C": {"alias": "S5_C", "_note": "The same desk: the terminal wakes with the requisition on it."},
         "S6_H": edge_room,
         "S7_C": freight_elevator(),
-        "S7_H": {"alias": "S6_H", "spawn": [0, -9.5, 0], "_note": "The same edge, one step closer: S7 H plays the `lean` shot here."},
+        "S7_H": {"alias": "S6_H", "spawn": [0, -21.5, 0], "_note": "The same edge, one step closer: S7 H plays the `lean` shot here (spawn: 2.5 m short of the lip, facing it)."},
         "S8_C": mailroom(),
         "SET_DIVE": dive(),
         "S8_H": convenience_store(),
