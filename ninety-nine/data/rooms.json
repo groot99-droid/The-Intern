@@ -4449,6 +4449,7 @@
      ],
      "node": "lib_desk",
      "collide": true,
+     "mat": "lp_beige",
      "fallback": "desk"
     },
     {
@@ -4459,6 +4460,7 @@
       -16.4
      ],
      "node": "lib_crt",
+     "mat": "lp_beige",
      "fallback": "monitor"
     },
     {
@@ -4470,6 +4472,7 @@
      ],
      "rot": 180,
      "node": "lib_chair_wood",
+     "mat": "lp_suit",
      "fallback": "chair"
     },
     {
@@ -4500,6 +4503,7 @@
      ],
      "node": "lib_desk",
      "collide": true,
+     "mat": "lp_beige",
      "fallback": "desk"
     },
     {
@@ -4510,6 +4514,7 @@
       -16.4
      ],
      "node": "lib_crt",
+     "mat": "lp_beige",
      "fallback": "monitor"
     },
     {
@@ -4521,6 +4526,7 @@
      ],
      "rot": 180,
      "node": "lib_chair_wood",
+     "mat": "lp_suit",
      "fallback": "chair"
     },
     {
@@ -4541,6 +4547,7 @@
      ],
      "node": "lib_desk",
      "collide": true,
+     "mat": "lp_beige",
      "fallback": "desk"
     },
     {
@@ -4551,6 +4558,7 @@
       -16.4
      ],
      "node": "lib_crt",
+     "mat": "lp_beige",
      "fallback": "monitor"
     },
     {
@@ -4562,6 +4570,7 @@
      ],
      "rot": 180,
      "node": "lib_chair_wood",
+     "mat": "lp_suit",
      "fallback": "chair"
     },
     {
@@ -4592,6 +4601,7 @@
      ],
      "node": "lib_desk",
      "collide": true,
+     "mat": "lp_beige",
      "fallback": "desk"
     },
     {
@@ -4602,6 +4612,7 @@
       -16.4
      ],
      "node": "lib_crt",
+     "mat": "lp_beige",
      "fallback": "monitor"
     },
     {
@@ -4613,6 +4624,7 @@
      ],
      "rot": 180,
      "node": "lib_chair_wood",
+     "mat": "lp_suit",
      "fallback": "chair"
     },
     {
@@ -4643,6 +4655,7 @@
      ],
      "node": "lib_desk",
      "collide": true,
+     "mat": "lp_beige",
      "fallback": "desk"
     },
     {
@@ -4653,6 +4666,7 @@
       -16.4
      ],
      "node": "lib_crt",
+     "mat": "lp_beige",
      "fallback": "monitor"
     },
     {
@@ -4664,6 +4678,7 @@
      ],
      "rot": 180,
      "node": "lib_chair_wood",
+     "mat": "lp_suit",
      "fallback": "chair"
     },
     {
@@ -4684,6 +4699,7 @@
      ],
      "node": "lib_desk",
      "collide": true,
+     "mat": "lp_beige",
      "fallback": "desk"
     },
     {
@@ -4694,6 +4710,7 @@
       -16.4
      ],
      "node": "lib_crt",
+     "mat": "lp_beige",
      "fallback": "monitor"
     },
     {
@@ -4705,6 +4722,7 @@
      ],
      "rot": 180,
      "node": "lib_chair_wood",
+     "mat": "lp_suit",
      "fallback": "chair"
     },
     {
@@ -4735,6 +4753,7 @@
      ],
      "node": "lib_desk",
      "collide": true,
+     "mat": "lp_beige",
      "fallback": "desk"
     },
     {
@@ -4745,6 +4764,7 @@
       -14.0
      ],
      "node": "lib_crt",
+     "mat": "lp_beige",
      "fallback": "monitor"
     },
     {
@@ -4756,6 +4776,7 @@
      ],
      "rot": 180,
      "node": "lib_chair_wood",
+     "mat": "lp_suit",
      "fallback": "chair"
     },
     {
@@ -4786,6 +4807,7 @@
      ],
      "node": "lib_desk",
      "collide": true,
+     "mat": "lp_beige",
      "fallback": "desk"
     },
     {
@@ -4796,6 +4818,7 @@
       -14.0
      ],
      "node": "lib_crt",
+     "mat": "lp_beige",
      "fallback": "monitor"
     },
     {
@@ -4807,6 +4830,7 @@
      ],
      "rot": 180,
      "node": "lib_chair_wood",
+     "mat": "lp_suit",
      "fallback": "chair"
     },
     {
@@ -4827,6 +4851,7 @@
      ],
      "node": "lib_desk",
      "collide": true,
+     "mat": "lp_beige",
      "fallback": "desk"
     },
     {
@@ -4837,6 +4862,7 @@
       -14.0
      ],
      "node": "lib_crt",
+     "mat": "lp_beige",
      "fallback": "monitor"
     },
     {
@@ -4848,6 +4874,7 @@
      ],
      "rot": 180,
      "node": "lib_chair_wood",
+     "mat": "lp_suit",
      "fallback": "chair"
     },
     {
@@ -4878,6 +4905,7 @@
      ],
      "node": "lib_desk",
      "collide": true,
+     "mat": "lp_beige",
      "fallback": "desk"
     },
     {
@@ -4888,6 +4916,7 @@
       -14.0
      ],
      "node": "lib_crt",
+     "mat": "lp_beige",
      "fallback": "monitor"
     },
     {
@@ -4899,6 +4928,7 @@
      ],
      "rot": 180,
      "node": "lib_chair_wood",
+     "mat": "lp_suit",
      "fallback": "chair"
     },
     {
@@ -4929,6 +4959,7 @@
      ],
      "node": "lib_desk",
      "collide": true,
+     "mat": "lp_beige",
      "fallback": "desk"
     },
     {
@@ -4939,6 +4970,7 @@
       -14.0
      ],
      "node": "lib_crt",
+     "mat": "lp_beige",
      "fallback": "monitor"
     },
     {
@@ -4950,6 +4982,7 @@
      ],
      "rot": 180,
      "node": "lib_chair_wood",
+     "mat": "lp_suit",
      "fallback": "chair"
     },
     {
@@ -4970,6 +5003,7 @@
      ],
      "node": "lib_desk",
      "collide": true,
+     "mat": "lp_beige",
      "fallback": "desk"
     },
     {
@@ -4980,6 +5014,7 @@
       -14.0
      ],
      "node": "lib_crt",
+     "mat": "lp_beige",
      "fallback": "monitor"
     },
     {
@@ -4991,6 +5026,7 @@
      ],
      "rot": 180,
      "node": "lib_chair_wood",
+     "mat": "lp_suit",
      "fallback": "chair"
     },
     {
@@ -5021,6 +5057,7 @@
      ],
      "node": "lib_desk",
      "collide": true,
+     "mat": "lp_beige",
      "fallback": "desk"
     },
     {
@@ -5031,6 +5068,7 @@
       -11.6
      ],
      "node": "lib_crt",
+     "mat": "lp_beige",
      "fallback": "monitor"
     },
     {
@@ -5042,6 +5080,7 @@
      ],
      "rot": 180,
      "node": "lib_chair_wood",
+     "mat": "lp_suit",
      "fallback": "chair"
     },
     {
@@ -5072,6 +5111,7 @@
      ],
      "node": "lib_desk",
      "collide": true,
+     "mat": "lp_beige",
      "fallback": "desk"
     },
     {
@@ -5082,6 +5122,7 @@
       -11.6
      ],
      "node": "lib_crt",
+     "mat": "lp_beige",
      "fallback": "monitor"
     },
     {
@@ -5093,6 +5134,7 @@
      ],
      "rot": 180,
      "node": "lib_chair_wood",
+     "mat": "lp_suit",
      "fallback": "chair"
     },
     {
@@ -5113,6 +5155,7 @@
      ],
      "node": "lib_desk",
      "collide": true,
+     "mat": "lp_beige",
      "fallback": "desk"
     },
     {
@@ -5123,6 +5166,7 @@
       -11.6
      ],
      "node": "lib_crt",
+     "mat": "lp_beige",
      "fallback": "monitor"
     },
     {
@@ -5134,6 +5178,7 @@
      ],
      "rot": 180,
      "node": "lib_chair_wood",
+     "mat": "lp_suit",
      "fallback": "chair"
     },
     {
@@ -5164,6 +5209,7 @@
      ],
      "node": "lib_desk",
      "collide": true,
+     "mat": "lp_beige",
      "fallback": "desk"
     },
     {
@@ -5174,6 +5220,7 @@
       -11.6
      ],
      "node": "lib_crt",
+     "mat": "lp_beige",
      "fallback": "monitor"
     },
     {
@@ -5185,6 +5232,7 @@
      ],
      "rot": 180,
      "node": "lib_chair_wood",
+     "mat": "lp_suit",
      "fallback": "chair"
     },
     {
@@ -5215,6 +5263,7 @@
      ],
      "node": "lib_desk",
      "collide": true,
+     "mat": "lp_beige",
      "fallback": "desk"
     },
     {
@@ -5225,6 +5274,7 @@
       -11.6
      ],
      "node": "lib_crt",
+     "mat": "lp_beige",
      "fallback": "monitor"
     },
     {
@@ -5236,6 +5286,7 @@
      ],
      "rot": 180,
      "node": "lib_chair_wood",
+     "mat": "lp_suit",
      "fallback": "chair"
     },
     {
@@ -5256,6 +5307,7 @@
      ],
      "node": "lib_desk",
      "collide": true,
+     "mat": "lp_beige",
      "fallback": "desk"
     },
     {
@@ -5266,6 +5318,7 @@
       -11.6
      ],
      "node": "lib_crt",
+     "mat": "lp_beige",
      "fallback": "monitor"
     },
     {
@@ -5277,6 +5330,7 @@
      ],
      "rot": 180,
      "node": "lib_chair_wood",
+     "mat": "lp_suit",
      "fallback": "chair"
     },
     {
@@ -5307,6 +5361,7 @@
      ],
      "node": "lib_desk",
      "collide": true,
+     "mat": "lp_beige",
      "fallback": "desk"
     },
     {
@@ -5317,6 +5372,7 @@
       -9.2
      ],
      "node": "lib_crt",
+     "mat": "lp_beige",
      "fallback": "monitor"
     },
     {
@@ -5328,6 +5384,7 @@
      ],
      "rot": 180,
      "node": "lib_chair_wood",
+     "mat": "lp_suit",
      "fallback": "chair"
     },
     {
@@ -5358,6 +5415,7 @@
      ],
      "node": "lib_desk",
      "collide": true,
+     "mat": "lp_beige",
      "fallback": "desk"
     },
     {
@@ -5368,6 +5426,7 @@
       -9.2
      ],
      "node": "lib_crt",
+     "mat": "lp_beige",
      "fallback": "monitor"
     },
     {
@@ -5379,6 +5438,7 @@
      ],
      "rot": 180,
      "node": "lib_chair_wood",
+     "mat": "lp_suit",
      "fallback": "chair"
     },
     {
@@ -5399,6 +5459,7 @@
      ],
      "node": "lib_desk",
      "collide": true,
+     "mat": "lp_beige",
      "fallback": "desk"
     },
     {
@@ -5409,6 +5470,7 @@
       -9.2
      ],
      "node": "lib_crt",
+     "mat": "lp_beige",
      "fallback": "monitor"
     },
     {
@@ -5420,6 +5482,7 @@
      ],
      "rot": 180,
      "node": "lib_chair_wood",
+     "mat": "lp_suit",
      "fallback": "chair"
     },
     {
@@ -5450,6 +5513,7 @@
      ],
      "node": "lib_desk",
      "collide": true,
+     "mat": "lp_beige",
      "fallback": "desk"
     },
     {
@@ -5460,6 +5524,7 @@
       -9.2
      ],
      "node": "lib_crt",
+     "mat": "lp_beige",
      "fallback": "monitor"
     },
     {
@@ -5471,6 +5536,7 @@
      ],
      "rot": 180,
      "node": "lib_chair_wood",
+     "mat": "lp_suit",
      "fallback": "chair"
     },
     {
@@ -5501,6 +5567,7 @@
      ],
      "node": "lib_desk",
      "collide": true,
+     "mat": "lp_beige",
      "fallback": "desk"
     },
     {
@@ -5511,6 +5578,7 @@
       -9.2
      ],
      "node": "lib_crt",
+     "mat": "lp_beige",
      "fallback": "monitor"
     },
     {
@@ -5522,6 +5590,7 @@
      ],
      "rot": 180,
      "node": "lib_chair_wood",
+     "mat": "lp_suit",
      "fallback": "chair"
     },
     {
@@ -5542,6 +5611,7 @@
      ],
      "node": "lib_desk",
      "collide": true,
+     "mat": "lp_beige",
      "fallback": "desk"
     },
     {
@@ -5552,6 +5622,7 @@
       -9.2
      ],
      "node": "lib_crt",
+     "mat": "lp_beige",
      "fallback": "monitor"
     },
     {
@@ -5563,6 +5634,7 @@
      ],
      "rot": 180,
      "node": "lib_chair_wood",
+     "mat": "lp_suit",
      "fallback": "chair"
     },
     {
@@ -5593,6 +5665,7 @@
      ],
      "node": "lib_desk",
      "collide": true,
+     "mat": "lp_beige",
      "fallback": "desk"
     },
     {
@@ -5603,6 +5676,7 @@
       -6.8
      ],
      "node": "lib_crt",
+     "mat": "lp_beige",
      "fallback": "monitor"
     },
     {
@@ -5614,6 +5688,7 @@
      ],
      "rot": 180,
      "node": "lib_chair_wood",
+     "mat": "lp_suit",
      "fallback": "chair"
     },
     {
@@ -5644,6 +5719,7 @@
      ],
      "node": "lib_desk",
      "collide": true,
+     "mat": "lp_beige",
      "fallback": "desk"
     },
     {
@@ -5654,6 +5730,7 @@
       -6.8
      ],
      "node": "lib_crt",
+     "mat": "lp_beige",
      "fallback": "monitor"
     },
     {
@@ -5665,6 +5742,7 @@
      ],
      "rot": 180,
      "node": "lib_chair_wood",
+     "mat": "lp_suit",
      "fallback": "chair"
     },
     {
@@ -5685,6 +5763,7 @@
      ],
      "node": "lib_desk",
      "collide": true,
+     "mat": "lp_beige",
      "fallback": "desk"
     },
     {
@@ -5695,6 +5774,7 @@
       -6.8
      ],
      "node": "lib_crt",
+     "mat": "lp_beige",
      "fallback": "monitor"
     },
     {
@@ -5706,6 +5786,7 @@
      ],
      "rot": 180,
      "node": "lib_chair_wood",
+     "mat": "lp_suit",
      "fallback": "chair"
     },
     {
@@ -5736,6 +5817,7 @@
      ],
      "node": "lib_desk",
      "collide": true,
+     "mat": "lp_beige",
      "fallback": "desk"
     },
     {
@@ -5746,6 +5828,7 @@
       -6.8
      ],
      "node": "lib_crt",
+     "mat": "lp_beige",
      "fallback": "monitor"
     },
     {
@@ -5757,6 +5840,7 @@
      ],
      "rot": 180,
      "node": "lib_chair_wood",
+     "mat": "lp_suit",
      "fallback": "chair"
     },
     {
@@ -5787,6 +5871,7 @@
      ],
      "node": "lib_desk",
      "collide": true,
+     "mat": "lp_beige",
      "fallback": "desk"
     },
     {
@@ -5797,6 +5882,7 @@
       -6.8
      ],
      "node": "lib_crt",
+     "mat": "lp_beige",
      "fallback": "monitor"
     },
     {
@@ -5808,6 +5894,7 @@
      ],
      "rot": 180,
      "node": "lib_chair_wood",
+     "mat": "lp_suit",
      "fallback": "chair"
     },
     {
@@ -5828,6 +5915,7 @@
      ],
      "node": "lib_desk",
      "collide": true,
+     "mat": "lp_beige",
      "fallback": "desk"
     },
     {
@@ -5838,6 +5926,7 @@
       -6.8
      ],
      "node": "lib_crt",
+     "mat": "lp_beige",
      "fallback": "monitor"
     },
     {
@@ -5849,6 +5938,7 @@
      ],
      "rot": 180,
      "node": "lib_chair_wood",
+     "mat": "lp_suit",
      "fallback": "chair"
     },
     {
@@ -5879,6 +5969,7 @@
      ],
      "node": "lib_desk",
      "collide": true,
+     "mat": "lp_beige",
      "fallback": "desk"
     },
     {
@@ -5889,6 +5980,7 @@
       -4.4
      ],
      "node": "lib_crt",
+     "mat": "lp_beige",
      "fallback": "monitor"
     },
     {
@@ -5900,6 +5992,7 @@
      ],
      "rot": 180,
      "node": "lib_chair_wood",
+     "mat": "lp_suit",
      "fallback": "chair"
     },
     {
@@ -5930,6 +6023,7 @@
      ],
      "node": "lib_desk",
      "collide": true,
+     "mat": "lp_beige",
      "fallback": "desk"
     },
     {
@@ -5940,6 +6034,7 @@
       -4.4
      ],
      "node": "lib_crt",
+     "mat": "lp_beige",
      "fallback": "monitor"
     },
     {
@@ -5951,6 +6046,7 @@
      ],
      "rot": 180,
      "node": "lib_chair_wood",
+     "mat": "lp_suit",
      "fallback": "chair"
     },
     {
@@ -5971,6 +6067,7 @@
      ],
      "node": "lib_desk",
      "collide": true,
+     "mat": "lp_beige",
      "fallback": "desk"
     },
     {
@@ -5981,6 +6078,7 @@
       -4.4
      ],
      "node": "lib_crt",
+     "mat": "lp_beige",
      "fallback": "monitor"
     },
     {
@@ -5992,6 +6090,7 @@
      ],
      "rot": 180,
      "node": "lib_chair_wood",
+     "mat": "lp_suit",
      "fallback": "chair"
     },
     {
@@ -6022,6 +6121,7 @@
      ],
      "node": "lib_desk",
      "collide": true,
+     "mat": "lp_beige",
      "fallback": "desk"
     },
     {
@@ -6032,6 +6132,7 @@
       -4.4
      ],
      "node": "lib_crt",
+     "mat": "lp_beige",
      "fallback": "monitor"
     },
     {
@@ -6043,6 +6144,7 @@
      ],
      "rot": 180,
      "node": "lib_chair_wood",
+     "mat": "lp_suit",
      "fallback": "chair"
     },
     {
@@ -6073,6 +6175,7 @@
      ],
      "node": "lib_desk",
      "collide": true,
+     "mat": "lp_beige",
      "fallback": "desk"
     },
     {
@@ -6083,6 +6186,7 @@
       -4.4
      ],
      "node": "lib_crt",
+     "mat": "lp_beige",
      "fallback": "monitor"
     },
     {
@@ -6094,6 +6198,7 @@
      ],
      "rot": 180,
      "node": "lib_chair_wood",
+     "mat": "lp_suit",
      "fallback": "chair"
     },
     {
@@ -6114,6 +6219,7 @@
      ],
      "node": "lib_desk",
      "collide": true,
+     "mat": "lp_beige",
      "fallback": "desk"
     },
     {
@@ -6124,6 +6230,7 @@
       -4.4
      ],
      "node": "lib_crt",
+     "mat": "lp_beige",
      "fallback": "monitor"
     },
     {
@@ -6135,6 +6242,7 @@
      ],
      "rot": 180,
      "node": "lib_chair_wood",
+     "mat": "lp_suit",
      "fallback": "chair"
     },
     {
@@ -6165,6 +6273,7 @@
      ],
      "node": "lib_desk",
      "collide": true,
+     "mat": "lp_beige",
      "fallback": "desk"
     },
     {
@@ -6175,6 +6284,7 @@
       -2.0
      ],
      "node": "lib_crt",
+     "mat": "lp_beige",
      "fallback": "monitor"
     },
     {
@@ -6186,6 +6296,7 @@
      ],
      "rot": 180,
      "node": "lib_chair_wood",
+     "mat": "lp_suit",
      "fallback": "chair"
     },
     {
@@ -6216,6 +6327,7 @@
      ],
      "node": "lib_desk",
      "collide": true,
+     "mat": "lp_beige",
      "fallback": "desk"
     },
     {
@@ -6226,6 +6338,7 @@
       -2.0
      ],
      "node": "lib_crt",
+     "mat": "lp_beige",
      "fallback": "monitor"
     },
     {
@@ -6237,6 +6350,7 @@
      ],
      "rot": 180,
      "node": "lib_chair_wood",
+     "mat": "lp_suit",
      "fallback": "chair"
     },
     {
@@ -6257,6 +6371,7 @@
      ],
      "node": "lib_desk",
      "collide": true,
+     "mat": "lp_beige",
      "fallback": "desk"
     },
     {
@@ -6267,6 +6382,7 @@
       -2.0
      ],
      "node": "lib_crt",
+     "mat": "lp_beige",
      "fallback": "monitor"
     },
     {
@@ -6278,6 +6394,7 @@
      ],
      "rot": 180,
      "node": "lib_chair_wood",
+     "mat": "lp_suit",
      "fallback": "chair"
     },
     {
@@ -6308,6 +6425,7 @@
      ],
      "node": "lib_desk",
      "collide": true,
+     "mat": "lp_beige",
      "fallback": "desk"
     },
     {
@@ -6318,6 +6436,7 @@
       -2.0
      ],
      "node": "lib_crt",
+     "mat": "lp_beige",
      "fallback": "monitor"
     },
     {
@@ -6329,6 +6448,7 @@
      ],
      "rot": 222,
      "node": "lib_chair_wood",
+     "mat": "lp_suit",
      "fallback": "chair"
     },
     {
@@ -6359,6 +6479,7 @@
      ],
      "node": "lib_desk",
      "collide": true,
+     "mat": "lp_beige",
      "fallback": "desk"
     },
     {
@@ -6369,6 +6490,7 @@
       -2.0
      ],
      "node": "lib_crt",
+     "mat": "lp_beige",
      "fallback": "monitor"
     },
     {
@@ -6380,6 +6502,7 @@
      ],
      "rot": 180,
      "node": "lib_chair_wood",
+     "mat": "lp_suit",
      "fallback": "chair"
     },
     {
@@ -6400,6 +6523,7 @@
      ],
      "node": "lib_desk",
      "collide": true,
+     "mat": "lp_beige",
      "fallback": "desk"
     },
     {
@@ -6410,6 +6534,7 @@
       -2.0
      ],
      "node": "lib_crt",
+     "mat": "lp_beige",
      "fallback": "monitor"
     },
     {
@@ -6421,6 +6546,7 @@
      ],
      "rot": 180,
      "node": "lib_chair_wood",
+     "mat": "lp_suit",
      "fallback": "chair"
     },
     {
@@ -6451,6 +6577,7 @@
      ],
      "node": "lib_desk",
      "collide": true,
+     "mat": "lp_beige",
      "fallback": "desk"
     },
     {
@@ -6461,6 +6588,7 @@
       2.8
      ],
      "node": "lib_crt",
+     "mat": "lp_beige",
      "fallback": "monitor"
     },
     {
@@ -6472,6 +6600,7 @@
      ],
      "rot": 180,
      "node": "lib_chair_wood",
+     "mat": "lp_suit",
      "fallback": "chair"
     },
     {
@@ -6502,6 +6631,7 @@
      ],
      "node": "lib_desk",
      "collide": true,
+     "mat": "lp_beige",
      "fallback": "desk"
     },
     {
@@ -6512,6 +6642,7 @@
       2.8
      ],
      "node": "lib_crt",
+     "mat": "lp_beige",
      "fallback": "monitor"
     },
     {
@@ -6523,6 +6654,7 @@
      ],
      "rot": 180,
      "node": "lib_chair_wood",
+     "mat": "lp_suit",
      "fallback": "chair"
     },
     {
@@ -6543,6 +6675,7 @@
      ],
      "node": "lib_desk",
      "collide": true,
+     "mat": "lp_beige",
      "fallback": "desk"
     },
     {
@@ -6553,6 +6686,7 @@
       2.8
      ],
      "node": "lib_crt",
+     "mat": "lp_beige",
      "fallback": "monitor"
     },
     {
@@ -6564,6 +6698,7 @@
      ],
      "rot": 180,
      "node": "lib_chair_wood",
+     "mat": "lp_suit",
      "fallback": "chair"
     },
     {
@@ -6594,6 +6729,7 @@
      ],
      "node": "lib_desk",
      "collide": true,
+     "mat": "lp_beige",
      "fallback": "desk"
     },
     {
@@ -6604,6 +6740,7 @@
       2.8
      ],
      "node": "lib_crt",
+     "mat": "lp_beige",
      "fallback": "monitor"
     },
     {
@@ -6615,6 +6752,7 @@
      ],
      "rot": 180,
      "node": "lib_chair_wood",
+     "mat": "lp_suit",
      "fallback": "chair"
     },
     {
@@ -6645,6 +6783,7 @@
      ],
      "node": "lib_desk",
      "collide": true,
+     "mat": "lp_beige",
      "fallback": "desk"
     },
     {
@@ -6655,6 +6794,7 @@
       2.8
      ],
      "node": "lib_crt",
+     "mat": "lp_beige",
      "fallback": "monitor"
     },
     {
@@ -6666,6 +6806,7 @@
      ],
      "rot": 180,
      "node": "lib_chair_wood",
+     "mat": "lp_suit",
      "fallback": "chair"
     },
     {
@@ -6686,6 +6827,7 @@
      ],
      "node": "lib_desk",
      "collide": true,
+     "mat": "lp_beige",
      "fallback": "desk"
     },
     {
@@ -6696,6 +6838,7 @@
       2.8
      ],
      "node": "lib_crt",
+     "mat": "lp_beige",
      "fallback": "monitor"
     },
     {
@@ -6707,6 +6850,7 @@
      ],
      "rot": 180,
      "node": "lib_chair_wood",
+     "mat": "lp_suit",
      "fallback": "chair"
     },
     {
@@ -6737,6 +6881,7 @@
      ],
      "node": "lib_desk",
      "collide": true,
+     "mat": "lp_beige",
      "fallback": "desk"
     },
     {
@@ -6747,6 +6892,7 @@
       5.2
      ],
      "node": "lib_crt",
+     "mat": "lp_beige",
      "fallback": "monitor"
     },
     {
@@ -6758,6 +6904,7 @@
      ],
      "rot": 180,
      "node": "lib_chair_wood",
+     "mat": "lp_suit",
      "fallback": "chair"
     },
     {
@@ -6788,6 +6935,7 @@
      ],
      "node": "lib_desk",
      "collide": true,
+     "mat": "lp_beige",
      "fallback": "desk"
     },
     {
@@ -6798,6 +6946,7 @@
       5.2
      ],
      "node": "lib_crt",
+     "mat": "lp_beige",
      "fallback": "monitor"
     },
     {
@@ -6809,6 +6958,7 @@
      ],
      "rot": 180,
      "node": "lib_chair_wood",
+     "mat": "lp_suit",
      "fallback": "chair"
     },
     {
@@ -6829,6 +6979,7 @@
      ],
      "node": "lib_desk",
      "collide": true,
+     "mat": "lp_beige",
      "fallback": "desk"
     },
     {
@@ -6839,6 +6990,7 @@
       5.2
      ],
      "node": "lib_crt",
+     "mat": "lp_beige",
      "fallback": "monitor"
     },
     {
@@ -6850,6 +7002,7 @@
      ],
      "rot": 180,
      "node": "lib_chair_wood",
+     "mat": "lp_suit",
      "fallback": "chair"
     },
     {
@@ -6880,6 +7033,7 @@
      ],
      "node": "lib_desk",
      "collide": true,
+     "mat": "lp_beige",
      "fallback": "desk"
     },
     {
@@ -6890,6 +7044,7 @@
       5.2
      ],
      "node": "lib_crt",
+     "mat": "lp_beige",
      "fallback": "monitor"
     },
     {
@@ -6901,6 +7056,7 @@
      ],
      "rot": 180,
      "node": "lib_chair_wood",
+     "mat": "lp_suit",
      "fallback": "chair"
     },
     {
@@ -6931,6 +7087,7 @@
      ],
      "node": "lib_desk",
      "collide": true,
+     "mat": "lp_beige",
      "fallback": "desk"
     },
     {
@@ -6941,6 +7098,7 @@
       5.2
      ],
      "node": "lib_crt",
+     "mat": "lp_beige",
      "fallback": "monitor"
     },
     {
@@ -6952,6 +7110,7 @@
      ],
      "rot": 180,
      "node": "lib_chair_wood",
+     "mat": "lp_suit",
      "fallback": "chair"
     },
     {
@@ -6972,6 +7131,7 @@
      ],
      "node": "lib_desk",
      "collide": true,
+     "mat": "lp_beige",
      "fallback": "desk"
     },
     {
@@ -6982,6 +7142,7 @@
       5.2
      ],
      "node": "lib_crt",
+     "mat": "lp_beige",
      "fallback": "monitor"
     },
     {
@@ -6993,6 +7154,7 @@
      ],
      "rot": 180,
      "node": "lib_chair_wood",
+     "mat": "lp_suit",
      "fallback": "chair"
     },
     {
@@ -7023,6 +7185,7 @@
      ],
      "node": "lib_desk",
      "collide": true,
+     "mat": "lp_beige",
      "fallback": "desk"
     },
     {
@@ -7033,6 +7196,7 @@
       7.6
      ],
      "node": "lib_crt",
+     "mat": "lp_beige",
      "fallback": "monitor"
     },
     {
@@ -7044,6 +7208,7 @@
      ],
      "rot": 180,
      "node": "lib_chair_wood",
+     "mat": "lp_suit",
      "fallback": "chair"
     },
     {
@@ -7074,6 +7239,7 @@
      ],
      "node": "lib_desk",
      "collide": true,
+     "mat": "lp_beige",
      "fallback": "desk"
     },
     {
@@ -7084,6 +7250,7 @@
       7.6
      ],
      "node": "lib_crt",
+     "mat": "lp_beige",
      "fallback": "monitor"
     },
     {
@@ -7095,6 +7262,7 @@
      ],
      "rot": 180,
      "node": "lib_chair_wood",
+     "mat": "lp_suit",
      "fallback": "chair"
     },
     {
@@ -7115,6 +7283,7 @@
      ],
      "node": "lib_desk",
      "collide": true,
+     "mat": "lp_beige",
      "fallback": "desk"
     },
     {
@@ -7125,6 +7294,7 @@
       7.6
      ],
      "node": "lib_crt",
+     "mat": "lp_beige",
      "fallback": "monitor"
     },
     {
@@ -7136,6 +7306,7 @@
      ],
      "rot": 180,
      "node": "lib_chair_wood",
+     "mat": "lp_suit",
      "fallback": "chair"
     },
     {
@@ -7166,6 +7337,7 @@
      ],
      "node": "lib_desk",
      "collide": true,
+     "mat": "lp_beige",
      "fallback": "desk"
     },
     {
@@ -7176,6 +7348,7 @@
       7.6
      ],
      "node": "lib_crt",
+     "mat": "lp_beige",
      "fallback": "monitor"
     },
     {
@@ -7187,6 +7360,7 @@
      ],
      "rot": 180,
      "node": "lib_chair_wood",
+     "mat": "lp_suit",
      "fallback": "chair"
     },
     {
@@ -7217,6 +7391,7 @@
      ],
      "node": "lib_desk",
      "collide": true,
+     "mat": "lp_beige",
      "fallback": "desk"
     },
     {
@@ -7227,6 +7402,7 @@
       7.6
      ],
      "node": "lib_crt",
+     "mat": "lp_beige",
      "fallback": "monitor"
     },
     {
@@ -7238,6 +7414,7 @@
      ],
      "rot": 180,
      "node": "lib_chair_wood",
+     "mat": "lp_suit",
      "fallback": "chair"
     },
     {
@@ -7258,6 +7435,7 @@
      ],
      "node": "lib_desk",
      "collide": true,
+     "mat": "lp_beige",
      "fallback": "desk"
     },
     {
@@ -7268,6 +7446,7 @@
       7.6
      ],
      "node": "lib_crt",
+     "mat": "lp_beige",
      "fallback": "monitor"
     },
     {
@@ -7279,6 +7458,7 @@
      ],
      "rot": 180,
      "node": "lib_chair_wood",
+     "mat": "lp_suit",
      "fallback": "chair"
     },
     {
@@ -7309,6 +7489,7 @@
      ],
      "node": "lib_desk",
      "collide": true,
+     "mat": "lp_beige",
      "fallback": "desk"
     },
     {
@@ -7319,6 +7500,7 @@
       10.0
      ],
      "node": "lib_crt",
+     "mat": "lp_beige",
      "fallback": "monitor"
     },
     {
@@ -7330,6 +7512,7 @@
      ],
      "rot": 180,
      "node": "lib_chair_wood",
+     "mat": "lp_suit",
      "fallback": "chair"
     },
     {
@@ -7360,6 +7543,7 @@
      ],
      "node": "lib_desk",
      "collide": true,
+     "mat": "lp_beige",
      "fallback": "desk"
     },
     {
@@ -7370,6 +7554,7 @@
       10.0
      ],
      "node": "lib_crt",
+     "mat": "lp_beige",
      "fallback": "monitor"
     },
     {
@@ -7381,6 +7566,7 @@
      ],
      "rot": 180,
      "node": "lib_chair_wood",
+     "mat": "lp_suit",
      "fallback": "chair"
     },
     {
@@ -7401,6 +7587,7 @@
      ],
      "node": "lib_desk",
      "collide": true,
+     "mat": "lp_beige",
      "fallback": "desk"
     },
     {
@@ -7411,6 +7598,7 @@
       10.0
      ],
      "node": "lib_crt",
+     "mat": "lp_beige",
      "fallback": "monitor"
     },
     {
@@ -7422,6 +7610,7 @@
      ],
      "rot": 180,
      "node": "lib_chair_wood",
+     "mat": "lp_suit",
      "fallback": "chair"
     },
     {
@@ -7452,6 +7641,7 @@
      ],
      "node": "lib_desk",
      "collide": true,
+     "mat": "lp_beige",
      "fallback": "desk"
     },
     {
@@ -7462,6 +7652,7 @@
       10.0
      ],
      "node": "lib_crt",
+     "mat": "lp_beige",
      "fallback": "monitor"
     },
     {
@@ -7473,6 +7664,7 @@
      ],
      "rot": 180,
      "node": "lib_chair_wood",
+     "mat": "lp_suit",
      "fallback": "chair"
     },
     {
@@ -7503,6 +7695,7 @@
      ],
      "node": "lib_desk",
      "collide": true,
+     "mat": "lp_beige",
      "fallback": "desk"
     },
     {
@@ -7513,6 +7706,7 @@
       10.0
      ],
      "node": "lib_crt",
+     "mat": "lp_beige",
      "fallback": "monitor"
     },
     {
@@ -7524,6 +7718,7 @@
      ],
      "rot": 180,
      "node": "lib_chair_wood",
+     "mat": "lp_suit",
      "fallback": "chair"
     },
     {
@@ -7544,6 +7739,7 @@
      ],
      "node": "lib_desk",
      "collide": true,
+     "mat": "lp_beige",
      "fallback": "desk"
     },
     {
@@ -7554,6 +7750,7 @@
       10.0
      ],
      "node": "lib_crt",
+     "mat": "lp_beige",
      "fallback": "monitor"
     },
     {
@@ -7565,6 +7762,7 @@
      ],
      "rot": 180,
      "node": "lib_chair_wood",
+     "mat": "lp_suit",
      "fallback": "chair"
     },
     {
@@ -7595,6 +7793,7 @@
      ],
      "node": "lib_desk",
      "collide": true,
+     "mat": "lp_beige",
      "fallback": "desk"
     },
     {
@@ -7605,6 +7804,7 @@
       12.4
      ],
      "node": "lib_crt",
+     "mat": "lp_beige",
      "fallback": "monitor"
     },
     {
@@ -7616,6 +7816,7 @@
      ],
      "rot": 180,
      "node": "lib_chair_wood",
+     "mat": "lp_suit",
      "fallback": "chair"
     },
     {
@@ -7646,6 +7847,7 @@
      ],
      "node": "lib_desk",
      "collide": true,
+     "mat": "lp_beige",
      "fallback": "desk"
     },
     {
@@ -7656,6 +7858,7 @@
       12.4
      ],
      "node": "lib_crt",
+     "mat": "lp_beige",
      "fallback": "monitor"
     },
     {
@@ -7667,6 +7870,7 @@
      ],
      "rot": 180,
      "node": "lib_chair_wood",
+     "mat": "lp_suit",
      "fallback": "chair"
     },
     {
@@ -7687,6 +7891,7 @@
      ],
      "node": "lib_desk",
      "collide": true,
+     "mat": "lp_beige",
      "fallback": "desk"
     },
     {
@@ -7697,6 +7902,7 @@
       12.4
      ],
      "node": "lib_crt",
+     "mat": "lp_beige",
      "fallback": "monitor"
     },
     {
@@ -7708,6 +7914,7 @@
      ],
      "rot": 180,
      "node": "lib_chair_wood",
+     "mat": "lp_suit",
      "fallback": "chair"
     },
     {
@@ -7738,6 +7945,7 @@
      ],
      "node": "lib_desk",
      "collide": true,
+     "mat": "lp_beige",
      "fallback": "desk"
     },
     {
@@ -7748,6 +7956,7 @@
       12.4
      ],
      "node": "lib_crt",
+     "mat": "lp_beige",
      "fallback": "monitor"
     },
     {
@@ -7759,6 +7968,7 @@
      ],
      "rot": 180,
      "node": "lib_chair_wood",
+     "mat": "lp_suit",
      "fallback": "chair"
     },
     {
@@ -7789,6 +7999,7 @@
      ],
      "node": "lib_desk",
      "collide": true,
+     "mat": "lp_beige",
      "fallback": "desk"
     },
     {
@@ -7799,6 +8010,7 @@
       12.4
      ],
      "node": "lib_crt",
+     "mat": "lp_beige",
      "fallback": "monitor"
     },
     {
@@ -7810,6 +8022,7 @@
      ],
      "rot": 180,
      "node": "lib_chair_wood",
+     "mat": "lp_suit",
      "fallback": "chair"
     },
     {
@@ -7830,6 +8043,7 @@
      ],
      "node": "lib_desk",
      "collide": true,
+     "mat": "lp_beige",
      "fallback": "desk"
     },
     {
@@ -7840,6 +8054,7 @@
       12.4
      ],
      "node": "lib_crt",
+     "mat": "lp_beige",
      "fallback": "monitor"
     },
     {
@@ -7851,6 +8066,7 @@
      ],
      "rot": 180,
      "node": "lib_chair_wood",
+     "mat": "lp_suit",
      "fallback": "chair"
     },
     {
@@ -7881,6 +8097,7 @@
      ],
      "node": "lib_desk",
      "collide": true,
+     "mat": "lp_beige",
      "fallback": "desk"
     },
     {
@@ -7891,6 +8108,7 @@
       14.8
      ],
      "node": "lib_crt",
+     "mat": "lp_beige",
      "fallback": "monitor"
     },
     {
@@ -7902,6 +8120,7 @@
      ],
      "rot": 180,
      "node": "lib_chair_wood",
+     "mat": "lp_suit",
      "fallback": "chair"
     },
     {
@@ -7932,6 +8151,7 @@
      ],
      "node": "lib_desk",
      "collide": true,
+     "mat": "lp_beige",
      "fallback": "desk"
     },
     {
@@ -7942,6 +8162,7 @@
       14.8
      ],
      "node": "lib_crt",
+     "mat": "lp_beige",
      "fallback": "monitor"
     },
     {
@@ -7953,6 +8174,7 @@
      ],
      "rot": 180,
      "node": "lib_chair_wood",
+     "mat": "lp_suit",
      "fallback": "chair"
     },
     {
@@ -7973,6 +8195,7 @@
      ],
      "node": "lib_desk",
      "collide": true,
+     "mat": "lp_beige",
      "fallback": "desk"
     },
     {
@@ -7983,6 +8206,7 @@
       14.8
      ],
      "node": "lib_crt",
+     "mat": "lp_beige",
      "fallback": "monitor"
     },
     {
@@ -7994,6 +8218,7 @@
      ],
      "rot": 180,
      "node": "lib_chair_wood",
+     "mat": "lp_suit",
      "fallback": "chair"
     },
     {
@@ -8024,6 +8249,7 @@
      ],
      "node": "lib_desk",
      "collide": true,
+     "mat": "lp_beige",
      "fallback": "desk"
     },
     {
@@ -8034,6 +8260,7 @@
       14.8
      ],
      "node": "lib_crt",
+     "mat": "lp_beige",
      "fallback": "monitor"
     },
     {
@@ -8045,6 +8272,7 @@
      ],
      "rot": 180,
      "node": "lib_chair_wood",
+     "mat": "lp_suit",
      "fallback": "chair"
     },
     {
@@ -8075,6 +8303,7 @@
      ],
      "node": "lib_desk",
      "collide": true,
+     "mat": "lp_beige",
      "fallback": "desk"
     },
     {
@@ -8085,6 +8314,7 @@
       14.8
      ],
      "node": "lib_crt",
+     "mat": "lp_beige",
      "fallback": "monitor"
     },
     {
@@ -8096,6 +8326,7 @@
      ],
      "rot": 180,
      "node": "lib_chair_wood",
+     "mat": "lp_suit",
      "fallback": "chair"
     },
     {
@@ -8116,6 +8347,7 @@
      ],
      "node": "lib_desk",
      "collide": true,
+     "mat": "lp_beige",
      "fallback": "desk"
     },
     {
@@ -8126,6 +8358,7 @@
       14.8
      ],
      "node": "lib_crt",
+     "mat": "lp_beige",
      "fallback": "monitor"
     },
     {
@@ -8137,6 +8370,7 @@
      ],
      "rot": 180,
      "node": "lib_chair_wood",
+     "mat": "lp_suit",
      "fallback": "chair"
     },
     {
@@ -9334,7 +9568,8 @@
       10.5
      ],
      "rot": 90,
-     "node": "lib_breaker"
+     "node": "lib_breaker",
+     "mat": "lp_grey"
     },
     {
      "type": "pipe",
@@ -9769,7 +10004,7 @@
      "box": [
       [
        -1.6,
-       14.2
+       -18.0
       ],
       [
        1.6,
@@ -9789,7 +10024,7 @@
      "box": [
       [
        -1.6,
-       12.7
+       -18.0
       ],
       [
        1.6,
@@ -9809,7 +10044,7 @@
      "box": [
       [
        -1.6,
-       11.2
+       -18.0
       ],
       [
        1.6,
@@ -9829,7 +10064,7 @@
      "box": [
       [
        -1.6,
-       9.7
+       -18.0
       ],
       [
        1.6,
@@ -9849,7 +10084,7 @@
      "box": [
       [
        -1.6,
-       8.2
+       -18.0
       ],
       [
        1.6,
@@ -9869,7 +10104,7 @@
      "box": [
       [
        -1.6,
-       6.7
+       -18.0
       ],
       [
        1.6,
@@ -9889,7 +10124,7 @@
      "box": [
       [
        -1.6,
-       5.2
+       -18.0
       ],
       [
        1.6,
@@ -9909,7 +10144,7 @@
      "box": [
       [
        -1.6,
-       3.7
+       -18.0
       ],
       [
        1.6,
@@ -9929,7 +10164,7 @@
      "box": [
       [
        -1.6,
-       2.2
+       -18.0
       ],
       [
        1.6,

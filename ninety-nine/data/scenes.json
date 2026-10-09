@@ -656,13 +656,23 @@
               "zone": "far_end",
               "exit": "far",
               "via": "CN_CORRIDOR_SERVICE",
+              "sfxCue": "paper-handoff",
               "beat": [
                 {
                   "hide": "evidence_h",
                   "hold": "evidence"
                 },
                 {
-                  "waitMs": 1100
+                  "waitMs": 700
+                },
+                {
+                  "moveTo": {
+                    "pos": [
+                      0.0,
+                      -15.5
+                    ],
+                    "seconds": 0.6
+                  }
                 }
               ]
             },

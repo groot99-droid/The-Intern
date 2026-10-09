@@ -491,14 +491,18 @@ def cubicle_floor():
                 if k < 2:
                     sx = bx - side * 1.0 if k == 0 else bx + side * 1.0
                     props.append(prop("partition", [sx, 0, z + slen / 2], rot=90, len=slen))
-                props.append(glb("lib_desk", [bx, 0, z + 0.55], fallback="desk", collide=True))
-                props.append(glb("lib_crt", [bx, 0.75, z + 0.5], fallback="monitor"))
+                # the catalog models come through white without their photo
+                # textures; the palette gives them the floor's one dull
+                # laminate, beige CRTs and dark seats, so nothing company-owned
+                # outshines the evidence (Doc 1 S4)
+                props.append(glb("lib_desk", [bx, 0, z + 0.55], fallback="desk", collide=True, mat="lp_beige"))
+                props.append(glb("lib_crt", [bx, 0.75, z + 0.5], fallback="monitor", mat="lp_beige"))
                 cx, cz, crot = bx, z + 1.35, 180
                 if s == CROSS - 1 and side == 1 and k == 0:
                     # Harlowe's chair, pushed back from the desk and left (Track C
                     # motif 3), at the mouth of the cross aisle on the way to the side door
                     cx, cz, crot = bx + 0.55, z + 1.75, 222
-                props.append(glb("lib_chair_wood", [cx, 0, cz], rot=crot, fallback="chair"))
+                props.append(glb("lib_chair_wood", [cx, 0, cz], rot=crot, fallback="chair", mat="lp_suit"))
     # Drop ceiling: 1.2 x 0.6 troffers on a grid over the aisles; every
     # point light below sits on one.
     for fx in (0.0, -4.4, 4.4, -9.0, 9.0):
@@ -620,7 +624,8 @@ def utility_corridor():
     props.append(prop("evidence", [0.05, 0.002, -16.8], rot=168, name="evidence_h", hidden=True))
     props.append(prop("slip", [-1.22, 0.004, AZ + 0.32], rot=-30))
     props.append(prop("clock", [W / 2 - 0.03, 2.3, 8.2], rot=-90))  # C8: the same clock, between two doors
-    props.append(glb("lib_breaker", [-W / 2 + 0.12, 1.1, 10.5], rot=90, fallback=None))
+    # (the catalog panel comes through white without its photo texture: grey steel)
+    props.append(glb("lib_breaker", [-W / 2 + 0.12, 1.1, 10.5], rot=90, fallback=None, mat="lp_grey"))
     # Exposed services down the ceiling: two pipe runs.
     for pz in range(int(-D / 2) + 3, int(D / 2) - 2, 6):
         props.append(prop("pipe", [0.95, H - 0.22, pz], rot=90, len=6.0, r=0.09))
@@ -673,8 +678,14 @@ def utility_corridor():
     # a label; the director fades a label in as 1 - smoothstep(r + 0.3,
     # ring, distance), so r + 0.3 < ring <= 0 holds it at zero at every
     # distance and nothing ever shows.
+    # Each band runs from its line to the far wall, so it cannot be stepped
+    # over: a long frame (a hitch, the dev autopilot at 3x) used to carry
+    # the candidate across a 0.6 m band unseen, and a missed band_8 left
+    # the manager standing at the end, let the candidate walk right up to
+    # him and never armed TAKE THE PAPERS. Bands crossed in one frame fire
+    # in order; the last actor run wins, so he still only moves away.
     for k, bz in enumerate(H_BANDS):
-        zone(rec, "band_%d" % k, [0.0, bz], r=-0.8, ring=-0.1, box=[[-W / 2, bz - 0.3], [W / 2, bz + 0.3]], silent=True)
+        zone(rec, "band_%d" % k, [0.0, bz], r=-0.8, ring=-0.1, box=[[-W / 2, -D / 2], [W / 2, bz + 0.3]], silent=True)
     # TAKE THE PAPERS: the evidence on the floor at the far door, once he has gone through it
     zone(rec, "far_end", [0.0, -16.35], r=0.7, ring=4.0, label_at=[0.0, 1.35, -16.8], armAfter="band_%d" % (len(H_BANDS) - 1))
     # TAKE THE SIDE DOOR: stepped into, between the piers
