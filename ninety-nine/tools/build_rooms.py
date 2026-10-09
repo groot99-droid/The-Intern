@@ -1299,17 +1299,20 @@ def freight_elevator():
 
     The building's, photoreal (C1): the rust shell, the diamond-plate floor
     and kick band, the quilted steel padding (one pad peeling), the dented
-    bumper rails, the caged bulb's light. The company's, low-poly: the
-    panel of 66 buttons with one lit, the scissor gate, the segmented floor
-    indicator over the doors, the door leaves.
+    bumper rails, the caged bulb (its rust guard and its light). The
+    company's, low-poly: the panel of 66 buttons with one lit (cabpanel),
+    the scissor gate, the segmented floor indicator over the doors, the
+    door leaves.
 
     DESCEND is the one lit button, on the right-hand wall in the rear third
     (ahead and to the right on the way in, its green spilling on the rust).
     REFUSE is back at the open doors, armed only once he has been inside,
-    so walking in never refuses. Either way the cab goes down: the beats in
-    scenes.json draw the gate, close the doors (DESCEND only -- REFUSE rides
-    with them open), step the indicator B1, B2, B7, B12 and the glyph at
-    uneven intervals and move the cab, and the same doors open below."""
+    so walking in never refuses; 25 s of nothing is REFUSE too (scenes.json
+    `idle`). Either way the cab goes down: the beats in scenes.json draw the
+    gate, close the doors (DESCEND before the ride; REFUSE rides with them
+    open until they drag shut near the bottom), and make one eased ride
+    whose stops step the indicator B1, B2, B7, B12 and the glyph at uneven
+    intervals; the same doors open below."""
     W, H, D = 3.0, 2.6, 3.4
     hx, hz = W / 2, D / 2
     rnd = random.Random(77)
