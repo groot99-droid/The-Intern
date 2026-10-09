@@ -2140,6 +2140,498 @@ const BUILDERS = {
   // ---- polish: S3 threshold -- end ----
   //
   // ---- polish: S4 floor -- begin (that scene's new props go between these lines) ----
+  // S4 THE FLOOR. The surfaces the material library has no slot for -- the
+  // manager's blurred face, the evidence (the one photoreal paper in the
+  // game, Doc 1 S4), a caged bulb, a wet film on the concrete, the
+  // janitor's yellow -- are made here once per library (a WeakMap keyed by
+  // `mats`) and shared by every prop that uses them, never made per prop.
+  // Company things keep the PS1 look (C1: flat-shaded, vertex-snapped like
+  // the lp_* slots); the building's things (the paper, the bulb, water,
+  // dust, steam) are lit and real.
+  ...(() => {
+    const own = new WeakMap();
+    const cached = (mats, key, make) => {
+      let m = own.get(mats);
+      if (!m) { m = new Map(); own.set(mats, m); }
+      if (!m.has(key)) m.set(key, make());
+      return m.get(key);
+    };
+    // the lp_* vertex snap, borrowed from a library slot (materials.js withVertexSnap)
+    const snapped = (mats, m) => {
+      const b = mats.get('lp_grey');
+      m.onBeforeCompile = b.onBeforeCompile;
+      m.customProgramCacheKey = b.customProgramCacheKey;
+      return m;
+    };
+    const canvas = (w, h, draw) => { const c = document.createElement('canvas'); c.width = w; c.height = h; draw(c.getContext('2d'), w, h); return c; };
+    const texture = (c, { srgb = true, repeat = false } = {}) => {
+      const t = new THREE.CanvasTexture(c);
+      if (srgb) t.colorSpace = THREE.SRGBColorSpace;
+      if (repeat) t.wrapS = t.wrapT = THREE.RepeatWrapping;
+      t.anisotropy = 4;
+      return t;
+    };
+    const rng = (seed) => {
+      let a = seed >>> 0;
+      return () => {
+        a = (a + 0x6D2B79F5) >>> 0;
+        let t = a;
+        t = Math.imul(t ^ (t >>> 15), t | 1);
+        t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
+        return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+      };
+    };
+    const blob = (g, x, y, rx, ry, color) => {
+      const r = Math.max(rx, ry);
+      const gr = g.createRadialGradient(0, 0, 0, 0, 0, r);
+      gr.addColorStop(0, color);
+      gr.addColorStop(1, 'rgba(0,0,0,0)');
+      g.save();
+      g.translate(x, y);
+      g.scale(rx / r, ry / r);
+      g.fillStyle = gr;
+      g.fillRect(-r, -r, 2 * r, 2 * r);
+      g.restore();
+    };
+    const _q = new THREE.Quaternion();
+    const mesh = (geo, m, { cast = true, receive = true } = {}) => { const o = new THREE.Mesh(geo, m); o.castShadow = cast; o.receiveShadow = receive; return o; };
+
+    // A face blurred beyond reading at every distance (Doc 1 S4): soft
+    // features only, then blurred again, on the head's front.
+    const faceMat = (mats) => cached(mats, 'face', () => {
+      const raw = canvas(64, 64, (g, w, h) => {
+        g.fillStyle = '#c4a383';
+        g.fillRect(0, 0, w, h);
+        blob(g, 32, 2, 40, 12, 'rgba(38,30,26,0.95)');
+        blob(g, 20, 28, 11, 6, 'rgba(70,46,36,0.7)');
+        blob(g, 44, 28, 11, 6, 'rgba(70,46,36,0.7)');
+        blob(g, 32, 39, 5, 10, 'rgba(105,72,54,0.4)');
+        blob(g, 32, 51, 13, 4, 'rgba(92,52,46,0.6)');
+        blob(g, 32, 66, 34, 9, 'rgba(110,80,62,0.45)');
+      });
+      const soft = canvas(64, 64, (g) => { g.filter = 'blur(3px)'; g.drawImage(raw, 0, 0); g.filter = 'none'; });
+      return snapped(mats, new THREE.MeshLambertMaterial({ map: texture(soft), flatShading: true }));
+    });
+
+    // The evidence: crisp, typed, signed, clipped. Illegible (no words in
+    // the world), but the sharpest thing in any frame it is in.
+    const paperMats = (mats) => cached(mats, 'paper', () => {
+      const r = rng(4099);
+      const page = canvas(512, 724, (g, w, h) => {
+        g.fillStyle = '#f3f1eb';
+        g.fillRect(0, 0, w, h);
+        for (let i = 0; i < 4200; i++) {
+          const v = r() < 0.5 ? 150 : 255;
+          g.fillStyle = `rgba(${v},${v},${v - 6},${0.04 + r() * 0.06})`;
+          g.fillRect(r() * w, r() * h, 1 + r() * 2.5, 1);
+        }
+        const ink = 'rgba(28,28,32,0.9)';
+        g.fillStyle = ink;
+        g.fillRect(44, 46, 150, 11);
+        g.fillRect(44, 64, 96, 5);
+        g.fillRect(352, 46, 116, 6);
+        g.fillRect(392, 58, 76, 5);
+        g.fillStyle = 'rgba(40,40,44,0.7)';
+        g.fillRect(44, 88, w - 88, 1.5);
+        let y = 116;
+        for (let line = 0; y < 600; line++) {
+          if (line % 7 === 6) { y += 10; continue; }
+          let x = 44 + (line % 7 === 0 ? 22 : 0);
+          const end = w - 44 - (line % 7 === 5 ? 120 + r() * 160 : r() * 18);
+          g.fillStyle = ink;
+          while (x < end) {
+            const ww = Math.min(end - x, 10 + r() * 46);
+            g.fillRect(x, y, ww, 3.2);
+            x += ww + 6;
+          }
+          y += 11.5;
+        }
+        // a form box, a signature, a stamp
+        g.strokeStyle = 'rgba(30,30,34,0.85)';
+        g.lineWidth = 1.2;
+        g.strokeRect(44, 616, 210, 58);
+        g.strokeRect(274, 616, 194, 58);
+        for (let k = 0; k < 3; k++) { g.fillStyle = ink; g.fillRect(52, 628 + k * 15, 60 + r() * 100, 3); }
+        g.strokeStyle = 'rgba(22,30,70,0.85)';
+        g.lineWidth = 2;
+        g.beginPath();
+        g.moveTo(292, 660);
+        g.bezierCurveTo(310, 620, 330, 676, 350, 640);
+        g.bezierCurveTo(366, 612, 380, 668, 410, 646);
+        g.bezierCurveTo(424, 636, 440, 650, 452, 642);
+        g.stroke();
+        g.strokeStyle = 'rgba(140,38,34,0.45)';
+        g.lineWidth = 4;
+        g.beginPath();
+        g.arc(410, 560, 38, 0, Math.PI * 2);
+        g.stroke();
+        g.lineWidth = 2;
+        g.beginPath();
+        g.arc(410, 560, 28, 0, Math.PI * 2);
+        g.stroke();
+      });
+      return {
+        top: new THREE.MeshStandardMaterial({ map: texture(page), roughness: 0.78, metalness: 0 }),
+        edge: new THREE.MeshStandardMaterial({ color: '#ebe8df', roughness: 0.86, metalness: 0 }),
+        clip: new THREE.MeshStandardMaterial({ color: '#b9bdc1', roughness: 0.22, metalness: 0.9 })
+      };
+    });
+
+    const yellowMat = (mats) => cached(mats, 'yellow', () => snapped(mats, new THREE.MeshLambertMaterial({ color: '#b8952c', flatShading: true })));
+    const coldLensMat = (mats) => cached(mats, 'coldLens', () => snapped(mats, new THREE.MeshLambertMaterial({ color: '#d8e6f0', emissive: '#cfe2f2', emissiveIntensity: 1.5, flatShading: true })));
+    const bulbMats = (mats) => cached(mats, 'bulb', () => ({
+      metal: new THREE.MeshStandardMaterial({ color: '#2c2b28', roughness: 0.5, metalness: 0.75 }),
+      lit: new THREE.MeshStandardMaterial({ color: '#fff3d8', emissive: '#ffd79a', emissiveIntensity: 2.4, roughness: 0.3 }),
+      dark: new THREE.MeshStandardMaterial({ color: '#77736a', roughness: 0.18, metalness: 0.05 })
+    }));
+    // a soft round glow (additive), so a lamp's halo is a falloff, not a square
+    const haloMat = (mats, color, opacity) => cached(mats, `halo:${color}:${opacity}`, () => {
+      const c = canvas(64, 64, (g) => blob(g, 32, 32, 31, 31, 'rgba(255,255,255,1)'));
+      return new THREE.MeshBasicMaterial({ map: texture(c), color, transparent: true, opacity, blending: THREE.AdditiveBlending, depthWrite: false, side: THREE.DoubleSide, fog: false });
+    });
+    const spillMat = (mats) => cached(mats, 'spill', () => new THREE.MeshBasicMaterial({ vertexColors: true, transparent: true, blending: THREE.AdditiveBlending, depthWrite: false, side: THREE.DoubleSide, fog: false }));
+    const puddleMat = (mats) => cached(mats, 'puddle', () => new THREE.MeshStandardMaterial({ color: '#141513', roughness: 0.05, metalness: 0.15, transparent: true, opacity: 0.58, depthWrite: false, polygonOffset: true, polygonOffsetFactor: -2, polygonOffsetUnits: -2 }));
+    const dustMat = (mats) => cached(mats, 'dust', () => {
+      const dot = canvas(32, 32, (g) => blob(g, 16, 16, 15, 15, 'rgba(255,255,255,1)'));
+      return new THREE.PointsMaterial({ color: '#fbf5e2', size: 0.018, sizeAttenuation: true, map: texture(dot), transparent: true, opacity: 0.45, depthWrite: false, blending: THREE.AdditiveBlending });
+    });
+    const steamMat = (mats) => cached(mats, 'steam', () => {
+      const r = rng(77);
+      const wisps = canvas(64, 128, (g, w, h) => {
+        g.fillStyle = '#000';
+        g.fillRect(0, 0, w, h);
+        for (let i = 0; i < 40; i++) {
+          const x = r() * w, y = r() * h, rx = 4 + r() * 10, ry = 12 + r() * 26, a = 0.12 + r() * 0.2;
+          for (const dy of [-h, 0, h]) blob(g, x, y + dy, rx, ry, `rgba(255,255,255,${a})`);
+        }
+      });
+      const fade = canvas(64, 64, (g, w, h) => {
+        const hz = g.createLinearGradient(0, 0, w, 0);
+        hz.addColorStop(0, '#000'); hz.addColorStop(0.5, '#fff'); hz.addColorStop(1, '#000');
+        g.fillStyle = hz;
+        g.fillRect(0, 0, w, h);
+        g.globalCompositeOperation = 'multiply';
+        const vt = g.createLinearGradient(0, 0, 0, h);
+        vt.addColorStop(0, '#000'); vt.addColorStop(0.55, '#bbb'); vt.addColorStop(0.92, '#fff'); vt.addColorStop(1, '#333');
+        g.fillStyle = vt;
+        g.fillRect(0, 0, w, h);
+      });
+      const map = texture(wisps, { repeat: true });
+      return new THREE.MeshBasicMaterial({ map, alphaMap: texture(fade, { srgb: false }), color: '#dfe5df', transparent: true, opacity: 0.34, blending: THREE.AdditiveBlending, depthWrite: false, side: THREE.DoubleSide });
+    });
+
+    return {
+      // THE MANAGER (Doc 1 S4, Doc 2 S4_C): the same blocky suit as
+      // `figure`, a face blurred beyond reading on the front of the head
+      // (`face: 'blur'`), a tie that is four flat polygons (`tie`), and with
+      // `offer` his right forearm held out, palm up, for the evidence to lie
+      // on. No walk cycle: he only ever translates (room.js actors). `collide`
+      // gives him a body the candidate cannot walk through.
+      manager(mats, o) {
+        const g = new THREE.Group();
+        const suit = o.suit || 'lp_suit';
+        const skin = mats.get('lp_skin'), hair = mats.get('lp_dark');
+        g.add(box(mats, suit, 0.44, 0.6, 0.24, 0, 0.9, 0));
+        g.add(box(mats, suit, 0.56, 0.1, 0.26, 0, 1.44, 0));
+        g.add(box(mats, 'lp_white', 0.13, 0.1, 0.01, 0, 1.36, 0.122)); // the shirt at the collar
+        g.add(box(mats, 'lp_skin', 0.1, 0.06, 0.1, 0, 1.5, 0));
+        const head = mesh(new THREE.BoxGeometry(0.22, 0.24, 0.22), [skin, skin, hair, skin, o.face === 'blur' ? faceMat(mats) : skin, hair]);
+        head.position.set(0, 1.68, 0);
+        g.add(head);
+        g.add(box(mats, 'lp_dark', 0.24, 0.07, 0.24, 0, 1.79, -0.005));
+        for (const s of [-1, 1]) {
+          g.add(box(mats, 'lp_dark', 0.16, 0.9, 0.16, s * 0.12, 0, 0));
+          g.add(box(mats, 'lp_black', 0.15, 0.06, 0.26, s * 0.12, 0, 0.04));
+        }
+        // his left arm hangs
+        g.add(box(mats, suit, 0.12, 0.58, 0.12, 0.3, 0.92, 0));
+        g.add(box(mats, 'lp_skin', 0.1, 0.12, 0.1, 0.3, 0.8, 0));
+        if (o.offer) {
+          // his right: upper arm a little forward, forearm out level, palm up
+          const shoulder = new THREE.Group();
+          shoulder.position.set(-0.3, 1.46, 0);
+          shoulder.rotation.x = -0.45;
+          shoulder.add(box(mats, suit, 0.12, 0.34, 0.12, 0, -0.34, 0));
+          const elbow = new THREE.Group();
+          elbow.position.set(0, -0.32, 0);
+          elbow.rotation.x = -1.05;
+          elbow.add(box(mats, suit, 0.11, 0.3, 0.11, 0, -0.3, 0));
+          elbow.add(box(mats, 'lp_skin', 0.1, 0.11, 0.1, 0, -0.41, 0));
+          shoulder.add(elbow);
+          g.add(shoulder);
+        } else {
+          g.add(box(mats, suit, 0.12, 0.58, 0.12, -0.3, 0.92, 0));
+          g.add(box(mats, 'lp_skin', 0.1, 0.12, 0.1, -0.3, 0.8, 0));
+        }
+        if (o.tie) {
+          // four flat polygons: the knot, the blade, its widening, the point
+          const quads = [
+            [[-0.036, 1.44], [0.036, 1.44], [0.022, 1.37], [-0.022, 1.37]],
+            [[-0.022, 1.37], [0.022, 1.37], [0.04, 1.12], [-0.04, 1.12]],
+            [[-0.04, 1.12], [0.04, 1.12], [0.05, 1.0], [-0.05, 1.0]]
+          ];
+          const v = [];
+          for (const [a, b, c, d] of quads) v.push(...a, 0, ...d, 0, ...c, 0, ...a, 0, ...c, 0, ...b, 0);
+          v.push(-0.05, 1.0, 0, 0, 0.93, 0, 0.05, 1.0, 0);
+          const geo = new THREE.BufferGeometry();
+          geo.setAttribute('position', new THREE.Float32BufferAttribute(v, 3));
+          geo.computeVertexNormals();
+          const tie = mesh(geo, mats.get('lp_red'), { cast: false });
+          tie.position.z = 0.129;
+          g.add(tie);
+        }
+        if (o.collide) {
+          const body = box(mats, 'lp_dark', 0.56, 1.8, 0.32, 0, 0, 0, { castShadow: false, collide: true });
+          body.visible = false;
+          g.add(body);
+        }
+        return g;
+      },
+      // The evidence (Doc 1 S4): a stack of photoreal paper, the top sheet
+      // typed and signed, a clip at the corner. `tilt` (degrees) lifts its
+      // far edge toward whoever it is held out to. The top of the page is
+      // toward local -z.
+      evidence(mats, o) {
+        const g = new THREE.Group();
+        const pm = paperMats(mats);
+        const inner = new THREE.Group();
+        inner.rotation.x = THREE.MathUtils.degToRad(o.tilt || 0);
+        g.add(inner);
+        const W = 0.21, D = 0.297, T = 0.0011 * (o.sheets || 10);
+        const stack = mesh(new THREE.BoxGeometry(W, T, D), pm.edge);
+        stack.position.y = T / 2;
+        inner.add(stack);
+        const loose = mesh(new THREE.BoxGeometry(W, 0.0008, D), pm.edge, { cast: false });
+        loose.position.set(0.006, T + 0.0004, 0.004);
+        loose.rotation.y = -0.045;
+        inner.add(loose);
+        const top = mesh(new THREE.PlaneGeometry(W, D), pm.top, { cast: false });
+        top.rotation.set(-Math.PI / 2, 0, 0.018);
+        top.position.y = T + 0.0013;
+        inner.add(top);
+        for (const [x, w, d] of [[-0.075, 0.006, 0.05], [-0.06, 0.006, 0.04], [-0.0675, 0.021, 0.006]]) {
+          const c = mesh(new THREE.BoxGeometry(w, 0.0025, d), pm.clip, { cast: false });
+          c.position.set(x, T + 0.0022, -D / 2 + (d > 0.01 ? d / 2 - 0.006 : 0.03));
+          inner.add(c);
+        }
+        return g;
+      },
+      // Real dust in the air (Doc 1 S4, Doc 2 KLING C "dust drifts"): a
+      // few hundred motes in a w x h x d volume above the prop's position,
+      // drifting slowly, lit by nothing but adding to the light they are in.
+      dust(mats, o) {
+        const g = new THREE.Group();
+        const n = o.n || 220, w = o.w || 3, h = o.h || 2.4, d = o.d || 3;
+        const r = rng(o.seed || 11);
+        const base = new Float32Array(n * 3), ph = new Float32Array(n * 3);
+        for (let i = 0; i < n; i++) {
+          base[i * 3] = (r() - 0.5) * w; base[i * 3 + 1] = 0.3 + r() * (h - 0.3); base[i * 3 + 2] = (r() - 0.5) * d;
+          ph[i * 3] = r() * 6.28; ph[i * 3 + 1] = 0.006 + r() * 0.02; ph[i * 3 + 2] = r() * 6.28;
+        }
+        const geo = new THREE.BufferGeometry();
+        const pos = new THREE.BufferAttribute(new Float32Array(n * 3), 3);
+        geo.setAttribute('position', pos);
+        const pts = new THREE.Points(geo, dustMat(mats));
+        pts.frustumCulled = false;
+        const span = h - 0.3;
+        const step = () => {
+          const t = performance.now() * 0.001;
+          const a = pos.array;
+          for (let i = 0; i < n; i++) {
+            const k = i * 3;
+            a[k] = base[k] + Math.sin(t * 0.17 + ph[k]) * 0.14;
+            a[k + 1] = 0.3 + ((base[k + 1] - 0.3 + t * ph[k + 1]) % span);
+            a[k + 2] = base[k + 2] + Math.cos(t * 0.13 + ph[k + 2]) * 0.14;
+          }
+          pos.needsUpdate = true;
+        };
+        step();
+        pts.onBeforeRender = step;
+        g.add(pts);
+        return g;
+      },
+      // Light lying on the floor where it comes through a door (the side
+      // door's cold strip, the ajar door's gap): a fan from `w` wide at the
+      // door to `w2` wide `len` into the room (local +z), fading to nothing.
+      lightspill(mats, o) {
+        const g = new THREE.Group();
+        const w0 = o.w || 1.0, w1 = o.w2 || 1.6, len = o.len || 1.2;
+        const c = new THREE.Color(o.color || '#cfdcea').multiplyScalar(o.strength === undefined ? 0.35 : o.strength);
+        const geo = new THREE.BufferGeometry();
+        geo.setAttribute('position', new THREE.Float32BufferAttribute([-w0 / 2, 0, 0, w0 / 2, 0, 0, w1 / 2, 0, len, -w1 / 2, 0, len], 3));
+        geo.setAttribute('color', new THREE.Float32BufferAttribute([c.r, c.g, c.b, c.r, c.g, c.b, 0, 0, 0, 0, 0, 0], 3));
+        geo.setIndex([0, 2, 1, 0, 3, 2]);
+        const m = new THREE.Mesh(geo, spillMat(mats));
+        m.position.y = 0.006;
+        m.renderOrder = 1;
+        g.add(m);
+        return g;
+      },
+      // A wall bulkhead lamp with a cold lens, mounted on a wall (local -z
+      // is the wall): the light over the side door.
+      bulkhead(mats) {
+        const g = new THREE.Group();
+        g.add(box(mats, 'lp_dark', 0.36, 0.18, 0.09, 0, -0.09, 0.045, { castShadow: false }));
+        g.add(box(mats, 'lp_dark', 0.04, 0.04, 0.05, 0, -0.02, 0.1, { castShadow: false }));
+        const lens = new THREE.Mesh(new THREE.BoxGeometry(0.28, 0.1, 0.02), coldLensMat(mats));
+        lens.position.set(0, -0.09, 0.095);
+        g.add(lens);
+        const glow = new THREE.Mesh(new THREE.PlaneGeometry(1.1, 0.8), haloMat(mats, '#cfe0f0', 0.5));
+        glow.position.set(0, -0.09, 0.11);
+        g.add(glow);
+        return g;
+      },
+      // A caged bulb under the ceiling (Doc 2 S4_H: "a single caged
+      // bulb"): the building's light, so photoreal -- a steel cage, a warm
+      // bulb, a glow. `lit: false` leaves the glass dark.
+      cagebulb(mats, o) {
+        const g = new THREE.Group();
+        const bm = bulbMats(mats);
+        const drop = o.drop || 0.14, lit = o.lit !== false;
+        const plate = mesh(new THREE.CylinderGeometry(0.07, 0.07, 0.025, 10), bm.metal, { cast: false });
+        plate.position.y = -0.0125;
+        g.add(plate);
+        const stem = mesh(new THREE.CylinderGeometry(0.016, 0.016, drop, 6), bm.metal, { cast: false });
+        stem.position.y = -drop / 2;
+        g.add(stem);
+        const socket = mesh(new THREE.CylinderGeometry(0.034, 0.03, 0.05, 8), bm.metal, { cast: false });
+        socket.position.y = -drop - 0.025;
+        g.add(socket);
+        const bulb = mesh(new THREE.SphereGeometry(0.05, 10, 8), lit ? bm.lit : bm.dark, { cast: false });
+        bulb.position.y = -drop - 0.1;
+        g.add(bulb);
+        for (let k = 0; k < 4; k++) {
+          const a = k * Math.PI / 2 + Math.PI / 4;
+          const bar = mesh(new THREE.BoxGeometry(0.007, 0.17, 0.007), bm.metal, { cast: false });
+          bar.position.set(Math.cos(a) * 0.075, -drop - 0.115, Math.sin(a) * 0.075);
+          g.add(bar);
+        }
+        for (const y of [-drop - 0.04, -drop - 0.2]) {
+          const ring = mesh(new THREE.TorusGeometry(0.075, 0.004, 4, 12), bm.metal, { cast: false });
+          ring.rotation.x = Math.PI / 2;
+          ring.position.y = y;
+          g.add(ring);
+        }
+        if (lit) {
+          // a halo round the bulb that always faces the eye
+          const glow = new THREE.Mesh(new THREE.PlaneGeometry(0.7, 0.7), haloMat(mats, '#ffd296', 0.55));
+          glow.position.y = -drop - 0.1;
+          glow.onBeforeRender = (r, sc, cam) => {
+            cam.getWorldQuaternion(glow.quaternion);
+            if (glow.parent) glow.quaternion.premultiply(glow.parent.getWorldQuaternion(_q).invert());
+            glow.updateMatrixWorld();
+          };
+          g.add(glow);
+        }
+        return g;
+      },
+      // The janitor's mop bucket on casters, its wringer, the mop leaning
+      // out of it (Doc 2 S4_H). Company property: low-poly, PS1 yellow.
+      mopbucket(mats) {
+        const g = new THREE.Group();
+        const yel = yellowMat(mats);
+        g.add(box(mats, 'lp_black', 0.05, 0.06, 0.05, -0.17, 0, -0.17));
+        g.add(box(mats, 'lp_black', 0.05, 0.06, 0.05, 0.17, 0, -0.17));
+        g.add(box(mats, 'lp_black', 0.05, 0.06, 0.05, -0.17, 0, 0.17));
+        g.add(box(mats, 'lp_black', 0.05, 0.06, 0.05, 0.17, 0, 0.17));
+        const deck = mesh(new THREE.BoxGeometry(0.44, 0.05, 0.44), yel);
+        deck.position.y = 0.085;
+        g.add(deck);
+        const tub = mesh(new THREE.CylinderGeometry(0.21, 0.17, 0.32, 8), yel);
+        tub.position.y = 0.27;
+        g.add(tub);
+        const rim = mesh(new THREE.CylinderGeometry(0.225, 0.225, 0.03, 8), yel);
+        rim.position.y = 0.44;
+        g.add(rim);
+        const water = mesh(new THREE.CylinderGeometry(0.195, 0.195, 0.01, 8), mats.get('lp_dark'), { cast: false });
+        water.position.y = 0.4;
+        g.add(water);
+        g.add(box(mats, 'lp_grey', 0.32, 0.12, 0.15, 0, 0.42, -0.12));
+        const lever = box(mats, 'lp_grey', 0.03, 0.5, 0.03, 0.12, 0.45, -0.17);
+        lever.rotation.x = 0.25;
+        g.add(lever);
+        const mop = new THREE.Group();
+        mop.position.set(-0.04, 0.3, 0.05);
+        mop.rotation.set(0.22, 0, -0.2);
+        mop.add(box(mats, 'lp_wood', 0.03, 1.25, 0.03, 0, 0, 0));
+        mop.add(box(mats, 'lp_grey', 0.16, 0.14, 0.12, 0, -0.06, 0));
+        g.add(mop);
+        const body = box(mats, 'lp_dark', 0.5, 0.95, 0.5, 0, 0, 0, { castShadow: false, collide: true });
+        body.visible = false;
+        g.add(body);
+        return g;
+      },
+      // A hand truck stood on its nose plate with two cartons on it (Doc 2
+      // S4_H). Low-poly; the frame leans back a little onto its wheels.
+      handtruck(mats) {
+        const g = new THREE.Group();
+        const frame = new THREE.Group();
+        frame.rotation.x = -0.1;
+        for (const s of [-1, 1]) frame.add(box(mats, 'lp_red', 0.035, 1.22, 0.035, s * 0.18, 0.02, 0));
+        for (const y of [0.35, 0.75, 1.15]) frame.add(box(mats, 'lp_red', 0.36, 0.025, 0.025, 0, y, 0));
+        frame.add(box(mats, 'lp_dark', 0.3, 0.04, 0.04, 0, 1.22, -0.03));
+        frame.add(box(mats, 'lp_grey', 0.4, 0.015, 0.24, 0, 0.01, 0.12));
+        const c1 = box(mats, 'cardboard', 0.36, 0.3, 0.3, 0, 0.03, 0.17);
+        const c2 = box(mats, 'cardboard', 0.32, 0.26, 0.28, 0.01, 0.33, 0.16);
+        c2.rotation.y = 0.06;
+        frame.add(c1, c2);
+        g.add(frame);
+        for (const s of [-1, 1]) {
+          const wheel = mesh(new THREE.CylinderGeometry(0.11, 0.11, 0.06, 8), mats.get('lp_black'));
+          wheel.rotation.z = Math.PI / 2;
+          wheel.position.set(s * 0.24, 0.11, -0.07);
+          g.add(wheel);
+        }
+        const body = box(mats, 'lp_dark', 0.56, 1.2, 0.5, 0, 0, 0.06, { castShadow: false, collide: true });
+        body.visible = false;
+        g.add(body);
+        return g;
+      },
+      // Standing water on the concrete (C1: the building's, photoreal): an
+      // irregular dark glossy film, `w` x `d` metres, that catches the bulbs.
+      puddle(mats, o) {
+        const g = new THREE.Group();
+        const r = rng(o.seed || 5);
+        const shape = new THREE.Shape();
+        const n = 16;
+        for (let i = 0; i < n; i++) {
+          const a = (i / n) * Math.PI * 2;
+          const rad = 0.5 * (0.72 + r() * 0.36);
+          const x = Math.cos(a) * rad, y = Math.sin(a) * rad;
+          if (i === 0) shape.moveTo(x, y); else shape.lineTo(x, y);
+        }
+        shape.closePath();
+        const geo = new THREE.ShapeGeometry(shape, 2);
+        geo.rotateX(-Math.PI / 2);
+        geo.scale(o.w || 1.0, 1, o.d || 0.7);
+        const m = mesh(geo, puddleMat(mats), { cast: false });
+        m.position.y = 0.003;
+        g.add(m);
+        return g;
+      },
+      // Faint steam off a floor drain (Doc 2 KLING H): three crossed
+      // additive sheets of slow-rising wisps.
+      steam(mats, o) {
+        const g = new THREE.Group();
+        const m = steamMat(mats);
+        const h = o.h || 1.5, w = o.w || 0.7;
+        const tick = () => {
+          const t = performance.now() * 0.001;
+          m.map.offset.y = -((t * 0.07) % 1);
+          g.rotation.y = Math.sin(t * 0.21) * 0.35;
+        };
+        for (let k = 0; k < 3; k++) {
+          const p = new THREE.Mesh(new THREE.PlaneGeometry(w, h), m);
+          p.position.y = h / 2;
+          p.rotation.y = (k * Math.PI) / 3;
+          p.renderOrder = 2;
+          if (k === 0) p.onBeforeRender = tick;
+          g.add(p);
+        }
+        return g;
+      }
+    };
+  })(),
   // ---- polish: S4 floor -- end ----
   //
   // ---- polish: S5-S6 desk / garage -- begin (that scene's new props go between these lines) ----

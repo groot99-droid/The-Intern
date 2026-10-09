@@ -677,121 +677,238 @@ def lobby_doors():
 
 
 def cubicle_floor():
-    W, H, D = 26.0, 3.0, 36.0
+    """S4 C: an unending cubicle floor (Doc 1 S4, Doc 2 S4_C). The candidate
+    comes in at the S wall into an open rear aisle. Ahead, the main aisle
+    runs between two walls of partitions to the core; THE MANAGER walks up
+    it toward him and stops past the cross aisle, the evidence held out
+    (TAKE THE PAPERS walks with him). The cross aisle is the one gap in the
+    walls: at its E end, a grey fire door under a cold lamp (TAKE THE SIDE
+    DOOR); at its W end, the clock."""
+    W, H, D = 24.6, 3.0, 38.0
     props = []
-    # Two banks either side of a 2.2 m aisle; rows every 2.4 m; each
-    # workstation = back partition + side partition + desk + CRT + chair.
-    z = -D / 2 + 2.0
-    row = 0
-    while z < D / 2 - 2.6:
-        if abs(z - 3.2) < 0.01:
-            # the cross-aisle: one row left out, so the side door can be walked to
-            z += 2.4
-            row += 1
+    # Rows of workstations every 2.4 m, three per side, from the front
+    # aisle (z -19..-16.9) to the rear aisle (z 16.3..19); slot 7 is the
+    # cross aisle (z -0.5..2.3). Each workstation is a back partition, a
+    # side partition that runs on to the next row (no slots to squeeze
+    # through), a desk, a CRT and a chair, all identical (78 of them; never
+    # more). The inner workstations put their side partition on the main
+    # aisle, so the aisle is two clean walls of panels with no pockets to
+    # snag on; the outer ones lean on the room's own wall.
+    # (Z0 and BX keep every 6 cm partition plane off the 0.45 m cells of
+    # the dev autopilot's navgrid, whose rays cannot see a wall a cell
+    # centre sits inside.)
+    Z0, PITCH, SLOTS, CROSS = -16.9, 2.4, 14, 7
+    BX = (2.1, 6.65, 11.3)
+    for s in range(SLOTS):
+        if s == CROSS:
             continue
+        z = Z0 + PITCH * s
+        slen = 2.0 if s in (CROSS - 1, SLOTS - 1) else PITCH  # the last row before an aisle stops short
         for side in (-1, 1):
-            for k in (0, 1, 2, 3):
-                bx = side * (2.1 + k * 4.6)
-                if abs(bx) > W / 2 - 1.5:
-                    continue
+            for k, b in enumerate(BX):
+                bx = side * b
                 props.append(prop("partition", [bx, 0, z], len=2.0))
-                props.append(prop("partition", [bx + side * 1.0, 0, z + 1.0], rot=90, len=2.0))
-                props.append(glb("lib_desk", [bx, 0, z + 0.55], fallback="desk", collide=True))
-                props.append(glb("lib_crt", [bx, 0.75, z + 0.5], fallback="monitor"))
-                cx, cz, chair_rot = bx, z + 1.35, 0
-                if row == 4 and side == -1 and k == 0:
-                    cx, cz, chair_rot = bx + 0.9, z + 1.6, 40  # Harlowe's chair, pushed out (Track C motif 3)
-                props.append(glb("lib_chair_wood", [cx, 0, cz], rot=180 + chair_rot, fallback="chair"))
-        z += 2.4
-        row += 1
-    # Fluorescent grid.
-    for fx in range(-12, 13, 4):
-        for fz in range(-16, 17, 4):
-            props.append(prop("fluoro", [fx, H - 0.06, fz], w=1.2, d=0.3))
-    # THE MANAGER: starts at the far end of the aisle and walks toward the
-    # camera while the player follows (MG-03 C drives `actors.manager`).
-    props.append(prop("figure", [0, 0, -9.0], face="blur", tie=True, name="manager"))
-    props.append(prop("papers", [0.32, 0.86, -8.86], mat="plaster_blown", name="evidence"))
-    props.append(prop("clock", [4.0, 2.4, -D / 2 + 0.02]))
-    props.append(prop("slip", [1.1, 0.004, -3.8], rot=12))
-    lights = [{"type": "point", "pos": [x, H - 0.4, zz], "color": "#eef2ff", "intensity": 11, "distance": 14, "flicker": 0.12 if (x, zz) == (8, 4) else 0}
-              for x in (-8, 0, 8) for zz in (-12, -4, 4, 12)]
+                if k < 2:
+                    sx = bx - side * 1.0 if k == 0 else bx + side * 1.0
+                    props.append(prop("partition", [sx, 0, z + slen / 2], rot=90, len=slen))
+                # the catalog models come through white without their photo
+                # textures; the palette gives them the floor's one dull
+                # laminate, beige CRTs and dark seats, so nothing company-owned
+                # outshines the evidence (Doc 1 S4)
+                props.append(glb("lib_desk", [bx, 0, z + 0.55], fallback="desk", collide=True, mat="lp_beige"))
+                props.append(glb("lib_crt", [bx, 0.75, z + 0.5], fallback="monitor", mat="lp_beige"))
+                cx, cz, crot = bx, z + 1.35, 180
+                if s == CROSS - 1 and side == 1 and k == 0:
+                    # Harlowe's chair, pushed back from the desk and left (Track C
+                    # motif 3), at the mouth of the cross aisle on the way to the side door
+                    cx, cz, crot = bx + 0.55, z + 1.75, 222
+                props.append(glb("lib_chair_wood", [cx, 0, cz], rot=crot, fallback="chair", mat="lp_suit"))
+    # Drop ceiling: 1.2 x 0.6 troffers on a grid over the aisles; every
+    # point light below sits on one.
+    for fx in (0.0, -4.4, 4.4, -9.0, 9.0):
+        for fz in range(-17, 16, 4):
+            name = "hold_troffer" if (fx, fz) == (0.0, -5) else None
+            kw = {"name": name} if name else {}
+            props.append(prop("fluoro", [fx, H - 0.06, fz], w=1.2, d=0.6, **kw))
+    # THE MANAGER: low-poly, the face blurred, the tie four flat polygons,
+    # the evidence (photoreal) held out on his palm. He starts far down the
+    # aisle facing the candidate and translates up it, no walk cycle,
+    # stopping under the flickering troffer at z -5 (the cross aisle is
+    # never in his way). He never turns. No collider: hidden meshes still
+    # collide, and he is gone after the hand-off; from the front his zone
+    # takes the candidate before they could touch.
+    MZ0, MZ1 = -12.0, -5.0
+    props.append(prop("manager", [0, 0, MZ0], face="blur", tie=True, offer=True, name="manager"))
+    props.append(prop("evidence", [-0.3, 1.205, MZ0 + 0.47], tilt=14, name="evidence"))
+    props.append(prop("dust", [0, 0, MZ1 + 0.5], w=2.0, h=2.6, d=4.0, n=180, seed=3))
+    props.append(prop("dust", [0, 0, 16.6], w=6.0, h=2.6, d=3.6, n=240, seed=9))
+    # The side door's marks: a cold bulkhead lamp over it, a cold strip of
+    # light on the carpet under it, a wordless plate, the room's one 99.
+    SZ = 0.9
+    props.append(prop("bulkhead", [W / 2 - 0.01, 2.62, SZ], rot=-90))
+    props.append(prop("lightspill", [W / 2 - 0.02, 0, SZ], rot=-90, w=1.1, w2=1.6, len=0.9, color="#cfdcea", strength=0.16))
+    props.append(prop("placard", [W / 2 - 0.02, 1.5, SZ + 1.1], rot=-90))
+    props.append(prop("slip", [W / 2 - 0.75, 0.004, SZ + 0.45], rot=24))
+    props.append(prop("dust", [W / 2 - 1.2, 0, SZ], w=2.2, h=2.6, d=2.6, n=120, seed=5))
+    # C8: the clock, at the W end of the cross aisle, opposite the side door
+    props.append(prop("clock", [-W / 2 + 0.03, 2.3, SZ], rot=90))
+    # Slight green cast (Doc 2: "the real quality of fluorescent light
+    # including its slight green cast"); two independent irregular flickers
+    # (KLING C): the troffer over the manager's stop, the lamp over the side door.
+    lamp = "#eef4e2"
+    lights = [{"type": "point", "pos": [x, H - 0.4, z], "color": lamp, "intensity": 11, "distance": 14}
+              for (x, z) in ((0, 15), (0, 7), (0, -1), (0, -13), (-4.4, 11), (4.4, 11), (-4.4, -9), (4.4, -9), (-9.0, 3), (9.0, 3), (-9.0, -13), (9.0, -13))]
+    lights.append({"type": "point", "pos": [0, H - 0.4, MZ1], "color": lamp, "intensity": 12, "distance": 12, "flicker": 0.32, "id": "hold_light"})
+    lights.append({"type": "point", "pos": [W / 2 - 0.35, 2.3, SZ], "color": "#d4e2ee", "intensity": 5, "distance": 6.5, "flicker": 0.22, "id": "side_light"})
     rec = {
         "name": "THE FLOOR",
         "size": [W, H, D],
-        "floor": "carpet", "wall": "plaster", "ceiling": "ceiling_tile",
-        "tile": {"floor": 1.5, "wall": 2.0, "ceiling": 1.2},
+        "floor": "carpet", "wall": "plaster_blown", "ceiling": "ceiling_tile",
+        "tile": {"floor": 1.2, "wall": 3.0, "ceiling": 1.2},
         "skirt": {"mat": "plaster_dark", "h": 0.1, "t": 0.02},
-        "ambient": {"color": "#e8ecff", "intensity": 0.2},
-        "sun": {"from": [2.0, 5.0, 22.0], "color": "#f4f6ff", "intensity": 0.4},
+        "ambient": {"color": "#e6ecdc", "intensity": 0.22},
+        "sun": {"from": [2.0, 5.0, 24.0], "color": "#f2f6ea", "intensity": 0.4},
         "lights": lights,
-        "fog": {"color": "#b4b7b1", "near": 12, "far": 46},
+        # the far wall lost in light haze (Doc 2)
+        "fog": {"color": "#b9beb1", "near": 9, "far": 44},
         "exposure": 1.0,
         "vignette": 0.45,
-        "spawn": [0, 15.5, 0],
+        "spawn": [0, 17.0, 0],
         "props": props,
         "footstep": {"filterHz": 380, "gain": 0.05},
-        # The manager approaches down the aisle: t=0 far, t=1 beside the player.
-        "actors": {"manager": {"path": [[0, -9.0], [0, 6.0]], "carry": ["evidence"]}},
+        # He comes up the aisle facing the candidate (face: false keeps his
+        # yaw; he translates, he never turns): t=0 far, t=1 at his stop.
+        "actors": {"manager": {"path": [[0, MZ0], [0, MZ1]], "carry": ["evidence"], "face": False}},
     }
     rec["shots"] = shots_for(rec, out_dist=3.0, leave_dist=13.0, loop_seconds=24.0)
     door(rec, "front", "S", 0.0, w=1.4, h=2.3, kind="door", mat="lp_beige")
     door(rec, "back", "N", 0.0, w=1.4, h=2.3, kind="door", locked=True, mat="lp_beige")
-    door(rec, "side", "E", 3.9, w=1.0, h=2.2, kind="door", locked=True, mat="lp_grey")
+    door(rec, "side", "E", SZ, w=1.2, h=2.2, kind="door", locked=True, mat="lp_grey", panel="lp_dark", hinge="L")
     rec["entry"] = "front"
-    # TAKE THE PAPERS: the zone walks with the manager as he comes up the aisle
-    zone(rec, "manager", [0.0, -8.1], r=0.85, ring=3.5, actor="manager", offset=[0.0, 0.9], label_at=[0.0, 2.25, -9.0])
-    zone(rec, "side_door", [12.0, 3.9], r=0.6, ring=3.0, label_at=[12.9, 2.5, 3.9])
+    # TAKE THE PAPERS walks with him: the zone stands just in front of him
+    # (he faces +z), so stepping up to the evidence commits and passing
+    # behind him never does. Nothing shows from the entry: the label rises
+    # only within 3.5 m of him.
+    zone(rec, "manager", [0.0, MZ0 + 0.9], r=0.8, ring=3.5, actor="manager", offset=[0.0, 0.9])
+    # TAKE THE SIDE DOOR: at the dead end of the cross aisle, in front of the door
+    zone(rec, "side_door", [W / 2 - 0.55, SZ], r=0.6, ring=3.0, label_at=[W / 2 - 0.3, 2.62, SZ])
     return rec
 
 
 def utility_corridor():
+    """S4 H: the janitorial spine of the same floor (Doc 1 S4, Doc 2 S4_H).
+    Wet concrete, beige-lit cinderblock, identical utility doors receding,
+    mop sinks and drains, caged bulbs, steady. The manager is seen once, at
+    the far end, facing away, and is never closer: when he reaches the end
+    he goes through the far door and leaves the evidence on the floor at its
+    foot (TAKE THE PAPERS). One door is not flush: set back between two
+    piers, a cold light through its gap (TAKE THE SIDE DOOR)."""
     W, H, D = 3.2, 3.0, 36.0
+    AZ = -6.0  # the ajar door
+    # The manager is 20 m ahead and never closer (Doc 1 S4, Doc 2
+    # S4_H_IMG_OUT). He starts 21.5 m down the corridor; each band the
+    # candidate crosses (box zones across the corridor, walked by
+    # scenes.json's beatZones) moves him one leg further along H_PATH, so
+    # the gap only ever grows back to 20-21.5 m. Band k takes him to
+    # t=(k+1)/9; the last sends him through the far door.
+    H_PATH = [[0.0, -5.5], [0.0, -19.0]]
+    H_BANDS = [14.5 - 1.5 * k for k in range(9)]
     props = []
     z = -D / 2 + 3.0
     i = 0
     while z < D / 2 - 2.0:
-        if abs(z + 6.0) > 0.01:  # z -6 west is the real, ajar door (below)
+        if abs(z - AZ) > 0.01:  # the real one is a doorway (below)
             props.append(prop("door", [-W / 2 + 0.06, 0, z], rot=90))
         props.append(prop("door", [W / 2 - 0.06, 0, z + 2.2], rot=-90))
-        if i % 2 == 0:
-            props.append(glb("lib_basin", [W / 2 - 0.45, 0, z - 1.6], rot=-90, fallback="mopsink", collide=True))
-        if i % 3 == 1:
-            props.append(prop("drain", [0, 0.002, z + 1.0]))
-        props.append(prop("fluoro", [0, H - 0.06, z], w=1.2, d=0.25))
         z += 4.5
         i += 1
-    props.append(prop("figure", [0, 0, -D / 2 + 1.2], rot=180, face="blur", tie=True, name="manager"))  # facing away, never closer
-    props.append(prop("slip", [-0.7, 0.004, 4.0], rot=-30))
+    # basins and sinks between the east doors (frames at z+2.2 +- 0.51)
+    for bz in (-10.55, 2.95, 11.95):
+        props.append(glb("lib_basin", [W / 2 - 0.25, 0, bz], rot=-90, fallback="mopsink", collide=True))
+    props.append(prop("mopsink", [-W / 2 + 0.4, 0, -12.75]))
+    props.append(prop("mopsink", [1.05, 0, D / 2 - 0.45]))  # behind him once the entry shuts: a dead end with a mop sink (Doc 3 MG-03 H)
+    # Doc 2 S4_H_IMG_IN: a mop bucket and a hand truck, in the first frame
+    props.append(prop("mopbucket", [-1.05, 0, 9.1], rot=20))
+    props.append(prop("handtruck", [1.22, 0, 7.0], rot=-80))
+    # floor drains down the middle, standing water round them, steam off one
+    for dz, pw, pd, seed in ((12.4, 1.1, 0.8, 3), (4.0, 1.5, 0.9, 7), (-9.5, 1.2, 0.75, 11)):
+        props.append(prop("drain", [0, 0.002, dz]))
+        props.append(prop("puddle", [0.15, 0, dz - 0.2], w=pw, d=pd, seed=seed))
+    props.append(prop("puddle", [-0.9, 0, 0.6], w=0.9, d=0.5, seed=19))
+    props.append(prop("puddle", [0.7, 0, -14.2], w=1.0, d=0.6, seed=23))
+    props.append(prop("steam", [0, 0, 4.0], w=0.6, h=1.4))
+    # THE MANAGER: facing away (rot 180, face: false keeps it), no body to
+    # bump: nobody ever gets near him.
+    props.append(prop("manager", [H_PATH[0][0], 0, H_PATH[0][1]], rot=180, face="blur", tie=True, name="manager"))
+    # what he leaves at the foot of the door he goes through (hidden until then)
+    props.append(prop("evidence", [0.05, 0.002, -16.8], rot=168, name="evidence_h", hidden=True))
+    props.append(prop("slip", [-1.22, 0.004, AZ + 0.32], rot=-30))
     props.append(prop("clock", [W / 2 - 0.03, 2.3, 8.2], rot=-90))  # C8: the same clock, between two doors
     props.append(glb("lib_breaker", [-W / 2 + 0.12, 1.1, 10.5], rot=90, fallback=None))
-    # Exposed services down the ceiling: two pipe runs and a cable tray.
-    for z in range(int(-D / 2) + 3, int(D / 2) - 2, 6):
-        props.append(prop("pipe", [0.95, H - 0.22, z], rot=90, len=6.0, r=0.09))
-        props.append(prop("pipe", [-0.85, H - 0.3, z], rot=90, len=6.0, r=0.05, mat="lp_dark"))
-    lights = [{"type": "point", "pos": [0, H - 0.3, zz], "color": "#dfe6dc", "intensity": 7, "distance": 9, "flicker": 0.3 if zz in (-5, 10) else 0} for zz in range(-15, 16, 5)]
+    # Exposed services down the ceiling: two pipe runs.
+    for pz in range(int(-D / 2) + 3, int(D / 2) - 2, 6):
+        props.append(prop("pipe", [0.95, H - 0.22, pz], rot=90, len=6.0, r=0.09))
+        props.append(prop("pipe", [-0.85, H - 0.3, pz], rot=90, len=6.0, r=0.05, mat="lp_dark"))
+    # Caged bulbs, steady (KLING H), warm enough to turn the grey block beige.
+    bulb = "#ecdcbc"
+    lights = []
+    for lz in range(-15, 16, 5):
+        props.append(prop("cagebulb", [0, H, lz], drop=0.16))
+        lights.append({"type": "point", "pos": [0, H - 0.42, lz], "color": bulb, "intensity": 7, "distance": 9.5})
+    # over the far door: dark until he has gone through it
+    props.append(prop("cagebulb", [0, H, -17.55], drop=0.12, lit=False, name="end_cage_off"))
+    props.append(prop("cagebulb", [0, H, -17.55], drop=0.12, name="end_cage_on", hidden=True))
+    lights.append({"type": "point", "pos": [0, H - 0.4, -17.4], "color": bulb, "intensity": 6, "distance": 6, "id": "end_bulb", "off": True})
+    # the ajar door: cold light through its gap, lying on the wet floor
+    lights.append({"type": "point", "pos": [-1.35, 0.7, AZ + 0.35], "color": "#bccbda", "intensity": 4.2, "distance": 3.6, "id": "ajar_spill"})
+    props.append(prop("lightspill", [-W / 2 + 0.02, 0, AZ + 0.3], rot=90, w=0.4, w2=1.3, len=1.5, color="#c4d2e0", strength=0.4))
     rec = {
         "name": "THE FLOOR",
         "size": [W, H, D],
         "floor": "concrete_wet", "wall": "cinderblock", "ceiling": "concrete",
         "tile": {"floor": 2.0, "wall": 1.6, "ceiling": 2.0},
         "skirt": {"mat": "paint_green", "h": 1.2, "t": 0.02, "tile": 1.6},
-        "ambient": {"color": "#dfe6dc", "intensity": 0.14},
-        "sun": {"from": [0.6, 4.5, 20.0], "color": "#dfe6dc", "intensity": 0.7},
+        "ambient": {"color": "#e2d9c6", "intensity": 0.12},
+        "sun": {"from": [0.6, 4.5, 20.0], "color": "#e6dcc6", "intensity": 0.6},
         "lights": lights,
-        "fog": {"color": "#101211", "near": 6, "far": 30},
-        "spawn": [0, 15.5, 0],
+        # the vanishing point further away than the architecture supports
+        "fog": {"color": "#45423a", "near": 4, "far": 38},
+        "spawn": [0, 16.4, 0],
         "props": props,
+        "boxes": [],
         "footstep": {"filterHz": 900, "gain": 0.1},
+        "actors": {"manager": {"path": H_PATH, "face": False}},
     }
+    # The ajar door is set back between two piers, so walking down the
+    # corridor -- even along the wall -- never brushes its zone: it has to
+    # be stepped into.
+    for z0, z1 in ((AZ - 1.15, AZ - 0.58), (AZ + 0.58, AZ + 1.15)):
+        rec["boxes"].append({"min": [-W / 2, 0, z0], "max": [-W / 2 + 0.62, 1.2, z1], "mat": "paint_green", "tile": 1.6})
+        rec["boxes"].append({"min": [-W / 2, 1.2, z0], "max": [-W / 2 + 0.62, H, z1], "mat": "cinderblock", "tile": 1.6})
     rec["shots"] = shots_for(rec, out_dist=4.0, leave_dist=14.0, loop_seconds=26.0)
     door(rec, "front", "S", 0.0, w=1.2, h=2.2, kind="door", mat="lp_grey")
-    door(rec, "far", "N", 0.0, w=1.2, h=2.2, kind="door", locked=True, mat="lp_grey")
-    # one door ajar among the identical ones (Harlowe's)
-    door(rec, "ajar", "W", -6.0, w=0.9, h=2.1, kind="door", locked=True, ajar=0.22, mat="lp_beige", hinge="L")
+    door(rec, "far", "N", 0.0, w=1.2, h=2.2, kind="door", locked=True, mat="lp_beige", panel="lp_dark")
+    # one door ajar among the identical ones (Harlowe's): the same beige
+    # leaf as the rest, left a hand's width open
+    door(rec, "ajar", "W", AZ, w=0.9, h=2.1, kind="door", locked=True, ajar=0.3, mat="lp_beige", panel="lp_dark", hinge="R")
     rec["entry"] = "front"
-    zone(rec, "far_end", [0.0, -15.0], r=0.75, ring=4.0, label_at=[0.0, 2.3, -16.6])
-    zone(rec, "ajar", [-0.85, -6.0], r=0.55, ring=2.6, label_at=[-1.4, 2.35, -6.0])
+    # The bands that keep him 20 m ahead (scenes.json beatZones). A box
+    # zone fires on being stood in. The suite asks every beat zone to carry
+    # a label; the director fades a label in as 1 - smoothstep(r + 0.3,
+    # ring, distance), so r + 0.3 < ring <= 0 holds it at zero at every
+    # distance and nothing ever shows.
+    # Each band runs from its line to the far wall, so it cannot be stepped
+    # over: a long frame (a hitch, the dev autopilot at 3x) used to carry
+    # the candidate across a 0.6 m band unseen, and a missed band_8 left
+    # the manager standing at the end, let the candidate walk right up to
+    # him and never armed TAKE THE PAPERS. Bands crossed in one frame fire
+    # in order; the last actor run wins, so he still only moves away.
+    for k, bz in enumerate(H_BANDS):
+        zone(rec, "band_%d" % k, [0.0, bz], r=-0.8, ring=-0.1, box=[[-W / 2, -D / 2], [W / 2, bz + 0.3]], silent=True)
+    # TAKE THE PAPERS: the evidence on the floor at the far door, once he has gone through it
+    zone(rec, "far_end", [0.0, -16.35], r=0.7, ring=4.0, label_at=[0.0, 1.35, -16.8], armAfter="band_%d" % (len(H_BANDS) - 1))
+    # TAKE THE SIDE DOOR: stepped into, between the piers
+    zone(rec, "ajar", [-1.15, AZ], r=0.38, ring=2.6, label_at=[-1.35, 2.4, AZ])
     return rec
 
 
