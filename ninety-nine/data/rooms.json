@@ -13700,7 +13700,7 @@
    "name": "THE DELIVERY",
    "size": [
     40.0,
-    10.0,
+    16.0,
     50.0
    ],
    "floor": "concrete",
@@ -13867,9 +13867,9 @@
     }
    ],
    "fog": {
-    "color": "#6d7279",
-    "near": 7,
-    "far": 46
+    "color": "#666b72",
+    "near": 5,
+    "far": 40
    },
    "boxes": [
     {
@@ -14692,20 +14692,20 @@
      "type": "worklamp",
      "pos": [
       0.0,
-      9.6,
+      15.6,
       -24.35
      ],
-     "drop": 6.2,
+     "drop": 12.2,
      "name": "docklamp_dark"
     },
     {
      "type": "worklamp",
      "pos": [
       0.0,
-      9.6,
+      15.6,
       -24.35
      ],
-     "drop": 6.2,
+     "drop": 12.2,
      "lit": true,
      "name": "docklamp_lit",
      "hidden": true
@@ -14747,20 +14747,20 @@
      "type": "worklamp",
      "pos": [
       -6.3,
-      9.6,
+      15.6,
       -23.75
      ],
-     "drop": 7.3,
+     "drop": 13.3,
      "name": "sortlamp_dark"
     },
     {
      "type": "worklamp",
      "pos": [
       -6.3,
-      9.6,
+      15.6,
       -23.75
      ],
-     "drop": 7.3,
+     "drop": 13.3,
      "lit": true,
      "name": "sortlamp_lit",
      "hidden": true
@@ -14822,7 +14822,7 @@
       7.6,
       -16
      ],
-     "hang": 2.4
+     "hang": 8.6
     },
     {
      "type": "highbay",
@@ -14831,7 +14831,7 @@
       7.6,
       -6
      ],
-     "hang": 2.4
+     "hang": 8.6
     },
     {
      "type": "highbay",
@@ -14840,7 +14840,7 @@
       7.6,
       8
      ],
-     "hang": 2.4
+     "hang": 8.6
     },
     {
      "type": "highbay",
@@ -14849,7 +14849,7 @@
       7.6,
       -16
      ],
-     "hang": 2.4
+     "hang": 8.6
     },
     {
      "type": "highbay",
@@ -14858,7 +14858,7 @@
       7.6,
       -6
      ],
-     "hang": 2.4
+     "hang": 8.6
     },
     {
      "type": "highbay",
@@ -14867,7 +14867,7 @@
       7.6,
       8
      ],
-     "hang": 2.4
+     "hang": 8.6
     },
     {
      "type": "highbay",
@@ -14876,7 +14876,7 @@
       7.6,
       -16
      ],
-     "hang": 2.4
+     "hang": 8.6
     },
     {
      "type": "highbay",
@@ -14885,7 +14885,7 @@
       7.6,
       -6
      ],
-     "hang": 2.4
+     "hang": 8.6
     },
     {
      "type": "highbay",
@@ -14894,7 +14894,7 @@
       7.6,
       8
      ],
-     "hang": 2.4
+     "hang": 8.6
     }
    ],
    "footstep": {
@@ -17353,15 +17353,15 @@
      "to": {
       "pos": [
        0,
-       1.75,
-       7.6
+       2.05,
+       8.2
       ],
       "look": [
        0,
-       0.95,
+       0.8,
        -7.8
       ],
-      "fov": 56
+      "fov": 58
      },
      "seconds": 10.0,
      "ease": "inout"
@@ -17802,6 +17802,18 @@
      },
      "seconds": 1.8,
      "ease": "inout"
+    },
+    "entry": {
+     "pos": [
+      5.6,
+      1.6,
+      -4.4
+     ],
+     "look": [
+      -0.6,
+      1.0,
+      1.6
+     ]
     }
    },
    "doors": [

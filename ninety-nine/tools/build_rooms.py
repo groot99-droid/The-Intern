@@ -826,7 +826,7 @@ def mailroom():
     behind the counter: over the deliveries door (DELIVER, through to the
     boardroom) and over the sorting table with the box cutter on it (OPEN
     THE BOX). Doc 1 §5 S8, Doc 2 S8_C."""
-    W, H, D = 40.0, 10.0, 50.0
+    W, H, D = 40.0, 16.0, 50.0
     props = []
     rnd = random.Random(8)
     for x in range(-16, 17, 4):
@@ -855,13 +855,13 @@ def mailroom():
     # plate before it, a lamp over it. OPEN THE BOX: the sorting table to its
     # left under a work lamp, pigeonholes against the wall. Both lamps are
     # dark until he has the package (scenes.json S8 C beat zone `counter`).
-    props.append(prop("worklamp", [0.0, 9.6, -24.35], drop=6.2, name="docklamp_dark"))
-    props.append(prop("worklamp", [0.0, 9.6, -24.35], drop=6.2, lit=True, name="docklamp_lit", hidden=True))
+    props.append(prop("worklamp", [0.0, 15.6, -24.35], drop=12.2, name="docklamp_dark"))
+    props.append(prop("worklamp", [0.0, 15.6, -24.35], drop=12.2, lit=True, name="docklamp_lit", hidden=True))
     props.append(prop("sortingtable", [-6.3, 0, -23.75], w=2.0, d=0.9, name="sortingtable"))
     props.append(prop("boxcutter", [-5.72, 0.903, -23.55], rot=30, name="boxcutter"))
     props.append(prop("soggypackage", [-6.35, 0.9, -23.72], rot=-8, open=True, name="openbox", hidden=True))
-    props.append(prop("worklamp", [-6.3, 9.6, -23.75], drop=7.3, name="sortlamp_dark"))
-    props.append(prop("worklamp", [-6.3, 9.6, -23.75], drop=7.3, lit=True, name="sortlamp_lit", hidden=True))
+    props.append(prop("worklamp", [-6.3, 15.6, -23.75], drop=13.3, name="sortlamp_dark"))
+    props.append(prop("worklamp", [-6.3, 15.6, -23.75], drop=13.3, lit=True, name="sortlamp_lit", hidden=True))
     props.append(prop("pigeonholes", [-9.4, 0, -24.72], w=2.4, h=1.9, d=0.42))
     props.append(prop("boxtower", [-3.9, 0, -24.3], rot=8, n=2))
     props.append(prop("boxtower", [-3.4, 0, -23.5], rot=31, n=1))
@@ -871,7 +871,7 @@ def mailroom():
     lights = []
     for fx in (-12, 0, 12):
         for fz in (-16, -6, 8):
-            props.append(prop("highbay", [fx, 7.6, fz], hang=2.4))
+            props.append(prop("highbay", [fx, 7.6, fz], hang=8.6))
             lights.append({"type": "point", "pos": [fx, 7.1, fz], "color": "#e6ecff", "intensity": 30, "distance": 22, "flicker": 0.15 if (fx, fz) == (12, -16) else 0})
     lights.append({"type": "point", "pos": [0.0, 2.9, -23.9], "color": "#ffcf96", "intensity": 16, "distance": 9, "id": "docklamp", "off": True})
     lights.append({"type": "point", "pos": [-6.3, 1.95, -23.5], "color": "#ffcf96", "intensity": 16, "distance": 8, "id": "sortlamp", "off": True})
@@ -885,7 +885,7 @@ def mailroom():
         "ambient": {"color": "#dfe6f0", "intensity": 0.12},
         "sun": {"from": [4.0, 9.0, 26.0], "color": "#e6ecff", "intensity": 0.45},
         "lights": lights,
-        "fog": {"color": "#6d7279", "near": 7, "far": 46},
+        "fog": {"color": "#666b72", "near": 5, "far": 40},
         "boxes": [
             # the steel plate before the deliveries door
             {"min": [-1.1, 0, -D / 2], "max": [1.1, 0.012, -D / 2 + 1.3], "mat": "grate", "floor": True, "collide": False, "tile": 1.0},
@@ -1331,7 +1331,7 @@ def boardroom():
     # ASSIMILATION: the camera leaves him standing at the head -- his face the
     # blurred texture map -- and pulls back down the length of the table,
     # resolving on the twelve, him, the empty chair with the slip, the package.
-    s["ending"] = {"from": pose([0.75, 1.52, -5.7], [0.8, 1.48, -7.6], fov=40), "to": pose([0, 1.75, 7.6], [0, 0.95, -7.8], fov=56), "seconds": 10.0, "ease": "inout"}
+    s["ending"] = {"from": pose([0.75, 1.52, -5.7], [0.8, 1.48, -7.6], fov=40), "to": pose([0, 2.05, 8.2], [0, 0.8, -7.8], fov=58), "seconds": 10.0, "ease": "inout"}
     # RETAINED: the same, shorter and lower, the resealed package kept in frame.
     s["retained"] = {"from": pose([0.75, 1.52, -5.7], [0.8, 1.48, -7.6], fov=40), "to": pose([0.2, 1.4, 4.6], [0, 0.85, -6.0], fov=50), "seconds": 7.0, "ease": "inout"}
     rec["shots"] = s
@@ -1369,6 +1369,8 @@ def pending_room():
     # sitting down to wait: beside the chair, a quarter turn, down into it (two
     # quarter turns, never a half: a carried look that swings through 180 flips)
     s["sit"] = {"from": pose([-0.9, EYE, 0.5], [-0.9, 1.0, 3.5]), "to": pose([-0.75, 1.15, 1.2], [-0.2, 0.8, 1.2], fov=52), "seconds": 1.8, "ease": "inout"}
+    # what he sees coming back in through the inner door (for previews)
+    s["entry"] = pose([5.6, EYE, -4.4], [-0.6, 1.0, 1.6])
     rec["shots"] = s
     rec["entry"] = "inner"
     rec["zones"] = []
