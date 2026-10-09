@@ -154,13 +154,24 @@ export function createSfx(audio) {
       if (realFile && audio.playOneShot) {
         // opts (e.g. MG-02 H's per-push `gain`) used to be dropped on this
         // path, so "each push fractionally quieter" never happened.
-        audio.playOneShot(realFile, opts || {});
+        const o = opts || {};
+        audio.playOneShot(realFile, typeof o.volume === 'number' ? { ...o, gain: (typeof o.gain === 'number' ? o.gain : 1) * o.volume } : o);
         return;
       }
 
       const cue = CUES[name];
       if (!cue) {
         console.debug(`sfx.js: unknown cue "${name}"`);
+        return;
+      }
+      // `volume` scales any synthesized cue (a door closing 20 m off is a
+      // click); a cue's own `gain` option, where it has one, is its level
+      if (opts && typeof opts.volume === 'number' && opts.volume !== 1) {
+        const g = ctx.createGain();
+        g.gain.value = Math.max(0, opts.volume);
+        g.connect(bus);
+        cue(ctx, g, opts);
+        setTimeout(() => { try { g.disconnect(); } catch (e) { /* already gone */ } }, 6000);
         return;
       }
       cue(ctx, bus, opts);

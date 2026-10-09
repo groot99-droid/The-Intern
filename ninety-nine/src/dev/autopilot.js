@@ -42,6 +42,7 @@ export function startAutopilot({ director, stage, plan = '', seed = 'C', bailAt 
 
   // ---- the navigation grid ---------------------------------------------------
 
+  const _p = new THREE.Vector3();
   function buildGrid(inst) {
     const rec = inst.rec;
     const [W, , D] = rec.size;
@@ -55,6 +56,10 @@ export function startAutopilot({ director, stage, plan = '', seed = 'C', bailAt 
     const rotOnly = new THREE.Matrix4().extractRotation(inst.matrix);
     const worldDirs = dirs.map((d) => d.clone().applyMatrix4(rotOnly));
     const down = new THREE.Vector3(0, -1, 0);
+    // a ray cast from inside a box misses its faces, so a cell whose centre
+    // is inside a chair or a partition would read as open: test that apart
+    const boxes = walls.map((w) => new THREE.Box3().setFromObject(w).expandByScalar(0.04)).filter((b) => !b.isEmpty());
+    const inBox = (x, y, z) => { _p.set(x, y, z); for (const b of boxes) if (b.containsPoint(_p)) return true; return false; };
     for (let ix = 0; ix < nx; ix++) {
       for (let iz = 0; iz < nz; iz++) {
         const lx = -W / 2 + (ix + 0.5) * CELL, lz = -D / 2 + (iz + 0.5) * CELL;
@@ -63,6 +68,7 @@ export function startAutopilot({ director, stage, plan = '', seed = 'C', bailAt 
         const fh = ray.intersectObjects(floors, false);
         if (!fh.length) continue;
         const fy = fh[0].point.y;
+        if (inBox(v.x, fy + 0.45, v.z) || inBox(v.x, fy + 1.0, v.z)) continue;
         let ok = true;
         for (const h of [0.45, 1.0]) {
           const o = new THREE.Vector3(v.x, fy + h, v.z);
@@ -256,7 +262,10 @@ export function startAutopilot({ director, stage, plan = '', seed = 'C', bailAt 
     if (goal.kind === 'exit') {
       // route to the doorway, then through it
       const key = `exit:${goal.point.map((n) => n.toFixed(1)).join(',')}`;
-      if (!route || route.key !== key) { route = planTo(goal.point, goal.inst); route.key = key; }
+      // the grid was built with the door shut across it: build it again now
+      // it is open (and once more a second later if the leaf still blocked)
+      if (route && route.failed && route.key === key && (route.age = (route.age || 0) + dt) > 1.0) route = null;
+      if (!route || route.key !== key) { if (goal.inst) grids.delete(goal.inst.id); route = planTo(goal.point, goal.inst); route.key = key; }
     } else if (goal.kind === 'conn' || goal.kind === 'enter') {
       route = { key: goal.kind, points: [past(goal.point, goal.yaw, goal.kind === 'enter' ? 2.6 : 0.8)], i: 0 };
     } else if (!swim) {

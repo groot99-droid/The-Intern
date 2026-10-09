@@ -115,6 +115,9 @@ html, body {
   text-transform: uppercase;
   color: var(--company-ink);
   text-shadow: 0 1px 8px rgba(0, 0, 0, 0.9), 0 0 2px rgba(0, 0, 0, 0.9);
+  /* a soft dark halo, so the words hold over a blown-out wall (S1 H) */
+  padding: 0.45rem 1.4rem;
+  background: radial-gradient(ellipse closest-side, rgba(0, 0, 0, 0.42), rgba(0, 0, 0, 0.22) 60%, rgba(0, 0, 0, 0));
   white-space: nowrap;
   opacity: 0;
   will-change: transform, opacity;

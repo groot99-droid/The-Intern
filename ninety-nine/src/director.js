@@ -94,7 +94,8 @@ export function createDirector({ manifest, endings, state, stage, audio = null, 
   // ---- props, lights, screens ------------------------------------------------
 
   function setVisible(inst, name, on) {
-    const g = inst && inst.room.named.get(name);
+    if (!inst) return;
+    const g = inst.room.named.get(name) || (inst.room.boxesById && inst.room.boxesById.get(name));
     if (g) g.visible = on;
   }
   function setLight(inst, id, on) {
@@ -152,22 +153,27 @@ export function createDirector({ manifest, endings, state, stage, audio = null, 
     return { pos: [c.x, eye === null ? c.y : eye, c.z], look: targetWorld, fov: stage.camera.fov, space: 'world' };
   }
 
+  let carriedDepth = 0;
   async function carried(fn) {
-    const was = player.isEnabled();
+    const was = carriedDepth > 0 ? true : player.isEnabled();
+    carriedDepth++;
     player.disable();
     stage.setPlayerActive(false);
     try { await fn(); } finally {
-      if (!gone()) {
+      carriedDepth--;
+      // nested carried beats (a `together` group) hand the camera on
+      // without giving it back: re-enabling snaps him to standing height
+      if (!gone() && carriedDepth === 0) {
         stage.releaseShot();
         if (was || scene) { player.enable(); stage.setPlayerActive(true); }
       }
     }
   }
 
-  async function runBeats(beats, inst) {
+  async function runBeats(beats, inst, ctx = {}) {
     for (const b of beats || []) {
       if (gone()) return;
-      if (b.sfxCue) sfxPlay(b.sfxCue);
+      if (b.sfxCue) sfxPlay(b.sfxCue, b.sfxOpts);
       if (b.oneShot && audio) audio.playOneShot(b.oneShot);
       if (b.caption) captions.show(b.caption, { holdMs: b.holdMs || 3000, className: b.className || '' });
       if (b.rattle) { const d = inst.room.doors.get(b.rattle); if (d) d.rattle(); }
@@ -199,14 +205,24 @@ export function createDirector({ manifest, endings, state, stage, audio = null, 
       if (b.sit) {
         const sit = b.sit === true ? {} : b.sit;
         await carried(async () => {
-          const c = stage.camera.position;
+          const c = stage.camera.position.clone();
           const fwd = new THREE.Vector3(); stage.camera.getWorldDirection(fwd); fwd.y = 0; fwd.normalize();
-          const feet = c.y - player.eyeHeight - 0.0;
-          const eye = feet + (sit.eye || 1.12);
-          const look = [c.x + fwd.x * 3, eye - 0.15, c.z + fwd.z * 3];
-          await stage.carry({ pos: [c.x, eye, c.z], look, space: 'world' }, { seconds: sit.seconds || 1.2 });
-          await wait(sit.holdMs || 1800);
-          if (sit.stand !== false) await stage.carry({ pos: [c.x, feet + player.eyeHeight, c.z], look: [look[0], feet + player.eyeHeight - 0.1, look[2]], space: 'world' }, { seconds: 1.0 });
+          const feet = c.y - player.eyeHeight;
+          const seat = sit.into && ctx.zone && ctx.zone.seatWorld;
+          if (seat) {
+            // into the chair he walked up to: turn round and sit down in it
+            const eye = seat.pos[1] + (sit.eye || 1.12);
+            await stage.carry({ pos: [seat.pos[0], eye, seat.pos[2]], look: [seat.look[0], eye - 0.15, seat.look[2]], space: 'world' }, { seconds: sit.seconds || 1.6 });
+            await wait(sit.holdMs || 1800);
+            // and up again where he stood, facing the way he came in
+            if (sit.stand !== false) await stage.carry({ pos: [c.x, feet + player.eyeHeight, c.z], look: [seat.look[0], feet + player.eyeHeight - 0.1, seat.look[2]], space: 'world' }, { seconds: 1.2 });
+          } else {
+            const eye = feet + (sit.eye || 1.12);
+            const look = [c.x + fwd.x * 3, eye - 0.15, c.z + fwd.z * 3];
+            await stage.carry({ pos: [c.x, eye, c.z], look, space: 'world' }, { seconds: sit.seconds || 1.2 });
+            await wait(sit.holdMs || 1800);
+            if (sit.stand !== false) await stage.carry({ pos: [c.x, feet + player.eyeHeight, c.z], look: [look[0], feet + player.eyeHeight - 0.1, look[2]], space: 'world' }, { seconds: 1.0 });
+          }
         });
       }
       if (b.moveTo) {
@@ -223,6 +239,9 @@ export function createDirector({ manifest, endings, state, stage, audio = null, 
       if (b.shot) await carried(() => shotFromHere(inst, b.shot));
       if (b.ride) await rideCab(inst, b.ride);
       if (b.shake) await carried(() => stage.carry(cameraLookPose(lookPoint()), { seconds: b.shake.seconds || 0.8, shake: b.shake.amount || 0.03 }));
+      // several carried beats as one move: sit {stand: false}, a thud, a
+      // look, then stand -- without the controls snapping him up between
+      if (b.together) await carried(() => runBeats(b.together, inst, ctx));
       if (b.waitMs) await wait(b.waitMs);
     }
   }
@@ -250,23 +269,29 @@ export function createDirector({ manifest, endings, state, stage, audio = null, 
     const a = inst.room.actors[name];
     if (!a) return;
     const speed = spec.speed || 0.6;
-    const from = spec.from === undefined ? 0 : spec.from;
+    // `from: 'here'` carries on from wherever he stands now
+    const from = spec.from === 'here' ? (a.t === undefined ? 0 : a.t) : spec.from === undefined ? 0 : spec.from;
     const to = spec.to === undefined ? 1 : spec.to;
     actorRuns = actorRuns.filter((r) => r.actor !== a);
-    actorRuns.push({ inst, actor: a, t: from, to, rate: speed / Math.max(0.1, a.length * Math.abs(to - from)) * Math.abs(to - from), dir: Math.sign(to - from) || 1, stopNear: spec.stopNear || 0 });
+    // rate in path-fraction per second: `speed` metres per second along a path `length` long
+    actorRuns.push({ inst, actor: a, t: from, to, rate: speed / Math.max(0.1, a.length), dir: Math.sign(to - from) || 1, stopNear: spec.stopNear || 0, resumeAt: spec.resumeAt || (spec.stopNear ? spec.stopNear + 0.8 : 0), held: false });
     a.set(from);
+    a.t = from;
   }
 
   // The freight cab: it really goes down. The cab (and the candidate in it)
   // moves; the connector it was entered from is gone above.
-  function rideCab(inst, { drop = 14, seconds = 12, shake = 0.012 } = {}) {
+  // `stops`: [{at: 0..1, show, hide, sfxCue, light, caption}] -- beats run
+  // as the ride passes them (the floor indicator counting down), inside one
+  // continuous eased drop and one motor cue.
+  function rideCab(inst, { drop = 14, seconds = 12, shake = 0.012, stops = [], motor = true } = {}) {
     return carried(() => new Promise((resolve) => {
-      sfxPlay('elevator-motor');
+      if (motor) sfxPlay('elevator-motor');
       const m0 = inst.matrix.clone();
       const y0 = m0.elements[13];
       const camY0 = stage.camera.position.y;
       stage.carry(cameraLookPose(lookPoint()), { seconds: 0.01 });
-      ride = { inst, m0, y0, camY0, drop, seconds, shake, t: 0, resolve };
+      ride = { inst, m0, y0, camY0, drop, seconds, shake, t: 0, resolve, stops: stops.slice().sort((a, b) => a.at - b.at) };
     }));
   }
   function stepRide(dt) {
@@ -279,6 +304,7 @@ export function createDirector({ manifest, endings, state, stage, audio = null, 
     m.elements[13] = r.y0 + dy;
     world.move(r.inst, m);
     stage.camera.position.y = r.camY0 + dy + Math.sin(stage.elapsed() * 31) * r.shake * (1 - Math.abs(2 * u - 1));
+    while (r.stops.length && u >= r.stops[0].at) runBeats([r.stops.shift()], r.inst);
     if (u >= 1) { ride = null; r.resolve(); }
   }
 
@@ -291,12 +317,18 @@ export function createDirector({ manifest, endings, state, stage, audio = null, 
     dest.lightLevel = 0;
     dest.lightTarget = 0;
     conn.lightLevel = 0;
-    conn.lightTarget = 1;
+    conn.lightTarget = opts.viaDark ? 0 : 1;
     const entryDoor = dest.room.doors.get(dest.entryName);
     if (entryDoor) entryDoor.open(0.01);
     const exitDoor = fromInst.room.doors.get(exitName);
-    const L = { from: fromInst, conn, dest, exitName, seal1: false, seal2: false, boundary: false, enteredConn: false, opts };
+    const L = { from: fromInst, conn, dest, exitName, seal1: false, seal2: false, boundary: false, enteredConn: false, opts, hiddenSeal: null };
+    const seal = conn.room.doors.get('entry');
+    if (exitDoor && exitDoor.kind !== 'open' && seal && seal.kind !== 'open') {
+      seal.group.visible = false;
+      L.hiddenSeal = seal;
+    }
     links.push(L);
+    stage.warm();
     if (exitDoor) exitDoor.open(opts.openSeconds || 1.3);
     return L;
   }
@@ -315,6 +347,7 @@ export function createDirector({ manifest, endings, state, stage, audio = null, 
     const cur = world.current();
     if (cur === L.conn && !L.enteredConn) {
       L.enteredConn = true;
+      L.conn.lightTarget = 1;
       L.dest.lightTarget = 1;
       if (L.opts.onEnterConn) L.opts.onEnterConn(L);
     }
@@ -329,6 +362,7 @@ export function createDirector({ manifest, endings, state, stage, audio = null, 
       (seal && seal.kind !== 'open' ? seal.close(0.9) : wait(900)).then(() => {
         if (gone()) return;
         dropRoom(L.from);
+        if (L.hiddenSeal) { L.hiddenSeal.group.visible = true; L.hiddenSeal = null; }
         if (L.opts.onSeal1) L.opts.onSeal1(L);
       });
     }
@@ -426,7 +460,7 @@ export function createDirector({ manifest, endings, state, stage, audio = null, 
     });
     const startInside = new Set();
     for (const T of thresholds) for (const z of T.zones) if (zoneState(inst, z, pos, feet).inside) startInside.add(z.name);
-    scene = { id: sceneId, letter, branch, inst, meter: createFrictionMeter(branch.friction || {}), reached: new Set(), armed: false, committing: false, thresholds, startInside };
+    scene = { id: sceneId, letter, branch, inst, meter: createFrictionMeter(branch.friction || {}), reached: new Set(), armed: false, committing: false, thresholds, startInside, armedT: 0, idleDone: false, stillT: 0, stillDone: false, lastPos: null };
     for (const bz of branch.beatZones || []) beatZones.push({ inst, zone: bz.zone, label: bz.label || null, beats: bz.beat, once: bz.once !== false, done: false, scene: sceneId });
     const outs = prefetchOutcomes(sceneId, branch);
     scene.outcomes = outs;
@@ -434,7 +468,7 @@ export function createDirector({ manifest, endings, state, stage, audio = null, 
     runBeats(branch.onEnter, inst).then(() => { if (scene === mine && !gone()) mine.armed = true; });
   }
 
-  async function commit(key) {
+  async function commit(key, zone = null) {
     const sc = scene;
     if (!sc || sc.committing) return;
     sc.committing = true;
@@ -446,7 +480,7 @@ export function createDirector({ manifest, endings, state, stage, audio = null, 
     state.friction = Math.min(8, state.friction + sc.meter.value());
     state.dwell[state.sceneIndex] = sc.meter.seconds();
     sfxPlay(th.sfxCue);
-    await runBeats(th.beat, sc.inst);
+    await runBeats(th.beat, sc.inst, { zone });
     if (gone()) return;
     const next = sc.branch.next;
     if (next === 'E') { toEnding(sc, th); return; }
@@ -456,6 +490,7 @@ export function createDirector({ manifest, endings, state, stage, audio = null, 
     if (world.baseOf(nb.room) === sc.inst.base) { enterScene(next, sc.inst); return; }
     sealHeldEntry(sc.inst);
     openWay(sc.inst, th.exit, th.via, nb.room, {
+      viaDark: !!th.viaDark,
       onEnterConn: () => { captions.clear(); if (audio) audio.stopOneShots({ ms: 400 }); },
       onBoundary: (dest) => enterScene(next, dest)
     });
@@ -676,6 +711,8 @@ export function createDirector({ manifest, endings, state, stage, audio = null, 
     layer.replaceChildren();
     layer.hidden = true;
     unfollow();
+    await stage.carry(apt.rec.shots[branch.start.sit], { inst: apt, seconds: 1.0 });
+    if (gone()) return;
     // The portal answers on the screen itself (Doc 1 §5 S0): received, three
     // seconds of nothing, ACCEPTED. The window cannot be closed.
     drawScreen(apt, 'terminal', PAGES.confirm());
@@ -725,15 +762,23 @@ export function createDirector({ manifest, endings, state, stage, audio = null, 
   function tick(dt) {
     labels.update(dt);
     if (gone()) return;
-    if (ride) stepRide(dt);
+    const pos = player.position();
+    const feet = pos[1] - player.eyeHeight;
     for (const r of actorRuns.slice()) {
+      if (r.stopNear) {
+        // he stops when the candidate is near and walks on once he is clear
+        const [ax, az] = r.actor.at();
+        _v.set(ax, r.inst.rec.floorY || 0, az).applyMatrix4(r.inst.matrix);
+        const d = Math.hypot(pos[0] - _v.x, pos[2] - _v.z);
+        if (r.held ? d < r.resumeAt : d < r.stopNear) { r.held = true; continue; }
+        r.held = false;
+      }
       r.t += r.dir * r.rate * dt;
       const done = r.dir > 0 ? r.t >= r.to : r.t <= r.to;
       r.actor.set(done ? r.to : r.t);
+      r.actor.t = done ? r.to : r.t;
       if (done) actorRuns.splice(actorRuns.indexOf(r), 1);
     }
-    const pos = player.position();
-    const feet = pos[1] - player.eyeHeight;
     for (const L of links.slice()) stepLink(L, pos);
 
     // beat zones (APPLY, the street door, the package)
@@ -763,6 +808,7 @@ export function createDirector({ manifest, endings, state, stage, audio = null, 
       }
       let ringKey = null;
       let commitKey = null;
+      let commitZone = null;
       if (sc.armed && !sc.committing) {
         for (const T of sc.thresholds) {
           let best = null;
@@ -777,11 +823,12 @@ export function createDirector({ manifest, endings, state, stage, audio = null, 
             ringKey = T.key;
             if (!T.approached) { T.approached = true; if (T.th.approach) runBeats(T.th.approach, inst); }
           }
-          if (best.inside && !sc.startInside.has(best.z.name) && player.isEnabled() && !commitKey) commitKey = T.key;
+          if (best.inside && !sc.startInside.has(best.z.name) && player.isEnabled() && !commitKey) { commitKey = T.key; commitZone = best.z; }
         }
       }
       sc.meter.tick(dt, { ring: ringKey, active: sc.armed && player.isEnabled() && !document.hidden });
-      if (commitKey) commit(commitKey);
+      if (commitKey) commit(commitKey, commitZone);
+      else if (sc.armed && !sc.committing && player.isEnabled()) timers(sc, dt, pos);
     }
 
     // the ending room
@@ -793,7 +840,30 @@ export function createDirector({ manifest, endings, state, stage, audio = null, 
       if ((st.inside && player.isEnabled()) || w.t > (w.ending.autoSeconds || 90)) playEnding(w);
     }
   }
+  // `idle`: {seconds, beat, commit} -- nothing chosen for that long: the
+  // speaker repeats the line, or the choice is made for him (the cab's 25 s
+  // gives REFUSE). `stillness`: {seconds, beat} -- he has not moved for that
+  // long (S4 H: a door swings wider).
+  function timers(sc, dt, pos) {
+    const b = sc.branch;
+    if (b.idle && !sc.idleDone) {
+      sc.armedT += dt;
+      if (sc.armedT >= b.idle.seconds) {
+        sc.idleDone = true;
+        runBeats(b.idle.beat, sc.inst);
+        if (b.idle.commit && b.thresholds[b.idle.commit]) commit(b.idle.commit);
+      }
+    }
+    if (b.stillness && !sc.stillDone) {
+      const moved = sc.lastPos ? Math.hypot(pos[0] - sc.lastPos[0], pos[2] - sc.lastPos[2]) : 0;
+      sc.lastPos = pos;
+      sc.stillT = moved > 0.02 ? 0 : sc.stillT + dt;
+      if (sc.stillT >= b.stillness.seconds) { sc.stillDone = true; runBeats(b.stillness.beat, sc.inst); }
+    }
+  }
+
   stage.onFrame(tick);
+  stage.onPreFrame((dt) => { if (ride && !gone()) stepRide(dt); });
 
   // Walking into a locked door: it shudders and rattles. A branch may count
   // the pushes (S3 H: thirty-one and the building remarks on it).
@@ -815,8 +885,11 @@ export function createDirector({ manifest, endings, state, stage, audio = null, 
     if (bc && bc.door === name && scene.inst === inst) {
       const n = (bumpCounts.get(scene.id) || 0) + 1;
       bumpCounts.set(scene.id, n);
+      // `show`: {count: propName} -- more handprints on the glass as he pushes
+      for (const [k, prop] of Object.entries(bc.show || {})) if (n === Number(k)) setVisible(inst, prop, true);
       if (n === bc.at) {
         if (bc.setFlag) state.flags.add(bc.setFlag);
+        if (bc.friction) state.friction = Math.min(8, state.friction + bc.friction);
         if (bc.caption) captions.show(bc.caption, { holdMs: 3200, className: 'scene-caption-receptionist' });
       }
     }

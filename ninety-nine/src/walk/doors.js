@@ -57,8 +57,11 @@ export function buildDoor(mats, spec, { wallT = 0.3 } = {}) {
     const leafMat = spec.mat || 'lp_beige';
     const leaf = boxMesh(mats, leafMat, w - 0.02, h - 0.02, 0.05, dir * (w / 2), h / 2, 0);
     pivot.add(leaf);
-    if (spec.panel) pivot.add(boxMesh(mats, spec.panel, w * 0.45, h * 0.32, 0.055, dir * (w / 2), h * 0.66, 0));
-    pivot.add(boxMesh(mats, 'lp_dark', w - 0.24, h * 0.36, 0.06, dir * (w / 2), h * 0.25, 0)); // kick panel
+    // panels stand 2 cm proud of each face: the low-poly vertex snap moves
+    // corners on screen but not in depth, and a thinner panel loses
+    // triangles to the leaf at an angle
+    if (spec.panel) pivot.add(boxMesh(mats, spec.panel, w * 0.45, h * 0.32, 0.09, dir * (w / 2), h * 0.66, 0));
+    pivot.add(boxMesh(mats, 'lp_dark', w - 0.24, h * 0.36, 0.09, dir * (w / 2), h * 0.25, 0)); // kick panel
     for (const s of [-1, 1]) pivot.add(boxMesh(mats, 'lp_brass', 0.04, 0.04, 0.12, dir * (w - 0.12), h * 0.47, s * 0.05)); // handles both faces
     group.add(pivot);
     leaves.push(pivot);

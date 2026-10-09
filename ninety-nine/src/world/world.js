@@ -109,7 +109,16 @@ export function createWorld({ scene, mats, library, rooms, lightPool = {} }) {
       const zz = z.pos.length === 3 ? z.pos[2] : z.pos[1];
       const p = new THREE.Vector3(z.pos[0], y, zz).applyMatrix4(m);
       const la = z.labelAt ? new THREE.Vector3(...z.labelAt).applyMatrix4(m) : p.clone().setY(p.y + 1.9);
-      return { ...z, world: [p.x, p.y, p.z], labelWorld: [la.x, la.y, la.z] };
+      const out = { ...z, world: [p.x, p.y, p.z], labelWorld: [la.x, la.y, la.z] };
+      if (z.seat) {
+        // the chair this zone stands in front of: where he sits, which way he faces
+        const fy = inst.rec.floorY || 0;
+        const [sx, sz] = z.seat.pos, [fx, fz] = z.seat.face;
+        const sp = new THREE.Vector3(sx, fy, sz).applyMatrix4(m);
+        const sl = new THREE.Vector3(sx + fx * 3, fy, sz + fz * 3).applyMatrix4(m);
+        out.seatWorld = { pos: [sp.x, sp.y, sp.z], look: [sl.x, sl.y, sl.z] };
+      }
+      return out;
     });
     for (const s of inst.lights) {
       const p = new THREE.Vector3(...s.pos).applyMatrix4(m);
