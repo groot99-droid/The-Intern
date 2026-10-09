@@ -605,7 +605,7 @@ def desk_void(monitor_on=False):
         prop("slip", [0.55, 0.004, 1.4], rot=70),
         # the troffer and the dust standing in its light
         prop("fluoro", [0, H - 0.05, 0.1], w=1.2, d=0.6, name="troffer"),
-        prop("troffbeam", [0, 0, 0.1], h=H - 0.12, r0=0.55, r1=3.2, opacity=0.016),
+        prop("troffbeam", [0, 0, 0.1], h=H - 0.12, r0=0.55, r1=3.2, opacity=0.045),
         # the building's columns, standing off in the dark on a 7.2 m grid
         prop("pillar", [-7.2, 0, -7.2], w=0.6, h=H, mat="plaster_dark", cap=False, tile=1.2),
         prop("pillar", [7.2, 0, -7.2], w=0.6, h=H, mat="plaster_dark", cap=False, tile=1.2),
@@ -625,9 +625,9 @@ def desk_void(monitor_on=False):
         # Both stand dark through S5; their lamps (lampdot) come on with S6.
         prop("tubeorder", [-3.8, 0, -3.0], rot=52, h=H, name="tube"),
         prop("canister", [-3.8, 0, -3.0], rot=52, name="canister"),
-        prop("lampdot", [-3.8, 0, -3.0], rot=52, at=[0.21, 1.32, 0.255], mat="lp_sign", r=0.03, hidden=True, name="tube_lamp"),
+        prop("lampdot", [-3.8, 0, -3.0], rot=52, at=[0.21, 1.335, 0.255], mat="lp_sign", r=0.042, hidden=True, name="tube_lamp"),
         prop("callbox", [4.6, 0, 3.0], rot=-123, name="flagbox"),
-        prop("lampdot", [4.6, 0, 3.0], rot=-123, at=[-0.1, 1.62, 0.1], mat="lp_taillight", r=0.025, hidden=True, name="flag_lamp"),
+        prop("lampdot", [4.6, 0, 3.0], rot=-123, at=[-0.1, 1.64, 0.1], mat="lp_taillight", r=0.04, hidden=True, name="flag_lamp"),
     ]
     lights = [
         # the troffer: one pool, steady, soft-edged, gone four metres out
@@ -636,8 +636,8 @@ def desk_void(monitor_on=False):
         {"type": "point", "pos": [0, H - 0.45, 0.1], "color": "#fff0d8", "intensity": 1.1, "distance": 3.0},
         {"type": "point", "pos": [0.32, 1.15, 0.25], "color": "#7ad9a0", "intensity": 3, "distance": 3.5, "id": "terminal_glow", "off": not monitor_on},
         {"type": "point", "pos": [3.75, 1.15, -1.9], "color": "#8fb0d8", "intensity": 2.6, "distance": 3.5, "id": "harlowe_glow", "off": True},
-        {"type": "point", "pos": [-3.4, 1.55, -2.85], "color": "#33ff77", "intensity": 1.3, "distance": 4.0, "id": "tube_lamp", "off": True},
-        {"type": "point", "pos": [4.35, 1.75, 2.85], "color": "#ff3a2a", "intensity": 1.3, "distance": 4.0, "id": "flag_lamp", "off": True},
+        {"type": "point", "pos": [-3.4, 1.55, -2.85], "color": "#33ff77", "intensity": 1.8, "distance": 4.5, "id": "tube_lamp", "off": True},
+        {"type": "point", "pos": [4.35, 1.75, 2.85], "color": "#ff3a2a", "intensity": 1.7, "distance": 5.0, "id": "flag_lamp", "off": True},
     ]
     rec = {
         "name": "THE REQUISITION" if monitor_on else "THE DESK",
@@ -751,10 +751,13 @@ def garage(depth=44.0, open_north=False):
             side = -1.0 if x > 0 else 1.0
             hx = x + side * 0.82 * math.cos(fwd) + 0.42 * math.sin(fwd)
             hz = zc - side * 0.82 * math.sin(fwd) + 0.42 * math.cos(fwd)
-            props.append(prop("cardoor", [hx, 0, hz], rot=rot + 180, mat=ajar, len=1.1, h=0.46, y=0.3, angle=-42 * side, window=node != "lib_car_cruiser"))
+            # `tint`: the panel takes the colour the catalog car's body gets from `mat`
+            props.append(prop("cardoor", [hx, 0, hz], rot=rot + 180, mat=ajar, tint=mat, len=1.1, h=0.46, y=0.3, angle=-42 * side, window=node != "lib_car_cruiser"))
 
     def stain(x0, z0_, x1, z1):
-        boxes.append({"min": [x0, 0.001, z0_], "max": [x1, 0.004, z1], "mat": "concrete_wet", "collide": False, "shadow": False, "tile": 1.5})
+        # a soft wet blotch (props.js oilstain), not a rectangle
+        n = len([p for p in props if p["type"] == "oilstain"])
+        props.append(prop("oilstain", [(x0 + x1) / 2, 0, (z0_ + z1) / 2], rot=(n * 67) % 180, w=round((x1 - x0) * 1.5, 2), d=round((z1 - z0_) * 1.5, 2), seed=n))
 
     rec = {
         "name": "THE GARAGE",
@@ -837,14 +840,16 @@ def garage(depth=44.0, open_north=False):
         last = bz == bay_z[0]
         for x in (-8, 8):
             props.append(prop("sodium", [x, H - 0.74, bz]))
-            lights.append({"type": "point", "pos": [x, H - 1.15, bz], "color": "#ffa040", "intensity": 36, "distance": 20, "flicker": 0.6 if last else 0.08})
+            # the last row reaches no further than the lip: past it the pool is
+            # pale and blue, and its pillars must not catch the garage's orange
+            lights.append({"type": "point", "pos": [x, H - 1.15, bz], "color": "#ffa040", "intensity": 36, "distance": 12 if last else 20, "flicker": 0.6 if last else 0.08})
     # the same four cars, at the same offsets, in every bay; the same stain
     for bz in bay_z:
         car("lib_car_suv", -12.6, bz, 181.0, "lp_car2")
         car("lib_car_pastel", -7.4, bz, 178.0, "lp_car3")
         car("lib_car_cruiser", 7.4, bz, 2.0, "lp_car4", ajar="lp_beige")
         car("lib_car_sedan", 12.6, bz, -4.0, "lp_car", ajar="lp_dark")
-        stain(6.95, bz + 0.6, 7.85, bz + 1.5)
+        stain(4.75, bz - 1.3, 5.95, bz - 0.3)  # in the aisle's edge, where it is seen
     # an arrow worn into the aisle in the last bay, pointing on into the dark
     zz = bay_z[0] + 1.2
     boxes.append({"min": [-0.12, 0.001, zz], "max": [0.12, 0.004, zz + 1.8], "mat": "plaster_blown", "collide": False, "shadow": False})
@@ -880,17 +885,22 @@ def garage(depth=44.0, open_north=False):
     # (boxkit `poolkit`), so S6 H can hide it for the run and show it again.
     kit = []
     kit.append(["pool_tile", [-W / 2 - 0.3, -7.0, edge - 0.02], [W / 2 + 0.3, -0.9, edge + 0.5], 1.0])  # the pool's wall under the lip
-    kit.append(["glass_dark", [-90, -3.96, edge - 120], [90, -3.9, edge - 0.02], 5.0])
-    # the tiled floor, with a deep well under the gap where the dive is joined
-    # when he goes in (the dive room fills it: 12 x 12 below the surface)
+    # the tiled floor (dulled: polished tile threw every lamp back as a hot
+    # spot), with a deep well under the gap where the dive is joined when he
+    # goes in (the dive room fills it: 12 x 12 below the surface)
     well = (-14.4, -1.6, edge - 12.4)
+    dull = {"rough": 0.6}
     for (fx0, fx1, fz0, fz1) in ((-90, well[0], edge - 120, edge - 0.02), (well[1], 90, edge - 120, edge - 0.02), (well[0], well[1], edge - 120, well[2])):
-        kit.append(["pool_tile", [fx0, -7.2, fz0], [fx1, -7.0, fz1], 1.0])
+        kit.append(["pool_tile", [fx0, -7.2, fz0], [fx1, -7.0, fz1], 1.0, dull])
     for (wx0, wz0, wx1, wz1) in ((well[0] - 0.2, well[2], well[0], edge), (well[1], well[2], well[1] + 0.2, edge), (well[0], well[2] - 0.2, well[1], well[2])):
-        kit.append(["pool_tile", [wx0, -18.6, wz0], [wx1, -7.0, wz1], 1.0])
-    # deep below, a rusted floor grate glowing sick blue (Doc 2 S7_H_IMG_OUT)
-    kit.append(["grate", [-10.2, -7.02, edge - 27.0], [-5.8, -6.98, edge - 23.0], 1.0])
-    kit.append(["glow_water", [-10.6, -6.97, edge - 27.4], [-5.4, -6.95, edge - 22.6], 1.0])
+        kit.append(["pool_tile", [wx0, -18.9, wz0], [wx1, -7.0, wz1], 1.0, dull])
+    # THE WELL'S FLOOR, deep below the gap and seen only from the lip: a
+    # rusted grate glowing sick blue (Doc 2 S7_H_IMG_OUT), the one he will
+    # go through. Just under where the dive's own grate lands when it is joined.
+    kit.append(["pool_tile", [well[0], -18.9, well[2]], [well[1], -18.75, edge], 1.0, dull])
+    gx_ = (gap[0] + gap[1]) / 2
+    kit.append(["grate", [gx_ - 2.2, -18.76, edge - 8.2], [gx_ + 2.2, -18.7, edge - 3.8], 1.0])
+    kit.append(["glow_water", [gx_ - 2.6, -18.69, edge - 8.6], [gx_ + 2.6, -18.66, edge - 3.4], 1.0])
     prnd = random.Random(7)
     for x in range(-30, 31, 12):
         for zz in range(-8, -93, -12):
@@ -898,10 +908,14 @@ def garage(depth=44.0, open_north=False):
             if well[0] - 1 < x + jx < well[1] + 1 and edge + zz > well[2] - 1:
                 continue  # nothing stands in the well
             kit.append(["pool_tile", [round(x + jx - 0.75, 3), -7.0, edge + zz - 0.75], [round(x + jx + 0.75, 3), 40.0, edge + zz + 0.75], 1.0])
-    props.append(prop("boxkit", [0, 0, 0], boxes=kit, name="poolkit"))
-    # sourceless pale light over the water (id `pool`: S6 H turns it off for the run)
+    # still, clear water to the horizon (props.js poolwater: clear looking
+    # down from the lip, a pale sheet toward the fog), part of the kit
+    water = {"y": -3.92, "from": [-90, edge - 120], "to": [90, edge - 0.02]}
+    props.append(prop("boxkit", [0, 0, 0], boxes=kit, water=water, name="poolkit"))
+    # sourceless pale light over the water (id `pool`: S6 H turns it off for
+    # the run); the last one is down the well, on the grate
     for (px, py, pz, col, inten, dist) in ((-6.0, 2.5, edge - 4.5, "#d8eef0", 7, 16), (0, 4.0, edge - 16, "#cfe6ea", 30, 70), (-18, 6.0, edge - 38, "#b9dce2", 26, 70),
-                                            (18, 6.0, edge - 38, "#b9dce2", 26, 70), (-8.0, -5.6, edge - 25.0, "#5fd0e4", 22, 26)):
+                                            (18, 6.0, edge - 38, "#b9dce2", 26, 70), (gx_, -15.5, edge - 6.0, "#5fd0e4", 14, 9)):
         lights.append({"type": "point", "pos": [px, py, pz], "color": col, "intensity": inten, "distance": dist, "decay": 1.1, "id": "pool"})
     rec["fog"] = {"color": "#0a1618", "near": 12, "far": 85}
     rec["background"] = "#0a1618"
@@ -932,7 +946,9 @@ def garage(depth=44.0, open_north=False):
     zone(rec, "stopline", [-8.0, edge + 2.1], r=0.6, ring=2.6, box=[[gap[0], edge + 0.05], [gap[1], edge + 2.55]], label_at=[-8.0, 1.55, edge + 2.1])
     # S7 H: JUMP through the gap in the rail / TURN BACK (only once he has
     # stood at the lip: walking up to it must not read as turning back)
-    zone(rec, "edge_approach", [0.0, edge + 0.7], r=0.5, ring=0.5, box=[[-W / 2 + 0.3, edge + 0.25], [W / 2 - 0.3, edge + 1.15]], silent=True)
+    # (the strip runs 1.45 m back from the edge: up against the rail he
+    # stands ~0.75 m from it, and a low frame rate can stop him a step short)
+    zone(rec, "edge_approach", [0.0, edge + 0.85], r=0.5, ring=0.5, box=[[-W / 2 + 0.3, edge + 0.25], [W / 2 - 0.3, edge + 1.45]], silent=True)
     zone(rec, "gap", [gx, edge + 0.4], r=0.5, ring=2.6, box=[[gap[0], edge + 0.02], [gap[1], edge + 0.65]], label_at=[gx, 1.45, edge - 0.6])
     zone(rec, "turnback", [0.0, edge + 5.0], r=0.5, ring=2.4, box=[[-W / 2 + 0.3, edge + 4.55], [W / 2 - 0.3, edge + 5.5]], armAfter="edge_approach", label_at=[0.0, 2.3, edge + 5.0])
     anchor(rec, "drop", [gx, -4.3, edge - 6.0], 0, vertical=True)
