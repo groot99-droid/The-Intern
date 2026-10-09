@@ -9568,8 +9568,7 @@
       10.5
      ],
      "rot": 90,
-     "node": "lib_breaker",
-     "mat": "lp_grey"
+     "node": "lib_breaker"
     },
     {
      "type": "pipe",

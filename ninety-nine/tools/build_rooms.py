@@ -624,8 +624,7 @@ def utility_corridor():
     props.append(prop("evidence", [0.05, 0.002, -16.8], rot=168, name="evidence_h", hidden=True))
     props.append(prop("slip", [-1.22, 0.004, AZ + 0.32], rot=-30))
     props.append(prop("clock", [W / 2 - 0.03, 2.3, 8.2], rot=-90))  # C8: the same clock, between two doors
-    # (the catalog panel comes through white without its photo texture: grey steel)
-    props.append(glb("lib_breaker", [-W / 2 + 0.12, 1.1, 10.5], rot=90, fallback=None, mat="lp_grey"))
+    props.append(glb("lib_breaker", [-W / 2 + 0.12, 1.1, 10.5], rot=90, fallback=None))
     # Exposed services down the ceiling: two pipe runs.
     for pz in range(int(-D / 2) + 3, int(D / 2) - 2, 6):
         props.append(prop("pipe", [0.95, H - 0.22, pz], rot=90, len=6.0, r=0.09))
