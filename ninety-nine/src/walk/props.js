@@ -918,6 +918,10 @@ const BUILDERS = {
         };
         // ground: the forecourt and step (the tower's), the road, pavements
         add(-X, -0.3, 0, X, 0, 3.2, '#827f78');
+        // the forecourt's paving joints: seen low through the glass, a plain
+        // slab there read as a frosted panel, not as ground
+        for (let z = 0.8; z < 3.2; z += 0.8) add(-X, 0, z - 0.015, X, 0.002, z + 0.015, '#5d5b56', { seg: 8 });
+        for (let x = -X + 0.6; x < X; x += 1.2) add(x - 0.015, 0, 0, x + 0.015, 0.002, 3.2, '#5d5b56', { seg: 8 });
         add(-X, -0.3, 3.2, X, -0.15, 3.8, '#78756f');
         add(-6.4, -0.34, 3.8, 6.4, -0.3, Z, '#36373a');
         for (let z = 6; z < Z - 2; z += 5) add(-0.07, -0.3, z, 0.07, -0.296, z + 2.2, '#7a7974');
@@ -1011,7 +1015,9 @@ const BUILDERS = {
             if (door) {
               const milky = mats.get('glass');
               const clear = owned(new THREE.MeshStandardMaterial({
-                color: new THREE.Color('#c9d6da'), roughness: 0.04, metalness: 0.1,
+                // not mirror-smooth: the lobby's lamps make a soft sheen on
+                // it, not two bright points that read as lamps lit outside
+                color: new THREE.Color('#c9d6da'), roughness: o.glassRough || 0.2, metalness: 0.1,
                 transparent: true, opacity: o.glassOpacity || 0.07, depthWrite: false
               }));
               door.traverse((ch) => { if (ch.isMesh && ch.material === milky) ch.material = clear; });

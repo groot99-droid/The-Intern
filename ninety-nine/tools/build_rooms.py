@@ -383,7 +383,7 @@ def waiting_room(hostile):
 
 def threshold_corridor():
     """S3 C, THE THRESHOLD (Doc 1 §5 S3, Doc 2 S3_C): a short corridor off
-    the lobby, red carpet, a dark wood wainscot, ending in a heavy red
+    the lobby, red carpet, a dark marble wainscot, ending in a heavy red
     velvet curtain under a green ENTER sign on its 2.3 s cycle, the badge
     reader's red laser slot beside it. The other way, the lobby's glass
     doors, locked, smoked, black behind, a dead EXIT over them. He comes in
@@ -424,7 +424,7 @@ def threshold_corridor():
         "size": [W, H, D],
         "floor": "carpet_red", "wall": "plaster_dark", "ceiling": "plaster_dark",
         "tile": {"floor": 1.5, "wall": 2.0, "ceiling": 2.0},
-        "skirt": {"mat": "marble", "h": 0.92, "t": 0.03, "tile": 2.2},
+        "skirt": {"mat": "marble", "h": 0.92, "t": 0.03, "tile": 0.9},
         "cornice": {"mat": "plaster_dark", "h": 0.22, "t": 0.06},
         "ambient": {"color": "#ffe6d0", "intensity": 0.2},
         "sun": {"from": [0.5, 5.5, 8.0], "color": "#ffe0c0", "intensity": 0.7},
@@ -452,7 +452,7 @@ def threshold_corridor():
     # (0.8, 1.2) he is 7 m from the one and 4.8 m from the other, outside
     # both labels' rings.
     zone(rec, "curtain", [0.0, -6.05], r=0.6, ring=3.0, label_at=[0.0, 2.0, -6.75])
-    zone(rec, "glass", [0.0, 6.45], r=0.5, ring=2.2, box=[[-1.25, 6.05], [1.25, 6.9]], label_at=[0.0, 2.3, 6.9])
+    zone(rec, "glass", [0.0, 6.45], r=0.5, ring=2.2, box=[[-1.25, 6.05], [1.25, 6.9]], label_at=[0.0, 2.0, 6.88])
     return rec
 
 
@@ -492,16 +492,37 @@ def lobby_doors():
     door(rec, "side", "E", 3.0, w=1.2, h=2.3, kind="door", mat="lp_beige", hinge="R")
     door(rec, "service", "W", 3.8, w=1.2, h=2.2, kind="door", locked=True, mat="lp_grey", hinge="R")
     mine = list(rec["doors"])
+    dropped = []
     for d in inherited:
-        if d["wall"] == "S":
-            continue
-        if any(m["wall"] == d["wall"] and d["x"] - d["w"] / 2 < m["x"] + m["w"] / 2 + 0.3 and d["x"] + d["w"] / 2 > m["x"] - m["w"] / 2 - 0.3 for m in mine):
+        if d["wall"] == "S" or any(m["wall"] == d["wall"] and d["x"] - d["w"] / 2 < m["x"] + m["w"] / 2 + 0.3 and d["x"] + d["w"] / 2 > m["x"] - m["w"] / 2 - 0.3 for m in mine):
+            dropped.append(d["name"])
             continue
         d = {k: v for k, v in d.items() if k not in ("open", "ajar")}
         d["locked"] = True
         if any(m["name"] == d["name"] for m in mine):
             d["name"] = d["name"] + "_s1"
         rec["doors"].append(d)
+    # S1 hangs a lamp over a door (props `<door>_lamp_red|green`, light
+    # `<door>_lamp`, switched by the beats). A door of S1's that is not here
+    # takes its lamp with it, or hands it to this room's door of that name
+    # (the service door: red until TRY THE DOOR opens it), so no lamp is left
+    # on a bare wall.
+    def over(d, up, out):
+        y = d.get("y", 0) + d["h"] + up
+        return {"N": ([d["x"], y, -D / 2 + out], 0), "S": ([d["x"], y, D / 2 - out], 180),
+                "E": ([W / 2 - out, y, d["x"]], -90), "W": ([-W / 2 + out, y, d["x"]], 90)}[d["wall"]]
+    for nm in dropped:
+        to = next((m for m in mine if m["name"] == nm), None)
+        for p in [p for p in rec["props"] if str(p.get("name", "")).startswith(nm + "_lamp_")]:
+            if to:
+                p["pos"], p["rot"] = over(to, 0.26, 0.02)
+            else:
+                rec["props"].remove(p)
+        for li in [li for li in rec["lights"] if li.get("id") == nm + "_lamp"]:
+            if to:
+                li["pos"] = over(to, 0.1, 0.45)[0]
+            else:
+                rec["lights"].remove(li)
     rec["entry"] = "side"
     for p in rec["props"]:
         if p["type"] == "clock":
@@ -515,10 +536,13 @@ def lobby_doors():
     rec["props"].append(prop("slip", [fx + 0.6, 0.004, D / 2 - 1.2], rot=15))
     rec["props"].append(glb("lib_payphone", [-W / 2 + 0.75, 0, D / 2 - 0.75], rot=180, fallback=None, collide=True, mat="lp_grey"))
     # his handprints, left on the glass as he tries it, each further left
-    # (Doc 2 S3_H_IMG_OUT); shown by the TRY THE DOOR beats
+    # (Doc 2 S3_H_IMG_OUT); the first three shown by the TRY THE DOOR beats,
+    # the rest by the pushes after it (scenes.json bumpCount `show`)
     gz = D / 2 + WALL_T / 2 - 0.047
-    for i, (px, py, tilt) in enumerate(((fx - 0.42, 1.37, -8), (fx + 0.34, 1.31, 6), (fx + 0.98, 1.24, 14))):
-        rec["props"].append(prop("handprint", [px, py, gz], rot=180, tilt=tilt, flip=(i == 1), name="handprint%d" % (i + 1), hidden=True))
+    prints = ((fx - 0.42, 1.37, -8), (fx + 0.34, 1.31, 6), (fx + 0.98, 1.24, 14),
+              (fx - 0.95, 1.29, -13), (fx + 0.66, 1.52, 4), (fx - 0.21, 1.17, 9))
+    for i, (px, py, tilt) in enumerate(prints):
+        rec["props"].append(prop("handprint", [px, py, gz], rot=180, tilt=tilt, flip=(i % 2 == 1), name="handprint%d" % (i + 1), hidden=True))
     # the street through the glass: no sun, no shadow, nothing moving
     # (drawn only while the eye is in this lobby or its entry corridor, so
     # the lobby before, whose glass faces this way once joined, never sees it)
@@ -534,8 +558,11 @@ def lobby_doors():
     # TRY THE DOOR: the whole width of the glass. PART THE CURTAIN: at the
     # curtain in the far corner. Arriving by the side door at (5.7, 3.0)
     # he is 5.8 m from the one and 13.7 m from the other.
-    zone(rec, "glass", [fx, D / 2 - 0.5], r=0.5, ring=2.8, box=[[round(fx - fw / 2 - 0.1, 3), D / 2 - 0.85], [round(fx + fw / 2 + 0.1, 3), D / 2 - 0.1]], label_at=[fx, min(fh + 0.3, H - 0.45), D / 2 - 0.05])
-    zone(rec, "curtain", [-5.4, -D / 2 + 0.78], r=0.6, ring=2.6, label_at=[-5.4, 2.3, -D / 2 + 0.15])
+    # The words stand on the glass and on the velvet, low enough to stay in
+    # view until he is in the zone (over the lintel they left the top of the
+    # screen a step before the commit).
+    zone(rec, "glass", [fx, D / 2 - 0.5], r=0.5, ring=2.8, box=[[round(fx - fw / 2 - 0.1, 3), D / 2 - 0.85], [round(fx + fw / 2 + 0.1, 3), D / 2 - 0.1]], label_at=[fx, 2.05, D / 2 - 0.05])
+    zone(rec, "curtain", [-5.4, -D / 2 + 0.78], r=0.6, ring=2.6, label_at=[-5.4, 2.0, -D / 2 + 0.25])
     return rec
 
 

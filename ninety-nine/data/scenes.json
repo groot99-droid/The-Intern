@@ -286,22 +286,23 @@
               "zone": "curtain",
               "exit": "curtain",
               "via": "CN_CORRIDOR_OFFICE",
+              "viaDark": true,
               "approach": [
                 {
                   "caption": "scan.prompt",
-                  "holdMs": 2600
+                  "holdMs": 1800
                 }
               ],
               "beat": [
                 {
                   "sfxCue": "curtain-rustle",
-                  "caption": "scan.pass",
-                  "holdMs": 2400
-                },
-                {
                   "open": "curtain",
                   "seconds": 1.6,
                   "await": true
+                },
+                {
+                  "caption": "scan.pass",
+                  "holdMs": 2600
                 }
               ]
             },
@@ -343,7 +344,13 @@
             "door": "front",
             "at": 31,
             "caption": "door.counted",
-            "setFlag": "COUNTED_DOOR"
+            "setFlag": "COUNTED_DOOR",
+            "friction": 0.5,
+            "show": {
+              "6": "handprint4",
+              "14": "handprint5",
+              "22": "handprint6"
+            }
           },
           "thresholds": {
             "succumb": {
@@ -351,6 +358,7 @@
               "zone": "curtain",
               "exit": "curtain",
               "via": "CN_CORRIDOR_SERVICE",
+              "viaDark": true,
               "beat": [
                 {
                   "sfxCue": "curtain-rustle"
@@ -390,10 +398,26 @@
                   "caption": "door.violation",
                   "className": "scene-caption-receptionist",
                   "holdMs": 3400,
+                  "show": "receptionist_jaw",
                   "waitMs": 2400
                 },
                 {
+                  "hide": "receptionist_jaw"
+                },
+                {
                   "sfxCue": "door-buzz"
+                },
+                {
+                  "hide": "service_lamp_red"
+                },
+                {
+                  "show": "service_lamp_green"
+                },
+                {
+                  "light": {
+                    "id": "service_lamp",
+                    "on": true
+                  }
                 }
               ]
             }

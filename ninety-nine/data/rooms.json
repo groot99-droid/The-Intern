@@ -3390,7 +3390,7 @@
     "mat": "marble",
     "h": 0.92,
     "t": 0.03,
-    "tile": 2.2
+    "tile": 0.9
    },
    "cornice": {
     "mat": "plaster_dark",
@@ -3747,8 +3747,8 @@
      "ring": 2.2,
      "labelAt": [
       0.0,
-      2.3,
-      6.9
+      2.0,
+      6.88
      ],
      "box": [
       [
@@ -4131,6 +4131,45 @@
      "hidden": true
     },
     {
+     "type": "handprint",
+     "pos": [
+      -0.95,
+      1.29,
+      6.103
+     ],
+     "rot": 180,
+     "tilt": -13,
+     "flip": true,
+     "name": "handprint4",
+     "hidden": true
+    },
+    {
+     "type": "handprint",
+     "pos": [
+      0.66,
+      1.52,
+      6.103
+     ],
+     "rot": 180,
+     "tilt": 4,
+     "flip": false,
+     "name": "handprint5",
+     "hidden": true
+    },
+    {
+     "type": "handprint",
+     "pos": [
+      -0.21,
+      1.17,
+      6.103
+     ],
+     "rot": 180,
+     "tilt": 9,
+     "flip": true,
+     "name": "handprint6",
+     "hidden": true
+    },
+    {
      "type": "deadstreet",
      "pos": [
       0.0,
@@ -4235,7 +4274,7 @@
      "ring": 2.8,
      "labelAt": [
       0.0,
-      3.2,
+      2.05,
       5.95
      ],
      "box": [
@@ -4259,8 +4298,8 @@
      "ring": 2.6,
      "labelAt": [
       -5.4,
-      2.3,
-      -5.85
+      2.0,
+      -5.75
      ]
     }
    ],
