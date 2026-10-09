@@ -520,6 +520,428 @@ const BUILDERS = {
     return g;
   },
   // ---- polish: S0 + street -- begin (that scene's new props go between these lines) ----
+  // His desk (S0): the building's -- photoreal wood (Doc 1 §5 S0, "the desk
+  // ... photoreal"), world-tiled so the grain does not stretch per face.
+  homedesk(mats, o) {
+    const g = new THREE.Group();
+    const w = o.w || 1.5, d = o.d || 0.7, m = o.mat || 'wood', tile = o.tile || 0.9;
+    const top = box(mats, m, w, 0.04, d, 0, 0.71, 0, { collide: true });
+    applyWorldUV(top.geometry, tile);
+    g.add(top);
+    for (const [x, z] of [[-w / 2 + 0.04, -d / 2 + 0.04], [w / 2 - 0.04, -d / 2 + 0.04], [-w / 2 + 0.04, d / 2 - 0.04], [w / 2 - 0.04, d / 2 - 0.04]]) {
+      const leg = box(mats, m, 0.05, 0.71, 0.05, x, 0, z);
+      applyWorldUV(leg.geometry, tile);
+      g.add(leg);
+    }
+    const apron = box(mats, m, w - 0.1, 0.1, 0.02, 0, 0.61, -d / 2 + 0.03, { castShadow: false });
+    applyWorldUV(apron.geometry, tile);
+    g.add(apron);
+    const drawer = box(mats, m, 0.44, 0.13, 0.02, w / 2 - 0.3, 0.57, d / 2 - 0.01);
+    applyWorldUV(drawer.geometry, tile);
+    g.add(drawer);
+    g.add(box(mats, 'lp_dark', 0.09, 0.015, 0.012, w / 2 - 0.3, 0.63, d / 2 + 0.005, { castShadow: false }));
+    const body = box(mats, 'lp_dark', w, 0.72, d, 0, 0, 0, { castShadow: false });
+    body.visible = false; body.userData.collide = true; g.add(body);
+    return g;
+  },
+  // His bed (S0): low-poly like everything he owns. Head toward -z.
+  bed(mats, o) {
+    const g = new THREE.Group();
+    const w = o.w || 0.9, L = o.len || 2.0;
+    g.add(box(mats, 'lp_wood', w, 0.26, L, 0, 0.04, 0));                       // frame
+    for (const [x, z] of [[-w / 2 + 0.04, -L / 2 + 0.04], [w / 2 - 0.04, -L / 2 + 0.04], [-w / 2 + 0.04, L / 2 - 0.04], [w / 2 - 0.04, L / 2 - 0.04]]) g.add(box(mats, 'lp_dark', 0.06, 0.04, 0.06, x, 0, z));
+    g.add(box(mats, 'lp_wood', w, 0.62, 0.05, 0, 0.04, -L / 2 + 0.025));       // headboard
+    g.add(box(mats, 'lp_paper', w - 0.04, 0.18, L - 0.08, 0, 0.3, 0.02));      // mattress
+    g.add(box(mats, o.blanket || 'lp_blue', w + 0.02, 0.06, L * 0.62, 0, 0.45, L * 0.17)); // blanket, turned back
+    g.add(box(mats, o.blanket || 'lp_blue', w + 0.02, 0.2, 0.04, -0.0, 0.29, L / 2 - 0.02)); // its fall at the foot
+    g.add(box(mats, 'lp_white', w * 0.62, 0.1, 0.34, 0, 0.48, -L / 2 + 0.26)); // pillow
+    const body = box(mats, 'lp_dark', w, 0.55, L, 0, 0, 0, { castShadow: false });
+    body.visible = false; body.userData.collide = true; g.add(body);
+    return g;
+  },
+  // Light from the stairwell under a shut door: a warm line on the floor
+  // just inside it (S0: the way out, before it opens). `w` the door width.
+  doorglow(mats, o) {
+    // one additive quad, bright at the door and fading to nothing across
+    // the floor (vertex colours: black adds nothing), a little wider as it goes
+    const w = o.w || 1.1, reach = o.reach || 0.5;
+    const c = new THREE.Color(o.color || '#ffb060').multiplyScalar(o.strength || 0.55);
+    const pos = new Float32Array([-w * 0.46, 0, 0, w * 0.46, 0, 0, w * 0.62, 0, reach, -w * 0.62, 0, reach]);
+    const col = new Float32Array([c.r, c.g, c.b, c.r, c.g, c.b, 0, 0, 0, 0, 0, 0]);
+    const geo = new THREE.BufferGeometry();
+    geo.setAttribute('position', new THREE.BufferAttribute(pos, 3));
+    geo.setAttribute('color', new THREE.BufferAttribute(col, 3));
+    geo.setIndex([0, 2, 1, 0, 3, 2]);
+    const mat = new THREE.MeshBasicMaterial({ vertexColors: true, transparent: true, blending: THREE.AdditiveBlending, depthWrite: false, side: THREE.DoubleSide, fog: false });
+    mat.userData.owned = true;
+    const quad = new THREE.Mesh(geo, mat);
+    quad.position.y = 0.006;
+    const g = new THREE.Group();
+    g.add(quad);
+    return g;
+  },
+  // Dust in the CRT's light (Doc 2 S0_X: "dust in the air"): a few dozen
+  // still motes, one draw call. Box w x h x d around the prop's origin.
+  dust(mats, o) {
+    const n = o.n || 40, w = o.w || 0.5, h = o.h || 0.5, d = o.d || 0.7;
+    const pos = new Float32Array(n * 3);
+    const home = new Float32Array(n * 3);
+    let s = o.seed || 7;
+    const rnd = () => { s = (s * 16807) % 2147483647; return s / 2147483647; };
+    for (let i = 0; i < n; i++) { pos[3 * i] = (rnd() - 0.5) * w; pos[3 * i + 1] = rnd() * h; pos[3 * i + 2] = (rnd() - 0.5) * d; }
+    home.set(pos);
+    const geo = new THREE.BufferGeometry();
+    geo.setAttribute('position', new THREE.BufferAttribute(pos, 3));
+    // soft round motes, not square points: a small radial falloff as the map
+    const cv = document.createElement('canvas');
+    cv.width = cv.height = 32;
+    const cx = cv.getContext('2d');
+    const grad = cx.createRadialGradient(16, 16, 0, 16, 16, 16);
+    grad.addColorStop(0, 'rgba(255,255,255,1)');
+    grad.addColorStop(0.35, 'rgba(255,255,255,0.45)');
+    grad.addColorStop(1, 'rgba(255,255,255,0)');
+    cx.fillStyle = grad;
+    cx.fillRect(0, 0, 32, 32);
+    const tex = new THREE.CanvasTexture(cv);
+    tex.colorSpace = THREE.SRGBColorSpace;
+    const mat = new THREE.PointsMaterial({ color: new THREE.Color(o.color || '#cfe2ea'), map: tex, size: o.size || 0.006, sizeAttenuation: true, transparent: true, opacity: o.opacity || 0.55, blending: THREE.AdditiveBlending, depthWrite: false });
+    mat.userData.owned = true;
+    const pts = new THREE.Points(geo, mat);
+    // they hang in the CRT's light and drift, a few millimetres, very slowly
+    const drift = o.drift === undefined ? 0.012 : o.drift;
+    if (drift > 0) {
+      const attr = geo.getAttribute('position');
+      pts.onBeforeRender = () => {
+        const t = performance.now() / 1000;
+        for (let i = 0; i < n; i++) {
+          attr.array[3 * i] = home[3 * i] + Math.sin(t * 0.13 + i * 1.7) * drift;
+          attr.array[3 * i + 1] = home[3 * i + 1] + Math.sin(t * 0.09 + i * 2.3) * drift;
+          attr.array[3 * i + 2] = home[3 * i + 2] + Math.cos(t * 0.11 + i * 0.9) * drift;
+        }
+        attr.needsUpdate = true;
+      };
+    }
+    const g = new THREE.Group();
+    g.add(pts);
+    return g;
+  },
+  // His desk lamp (S0): low-poly like everything he owns -- a weighted base,
+  // a stem, an open cone shade. The light is the building's (C1): the
+  // inside of the shade and the bulb glow, a soft halo, and the room's own
+  // point light (placed by the room inside the shade, about y 0.27 here),
+  // which pools on the desk and climbs the wall without blowing the shade
+  // out. Shade centre at y 0.3.
+  desklamp(mats, o) {
+    const g = new THREE.Group();
+    const shadeSlot = o.shade || 'lp_beige';
+    g.add(cylinder(mats, 'lp_dark', 0.075, 0.025, 0, 0, 0, 10));
+    g.add(box(mats, 'lp_dark', 0.016, 0.24, 0.016, 0, 0.025, 0));
+    g.add(box(mats, 'lp_dark', 0.05, 0.016, 0.016, 0, 0.255, 0, { castShadow: false })); // the yoke
+    const coneGeo = new THREE.CylinderGeometry(0.065, 0.12, 0.15, 12, 1, true);
+    const outer = new THREE.Mesh(coneGeo, mats.get(shadeSlot));
+    outer.position.y = 0.3;
+    outer.castShadow = true;
+    outer.receiveShadow = true;
+    g.add(outer);
+    // inside of the shade: lit by the bulb, so it glows, warmer at the mouth
+    const inGeo = new THREE.CylinderGeometry(0.063, 0.118, 0.148, 12, 1, true);
+    const ip = inGeo.getAttribute('position');
+    const col = new Float32Array(ip.count * 3);
+    const hot = new THREE.Color(o.glow || '#ffd9a0'), dim = hot.clone().multiplyScalar(0.45);
+    for (let i = 0; i < ip.count; i++) { const c = ip.getY(i) < 0 ? hot : dim; col[3 * i] = c.r; col[3 * i + 1] = c.g; col[3 * i + 2] = c.b; }
+    inGeo.setAttribute('color', new THREE.BufferAttribute(col, 3));
+    const inMat = new THREE.MeshBasicMaterial({ vertexColors: true, side: THREE.BackSide });
+    inMat.userData.owned = true;
+    const inner = new THREE.Mesh(inGeo, inMat);
+    inner.position.y = 0.3;
+    g.add(inner);
+    const bulbMat = new THREE.MeshBasicMaterial({ color: new THREE.Color('#fff4e0') });
+    bulbMat.userData.owned = true;
+    const bulb = new THREE.Mesh(new THREE.SphereGeometry(0.028, 8, 6), bulbMat);
+    bulb.position.y = 0.27;
+    g.add(bulb);
+    // the halo around the mouth of the shade: always faces the eye
+    const cv = document.createElement('canvas');
+    cv.width = cv.height = 64;
+    const cx = cv.getContext('2d');
+    const grad = cx.createRadialGradient(32, 32, 0, 32, 32, 32);
+    grad.addColorStop(0, 'rgba(255,255,255,0.9)');
+    grad.addColorStop(0.3, 'rgba(255,255,255,0.25)');
+    grad.addColorStop(1, 'rgba(255,255,255,0)');
+    cx.fillStyle = grad;
+    cx.fillRect(0, 0, 64, 64);
+    const tex = new THREE.CanvasTexture(cv);
+    tex.colorSpace = THREE.SRGBColorSpace;
+    const haloMat = new THREE.SpriteMaterial({ map: tex, color: hot, transparent: true, opacity: o.halo === undefined ? 0.5 : o.halo, blending: THREE.AdditiveBlending, depthWrite: false });
+    haloMat.userData.owned = true;
+    const halo = new THREE.Sprite(haloMat);
+    halo.position.y = 0.24;
+    halo.scale.setScalar(o.haloSize || 0.42);
+    g.add(halo);
+    return g;
+  },
+  // A street facade (SET_STREET): the building's, so photoreal (C1: brick,
+  // stone, glass). Front faces +z (turn it with `rot`). w along the front,
+  // d deep, h tall. Upper floors get a grid of dark windows with stone sills
+  // and lintels (instanced: four draw calls for the lot); the ground floor
+  // a shopfront or a door up two steps; a cornice caps it. Wordless.
+  facade(mats, o) {
+    const g = new THREE.Group();
+    const w = o.w || 9, h = o.h || 16, d = o.d || 9, m = o.mat || 'brick';
+    const trim = o.trim || 'concrete';
+    if (o.body !== false) { // body: false dresses a wall that is already there (the street's end slab)
+      const body = box(mats, m, w, h, d, 0, 0, -d / 2, { collide: true });
+      applyWorldUV(body.geometry, o.tile || 0.5);
+      g.add(body);
+    }
+    // details cast no shadow: the sun runs down the street, along the
+    // fronts, so they would only cost shadow-pass draws
+    const add = (slot, bw, bh, bd, x, y, z, opts = {}) => {
+      const b = box(mats, slot, bw, bh, bd, x, y, z, { castShadow: false, ...opts });
+      if (!mats.isLowPoly(slot) && !mats.isGlow(slot)) applyWorldUV(b.geometry, opts.tile || 1.2);
+      g.add(b);
+      return b;
+    };
+    // pilasters at both ends and a plinth: the party walls read between blocks
+    for (const s of [-1, 1]) add(trim, 0.42, h, 0.12, s * (w / 2 - 0.21), 0, 0.06);
+    if (o.plinth !== false) add(trim, w, 0.5, 0.1, 0, 0, 0.05, { castShadow: false });
+    // cornice
+    add(trim, w + 0.2, 0.22, 0.55, 0, h - 0.62, 0.22);
+    add(trim, w + 0.1, 0.4, 0.3, 0, h - 0.4, 0.1);
+    // ground floor
+    const gf = o.ground || 'shop';
+    const gh = o.groundH || 3.6;
+    if (gf === 'shop') {
+      const sw = Math.min(w - 1.4, o.shopW || w * 0.72);
+      add('void', sw, 2.5, 0.06, 0, 0.5, 0.02, { castShadow: false });
+      add('glass_dark', sw - 0.1, 2.4, 0.03, 0, 0.55, 0.07, { castShadow: false });
+      add(trim, sw + 0.3, 0.12, 0.16, 0, 0.42, 0.06);             // stall riser cap
+      add('lp_dark', sw + 0.2, 0.08, 0.1, 0, 3.0, 0.07);          // the shop's frame head (its fittings: company)
+      for (const x of [-sw / 2, 0, sw / 2]) add('lp_dark', 0.07, 2.5, 0.1, x, 0.5, 0.07, { castShadow: false });
+      add(o.fascia || 'lp_dark', sw + 0.4, 0.55, 0.08, 0, 3.08, 0.08); // blank fascia: no name
+      // a shut roller shutter on half of them (dawn: nothing open)
+      if (o.shutter) {
+        add('lp_grey', sw - 0.1, 2.3, 0.04, 0, 0.7, 0.11, { castShadow: false });
+        for (let y = 0.9; y < 2.95; y += 0.4) add('lp_dark', sw - 0.1, 0.02, 0.05, 0, y, 0.12, { castShadow: false });
+      }
+    } else if (gf === 'door') {
+      // a residential door up two steps, off-centre
+      const dx = o.doorX === undefined ? -w * 0.22 : o.doorX;
+      add(trim, 1.8, 0.16, 0.7, dx, 0, 0.35);
+      add(trim, 1.6, 0.16, 0.4, dx, 0.16, 0.2);
+      add('void', 1.2, 2.4, 0.06, dx, 0.32, 0.02, { castShadow: false });
+      add('lp_dark', 1.0, 2.2, 0.06, dx, 0.32, 0.06);           // the door leaf
+      add('glass_dark', 0.7, 0.35, 0.02, dx, 2.3, 0.1, { castShadow: false }); // fanlight
+      add(trim, 1.6, 0.2, 0.18, dx, 2.75, 0.09);                 // door head
+      // two ground-floor windows beside it
+      for (const x of [dx + 1.9, dx + 3.5].filter((x) => x < w / 2 - 0.9)) {
+        add('void', 1.0, 1.6, 0.06, x, 1.0, 0.02, { castShadow: false });
+        add('glass_dark', 0.92, 1.52, 0.03, x, 1.04, 0.06, { castShadow: false });
+        add(trim, 1.2, 0.08, 0.16, x, 0.94, 0.08);
+      }
+    }
+    // upper floors: instanced windows
+    const fh = o.floorH || 3.1;
+    const cols = Math.max(1, Math.floor((w - 1.2) / (o.bay || 2.1)));
+    const bay = (w - 1.2) / cols;
+    const spots = [];
+    for (let y = gh + 0.75; y + 1.7 < h - 0.9; y += fh) for (let c = 0; c < cols; c++) spots.push([-w / 2 + 0.6 + bay * (c + 0.5), y]);
+    if (spots.length) {
+      const ww = o.winW || Math.min(1.15, bay * 0.55), wh = o.winH || 1.7;
+      const parts = [
+        { slot: 'void', g: new THREE.BoxGeometry(ww, wh, 0.06), dy: wh / 2, z: 0.0 },
+        { slot: 'glass_dark', g: new THREE.BoxGeometry(ww - 0.08, wh - 0.08, 0.02), dy: wh / 2, z: 0.035 },
+        { slot: trim, g: new THREE.BoxGeometry(ww + 0.22, 0.08, 0.16), dy: -0.04, z: 0.06 },
+        { slot: trim, g: new THREE.BoxGeometry(ww + 0.18, 0.2, 0.07), dy: wh + 0.1, z: 0.03 },
+        { slot: 'lp_dark', g: new THREE.BoxGeometry(0.04, wh - 0.1, 0.03), dy: wh / 2, z: 0.05 } // the sash bar
+      ];
+      const mtx = new THREE.Matrix4();
+      for (const p of parts) {
+        if (!mats.isLowPoly(p.slot)) applyWorldUV(p.g, 1.2);
+        const im = new THREE.InstancedMesh(p.g, mats.get(p.slot), spots.length);
+        spots.forEach(([x, y], i) => { mtx.makeTranslation(x, y + p.dy, p.z); im.setMatrixAt(i, mtx); });
+        im.instanceMatrix.needsUpdate = true;
+        im.castShadow = false;
+        im.receiveShadow = true;
+        im.computeBoundingSphere();
+        g.add(im);
+      }
+    }
+    return g;
+  },
+  // A street sign on a pole, wordless (canon: no legible text in the world).
+  // kind 'ahead' (default): a blue disc facing +z with a white arrow
+  // pointing up -- straight on, at the tower. kind 'noparking': a red-ringed
+  // disc facing +z. kind 'oneway': a plate along the kerb, its arrow along
+  // local -z. Low-poly: the company's street furniture.
+  streetsign(mats, o) {
+    const g = new THREE.Group();
+    const h = o.h || 2.6;
+    const kind = o.kind || 'ahead';
+    g.add(cylinder(mats, 'lp_grey', 0.035, h, 0, 0, 0, 6, { collide: true })); // he walks round it, not through it
+    if (kind === 'ahead' || kind === 'noparking') {
+      const disc = (slot, r, z) => {
+        const c = new THREE.Mesh(new THREE.CylinderGeometry(r, r, 0.02, 14), mats.get(slot));
+        c.rotation.x = Math.PI / 2; c.position.set(0, h - 0.3, z);
+        c.castShadow = true;
+        g.add(c);
+      };
+      if (kind === 'ahead') {
+        disc('lp_blue', 0.3, 0.05);
+        for (const s of [-1, 1]) {
+          const z = 0.05 + s * 0.016;
+          g.add(box(mats, 'lp_white', 0.07, 0.26, 0.006, 0, h - 0.47, z, { castShadow: false }));
+          const head = new THREE.Mesh(new THREE.CylinderGeometry(0.13, 0.13, 0.006, 3), mats.get('lp_white'));
+          head.rotation.set(Math.PI / 2, Math.PI, 0); // a triangle in the face, tip up
+          head.position.set(0, h - 0.17, z);
+          g.add(head);
+        }
+      } else {
+        disc('lp_red', 0.3, 0.05);
+        disc('lp_blue', 0.24, 0.05 + 0.004 * 1);
+        for (const s of [-1, 1]) {
+          const bar = box(mats, 'lp_red', 0.42, 0.06, 0.03, 0, h - 0.33, 0.05, { castShadow: false });
+          bar.rotation.z = s * Math.PI / 4;
+          bar.position.y = h - 0.3;
+          g.add(bar);
+        }
+      }
+    } else {
+      // a long plate along the pavement, the arrow on both faces
+      g.add(box(mats, o.plate || 'lp_blue', 0.04, 0.34, 0.95, 0, h - 0.42, 0));
+      for (const s of [-1, 1]) {
+        g.add(box(mats, 'lp_white', 0.012, 0.07, 0.48, s * 0.024, h - 0.285, 0.11, { castShadow: false })); // shaft
+        const head = new THREE.Mesh(new THREE.CylinderGeometry(0.14, 0.14, 0.012, 3), mats.get('lp_white'));
+        head.rotation.set(Math.PI, 0, Math.PI / 2); // a triangle, tip toward -z
+        head.position.set(s * 0.024, h - 0.25, -0.2);
+        g.add(head);
+      }
+    }
+    return g;
+  },
+  // A newspaper box on the kerb (Doc 2 S0_X: "a newspaper box"): low-poly,
+  // a window onto a stack of blank paper, a coin slot. Front faces +z.
+  newsbox(mats, o) {
+    const g = new THREE.Group();
+    const m = o.mat || 'lp_blue';
+    g.add(box(mats, 'lp_dark', 0.42, 0.28, 0.36, 0, 0, 0));                 // pedestal
+    g.add(box(mats, m, 0.5, 0.72, 0.44, 0, 0.28, 0));                       // body
+    g.add(box(mats, m, 0.54, 0.06, 0.48, 0, 1.0, 0));                       // lid
+    g.add(box(mats, 'lp_paper', 0.36, 0.2, 0.02, 0, 0.62, 0.215, { castShadow: false })); // the paper, blank
+    g.add(box(mats, 'lp_glass', 0.4, 0.3, 0.02, 0, 0.58, 0.225, { castShadow: false }));
+    g.add(box(mats, 'lp_chrome', 0.1, 0.12, 0.04, 0.16, 0.86, 0.23, { castShadow: false }));  // coin box
+    g.add(box(mats, 'lp_dark', 0.04, 0.008, 0.02, 0.16, 0.95, 0.25, { castShadow: false }));  // slot
+    g.add(box(mats, 'lp_chrome', 0.2, 0.03, 0.04, 0, 0.5, 0.24, { castShadow: false }));      // handle
+    const body = box(mats, 'lp_dark', 0.54, 1.06, 0.48, 0, 0, 0, { castShadow: false });
+    body.visible = false; body.userData.collide = true; g.add(body);
+    return g;
+  },
+  // The street clock's post: a pole with a collar and a cradle; the clock
+  // prop itself (C8: the same handless clock) sits on it at h + 0.26.
+  clockpost(mats, o) {
+    const g = new THREE.Group();
+    const h = o.h || 2.8;
+    g.add(cylinder(mats, 'lp_dark', 0.055, h, 0, 0, 0, 8, { collide: true }));
+    g.add(cylinder(mats, 'lp_dark', 0.11, 0.35, 0, 0, 0, 8));
+    g.add(cylinder(mats, 'lp_dark', 0.08, 0.06, 0, h - 0.1, 0, 8));
+    g.add(box(mats, 'lp_dark', 0.06, 0.2, 0.06, 0, h - 0.06, 0)); // the cradle the clock sits in
+    return g;
+  },
+  // A street lamp still burning at dawn: the lens under a catalog lamp's
+  // head and the glow it throws (the light itself is the room's).
+  lampglow(mats, o) {
+    const g = new THREE.Group();
+    g.add(box(mats, 'lp_sodium', o.w || 0.34, 0.03, o.d || 0.2, 0, 0, 0, { castShadow: false }));
+    const glow = new THREE.Mesh(new THREE.PlaneGeometry(o.glow || 1.1, (o.glow || 1.1) * 0.7), mats.get('glow_sodium'));
+    glow.rotation.x = Math.PI / 2; glow.position.y = -0.04;
+    g.add(glow);
+    return g;
+  },
+  // The company's address plate beside the tower doors (SET_STREET): a
+  // brass plate on a dark backing, four standoff bolts and three engraved
+  // bars where the letters would be -- wordless (the zone label carries
+  // "666 HALLAM ROW."). Low-poly: company signage. Front faces +z; y is
+  // the plate's centre.
+  addressplate(mats, o) {
+    const g = new THREE.Group();
+    const w = o.w || 0.5, h = o.h || 0.32;
+    g.add(box(mats, 'lp_dark', w + 0.06, h + 0.06, 0.02, 0, -(h + 0.06) / 2, 0.01, { castShadow: false }));
+    g.add(box(mats, o.mat || 'lp_brass', w, h, 0.012, 0, -h / 2, 0.026, { castShadow: false }));
+    for (const [x, y] of [[-1, -1], [1, -1], [-1, 1], [1, 1]]) g.add(box(mats, 'lp_chrome', 0.022, 0.022, 0.01, x * (w / 2 - 0.035), y * (h / 2 - 0.035) - 0.011, 0.036, { castShadow: false }));
+    const bars = [[0.62, 0.075], [0.8, 0.0], [0.5, -0.07]];
+    for (const [f, y] of bars) g.add(box(mats, 'lp_dark', w * f, 0.026, 0.004, 0, y * (h / 0.32) - 0.013, 0.033, { castShadow: false }));
+    return g;
+  },
+  // The street's paint, gutters and covers (SET_STREET): the building's, so
+  // the slot's photoreal texture -- but flat quads with no sides, and a
+  // bump-less copy of the slot. (As thin boxes, their 5 mm sides were seen
+  // edge-on down the street, where the derivative bump map's normal
+  // degenerates: every kerb and lane line sparkled with white dots in play.)
+  // o.rects: [[x0, z0, x1, z1], ...] in the prop's frame, at height o.y; one
+  // mesh, one draw call. Pulled toward the eye so it never fights the road.
+  roadmarks(mats, o) {
+    const y = o.y === undefined ? 0.004 : o.y;
+    const rects = o.rects || [];
+    const pos = new Float32Array(rects.length * 12);
+    const nrm = new Float32Array(rects.length * 12);
+    const idx = [];
+    rects.forEach(([x0, z0, x1, z1], i) => {
+      pos.set([x0, y, z0, x1, y, z0, x1, y, z1, x0, y, z1], i * 12);
+      for (let k = 0; k < 4; k++) nrm.set([0, 1, 0], i * 12 + k * 3);
+      const b = i * 4;
+      idx.push(b, b + 2, b + 1, b, b + 3, b + 2); // +y faces
+    });
+    const geo = new THREE.BufferGeometry();
+    geo.setAttribute('position', new THREE.BufferAttribute(pos, 3));
+    geo.setAttribute('normal', new THREE.BufferAttribute(nrm, 3));
+    geo.setIndex(idx);
+    applyWorldUV(geo, o.tile || 1.0);
+    // one bump-less copy per slot, kept with the library (it shares the
+    // slot's textures, so it is never the room's to dispose)
+    const cache = mats._s0Flat || (mats._s0Flat = new Map());
+    const key = `${o.mat || 'plaster_blown'}:road`;
+    if (!cache.has(key)) {
+      const c = mats.get(o.mat || 'plaster_blown').clone();
+      c.bumpMap = null;
+      c.bumpScale = 0;
+      c.polygonOffset = true;
+      c.polygonOffsetFactor = -1;
+      c.polygonOffsetUnits = -2;
+      cache.set(key, c);
+    }
+    const mesh = new THREE.Mesh(geo, cache.get(key));
+    mesh.castShadow = false;
+    mesh.receiveShadow = true;
+    const g = new THREE.Group();
+    g.add(mesh);
+    return g;
+  },
+  // Kerb stones (SET_STREET): the building's stone, a bump-less copy of the
+  // slot for the same reason as roadmarks (their road faces run edge-on to
+  // the eye down the street). o.boxes: [[x0, y0, z0, x1, y1, z1], ...] in the
+  // prop's frame. No collider: the pavement slabs under them are the floor.
+  kerbs(mats, o) {
+    const cache = mats._s0Flat || (mats._s0Flat = new Map());
+    const key = `${o.mat || 'plaster_blown'}:kerb`;
+    if (!cache.has(key)) {
+      const c = mats.get(o.mat || 'plaster_blown').clone();
+      c.bumpMap = null;
+      c.bumpScale = 0;
+      cache.set(key, c);
+    }
+    const mat = cache.get(key);
+    const g = new THREE.Group();
+    for (const [x0, y0, z0, x1, y1, z1] of o.boxes || []) {
+      const geo = new THREE.BoxGeometry(x1 - x0, y1 - y0, z1 - z0);
+      geo.translate((x0 + x1) / 2, (y0 + y1) / 2, (z0 + z1) / 2);
+      applyWorldUV(geo, o.tile || 1.0);
+      const m = new THREE.Mesh(geo, mat);
+      m.castShadow = false;
+      m.receiveShadow = true;
+      g.add(m);
+    }
+    return g;
+  },
   // ---- polish: S0 + street -- end ----
   //
   // ---- polish: S1-S2 waiting room -- begin (that scene's new props go between these lines) ----

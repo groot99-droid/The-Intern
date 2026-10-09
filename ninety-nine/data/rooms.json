@@ -195,8 +195,8 @@
    "ceiling": "plaster_dark",
    "tile": {
     "floor": 1.2,
-    "wall": 2.0,
-    "ceiling": 2.0
+    "wall": 2.6,
+    "ceiling": 2.6
    },
    "skirt": {
     "mat": "plaster_dark",
@@ -204,8 +204,8 @@
     "t": 0.02
    },
    "ambient": {
-    "color": "#8fd0b0",
-    "intensity": 0.08
+    "color": "#7d93a6",
+    "intensity": 0.11
    },
    "sun": {
     "from": [
@@ -213,8 +213,8 @@
      2.4,
      2.2
     ],
-    "color": "#9ad8b8",
-    "intensity": 0.25
+    "color": "#a9c3d6",
+    "intensity": 0.2
    },
    "lights": [
     {
@@ -224,8 +224,8 @@
       1.1,
       -1.6
      ],
-     "color": "#8fe0b8",
-     "intensity": 5,
+     "color": "#bcd4e2",
+     "intensity": 5.5,
      "distance": 5,
      "flicker": 0.08
     },
@@ -233,18 +233,29 @@
      "type": "point",
      "pos": [
       -0.45,
-      1.3,
-      -1.9
+      1.01,
+      -1.95
      ],
      "color": "#ffc27a",
-     "intensity": 2.2,
+     "intensity": 1.1,
      "distance": 4
+    },
+    {
+     "type": "point",
+     "pos": [
+      -1.3,
+      0.18,
+      2.25
+     ],
+     "color": "#ffcf8a",
+     "intensity": 1.2,
+     "distance": 2.4
     }
    ],
    "fog": {
-    "color": "#050706",
-    "near": 2,
-    "far": 9
+    "color": "#050607",
+    "near": 2.5,
+    "far": 10
    },
    "vignette": 0.7,
    "grain": 0.045,
@@ -255,7 +266,7 @@
    ],
    "props": [
     {
-     "type": "desk",
+     "type": "homedesk",
      "pos": [
       0.2,
       0,
@@ -263,7 +274,8 @@
      ],
      "w": 1.5,
      "d": 0.7,
-     "mat": "lp_wood"
+     "mat": "wood",
+     "tile": 2.4
     },
     {
      "type": "monitor",
@@ -302,14 +314,13 @@
      ]
     },
     {
-     "type": "glb",
+     "type": "desklamp",
      "pos": [
       -0.45,
       0.75,
       -1.95
      ],
-     "node": "lib_tablelamp",
-     "fallback": "lamp"
+     "rot": 20
     },
     {
      "type": "glb",
@@ -319,7 +330,18 @@
       -1.9
      ],
      "rot": 15,
-     "node": "lib_books"
+     "node": "lib_books",
+     "scale": 0.8
+    },
+    {
+     "type": "papers",
+     "pos": [
+      0.74,
+      0.75,
+      -1.5
+     ],
+     "rot": -14,
+     "h": 0.012
     },
     {
      "type": "glb",
@@ -334,6 +356,16 @@
      "fallback": "chair"
     },
     {
+     "type": "bed",
+     "pos": [
+      -1.83,
+      0,
+      -0.05
+     ],
+     "w": 0.9,
+     "len": 2.0
+    },
+    {
      "type": "clock",
      "pos": [
       -2.27,
@@ -341,6 +373,30 @@
       0.6
      ],
      "rot": 90
+    },
+    {
+     "type": "doorglow",
+     "pos": [
+      -1.3,
+      0,
+      2.48
+     ],
+     "rot": 180,
+     "w": 1.1
+    },
+    {
+     "type": "dust",
+     "pos": [
+      0.3,
+      0.9,
+      -1.15
+     ],
+     "n": 26,
+     "w": 0.6,
+     "h": 0.55,
+     "d": 0.7,
+     "size": 0.0035,
+     "opacity": 0.45
     }
    ],
    "footstep": {
@@ -451,15 +507,15 @@
     "sit": {
      "pos": [
       0.3,
-      1.17,
-      -1.0
+      1.2,
+      -0.98
      ],
      "look": [
       0.3,
-      0.88,
-      -1.7
+      0.9,
+      -1.62
      ],
-     "fov": 54
+     "fov": 56
     },
     "lean": {
      "pos": [
@@ -478,11 +534,11 @@
      "pos": [
       0.3,
       1.6,
-      -0.35
+      -0.15
      ],
      "look": [
       -1.3,
-      1.3,
+      1.25,
       2.5
      ],
      "fov": 68
@@ -519,6 +575,7 @@
      ],
      "mat": "concrete",
      "floor": true,
+     "shadow": false,
      "tile": 2.0
     },
     {
@@ -534,6 +591,7 @@
      ],
      "mat": "concrete",
      "floor": true,
+     "shadow": false,
      "tile": 2.0
     },
     {
@@ -549,6 +607,7 @@
      ],
      "mat": "concrete",
      "floor": true,
+     "shadow": false,
      "tile": 2.0
     },
     {
@@ -562,9 +621,9 @@
       18,
       32.3
      ],
-     "mat": "plaster_dark",
+     "mat": "brick",
      "shadow": false,
-     "tile": 2.0
+     "tile": 0.5
     },
     {
      "min": [
@@ -577,9 +636,9 @@
       18,
       32.3
      ],
-     "mat": "plaster_dark",
+     "mat": "brick",
      "shadow": false,
-     "tile": 2.0
+     "tile": 0.5
     },
     {
      "min": [
@@ -592,9 +651,141 @@
       18,
       32.3
      ],
-     "mat": "plaster_dark",
+     "mat": "brick",
      "shadow": false,
-     "tile": 2.0
+     "tile": 0.5
+    },
+    {
+     "min": [
+      -24,
+      0,
+      32.06
+     ],
+     "max": [
+      -0.61,
+      2.7,
+      32.239999999999995
+     ],
+     "mat": "brick",
+     "collide": false,
+     "tile": 0.5
+    },
+    {
+     "min": [
+      0.61,
+      0,
+      32.06
+     ],
+     "max": [
+      24,
+      2.7,
+      32.239999999999995
+     ],
+     "mat": "brick",
+     "collide": false,
+     "tile": 0.5
+    },
+    {
+     "min": [
+      -0.61,
+      2.4,
+      32.06
+     ],
+     "max": [
+      0.61,
+      2.7,
+      32.239999999999995
+     ],
+     "mat": "brick",
+     "collide": false,
+     "tile": 0.5
+    },
+    {
+     "min": [
+      -0.615,
+      0.14,
+      32.29
+     ],
+     "max": [
+      -0.58,
+      2.45,
+      32.33
+     ],
+     "mat": "lp_dark",
+     "collide": false
+    },
+    {
+     "min": [
+      0.58,
+      0.14,
+      32.29
+     ],
+     "max": [
+      0.615,
+      2.45,
+      32.33
+     ],
+     "mat": "lp_dark",
+     "collide": false
+    },
+    {
+     "min": [
+      -0.615,
+      2.3,
+      32.29
+     ],
+     "max": [
+      0.615,
+      2.45,
+      32.33
+     ],
+     "mat": "lp_dark",
+     "collide": false
+    },
+    {
+     "min": [
+      -1.0,
+      0,
+      31.92
+     ],
+     "max": [
+      -0.66,
+      2.7,
+      32.0
+     ],
+     "mat": "plaster_blown",
+     "shadow": false,
+     "tile": 1.2
+    },
+    {
+     "min": [
+      0.66,
+      0,
+      31.92
+     ],
+     "max": [
+      1.0,
+      2.7,
+      32.0
+     ],
+     "mat": "plaster_blown",
+     "shadow": false,
+     "tile": 1.2
+    },
+    {
+     "min": [
+      -1.0,
+      2.4,
+      31.9
+     ],
+     "max": [
+      1.0,
+      2.7,
+      32.0
+     ],
+     "mat": "plaster_blown",
+     "shadow": false,
+     "tile": 1.2
     },
     {
      "min": [
@@ -637,9 +828,8 @@
       9.0,
       -32.0
      ],
-     "mat": "marble_light",
-     "shadow": false,
-     "tile": 2.5
+     "mat": "cinderblock",
+     "tile": 2.0
     },
     {
      "min": [
@@ -652,9 +842,8 @@
       9.0,
       -32.0
      ],
-     "mat": "marble_light",
-     "shadow": false,
-     "tile": 2.5
+     "mat": "cinderblock",
+     "tile": 2.0
     },
     {
      "min": [
@@ -667,9 +856,80 @@
       9.0,
       -32.0
      ],
-     "mat": "marble_light",
-     "shadow": false,
-     "tile": 2.5
+     "mat": "cinderblock",
+     "tile": 2.0
+    },
+    {
+     "min": [
+      -1.75,
+      0.3,
+      -32.0
+     ],
+     "max": [
+      -1.3,
+      3.55,
+      -31.88
+     ],
+     "mat": "marble",
+     "tile": 1.5
+    },
+    {
+     "min": [
+      1.3,
+      0.3,
+      -32.0
+     ],
+     "max": [
+      1.75,
+      3.55,
+      -31.88
+     ],
+     "mat": "marble",
+     "tile": 1.5
+    },
+    {
+     "min": [
+      -1.75,
+      3.2,
+      -32.0
+     ],
+     "max": [
+      1.75,
+      3.55,
+      -31.88
+     ],
+     "mat": "marble",
+     "tile": 1.5
+    },
+    {
+     "min": [
+      -3.4,
+      3.95,
+      -32.0
+     ],
+     "max": [
+      3.4,
+      4.2,
+      -29.4
+     ],
+     "mat": "concrete",
+     "collide": false,
+     "tile": 2.0
+    },
+    {
+     "min": [
+      -3.45,
+      3.88,
+      -29.45
+     ],
+     "max": [
+      3.45,
+      4.26,
+      -29.32
+     ],
+     "mat": "marble",
+     "collide": false,
+     "tile": 1.5
     },
     {
      "min": [
@@ -682,7 +942,7 @@
       9.0,
       -32.3
      ],
-     "mat": "concrete",
+     "mat": "void",
      "collide": false,
      "shadow": false,
      "tile": 3.0
@@ -698,7 +958,7 @@
       9.0,
       -32.3
      ],
-     "mat": "concrete",
+     "mat": "void",
      "collide": false,
      "shadow": false,
      "tile": 3.0
@@ -714,10 +974,26 @@
       9.0,
       -51.0
      ],
-     "mat": "concrete",
+     "mat": "void",
      "collide": false,
      "shadow": false,
      "tile": 3.0
+    },
+    {
+     "min": [
+      -8.2,
+      0,
+      -51.0
+     ],
+     "max": [
+      8.2,
+      0.28,
+      -32.3
+     ],
+     "mat": "marble",
+     "collide": false,
+     "shadow": false,
+     "tile": 2.0
     },
     {
      "min": [
@@ -730,10 +1006,41 @@
       220.0,
       -32.0
      ],
-     "mat": "concrete",
+     "mat": "void",
      "collide": false,
      "shadow": false,
      "tile": 4.0
+    },
+    {
+     "min": [
+      -15.8,
+      9.6,
+      -31.99
+     ],
+     "max": [
+      15.8,
+      220.0,
+      -31.96
+     ],
+     "mat": "glass_dark",
+     "collide": false,
+     "shadow": false,
+     "tile": 4.0
+    },
+    {
+     "min": [
+      -16.2,
+      8.6,
+      -32.0
+     ],
+     "max": [
+      16.2,
+      9.6,
+      -31.55
+     ],
+     "mat": "marble_light",
+     "collide": false,
+     "tile": 2.5
     },
     {
      "min": [
@@ -767,1033 +1074,1375 @@
     },
     {
      "min": [
-      -15,
-      10,
-      -31.98
+      -12.3,
+      0.3,
+      -32.0
      ],
      "max": [
-      15,
-      11.4,
-      -31.94
+      -11.7,
+      8.6,
+      -31.78
      ],
-     "mat": "glass_dark",
+     "mat": "marble_light",
      "collide": false,
-     "shadow": false,
-     "tile": 4.0
+     "tile": 0.9
     },
     {
      "min": [
-      -15,
-      14,
-      -31.98
+      -8.3,
+      0.3,
+      -32.0
      ],
      "max": [
-      15,
-      15.4,
-      -31.94
+      -7.7,
+      8.6,
+      -31.78
      ],
-     "mat": "glass_dark",
+     "mat": "marble_light",
      "collide": false,
-     "shadow": false,
-     "tile": 4.0
+     "tile": 0.9
     },
     {
      "min": [
-      -15,
-      18,
-      -31.98
+      -4.7,
+      0.3,
+      -32.0
      ],
      "max": [
-      15,
-      19.4,
-      -31.94
+      -4.1000000000000005,
+      8.6,
+      -31.78
      ],
-     "mat": "glass_dark",
+     "mat": "marble_light",
      "collide": false,
-     "shadow": false,
-     "tile": 4.0
+     "tile": 0.9
     },
     {
      "min": [
-      -15,
-      22,
-      -31.98
+      4.1000000000000005,
+      0.3,
+      -32.0
      ],
      "max": [
-      15,
-      23.4,
-      -31.94
+      4.7,
+      8.6,
+      -31.78
      ],
-     "mat": "glass_dark",
+     "mat": "marble_light",
      "collide": false,
-     "shadow": false,
-     "tile": 4.0
+     "tile": 0.9
     },
     {
      "min": [
-      -15,
-      26,
-      -31.98
+      7.7,
+      0.3,
+      -32.0
      ],
      "max": [
-      15,
-      27.4,
-      -31.94
+      8.3,
+      8.6,
+      -31.78
      ],
-     "mat": "glass_dark",
+     "mat": "marble_light",
      "collide": false,
-     "shadow": false,
-     "tile": 4.0
+     "tile": 0.9
     },
     {
      "min": [
-      -15,
-      30,
-      -31.98
+      11.7,
+      0.3,
+      -32.0
      ],
      "max": [
-      15,
-      31.4,
-      -31.94
+      12.3,
+      8.6,
+      -31.78
      ],
-     "mat": "glass_dark",
+     "mat": "marble_light",
      "collide": false,
-     "shadow": false,
-     "tile": 4.0
+     "tile": 0.9
     },
     {
      "min": [
-      -15,
-      34,
-      -31.98
+      -15.440000000000001,
+      9.6,
+      -32.0
      ],
      "max": [
-      15,
-      35.4,
-      -31.94
+      -15.16,
+      220.0,
+      -31.7
      ],
-     "mat": "glass_dark",
+     "mat": "marble_light",
      "collide": false,
      "shadow": false,
-     "tile": 4.0
+     "tile": 3.0
     },
     {
      "min": [
-      -15,
-      38,
-      -31.98
+      -13.64,
+      9.6,
+      -32.0
      ],
      "max": [
-      15,
-      39.4,
-      -31.94
+      -13.36,
+      220.0,
+      -31.7
      ],
-     "mat": "glass_dark",
+     "mat": "marble_light",
      "collide": false,
      "shadow": false,
-     "tile": 4.0
+     "tile": 3.0
     },
     {
      "min": [
-      -15,
-      42,
-      -31.98
+      -11.840000000000002,
+      9.6,
+      -32.0
      ],
      "max": [
-      15,
-      43.4,
-      -31.94
+      -11.56,
+      220.0,
+      -31.7
      ],
-     "mat": "glass_dark",
+     "mat": "marble_light",
      "collide": false,
      "shadow": false,
-     "tile": 4.0
+     "tile": 3.0
     },
     {
      "min": [
-      -15,
-      46,
-      -31.98
+      -10.040000000000001,
+      9.6,
+      -32.0
      ],
      "max": [
-      15,
-      47.4,
-      -31.94
+      -9.76,
+      220.0,
+      -31.7
      ],
-     "mat": "glass_dark",
+     "mat": "marble_light",
      "collide": false,
      "shadow": false,
-     "tile": 4.0
+     "tile": 3.0
     },
     {
      "min": [
-      -15,
-      50,
-      -31.98
+      -8.240000000000002,
+      9.6,
+      -32.0
      ],
      "max": [
-      15,
-      51.4,
-      -31.94
+      -7.960000000000002,
+      220.0,
+      -31.7
      ],
-     "mat": "glass_dark",
+     "mat": "marble_light",
      "collide": false,
      "shadow": false,
-     "tile": 4.0
+     "tile": 3.0
     },
     {
      "min": [
-      -15,
-      54,
-      -31.98
+      -6.44,
+      9.6,
+      -32.0
      ],
      "max": [
-      15,
-      55.4,
-      -31.94
+      -6.160000000000001,
+      220.0,
+      -31.7
      ],
-     "mat": "glass_dark",
+     "mat": "marble_light",
      "collide": false,
      "shadow": false,
-     "tile": 4.0
+     "tile": 3.0
     },
     {
      "min": [
-      -15,
-      58,
-      -31.98
+      -4.64,
+      9.6,
+      -32.0
      ],
      "max": [
-      15,
-      59.4,
-      -31.94
+      -4.36,
+      220.0,
+      -31.7
      ],
-     "mat": "glass_dark",
+     "mat": "marble_light",
      "collide": false,
      "shadow": false,
-     "tile": 4.0
+     "tile": 3.0
     },
     {
      "min": [
-      -15,
-      62,
-      -31.98
+      -2.840000000000001,
+      9.6,
+      -32.0
      ],
      "max": [
-      15,
-      63.4,
-      -31.94
+      -2.560000000000001,
+      220.0,
+      -31.7
      ],
-     "mat": "glass_dark",
+     "mat": "marble_light",
      "collide": false,
      "shadow": false,
-     "tile": 4.0
+     "tile": 3.0
     },
     {
      "min": [
-      -15,
-      66,
-      -31.98
+      -1.0400000000000005,
+      9.6,
+      -32.0
      ],
      "max": [
-      15,
-      67.4,
-      -31.94
+      -0.7600000000000003,
+      220.0,
+      -31.7
      ],
-     "mat": "glass_dark",
+     "mat": "marble_light",
      "collide": false,
      "shadow": false,
-     "tile": 4.0
+     "tile": 3.0
     },
     {
      "min": [
-      -15,
-      70,
-      -31.98
+      0.7599999999999986,
+      9.6,
+      -32.0
      ],
      "max": [
-      15,
-      71.4,
-      -31.94
+      1.0399999999999987,
+      220.0,
+      -31.7
      ],
-     "mat": "glass_dark",
+     "mat": "marble_light",
      "collide": false,
      "shadow": false,
-     "tile": 4.0
+     "tile": 3.0
     },
     {
      "min": [
-      -15,
-      74,
-      -31.98
+      2.559999999999999,
+      9.6,
+      -32.0
      ],
      "max": [
-      15,
-      75.4,
-      -31.94
+      2.8399999999999994,
+      220.0,
+      -31.7
      ],
-     "mat": "glass_dark",
+     "mat": "marble_light",
      "collide": false,
      "shadow": false,
-     "tile": 4.0
+     "tile": 3.0
     },
     {
      "min": [
-      -15,
-      78,
-      -31.98
+      4.36,
+      9.6,
+      -32.0
      ],
      "max": [
-      15,
-      79.4,
-      -31.94
+      4.64,
+      220.0,
+      -31.7
      ],
-     "mat": "glass_dark",
+     "mat": "marble_light",
      "collide": false,
      "shadow": false,
-     "tile": 4.0
+     "tile": 3.0
     },
     {
      "min": [
-      -15,
-      82,
-      -31.98
+      6.160000000000001,
+      9.6,
+      -32.0
      ],
      "max": [
-      15,
-      83.4,
-      -31.94
+      6.44,
+      220.0,
+      -31.7
      ],
-     "mat": "glass_dark",
+     "mat": "marble_light",
      "collide": false,
      "shadow": false,
-     "tile": 4.0
+     "tile": 3.0
     },
     {
      "min": [
-      -15,
-      86,
-      -31.98
+      7.960000000000002,
+      9.6,
+      -32.0
      ],
      "max": [
-      15,
-      87.4,
-      -31.94
+      8.240000000000002,
+      220.0,
+      -31.7
      ],
-     "mat": "glass_dark",
+     "mat": "marble_light",
      "collide": false,
      "shadow": false,
-     "tile": 4.0
+     "tile": 3.0
     },
     {
      "min": [
-      -15,
-      90,
-      -31.98
+      9.759999999999998,
+      9.6,
+      -32.0
      ],
      "max": [
-      15,
-      91.4,
-      -31.94
+      10.04,
+      220.0,
+      -31.7
      ],
-     "mat": "glass_dark",
+     "mat": "marble_light",
      "collide": false,
      "shadow": false,
-     "tile": 4.0
+     "tile": 3.0
     },
     {
      "min": [
-      -15,
-      94,
-      -31.98
+      11.559999999999999,
+      9.6,
+      -32.0
      ],
      "max": [
-      15,
-      95.4,
-      -31.94
+      11.84,
+      220.0,
+      -31.7
      ],
-     "mat": "glass_dark",
+     "mat": "marble_light",
      "collide": false,
      "shadow": false,
-     "tile": 4.0
+     "tile": 3.0
     },
     {
      "min": [
-      -15,
-      98,
-      -31.98
+      13.36,
+      9.6,
+      -32.0
      ],
      "max": [
-      15,
-      99.4,
-      -31.94
+      13.64,
+      220.0,
+      -31.7
      ],
-     "mat": "glass_dark",
+     "mat": "marble_light",
      "collide": false,
      "shadow": false,
-     "tile": 4.0
+     "tile": 3.0
     },
     {
      "min": [
-      -15,
-      102,
-      -31.98
+      15.16,
+      9.6,
+      -32.0
      ],
      "max": [
-      15,
-      103.4,
-      -31.94
+      15.440000000000001,
+      220.0,
+      -31.7
      ],
-     "mat": "glass_dark",
+     "mat": "marble_light",
      "collide": false,
      "shadow": false,
-     "tile": 4.0
+     "tile": 3.0
     },
     {
      "min": [
-      -15,
-      106,
-      -31.98
+      -15.8,
+      13,
+      -32.0
      ],
      "max": [
-      15,
-      107.4,
-      -31.94
+      15.8,
+      13.9,
+      -31.86
      ],
-     "mat": "glass_dark",
+     "mat": "concrete",
      "collide": false,
      "shadow": false,
-     "tile": 4.0
+     "tile": 3.0
     },
     {
      "min": [
-      -15,
-      110,
-      -31.98
+      -15.8,
+      17,
+      -32.0
      ],
      "max": [
-      15,
-      111.4,
-      -31.94
+      15.8,
+      17.9,
+      -31.86
      ],
-     "mat": "glass_dark",
+     "mat": "concrete",
      "collide": false,
      "shadow": false,
-     "tile": 4.0
+     "tile": 3.0
     },
     {
      "min": [
-      -15,
-      114,
-      -31.98
+      -15.8,
+      21,
+      -32.0
      ],
      "max": [
-      15,
-      115.4,
-      -31.94
+      15.8,
+      21.9,
+      -31.86
      ],
-     "mat": "glass_dark",
+     "mat": "concrete",
      "collide": false,
      "shadow": false,
-     "tile": 4.0
+     "tile": 3.0
     },
     {
      "min": [
-      -15,
-      118,
-      -31.98
+      -15.8,
+      25,
+      -32.0
      ],
      "max": [
-      15,
-      119.4,
-      -31.94
+      15.8,
+      25.9,
+      -31.86
      ],
-     "mat": "glass_dark",
+     "mat": "concrete",
      "collide": false,
      "shadow": false,
-     "tile": 4.0
+     "tile": 3.0
     },
     {
      "min": [
-      -15,
-      122,
-      -31.98
+      -15.8,
+      29,
+      -32.0
      ],
      "max": [
-      15,
-      123.4,
-      -31.94
+      15.8,
+      29.9,
+      -31.86
      ],
-     "mat": "glass_dark",
+     "mat": "concrete",
      "collide": false,
      "shadow": false,
-     "tile": 4.0
+     "tile": 3.0
     },
     {
      "min": [
-      -15,
-      126,
-      -31.98
+      -15.8,
+      33,
+      -32.0
      ],
      "max": [
-      15,
-      127.4,
-      -31.94
+      15.8,
+      33.9,
+      -31.86
      ],
-     "mat": "glass_dark",
+     "mat": "concrete",
      "collide": false,
      "shadow": false,
-     "tile": 4.0
+     "tile": 3.0
     },
     {
      "min": [
-      -15,
-      130,
-      -31.98
+      -15.8,
+      37,
+      -32.0
      ],
      "max": [
-      15,
-      131.4,
-      -31.94
+      15.8,
+      37.9,
+      -31.86
      ],
-     "mat": "glass_dark",
+     "mat": "concrete",
      "collide": false,
      "shadow": false,
-     "tile": 4.0
+     "tile": 3.0
     },
     {
      "min": [
-      -15,
-      134,
-      -31.98
+      -15.8,
+      41,
+      -32.0
      ],
      "max": [
-      15,
-      135.4,
-      -31.94
+      15.8,
+      41.9,
+      -31.86
      ],
-     "mat": "glass_dark",
+     "mat": "concrete",
      "collide": false,
      "shadow": false,
-     "tile": 4.0
+     "tile": 3.0
     },
     {
      "min": [
-      -15,
-      138,
-      -31.98
+      -15.8,
+      45,
+      -32.0
      ],
      "max": [
-      15,
-      139.4,
-      -31.94
+      15.8,
+      45.9,
+      -31.86
      ],
-     "mat": "glass_dark",
+     "mat": "concrete",
      "collide": false,
      "shadow": false,
-     "tile": 4.0
+     "tile": 3.0
     },
     {
      "min": [
-      -15,
-      142,
-      -31.98
+      -15.8,
+      49,
+      -32.0
      ],
      "max": [
-      15,
-      143.4,
-      -31.94
+      15.8,
+      49.9,
+      -31.86
      ],
-     "mat": "glass_dark",
+     "mat": "concrete",
      "collide": false,
      "shadow": false,
-     "tile": 4.0
+     "tile": 3.0
     },
     {
      "min": [
-      -15,
-      146,
-      -31.98
+      -15.8,
+      53,
+      -32.0
      ],
      "max": [
-      15,
-      147.4,
-      -31.94
+      15.8,
+      53.9,
+      -31.86
      ],
-     "mat": "glass_dark",
+     "mat": "concrete",
      "collide": false,
      "shadow": false,
-     "tile": 4.0
+     "tile": 3.0
     },
     {
      "min": [
-      -15,
-      150,
-      -31.98
+      -15.8,
+      57,
+      -32.0
      ],
      "max": [
-      15,
-      151.4,
-      -31.94
+      15.8,
+      57.9,
+      -31.86
      ],
-     "mat": "glass_dark",
+     "mat": "concrete",
      "collide": false,
      "shadow": false,
-     "tile": 4.0
+     "tile": 3.0
     },
     {
      "min": [
-      -15,
-      154,
-      -31.98
+      -15.8,
+      61,
+      -32.0
      ],
      "max": [
-      15,
-      155.4,
-      -31.94
+      15.8,
+      61.9,
+      -31.86
      ],
-     "mat": "glass_dark",
+     "mat": "concrete",
      "collide": false,
      "shadow": false,
-     "tile": 4.0
+     "tile": 3.0
     },
     {
      "min": [
-      -15,
-      158,
-      -31.98
+      -15.8,
+      65,
+      -32.0
      ],
      "max": [
-      15,
-      159.4,
-      -31.94
+      15.8,
+      65.9,
+      -31.86
      ],
-     "mat": "glass_dark",
+     "mat": "concrete",
      "collide": false,
      "shadow": false,
-     "tile": 4.0
+     "tile": 3.0
     },
     {
      "min": [
-      -15,
-      162,
-      -31.98
+      -15.8,
+      69,
+      -32.0
      ],
      "max": [
-      15,
-      163.4,
-      -31.94
+      15.8,
+      69.9,
+      -31.86
      ],
-     "mat": "glass_dark",
+     "mat": "concrete",
      "collide": false,
      "shadow": false,
-     "tile": 4.0
+     "tile": 3.0
     },
     {
      "min": [
-      -15,
-      166,
-      -31.98
+      -15.8,
+      73,
+      -32.0
      ],
      "max": [
-      15,
-      167.4,
-      -31.94
+      15.8,
+      73.9,
+      -31.86
      ],
-     "mat": "glass_dark",
+     "mat": "concrete",
      "collide": false,
      "shadow": false,
-     "tile": 4.0
+     "tile": 3.0
     },
     {
      "min": [
-      -15,
-      170,
-      -31.98
+      -15.8,
+      77,
+      -32.0
      ],
      "max": [
-      15,
-      171.4,
-      -31.94
+      15.8,
+      77.9,
+      -31.86
      ],
-     "mat": "glass_dark",
+     "mat": "concrete",
      "collide": false,
      "shadow": false,
-     "tile": 4.0
+     "tile": 3.0
     },
     {
      "min": [
-      -15,
-      174,
-      -31.98
+      -15.8,
+      81,
+      -32.0
      ],
      "max": [
-      15,
-      175.4,
-      -31.94
+      15.8,
+      81.9,
+      -31.86
      ],
-     "mat": "glass_dark",
+     "mat": "concrete",
      "collide": false,
      "shadow": false,
-     "tile": 4.0
+     "tile": 3.0
     },
     {
      "min": [
-      -15,
-      178,
-      -31.98
+      -15.8,
+      85,
+      -32.0
      ],
      "max": [
-      15,
-      179.4,
-      -31.94
+      15.8,
+      85.9,
+      -31.86
      ],
-     "mat": "glass_dark",
+     "mat": "concrete",
      "collide": false,
      "shadow": false,
-     "tile": 4.0
+     "tile": 3.0
     },
     {
      "min": [
-      -15,
-      182,
-      -31.98
+      -15.8,
+      89,
+      -32.0
      ],
      "max": [
-      15,
-      183.4,
-      -31.94
+      15.8,
+      89.9,
+      -31.86
      ],
-     "mat": "glass_dark",
+     "mat": "concrete",
      "collide": false,
      "shadow": false,
-     "tile": 4.0
+     "tile": 3.0
     },
     {
      "min": [
-      -15,
-      186,
-      -31.98
+      -15.8,
+      93,
+      -32.0
      ],
      "max": [
-      15,
-      187.4,
-      -31.94
+      15.8,
+      93.9,
+      -31.86
      ],
-     "mat": "glass_dark",
+     "mat": "concrete",
      "collide": false,
      "shadow": false,
-     "tile": 4.0
+     "tile": 3.0
     },
     {
      "min": [
-      -15,
-      190,
-      -31.98
+      -15.8,
+      97,
+      -32.0
      ],
      "max": [
-      15,
-      191.4,
-      -31.94
+      15.8,
+      97.9,
+      -31.86
      ],
-     "mat": "glass_dark",
+     "mat": "concrete",
      "collide": false,
      "shadow": false,
-     "tile": 4.0
+     "tile": 3.0
     },
     {
      "min": [
-      -15,
-      194,
-      -31.98
+      -15.8,
+      101,
+      -32.0
      ],
      "max": [
-      15,
-      195.4,
-      -31.94
+      15.8,
+      101.9,
+      -31.86
      ],
-     "mat": "glass_dark",
+     "mat": "concrete",
      "collide": false,
      "shadow": false,
-     "tile": 4.0
+     "tile": 3.0
     },
     {
      "min": [
-      -15,
-      198,
-      -31.98
+      -15.8,
+      105,
+      -32.0
      ],
      "max": [
-      15,
-      199.4,
-      -31.94
+      15.8,
+      105.9,
+      -31.86
      ],
-     "mat": "glass_dark",
+     "mat": "concrete",
      "collide": false,
      "shadow": false,
-     "tile": 4.0
+     "tile": 3.0
+    },
+    {
+     "min": [
+      -15.8,
+      109,
+      -32.0
+     ],
+     "max": [
+      15.8,
+      109.9,
+      -31.86
+     ],
+     "mat": "concrete",
+     "collide": false,
+     "shadow": false,
+     "tile": 3.0
+    },
+    {
+     "min": [
+      -6.36,
+      0.3,
+      -29.4
+     ],
+     "max": [
+      -6.04,
+      1.15,
+      -29.08
+     ],
+     "mat": "marble_light",
+     "tile": 1.0
+    },
+    {
+     "min": [
+      -4.36,
+      0.3,
+      -29.4
+     ],
+     "max": [
+      -4.04,
+      1.15,
+      -29.08
+     ],
+     "mat": "marble_light",
+     "tile": 1.0
+    },
+    {
+     "min": [
+      -2.56,
+      0.3,
+      -29.4
+     ],
+     "max": [
+      -2.2399999999999998,
+      1.15,
+      -29.08
+     ],
+     "mat": "marble_light",
+     "tile": 1.0
+    },
+    {
+     "min": [
+      2.2399999999999998,
+      0.3,
+      -29.4
+     ],
+     "max": [
+      2.56,
+      1.15,
+      -29.08
+     ],
+     "mat": "marble_light",
+     "tile": 1.0
+    },
+    {
+     "min": [
+      4.04,
+      0.3,
+      -29.4
+     ],
+     "max": [
+      4.36,
+      1.15,
+      -29.08
+     ],
+     "mat": "marble_light",
+     "tile": 1.0
+    },
+    {
+     "min": [
+      6.04,
+      0.3,
+      -29.4
+     ],
+     "max": [
+      6.36,
+      1.15,
+      -29.08
+     ],
+     "mat": "marble_light",
+     "tile": 1.0
     }
    ],
    "ambient": {
-    "color": "#f0c8a0",
-    "intensity": 0.3
+    "color": "#f2c9a2",
+    "intensity": 0.36
    },
    "hemisphere": {
-    "sky": "#e8b07a",
-    "ground": "#3a3028",
-    "intensity": 0.5
+    "sky": "#f4c48e",
+    "ground": "#4a3a2c",
+    "intensity": 0.95
    },
    "sun": {
     "from": [
-     -6.0,
-     9.0,
-     60.0
+     0.0,
+     22.5,
+     64.0
     ],
-    "color": "#ffb070",
-    "intensity": 1.6
+    "color": "#ffb36e",
+    "intensity": 3.2
    },
-   "lights": [],
+   "lights": [
+    {
+     "type": "point",
+     "pos": [
+      -6.6370000000000005,
+      5.039999999999999,
+      -22.12
+     ],
+     "color": "#ffb46a",
+     "intensity": 1.1,
+     "distance": 7.5
+    },
+    {
+     "type": "point",
+     "pos": [
+      -6.6370000000000005,
+      5.039999999999999,
+      -6.12
+     ],
+     "color": "#ffb46a",
+     "intensity": 1.1,
+     "distance": 7.5
+    },
+    {
+     "type": "point",
+     "pos": [
+      -6.6370000000000005,
+      5.039999999999999,
+      9.88
+     ],
+     "color": "#ffb46a",
+     "intensity": 1.1,
+     "distance": 7.5
+    },
+    {
+     "type": "point",
+     "pos": [
+      -6.6370000000000005,
+      5.039999999999999,
+      25.88
+     ],
+     "color": "#ffb46a",
+     "intensity": 1.1,
+     "distance": 7.5
+    },
+    {
+     "type": "point",
+     "pos": [
+      6.6370000000000005,
+      5.039999999999999,
+      -13.88
+     ],
+     "color": "#ffb46a",
+     "intensity": 1.1,
+     "distance": 7.5
+    },
+    {
+     "type": "point",
+     "pos": [
+      6.6370000000000005,
+      5.039999999999999,
+      2.12
+     ],
+     "color": "#ffb46a",
+     "intensity": 1.1,
+     "distance": 7.5
+    },
+    {
+     "type": "point",
+     "pos": [
+      6.6370000000000005,
+      5.039999999999999,
+      18.12
+     ],
+     "color": "#ffb46a",
+     "intensity": 1.1,
+     "distance": 7.5
+    },
+    {
+     "type": "point",
+     "pos": [
+      0,
+      3.5,
+      -30.6
+     ],
+     "color": "#ffe2b8",
+     "intensity": 5,
+     "distance": 8
+    },
+    {
+     "type": "point",
+     "pos": [
+      0,
+      2.7,
+      31.4
+     ],
+     "color": "#ffd9a0",
+     "intensity": 1.6,
+     "distance": 5
+    },
+    {
+     "type": "point",
+     "pos": [
+      0,
+      1.7,
+      32.9
+     ],
+     "color": "#ffc48a",
+     "intensity": 3.2,
+     "distance": 8
+    }
+   ],
    "fog": {
-    "color": "#d9a878",
-    "near": 18,
+    "color": "#dcab7c",
+    "near": 16,
     "far": 95
    },
-   "background": "#d9a878",
-   "exposure": 1.1,
-   "vignette": 0.4,
+   "background": "#dcab7c",
+   "exposure": 1.12,
+   "vignette": 0.34,
    "grain": 0.03,
    "spawn": [
     0,
-    30.0,
+    29.0,
     0
    ],
    "props": [
     {
-     "type": "glb",
+     "type": "facade",
      "pos": [
-      -12.5,
+      -8.8,
       0,
-      -20
+      -28.0
      ],
      "rot": 90,
-     "node": "lib_brownstone",
-     "w": 10,
-     "h": 16,
-     "d": 9,
-     "fallback": "building"
+     "w": 8.0,
+     "h": 18,
+     "d": 9.0,
+     "mat": "brick",
+     "trim": "plaster_blown",
+     "ground": "shop",
+     "tile": 0.5,
+     "shutter": true
     },
     {
-     "type": "glb",
+     "type": "facade",
      "pos": [
-      12.5,
+      -8.8,
       0,
-      -15
-     ],
-     "rot": -90,
-     "node": "lib_aptblock",
-     "w": 10,
-     "h": 19,
-     "d": 9,
-     "fallback": "building"
-    },
-    {
-     "type": "glb",
-     "pos": [
-      -12.5,
-      0,
-      -10
+      -18.75
      ],
      "rot": 90,
-     "node": "lib_aptblock",
-     "w": 10,
-     "h": 20,
-     "d": 9,
-     "fallback": "building"
-    },
-    {
-     "type": "glb",
-     "pos": [
-      12.5,
-      0,
-      -5
-     ],
-     "rot": -90,
-     "node": "lib_brownstone",
-     "w": 10,
-     "h": 24,
-     "d": 9,
-     "fallback": "building"
-    },
-    {
-     "type": "glb",
-     "pos": [
-      -12.5,
-      0,
-      0
-     ],
-     "rot": 90,
-     "node": "lib_brownstone",
-     "w": 10,
-     "h": 24,
-     "d": 9,
-     "fallback": "building"
-    },
-    {
-     "type": "glb",
-     "pos": [
-      12.5,
-      0,
-      5
-     ],
-     "rot": -90,
-     "node": "lib_aptblock",
-     "w": 10,
+     "w": 10.5,
      "h": 14,
-     "d": 9,
-     "fallback": "building"
+     "d": 9.0,
+     "mat": "brick",
+     "trim": "plaster_blown",
+     "ground": "door",
+     "tile": 0.5
     },
     {
-     "type": "glb",
+     "type": "facade",
      "pos": [
-      -12.5,
+      -8.8,
       0,
-      10
+      -9.75
      ],
      "rot": 90,
-     "node": "lib_aptblock",
-     "w": 10,
+     "w": 7.5,
+     "h": 22,
+     "d": 9.0,
+     "mat": "plaster",
+     "trim": "concrete",
+     "ground": "shop",
+     "tile": 2.0
+    },
+    {
+     "type": "facade",
+     "pos": [
+      -8.8,
+      0,
+      -0.5
+     ],
+     "rot": 90,
+     "w": 11.0,
      "h": 16,
-     "d": 9,
-     "fallback": "building"
+     "d": 9.0,
+     "mat": "brick",
+     "trim": "plaster_blown",
+     "ground": "door",
+     "tile": 0.5
     },
     {
-     "type": "glb",
+     "type": "facade",
      "pos": [
-      12.5,
+      -8.8,
       0,
-      15
-     ],
-     "rot": -90,
-     "node": "lib_brownstone",
-     "w": 10,
-     "h": 19,
-     "d": 9,
-     "fallback": "building"
-    },
-    {
-     "type": "glb",
-     "pos": [
-      -12.5,
-      0,
-      20
+      9.5
      ],
      "rot": 90,
-     "node": "lib_brownstone",
-     "w": 10,
+     "w": 9.0,
      "h": 20,
-     "d": 9,
-     "fallback": "building"
+     "d": 9.0,
+     "mat": "brick",
+     "trim": "plaster_blown",
+     "ground": "shop",
+     "tile": 0.5,
+     "shutter": true
     },
     {
-     "type": "glb",
+     "type": "facade",
      "pos": [
-      12.5,
+      -8.8,
       0,
-      25
-     ],
-     "rot": -90,
-     "node": "lib_aptblock",
-     "w": 10,
-     "h": 24,
-     "d": 9,
-     "fallback": "building"
-    },
-    {
-     "type": "glb",
-     "pos": [
-      -12.5,
-      0,
-      30
+      18.25
      ],
      "rot": 90,
-     "node": "lib_aptblock",
-     "w": 10,
+     "w": 8.5,
+     "h": 13,
+     "d": 9.0,
+     "mat": "plaster",
+     "trim": "concrete",
+     "ground": "door",
+     "tile": 2.0
+    },
+    {
+     "type": "facade",
+     "pos": [
+      -8.8,
+      0,
+      27.25
+     ],
+     "rot": 90,
+     "w": 9.5,
+     "h": 17,
+     "d": 9.0,
+     "mat": "brick",
+     "trim": "plaster_blown",
+     "ground": "shop",
+     "tile": 0.5
+    },
+    {
+     "type": "facade",
+     "pos": [
+      8.8,
+      0,
+      -27.25
+     ],
+     "rot": -90,
+     "w": 9.5,
+     "h": 16,
+     "d": 9.0,
+     "mat": "brick",
+     "trim": "plaster_blown",
+     "ground": "door",
+     "tile": 0.5
+    },
+    {
+     "type": "facade",
+     "pos": [
+      8.8,
+      0,
+      -18.5
+     ],
+     "rot": -90,
+     "w": 8.0,
+     "h": 21,
+     "d": 9.0,
+     "mat": "brick",
+     "trim": "plaster_blown",
+     "ground": "shop",
+     "tile": 0.5
+    },
+    {
+     "type": "facade",
+     "pos": [
+      8.8,
+      0,
+      -9.0
+     ],
+     "rot": -90,
+     "w": 11.0,
+     "h": 14,
+     "d": 9.0,
+     "mat": "plaster",
+     "trim": "concrete",
+     "ground": "shop",
+     "tile": 2.0,
+     "shutter": true
+    },
+    {
+     "type": "facade",
+     "pos": [
+      8.8,
+      0,
+      0.25
+     ],
+     "rot": -90,
+     "w": 7.5,
+     "h": 18,
+     "d": 9.0,
+     "mat": "brick",
+     "trim": "plaster_blown",
+     "ground": "door",
+     "tile": 0.5
+    },
+    {
+     "type": "facade",
+     "pos": [
+      8.8,
+      0,
+      9.0
+     ],
+     "rot": -90,
+     "w": 10.0,
      "h": 24,
-     "d": 9,
-     "fallback": "building"
+     "d": 9.0,
+     "mat": "brick",
+     "trim": "plaster_blown",
+     "ground": "shop",
+     "tile": 0.5
+    },
+    {
+     "type": "facade",
+     "pos": [
+      8.8,
+      0,
+      18.5
+     ],
+     "rot": -90,
+     "w": 9.0,
+     "h": 15,
+     "d": 9.0,
+     "mat": "brick",
+     "trim": "plaster_blown",
+     "ground": "door",
+     "tile": 0.5
+    },
+    {
+     "type": "facade",
+     "pos": [
+      8.8,
+      0,
+      27.5
+     ],
+     "rot": -90,
+     "w": 9.0,
+     "h": 13,
+     "d": 9.0,
+     "mat": "plaster",
+     "trim": "concrete",
+     "ground": "shop",
+     "tile": 2.0,
+     "shutter": true
     },
     {
      "type": "glb",
      "pos": [
-      -7.8,
+      -7.582,
       0.14,
       -22
      ],
      "node": "lib_streetlamp",
+     "scale": 1.4,
      "fallback": "lamppost"
+    },
+    {
+     "type": "lampglow",
+     "pos": [
+      -6.637,
+      5.348,
+      -22.12
+     ]
     },
     {
      "type": "glb",
      "pos": [
-      7.8,
+      -7.582,
+      0.14,
+      -6
+     ],
+     "node": "lib_streetlamp",
+     "scale": 1.4,
+     "fallback": "lamppost"
+    },
+    {
+     "type": "lampglow",
+     "pos": [
+      -6.637,
+      5.348,
+      -6.12
+     ]
+    },
+    {
+     "type": "glb",
+     "pos": [
+      -7.582,
+      0.14,
+      10
+     ],
+     "node": "lib_streetlamp",
+     "scale": 1.4,
+     "fallback": "lamppost"
+    },
+    {
+     "type": "lampglow",
+     "pos": [
+      -6.637,
+      5.348,
+      9.88
+     ]
+    },
+    {
+     "type": "glb",
+     "pos": [
+      -7.582,
+      0.14,
+      26
+     ],
+     "node": "lib_streetlamp",
+     "scale": 1.4,
+     "fallback": "lamppost"
+    },
+    {
+     "type": "lampglow",
+     "pos": [
+      -6.637,
+      5.348,
+      25.88
+     ]
+    },
+    {
+     "type": "glb",
+     "pos": [
+      7.582,
       0.14,
       -14
      ],
      "rot": 180,
      "node": "lib_streetlamp",
+     "scale": 1.4,
      "fallback": "lamppost"
+    },
+    {
+     "type": "lampglow",
+     "pos": [
+      6.637,
+      5.348,
+      -13.88
+     ]
     },
     {
      "type": "glb",
      "pos": [
-      -7.8,
-      0.14,
-      -6
-     ],
-     "node": "lib_streetlamp",
-     "fallback": "lamppost"
-    },
-    {
-     "type": "glb",
-     "pos": [
-      7.8,
+      7.582,
       0.14,
       2
      ],
      "rot": 180,
      "node": "lib_streetlamp",
+     "scale": 1.4,
      "fallback": "lamppost"
+    },
+    {
+     "type": "lampglow",
+     "pos": [
+      6.637,
+      5.348,
+      2.12
+     ]
     },
     {
      "type": "glb",
      "pos": [
-      -7.8,
-      0.14,
-      10
-     ],
-     "node": "lib_streetlamp",
-     "fallback": "lamppost"
-    },
-    {
-     "type": "glb",
-     "pos": [
-      7.8,
+      7.582,
       0.14,
       18
      ],
      "rot": 180,
      "node": "lib_streetlamp",
+     "scale": 1.4,
      "fallback": "lamppost"
     },
     {
-     "type": "glb",
+     "type": "lampglow",
      "pos": [
-      -7.8,
-      0.14,
-      26
-     ],
-     "node": "lib_streetlamp",
-     "fallback": "lamppost"
+      6.637,
+      5.348,
+      18.12
+     ]
     },
     {
      "type": "glb",
@@ -1804,6 +2453,7 @@
      ],
      "rot": 180,
      "node": "lib_trafficlight",
+     "scale": 1.25,
      "fallback": "lamppost"
     },
     {
@@ -1827,9 +2477,54 @@
      "collide": true
     },
     {
+     "type": "newsbox",
+     "pos": [
+      7.35,
+      0.14,
+      8.0
+     ],
+     "rot": -90
+    },
+    {
+     "type": "streetsign",
+     "pos": [
+      -7.2,
+      0.14,
+      23.5
+     ],
+     "kind": "ahead"
+    },
+    {
+     "type": "streetsign",
+     "pos": [
+      7.2,
+      0.14,
+      13.5
+     ],
+     "kind": "noparking"
+    },
+    {
+     "type": "streetsign",
+     "pos": [
+      -7.2,
+      0.14,
+      -11.0
+     ],
+     "kind": "oneway"
+    },
+    {
+     "type": "streetsign",
+     "pos": [
+      7.2,
+      0.14,
+      -19.5
+     ],
+     "kind": "ahead"
+    },
+    {
      "type": "glb",
      "pos": [
-      6.0,
+      5.3,
       0,
       -16
      ],
@@ -1838,12 +2533,13 @@
      "mat": "lp_car2",
      "len": 4.4,
      "w": 1.8,
+     "scale": 1.45,
      "fallback": "car"
     },
     {
      "type": "glb",
      "pos": [
-      -6.0,
+      -5.3,
       0,
       -2
      ],
@@ -1853,12 +2549,13 @@
      "mat": "lp_car3",
      "len": 4.4,
      "w": 1.8,
+     "scale": 1.45,
      "fallback": "car"
     },
     {
      "type": "glb",
      "pos": [
-      6.0,
+      5.3,
       0,
       12
      ],
@@ -1867,12 +2564,13 @@
      "mat": "lp_car4",
      "len": 4.4,
      "w": 1.8,
+     "scale": 1.45,
      "fallback": "car"
     },
     {
      "type": "glb",
      "pos": [
-      -6.0,
+      -5.3,
       0,
       24
      ],
@@ -1882,25 +2580,352 @@
      "mat": "lp_car5",
      "len": 4.4,
      "w": 1.8,
+     "scale": 1.45,
      "fallback": "car"
+    },
+    {
+     "type": "glb",
+     "pos": [
+      -5.3,
+      0,
+      -19.5
+     ],
+     "rot": 180,
+     "node": "lib_car_suv",
+     "collide": true,
+     "mat": "lp_car6",
+     "len": 4.4,
+     "w": 1.8,
+     "scale": 1.35,
+     "fallback": "car"
+    },
+    {
+     "type": "clockpost",
+     "pos": [
+      -7.5,
+      0.14,
+      21.0
+     ],
+     "h": 2.8
     },
     {
      "type": "clock",
      "pos": [
-      -9.1,
-      3.2,
-      -26.0
+      -7.5,
+      3.464,
+      21.0
      ],
-     "rot": 90
+     "scale": 1.6
     },
     {
      "type": "slip",
      "pos": [
       0.4,
       0.004,
-      -29.0
+      -27.6
      ],
      "rot": 30
+    },
+    {
+     "type": "kerbs",
+     "pos": [
+      0,
+      0,
+      0
+     ],
+     "mat": "plaster_blown",
+     "tile": 1.0,
+     "boxes": [
+      [
+       -6.68,
+       0,
+       -28.2,
+       -6.38,
+       0.152,
+       29.6
+      ],
+      [
+       6.38,
+       0,
+       -28.2,
+       6.68,
+       0.152,
+       29.6
+      ],
+      [
+       -6.68,
+       0,
+       29.58,
+       6.68,
+       0.152,
+       29.88
+      ]
+     ]
+    },
+    {
+     "type": "roadmarks",
+     "pos": [
+      0,
+      0,
+      0
+     ],
+     "mat": "concrete_wet",
+     "tile": 1.5,
+     "y": 0.003,
+     "rects": [
+      [
+       -6.4,
+       -28.2,
+       -5.85,
+       29.6
+      ],
+      [
+       5.85,
+       -28.2,
+       6.4,
+       29.6
+      ]
+     ]
+    },
+    {
+     "type": "roadmarks",
+     "pos": [
+      0,
+      0,
+      0
+     ],
+     "mat": "plaster_blown",
+     "tile": 1.0,
+     "y": 0.004,
+     "rects": [
+      [
+       -0.06,
+       -20,
+       0.06,
+       -17.4
+      ],
+      [
+       -0.06,
+       -14,
+       0.06,
+       -11.4
+      ],
+      [
+       -0.06,
+       -8,
+       0.06,
+       -5.4
+      ],
+      [
+       -0.06,
+       -2,
+       0.06,
+       0.6
+      ],
+      [
+       -0.06,
+       4,
+       0.06,
+       6.6
+      ],
+      [
+       -0.06,
+       10,
+       0.06,
+       12.6
+      ],
+      [
+       -0.06,
+       16,
+       0.06,
+       18.6
+      ],
+      [
+       -0.06,
+       22,
+       0.06,
+       24.6
+      ],
+      [
+       -4.2,
+       -25.0,
+       -4.0,
+       28.8
+      ],
+      [
+       4.0,
+       -25.0,
+       4.2,
+       28.8
+      ],
+      [
+       -6.05,
+       -27.0,
+       -5.55,
+       -24.6
+      ],
+      [
+       -5.0,
+       -27.0,
+       -4.5,
+       -24.6
+      ],
+      [
+       -3.95,
+       -27.0,
+       -3.45,
+       -24.6
+      ],
+      [
+       -2.9,
+       -27.0,
+       -2.4,
+       -24.6
+      ],
+      [
+       -1.85,
+       -27.0,
+       -1.35,
+       -24.6
+      ],
+      [
+       -0.8,
+       -27.0,
+       -0.3,
+       -24.6
+      ],
+      [
+       0.25,
+       -27.0,
+       0.75,
+       -24.6
+      ],
+      [
+       1.3,
+       -27.0,
+       1.8,
+       -24.6
+      ],
+      [
+       2.35,
+       -27.0,
+       2.85,
+       -24.6
+      ],
+      [
+       3.4,
+       -27.0,
+       3.9,
+       -24.6
+      ],
+      [
+       4.45,
+       -27.0,
+       4.95,
+       -24.6
+      ],
+      [
+       5.5,
+       -27.0,
+       6.0,
+       -24.6
+      ]
+     ]
+    },
+    {
+     "type": "roadmarks",
+     "pos": [
+      0,
+      0,
+      0
+     ],
+     "mat": "grate",
+     "tile": 0.8,
+     "y": 0.005,
+     "rects": [
+      [
+       1.9,
+       -6.4,
+       2.7,
+       -5.6
+      ],
+      [
+       -3.0,
+       14.6,
+       -2.2,
+       15.4
+      ]
+     ]
+    },
+    {
+     "type": "fluoro",
+     "pos": [
+      -1.6,
+      3.93,
+      -30.7
+     ],
+     "w": 0.9,
+     "d": 0.22
+    },
+    {
+     "type": "fluoro",
+     "pos": [
+      1.6,
+      3.93,
+      -30.7
+     ],
+     "w": 0.9,
+     "d": 0.22
+    },
+    {
+     "type": "addressplate",
+     "pos": [
+      2.15,
+      1.55,
+      -32.0
+     ],
+     "w": 0.5,
+     "h": 0.32
+    },
+    {
+     "type": "facade",
+     "pos": [
+      0,
+      0,
+      32.0
+     ],
+     "rot": 180,
+     "w": 17.6,
+     "h": 18,
+     "d": 0.3,
+     "mat": "brick",
+     "trim": "plaster_blown",
+     "body": false,
+     "plinth": false,
+     "ground": "none",
+     "groundH": 3.0
+    },
+    {
+     "type": "lampglow",
+     "pos": [
+      0,
+      2.95,
+      31.75
+     ],
+     "w": 0.3,
+     "d": 0.16,
+     "glow": 0.8
+    },
+    {
+     "type": "wallplate",
+     "pos": [
+      0,
+      2.9,
+      31.86
+     ],
+     "w": 0.36,
+     "h": 0.14,
+     "mat": "lp_dark"
     }
    ],
    "footstep": {
@@ -1929,7 +2954,9 @@
      "h": 2.9,
      "kind": "glass",
      "y": 0.3,
-     "locked": true
+     "locked": true,
+     "swing": "out",
+     "frame": "marble"
     }
    ],
    "entry": "stoop",
@@ -1941,7 +2968,7 @@
       -30.4
      ],
      "r": 1.2,
-     "ring": 5.0,
+     "ring": 8.0,
      "labelAt": [
       0.0,
       3.6,
@@ -1954,12 +2981,12 @@
      "pos": [
       0.0,
       1.6,
-      30.0
+      29.0
      ],
      "look": [
       0.0,
       1.35,
-      24.0
+      23.0
      ]
     },
     "out": {
