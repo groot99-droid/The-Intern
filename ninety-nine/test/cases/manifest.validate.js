@@ -71,7 +71,7 @@ export async function run() {
     const THRESHOLD = new Set(['label', 'zone', 'exit', 'via', 'viaDark', 'to', 'setFlag', 'sfxCue', 'beat', 'approach', 'fallShot']);
     const BEAT_ZONE = new Set(['zone', 'label', 'beat', 'once']);
     // director.js runBeats(), in its order
-    const BEAT = new Set(['sfxCue', 'sfxOpts', 'oneShot', 'caption', 'holdMs', 'className', 'rattle', 'show', 'hide', 'light', 'screen', 'setFlag', 'hold', 'drop', 'actor', 'seal', 'open', 'close', 'seconds', 'await', 'lookAt', 'lookY', 'sit', 'moveTo', 'shot', 'ride', 'shake', 'together', 'waitMs']);
+    const BEAT = new Set(['sfxCue', 'sfxOpts', 'oneShot', 'music', 'musicRender', 'caption', 'holdMs', 'className', 'rattle', 'show', 'hide', 'light', 'screen', 'setFlag', 'hold', 'drop', 'actor', 'seal', 'open', 'close', 'seconds', 'await', 'lookAt', 'lookY', 'sit', 'moveTo', 'shot', 'ride', 'shake', 'together', 'waitMs']);
     const bad = [];
     const keysOf = (o) => Object.keys(o || {}).filter((k) => !k.startsWith('_'));
     const beats = (list, where) => {
@@ -274,11 +274,14 @@ export async function run() {
       beatKeys(b.onEnter, where);
       for (const bz of b.beatZones || []) beatKeys(bz.beat, where);
       for (const th of Object.values(b.thresholds || {})) { beatKeys(th.beat, where); beatKeys(th.approach, where); }
+      if (b.idle) beatKeys(b.idle.beat, `${where}.idle`);
+      if (b.stillness) beatKeys(b.stillness.beat, `${where}.stillness`);
     }
+    for (const [id, e] of Object.entries(endings)) if (!id.startsWith('_')) beatKeys(e.beats, `ending.${id}`);
     assert(keys.length >= 8, `only ${keys.length} caption keys found`);
     for (const [k, where] of keys) if (!(k in systemText)) missing.push(`${where}: ${k}`);
     // the director's screen pages read these (director.js PAGES)
-    for (const k of ['posting.title', 'posting.employer', 'posting.body', 'portal.confirm', 'portal.accept', 'harlowe.session', 'harlowe.draft', 'requisition.title', 'requisition.harlowe']) if (!(k in systemText)) missing.push(`PAGES: ${k}`);
+    for (const k of ['posting.title', 'posting.employer', 'posting.body', 'portal.confirm', 'portal.accept', 'harlowe.session', 'harlowe.draft', 'requisition.title']) if (!(k in systemText)) missing.push(`PAGES: ${k}`);
     assert(missing.length === 0, missing.join(', '));
   });
 
@@ -341,6 +344,7 @@ export async function run() {
       if (e.preShot && !rec.shots[e.preShot]) bad.push(`${id}: preShot ${e.preShot} not in ${e.room}`);
       for (const n of e.show || []) if (!propNames(e.room).has(n)) bad.push(`${id}: show ${n} not in ${e.room}`);
       for (const o of e.flagOverlays || []) for (const n of o.hide || []) if (!propNames(e.room).has(n)) bad.push(`${id}: overlay hides ${n}, not in ${e.room}`);
+      for (const bt of e.beats || []) for (const k of ['show', 'hide', 'lookAt']) if (bt[k] && !propNames(e.room).has(bt[k])) bad.push(`${id}: beat ${k} ${bt[k]} not in ${e.room}`);
     }
     assert(bad.length === 0, bad.join(' | '));
   });

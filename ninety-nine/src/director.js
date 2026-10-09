@@ -185,6 +185,7 @@ export function createDirector({ manifest, endings, state, stage, audio = null, 
       if (gone()) return;
       if (b.sfxCue) sfxPlay(b.sfxCue, b.sfxOpts);
       if (b.oneShot && audio) audio.playOneShot(b.oneShot);
+      if (b.music !== undefined && audio) audio.setMusic(b.music, b.musicRender || 'C');
       if (b.caption) captions.show(b.caption, { holdMs: b.holdMs || 3000, className: b.className || '' });
       if (b.rattle) { const d = inst.room.doors.get(b.rattle); if (d) d.rattle(); }
       if (b.show) setVisible(inst, b.show, true);
@@ -626,6 +627,11 @@ export function createDirector({ manifest, endings, state, stage, audio = null, 
     const inst = w.inst;
     const ending = w.ending;
     if (ending.preShot) await shotFromHere(inst, ending.preShot, 1.0);
+    if (gone()) return;
+    // the room's own last moment (PENDING: the speaker clicks, "One hundred.",
+    // the Muzak starts its eight bars again)
+    if (ending.beats) await runBeats(ending.beats, inst);
+    if (gone()) return;
     for (const n of ending.show || []) setVisible(inst, n, true);
     dropHeld();
     await shotFromHere(inst, ending.shot, ending.carrySeconds || 2.0);
