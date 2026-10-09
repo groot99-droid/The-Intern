@@ -67,22 +67,28 @@ export async function run() {
   });
 
   await runCase('Assertion 1b: the schema -- branch, threshold, beat zone and beat keys are ones the director reads (a typo is a silent no-op in the game)', () => {
-    const BRANCH = new Set(['room', 'next', 'ambience', 'ambienceSequence', 'music', 'captions', 'onEnter', 'thresholds', 'beatZones', 'sfxCue', 'friction', 'keepHeld', 'bumpCount', 'start', 'out', 'report']);
-    const THRESHOLD = new Set(['label', 'zone', 'exit', 'via', 'to', 'setFlag', 'sfxCue', 'beat', 'approach', 'fallShot']);
+    const BRANCH = new Set(['room', 'next', 'ambience', 'ambienceSequence', 'music', 'captions', 'onEnter', 'thresholds', 'beatZones', 'sfxCue', 'friction', 'keepHeld', 'bumpCount', 'idle', 'stillness', 'start', 'out', 'report']);
+    const THRESHOLD = new Set(['label', 'zone', 'exit', 'via', 'viaDark', 'to', 'setFlag', 'sfxCue', 'beat', 'approach', 'fallShot']);
     const BEAT_ZONE = new Set(['zone', 'label', 'beat', 'once']);
     // director.js runBeats(), in its order
-    const BEAT = new Set(['sfxCue', 'oneShot', 'caption', 'holdMs', 'className', 'rattle', 'show', 'hide', 'light', 'screen', 'setFlag', 'hold', 'drop', 'actor', 'seal', 'open', 'close', 'seconds', 'await', 'lookAt', 'lookY', 'sit', 'moveTo', 'shot', 'ride', 'shake', 'waitMs']);
+    const BEAT = new Set(['sfxCue', 'sfxOpts', 'oneShot', 'caption', 'holdMs', 'className', 'rattle', 'show', 'hide', 'light', 'screen', 'setFlag', 'hold', 'drop', 'actor', 'seal', 'open', 'close', 'seconds', 'await', 'lookAt', 'lookY', 'sit', 'moveTo', 'shot', 'ride', 'shake', 'together', 'waitMs']);
     const bad = [];
     const keysOf = (o) => Object.keys(o || {}).filter((k) => !k.startsWith('_'));
     const beats = (list, where) => {
       if (list === undefined) return;
       if (!Array.isArray(list)) { bad.push(`${where}: beats must be a list`); return; }
-      list.forEach((bt, i) => { for (const k of keysOf(bt)) if (!BEAT.has(k)) bad.push(`${where}[${i}]: unknown beat key ${k}`); });
+      list.forEach((bt, i) => {
+        for (const k of keysOf(bt)) if (!BEAT.has(k)) bad.push(`${where}[${i}]: unknown beat key ${k}`);
+        if (bt.ride && bt.ride.stops) beats(bt.ride.stops, `${where}[${i}].ride.stops`);
+        if (bt.together) beats(bt.together, `${where}[${i}].together`);
+      });
     };
     for (const { sid, letter, b } of branches()) {
       const where = `${sid}.${letter}`;
       for (const k of keysOf(b)) if (!BRANCH.has(k)) bad.push(`${where}: unknown branch key ${k}`);
       beats(b.onEnter, `${where}.onEnter`);
+      if (b.idle) { beats(b.idle.beat, `${where}.idle`); if (!(b.idle.seconds > 0)) bad.push(`${where}: idle.seconds`); if (b.idle.commit && !(b.thresholds || {})[b.idle.commit]) bad.push(`${where}: idle.commit names no threshold`); }
+      if (b.stillness) { beats(b.stillness.beat, `${where}.stillness`); if (!(b.stillness.seconds > 0)) bad.push(`${where}: stillness.seconds`); }
       for (const bz of b.beatZones || []) {
         for (const k of keysOf(bz)) if (!BEAT_ZONE.has(k)) bad.push(`${where}.beatZone: unknown key ${k}`);
         beats(bz.beat, `${where}.beatZone.${bz.zone}`);
@@ -183,7 +189,8 @@ export async function run() {
     const checkBeats = (where, room, beats) => {
       const rec = resolve(room);
       if (!rec) { bad.push(`${where}: no room ${room}`); return; }
-      const props = propNames(room), doors = doorNames(room);
+      // show/hide may name a prop or a box with an id
+      const props = new Set([...propNames(room), ...(rec.boxes || []).map((b) => b.id).filter(Boolean)]), doors = doorNames(room);
       const lights = new Set((rec.lights || []).map((l) => l.id).filter(Boolean));
       for (const bt of beats || []) {
         for (const c of [].concat(bt.sfxCue || [])) if (!cues.has(c)) bad.push(`${where}: unknown sfxCue ${c}`);
@@ -193,6 +200,8 @@ export async function run() {
         if (bt.light && !lights.has(bt.light.id)) bad.push(`${where}: light ${bt.light.id} not in ${room}`);
         if (bt.actor) { const n = typeof bt.actor === 'string' ? bt.actor : bt.actor.name; if (!(rec.actors || {})[n]) bad.push(`${where}: actor ${n} not in ${room}`); }
         if (bt.shot && !(rec.shots || {})[bt.shot]) bad.push(`${where}: shot ${bt.shot} not in ${room}`);
+        if (bt.ride && bt.ride.stops) checkBeats(`${where}.ride.stops`, room, bt.ride.stops);
+        if (bt.together) checkBeats(`${where}.together`, room, bt.together);
       }
     };
     for (const { sid, letter, b } of branches()) {
@@ -202,8 +211,14 @@ export async function run() {
         const bc = b.bumpCount;
         if (!doorNames(b.room).has(bc.door)) bad.push(`${sid}.${letter}: bumpCount door ${bc.door} is no door of ${b.room}`);
         if (!(Number.isInteger(bc.at) && bc.at > 0)) bad.push(`${sid}.${letter}: bumpCount.at must be a positive count`);
+        for (const [k, pn] of Object.entries(bc.show || {})) {
+          if (!(Number(k) > 0)) bad.push(`${sid}.${letter}: bumpCount.show key ${k} is not a count`);
+          if (!propNames(b.room).has(pn)) bad.push(`${sid}.${letter}: bumpCount.show ${pn} is no named prop of ${b.room}`);
+        }
       }
       checkBeats(`${sid}.${letter}.onEnter`, b.room, b.onEnter);
+      if (b.idle) checkBeats(`${sid}.${letter}.idle`, b.room, b.idle.beat);
+      if (b.stillness) checkBeats(`${sid}.${letter}.stillness`, b.room, b.stillness.beat);
       for (const bz of b.beatZones || []) checkBeats(`${sid}.${letter}.beatZone.${bz.zone}`, b.room, bz.beat);
       for (const [key, th] of Object.entries(b.thresholds || {})) {
         for (const c of [].concat(th.sfxCue || [])) if (!cues.has(c)) bad.push(`${sid}.${letter}.${key}: unknown sfxCue ${c}`);

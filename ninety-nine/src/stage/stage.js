@@ -18,6 +18,7 @@
 //   screenRect(inst, prop)           where a prop's screen is in the viewport (the CRT form)
 //   project(point)                   a world point in viewport fractions (threshold labels)
 //   onFrame(fn)                      per-frame hook (the director's zone checks)
+//   onPreFrame(fn)                   per-frame hook before the world update (the cab's ride)
 //   fadeTo / blackout                the composite's fade (the ending card)
 //
 // Look: an MSAA float target at ~70% of the viewport, ACES, vignette,
@@ -130,7 +131,16 @@ export function createStage(container, { rooms = null, audio = null, sfx = null,
   let fadeTarget = 1;
   let fadeSpeed = 0;        // per second
   let playerActive = false;
+  // His shadow (Doc 1 S0: "every shadow, his included, points at the
+  // tower"): a body nobody sees that only casts, at his feet while he walks.
+  const shadowBody = new THREE.Mesh(new THREE.CylinderGeometry(0.2, 0.17, 1.72, 10), new THREE.MeshBasicMaterial({ colorWrite: false, depthWrite: false }));
+  shadowBody.castShadow = true;
+  shadowBody.receiveShadow = false;
+  shadowBody.frustumCulled = false;
+  shadowBody.visible = false;
+  scene.add(shadowBody);
   const frameHooks = new Set();
+  const preFrameHooks = new Set();
 
   function resize() {
     const vw = container.clientWidth || window.innerWidth;
@@ -201,6 +211,23 @@ export function createStage(container, { rooms = null, audio = null, sfx = null,
 
   const tmpPos = new THREE.Vector3();
   const tmpLook = new THREE.Vector3();
+  const tmpDir = new THREE.Vector3();
+  const TURN_COS = Math.cos(110 * Math.PI / 180);
+
+  function turnOf(from, to) {
+    const ax = from.look[0] - from.pos[0], ay = from.look[1] - from.pos[1], az = from.look[2] - from.pos[2];
+    const bx = to.look[0] - to.pos[0], by = to.look[1] - to.pos[1], bz = to.look[2] - to.pos[2];
+    const dA = Math.hypot(ax, ay, az), dB = Math.hypot(bx, by, bz);
+    if (dA < 1e-6 || dB < 1e-6) return null;
+    if ((ax * bx + ay * by + az * bz) / (dA * dB) > TURN_COS) return null;
+    // turn about the vertical: the heading swings the short way round, the
+    // pitch eases from one to the other
+    const yawA = Math.atan2(ax, az), yawB = Math.atan2(bx, bz);
+    let dYaw = yawB - yawA;
+    while (dYaw > Math.PI) dYaw -= 2 * Math.PI;
+    while (dYaw < -Math.PI) dYaw += 2 * Math.PI;
+    return { yawA, dYaw, pitchA: Math.asin(Math.max(-1, Math.min(1, ay / dA))), pitchB: Math.asin(Math.max(-1, Math.min(1, by / dB))), dA, dB };
+  }
 
   function stepShot(dt) {
     if (!shot) return;
@@ -215,7 +242,16 @@ export function createStage(container, { rooms = null, audio = null, sfx = null,
     const e = (EASE[shot.ease] || EASE.inout)(u);
     const a = shot.from, b = shot.to;
     tmpPos.set(a.pos[0] + (b.pos[0] - a.pos[0]) * e, a.pos[1] + (b.pos[1] - a.pos[1]) * e, a.pos[2] + (b.pos[2] - a.pos[2]) * e);
-    tmpLook.set(a.look[0] + (b.look[0] - a.look[0]) * e, a.look[1] + (b.look[1] - a.look[1]) * e, a.look[2] + (b.look[2] - a.look[2]) * e);
+    if (shot.turn) {
+      // a big turn (sitting down in a chair behind him): lerping the look
+      // point would swing it through the camera, so turn the direction
+      const T = shot.turn;
+      const yaw = T.yawA + T.dYaw * e, pitch = T.pitchA + (T.pitchB - T.pitchA) * e;
+      tmpDir.set(Math.cos(pitch) * Math.sin(yaw), Math.sin(pitch), Math.cos(pitch) * Math.cos(yaw));
+      tmpLook.copy(tmpPos).addScaledVector(tmpDir, T.dA + (T.dB - T.dA) * e);
+    } else {
+      tmpLook.set(a.look[0] + (b.look[0] - a.look[0]) * e, a.look[1] + (b.look[1] - a.look[1]) * e, a.look[2] + (b.look[2] - a.look[2]) * e);
+    }
     if (shot.sway) {
       const s = shot.sway;
       tmpPos.y += Math.sin(elapsed * 0.9) * s;
@@ -262,6 +298,7 @@ export function createStage(container, { rooms = null, audio = null, sfx = null,
         fadeIn: def.fadeIn || 0,
         fadeOut: def.fadeOut || 0,
         hold: def.hold !== false,
+        turn: def.pingpong ? null : turnOf(from, to),
         t: 0,
         done: false,
         resolve
@@ -321,7 +358,10 @@ export function createStage(container, { rooms = null, audio = null, sfx = null,
     }
     if (shot) stepShot(dt);
     else if (playerActive) player.update(dt);
+    shadowBody.visible = playerActive && !shot && !player.controls.isSwimming();
+    if (shadowBody.visible) shadowBody.position.set(camera.position.x, player.controls.feetY() + 0.86, camera.position.z);
     mats.update(dt);
+    for (const fn of preFrameHooks) fn(dt, elapsed);
     const pos = camera.position.toArray();
     const env = world.update(dt, elapsed, pos);
     scene.background.set(env.background);
@@ -410,6 +450,17 @@ export function createStage(container, { rooms = null, audio = null, sfx = null,
     screenRect,
     project,
     onFrame(fn) { frameHooks.add(fn); return () => frameHooks.delete(fn); },
+    // compile the programs of what was just placed (a door opening onto a
+    // new room) before he looks at it, not on the frame he does
+    warm() {
+      try {
+        const parallel = renderer.compileAsync && renderer.extensions.has('KHR_parallel_shader_compile');
+        const p = parallel ? renderer.compileAsync(scene, camera) : renderer.compile(scene, camera);
+        if (p && p.catch) p.catch(() => {});
+      } catch (e) { /* a warm-up is only ever an optimisation */ }
+    },
+    // before the world updates its lights and env: anything that moves a room
+    onPreFrame(fn) { preFrameHooks.add(fn); return () => preFrameHooks.delete(fn); },
     currentKey() { const c = world.current(); return c ? c.key : null; },
     baseKey(key) { const rec = rooms && resolveRecord(rooms, key); return rec ? rec.base : key; },
     record(key) { return rooms ? resolveRecord(rooms, key) : null; },

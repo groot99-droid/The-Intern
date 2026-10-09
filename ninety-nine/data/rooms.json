@@ -2073,7 +2073,7 @@
    "ceiling": "plaster_dark",
    "tile": {
     "floor": 2.5,
-    "wall": 2.0,
+    "wall": 4.4,
     "ceiling": 2.0
    },
    "skirt": {
@@ -2088,8 +2088,8 @@
     "t": 0.08
    },
    "ambient": {
-    "color": "#fff4e0",
-    "intensity": 0.22
+    "color": "#dfe6ee",
+    "intensity": 0.24
    },
    "sun": {
     "from": [
@@ -2097,53 +2097,127 @@
      6.5,
      7.5
     ],
-    "color": "#fff1dc",
-    "intensity": 0.7
+    "color": "#eef2f6",
+    "intensity": 0.6
    },
    "lights": [
     {
      "type": "point",
      "pos": [
-      -3.5,
-      3.9000000000000004,
-      -1.5
+      -3.8,
+      3.85,
+      -1.4
      ],
-     "color": "#ffe9c8",
-     "intensity": 22,
-     "distance": 16,
-     "flicker": 0
+     "color": "#eaf0f6",
+     "intensity": 11,
+     "distance": 13,
+     "decay": 1.4
     },
     {
      "type": "point",
      "pos": [
-      3.5,
-      3.9000000000000004,
-      -1.5
+      0.0,
+      3.85,
+      -1.4
      ],
-     "color": "#ffe9c8",
-     "intensity": 22,
-     "distance": 16,
-     "flicker": 0
+     "color": "#eaf0f6",
+     "intensity": 11,
+     "distance": 13,
+     "decay": 1.4
+    },
+    {
+     "type": "point",
+     "pos": [
+      3.8,
+      3.85,
+      -1.4
+     ],
+     "color": "#eaf0f6",
+     "intensity": 11,
+     "distance": 13,
+     "decay": 1.4
+    },
+    {
+     "type": "point",
+     "pos": [
+      -3.8,
+      3.85,
+      2.6
+     ],
+     "color": "#eaf0f6",
+     "intensity": 11,
+     "distance": 13,
+     "decay": 1.4
+    },
+    {
+     "type": "point",
+     "pos": [
+      0.0,
+      3.85,
+      2.6
+     ],
+     "color": "#eaf0f6",
+     "intensity": 11,
+     "distance": 13,
+     "decay": 1.4
+    },
+    {
+     "type": "point",
+     "pos": [
+      3.8,
+      3.85,
+      2.6
+     ],
+     "color": "#eaf0f6",
+     "intensity": 11,
+     "distance": 13,
+     "decay": 1.4
     },
     {
      "type": "point",
      "pos": [
       0,
-      3.9000000000000004,
-      3.5
+      2.75,
+      -4.85
      ],
-     "color": "#ffe9c8",
-     "intensity": 16,
-     "distance": 16
+     "color": "#e8eef4",
+     "intensity": 4.5,
+     "distance": 4.5
+    },
+    {
+     "type": "point",
+     "id": "inner_lamp",
+     "off": true,
+     "pos": [
+      5.6,
+      2.3,
+      -5.55
+     ],
+     "color": "#3dff7a",
+     "intensity": 2.4,
+     "distance": 3.2
+    },
+    {
+     "type": "point",
+     "id": "service_lamp",
+     "off": true,
+     "pos": [
+      -4.6,
+      2.3,
+      5.55
+     ],
+     "color": "#3dff7a",
+     "intensity": 2.4,
+     "distance": 3.2
     }
    ],
    "fog": {
-    "color": "#1a1714",
+    "color": "#121518",
     "near": 10,
     "far": 36
    },
    "exposure": 1.0,
-   "vignette": 0.6,
+   "vignette": 0.55,
    "spawn": [
     0,
     4.6,
@@ -2151,33 +2225,71 @@
    ],
    "props": [
     {
-     "type": "counter",
+     "type": "reception",
      "pos": [
       0,
       0,
-      -5.1
+      -4.7
      ],
      "w": 4.6,
-     "d": 0.9
+     "d": 0.8,
+     "h": 1.05,
+     "smudges": true
     },
     {
-     "type": "figure",
+     "type": "receptionist",
      "pos": [
       0,
       0,
-      -5.65
+      -5.62
      ],
-     "seated": true,
-     "suit": "lp_red",
-     "name": "receptionist"
+     "name": "receptionist",
+     "tilt": 36,
+     "dais": 0.25,
+     "daisZ": 0.07,
+     "daisD": 0.9,
+     "daisW": 4.5
     },
     {
-     "type": "dispenser",
+     "type": "receptionist_jaw",
      "pos": [
-      -3.4,
       0,
-      -5.0
+      0,
+      -5.62
+     ],
+     "name": "receptionist_jaw",
+     "tilt": 36,
+     "dais": 0.25,
+     "hidden": true
+    },
+    {
+     "type": "notice",
+     "pos": [
+      0,
+      3.43,
+      -4.245
+     ],
+     "w": 2.3,
+     "h": 0.3,
+     "text": "THE CANDIDATE WILL BE SEEN IN TURN."
+    },
+    {
+     "type": "speaker",
+     "pos": [
+      1.15,
+      2.95,
+      -4.7
      ]
+    },
+    {
+     "type": "fluoro",
+     "pos": [
+      0,
+      2.88,
+      -5.45
+     ],
+     "w": 1.6,
+     "d": 0.22
     },
     {
      "type": "clock",
@@ -2188,124 +2300,240 @@
      ]
     },
     {
-     "type": "placard",
+     "type": "queue",
      "pos": [
-      4.4,
-      1.9,
-      -5.98
+      -1.3,
+      0,
+      -3.47
+     ],
+     "w": 1.4,
+     "len": 1.56
+    },
+    {
+     "type": "ticketpost",
+     "pos": [
+      -2.35,
+      0,
+      -2.45
+     ],
+     "rot": 25,
+     "feed": false,
+     "name": "dispenser"
+    },
+    {
+     "type": "floorsheen",
+     "pos": [
+      0,
+      0,
+      0
+     ],
+     "w": 14.0,
+     "d": 12.0,
+     "coffers": false,
+     "ceiling": 4.14,
+     "lamps": [
+      [
+       -3.8,
+       -1.4,
+       1.4,
+       0.4
+      ],
+      [
+       0.0,
+       -1.4,
+       1.4,
+       0.4
+      ],
+      [
+       3.8,
+       -1.4,
+       1.4,
+       0.4
+      ],
+      [
+       -3.8,
+       2.6,
+       1.4,
+       0.4
+      ],
+      [
+       0.0,
+       2.6,
+       1.4,
+       0.4
+      ],
+      [
+       3.8,
+       2.6,
+       1.4,
+       0.4
+      ]
+     ],
+     "fog": [
+      10,
+      36
+     ],
+     "tone": "#aab1ba",
+     "gain": 0.8
+    },
+    {
+     "type": "monogram",
+     "pos": [
+      0,
+      0,
+      0.6
+     ],
+     "r": 1.5,
+     "name": "mosaic"
+    },
+    {
+     "type": "dust",
+     "pos": [
+      0,
+      0,
+      0.5
+     ],
+     "n": 90,
+     "w": 12,
+     "h": 2.6,
+     "d": 9.5,
+     "y": 1.2,
+     "opacity": 0.2
+    },
+    {
+     "type": "glb",
+     "pos": [
+      -5.2,
+      0,
+      -2.8
+     ],
+     "rot": 90,
+     "node": "lib_chair",
+     "mat": "lp_curtain",
+     "paint": "#45101a",
+     "collide": true,
+     "name": "chair0",
+     "fallback": "chair"
+    },
+    {
+     "type": "glb",
+     "pos": [
+      -5.2,
+      0,
+      -1.3
+     ],
+     "rot": 90,
+     "node": "lib_chair",
+     "mat": "lp_curtain",
+     "paint": "#45101a",
+     "collide": true,
+     "name": "chair1",
+     "fallback": "chair"
+    },
+    {
+     "type": "glb",
+     "pos": [
+      -5.2,
+      0,
+      0.2
+     ],
+     "rot": 90,
+     "node": "lib_chair",
+     "mat": "lp_curtain",
+     "paint": "#45101a",
+     "collide": true,
+     "name": "chair2",
+     "fallback": "chair"
+    },
+    {
+     "type": "glb",
+     "pos": [
+      -5.2,
+      0,
+      1.7
+     ],
+     "rot": 90,
+     "node": "lib_chair",
+     "mat": "lp_curtain",
+     "paint": "#45101a",
+     "collide": true,
+     "name": "chair3",
+     "fallback": "chair"
+    },
+    {
+     "type": "glb",
+     "pos": [
+      5.2,
+      0,
+      -2.8
+     ],
+     "rot": -90,
+     "node": "lib_chair",
+     "mat": "lp_curtain",
+     "paint": "#45101a",
+     "collide": true,
+     "name": "chair4",
+     "fallback": "chair"
+    },
+    {
+     "type": "glb",
+     "pos": [
+      5.2,
+      0,
+      -1.3
+     ],
+     "rot": -90,
+     "node": "lib_chair",
+     "mat": "lp_curtain",
+     "paint": "#45101a",
+     "collide": true,
+     "name": "chair5",
+     "fallback": "chair"
+    },
+    {
+     "type": "glb",
+     "pos": [
+      5.2,
+      0,
+      0.2
+     ],
+     "rot": -90,
+     "node": "lib_chair",
+     "mat": "lp_curtain",
+     "paint": "#45101a",
+     "collide": true,
+     "name": "chair6",
+     "fallback": "chair"
+    },
+    {
+     "type": "glb",
+     "pos": [
+      5.2,
+      0,
+      1.7
+     ],
+     "rot": -90,
+     "node": "lib_chair",
+     "mat": "lp_curtain",
+     "paint": "#45101a",
+     "collide": true,
+     "name": "chair7",
+     "fallback": "chair"
+    },
+    {
+     "type": "palette",
+     "pos": [
+      0,
+      0,
+      0
      ]
     },
     {
-     "type": "emblem",
-     "pos": [
-      0,
-      0.003,
-      0.6
-     ],
-     "r": 1.5
-    },
-    {
-     "type": "glb",
-     "pos": [
-      -5.2,
-      0,
-      -2.8
-     ],
-     "rot": 90,
-     "node": "lib_chair",
-     "collide": true,
-     "fallback": "chair"
-    },
-    {
-     "type": "glb",
-     "pos": [
-      -5.2,
-      0,
-      -1.3
-     ],
-     "rot": 90,
-     "node": "lib_chair",
-     "collide": true,
-     "fallback": "chair"
-    },
-    {
-     "type": "glb",
-     "pos": [
-      -5.2,
-      0,
-      0.2
-     ],
-     "rot": 90,
-     "node": "lib_chair",
-     "collide": true,
-     "fallback": "chair"
-    },
-    {
-     "type": "glb",
-     "pos": [
-      -5.2,
-      0,
-      1.7
-     ],
-     "rot": 90,
-     "node": "lib_chair",
-     "collide": true,
-     "fallback": "chair"
-    },
-    {
-     "type": "glb",
-     "pos": [
-      5.2,
-      0,
-      -2.8
-     ],
-     "rot": -90,
-     "node": "lib_chair",
-     "collide": true,
-     "fallback": "chair"
-    },
-    {
-     "type": "glb",
-     "pos": [
-      5.2,
-      0,
-      -1.3
-     ],
-     "rot": -90,
-     "node": "lib_chair",
-     "collide": true,
-     "fallback": "chair"
-    },
-    {
-     "type": "glb",
-     "pos": [
-      5.2,
-      0,
-      0.2
-     ],
-     "rot": -90,
-     "node": "lib_chair",
-     "collide": true,
-     "fallback": "chair"
-    },
-    {
-     "type": "glb",
-     "pos": [
-      5.2,
-      0,
-      1.7
-     ],
-     "rot": -90,
-     "node": "lib_chair",
-     "collide": true,
-     "fallback": "chair"
-    },
-    {
      "type": "fluoro",
      "pos": [
-      -3.5,
+      -3.8,
       4.14,
-      -1.5
+      -1.4
      ],
      "w": 1.4,
      "d": 0.4
@@ -2313,9 +2541,9 @@
     {
      "type": "fluoro",
      "pos": [
-      3.5,
+      0.0,
       4.14,
-      -1.5
+      -1.4
      ],
      "w": 1.4,
      "d": 0.4
@@ -2323,12 +2551,181 @@
     {
      "type": "fluoro",
      "pos": [
-      0,
+      3.8,
       4.14,
-      3.5
+      -1.4
      ],
      "w": 1.4,
      "d": 0.4
+    },
+    {
+     "type": "fluoro",
+     "pos": [
+      -3.8,
+      4.14,
+      2.6
+     ],
+     "w": 1.4,
+     "d": 0.4
+    },
+    {
+     "type": "fluoro",
+     "pos": [
+      0.0,
+      4.14,
+      2.6
+     ],
+     "w": 1.4,
+     "d": 0.4
+    },
+    {
+     "type": "fluoro",
+     "pos": [
+      3.8,
+      4.14,
+      2.6
+     ],
+     "w": 1.4,
+     "d": 0.4
+    },
+    {
+     "type": "backing",
+     "pos": [
+      0,
+      0,
+      6.37
+     ],
+     "w": 2.9,
+     "h": 3.1,
+     "name": "front_dark",
+     "hidden": true
+    },
+    {
+     "type": "doorlamp",
+     "pos": [
+      5.6,
+      2.46,
+      -5.98
+     ],
+     "lens": "red",
+     "name": "inner_lamp_red"
+    },
+    {
+     "type": "doorlamp",
+     "pos": [
+      5.6,
+      2.46,
+      -5.98
+     ],
+     "lens": "green",
+     "name": "inner_lamp_green",
+     "hidden": true
+    },
+    {
+     "type": "doorlamp",
+     "pos": [
+      -4.6,
+      2.46,
+      5.98
+     ],
+     "rot": 180,
+     "lens": "red",
+     "name": "service_lamp_red"
+    },
+    {
+     "type": "doorlamp",
+     "pos": [
+      -4.6,
+      2.46,
+      5.98
+     ],
+     "rot": 180,
+     "lens": "green",
+     "name": "service_lamp_green",
+     "hidden": true
+    },
+    {
+     "type": "badgereader",
+     "pos": [
+      6.45,
+      1.25,
+      -5.97
+     ]
+    }
+   ],
+   "boxes": [
+    {
+     "min": [
+      -2.45,
+      2.95,
+      -6.0
+     ],
+     "max": [
+      2.45,
+      4.2,
+      -4.25
+     ],
+     "mat": "plaster",
+     "collide": false,
+     "tile": 4.4
+    },
+    {
+     "min": [
+      -2.45,
+      0,
+      -6.0
+     ],
+     "max": [
+      -2.3,
+      2.95,
+      -4.8
+     ],
+     "mat": "plaster",
+     "tile": 4.4
+    },
+    {
+     "min": [
+      2.3,
+      0,
+      -6.0
+     ],
+     "max": [
+      2.45,
+      2.95,
+      -4.8
+     ],
+     "mat": "plaster",
+     "tile": 4.4
+    },
+    {
+     "min": [
+      -2.28,
+      0,
+      -4.71
+     ],
+     "max": [
+      2.28,
+      1.0,
+      -4.69
+     ],
+     "mat": "plaster_dark",
+     "invisible": true,
+     "shadow": false
+    },
+    {
+     "min": [
+      -2.3,
+      0,
+      -6.0
+     ],
+     "max": [
+      2.3,
+      2.95,
+      -5.97
+     ],
+     "mat": "plaster_dark",
+     "collide": false,
+     "tile": 4.4
     }
    ],
    "footstep": {
@@ -2408,15 +2805,16 @@
      "from": "out",
      "to": {
       "pos": [
-       0,
+       -0.9,
        1.6,
-       -2.8
+       -3.0
       ],
       "look": [
-       0,
-       1.1,
-       -5.65
-      ]
+       0.1,
+       1.45,
+       -5.6
+      ],
+      "fov": 44
      },
      "seconds": 4.0,
      "ease": "inout"
@@ -2430,25 +2828,27 @@
      "w": 2.6,
      "h": 2.9,
      "kind": "glass",
-     "locked": true
+     "locked": true,
+     "glass": "glass_dark"
     },
     {
      "name": "inner",
      "wall": "N",
      "x": 5.6,
-     "w": 1.1,
+     "w": 1.2,
      "h": 2.2,
      "kind": "door",
      "locked": true,
      "mat": "lp_beige",
-     "hinge": "R"
+     "hinge": "R",
+     "panel": "lp_grey"
     },
     {
      "name": "service",
      "wall": "S",
      "x": -4.6,
-     "w": 1.0,
-     "h": 2.1,
+     "w": 1.2,
+     "h": 2.2,
      "kind": "door",
      "locked": true,
      "mat": "lp_grey"
@@ -2457,79 +2857,223 @@
    "entry": "front",
    "zones": [
     {
-     "name": "seat_w",
+     "name": "seat0",
      "pos": [
-      -4.3,
-      -0.5
+      -4.48,
+      -2.8
      ],
-     "r": 0.7,
-     "ring": 2.2,
+     "r": 0.35,
+     "ring": 1.7,
      "labelAt": [
-      -4.6,
-      1.5,
-      -0.5
+      -5.2,
+      1.45,
+      -2.8
      ],
-     "box": [
-      [
-       -4.75,
-       -3.3
+     "seat": {
+      "pos": [
+       -5.14,
+       -2.8
       ],
-      [
-       -3.85,
-       2.3
+      "face": [
+       1.0,
+       0.0
       ]
-     ]
+     }
     },
     {
-     "name": "seat_e",
+     "name": "seat1",
      "pos": [
-      4.3,
-      -0.5
+      -4.48,
+      -1.3
      ],
-     "r": 0.7,
-     "ring": 2.2,
+     "r": 0.35,
+     "ring": 1.7,
      "labelAt": [
-      4.6,
-      1.5,
-      -0.5
+      -5.2,
+      1.45,
+      -1.3
      ],
-     "box": [
-      [
-       3.85,
-       -3.3
+     "seat": {
+      "pos": [
+       -5.14,
+       -1.3
       ],
-      [
-       4.75,
-       2.3
+      "face": [
+       1.0,
+       0.0
       ]
-     ]
+     }
+    },
+    {
+     "name": "seat2",
+     "pos": [
+      -4.48,
+      0.2
+     ],
+     "r": 0.35,
+     "ring": 1.7,
+     "labelAt": [
+      -5.2,
+      1.45,
+      0.2
+     ],
+     "seat": {
+      "pos": [
+       -5.14,
+       0.2
+      ],
+      "face": [
+       1.0,
+       0.0
+      ]
+     }
+    },
+    {
+     "name": "seat3",
+     "pos": [
+      -4.48,
+      1.7
+     ],
+     "r": 0.35,
+     "ring": 1.7,
+     "labelAt": [
+      -5.2,
+      1.45,
+      1.7
+     ],
+     "seat": {
+      "pos": [
+       -5.14,
+       1.7
+      ],
+      "face": [
+       1.0,
+       0.0
+      ]
+     }
+    },
+    {
+     "name": "seat4",
+     "pos": [
+      4.48,
+      -2.8
+     ],
+     "r": 0.35,
+     "ring": 1.7,
+     "labelAt": [
+      5.2,
+      1.45,
+      -2.8
+     ],
+     "seat": {
+      "pos": [
+       5.14,
+       -2.8
+      ],
+      "face": [
+       -1.0,
+       0.0
+      ]
+     }
+    },
+    {
+     "name": "seat5",
+     "pos": [
+      4.48,
+      -1.3
+     ],
+     "r": 0.35,
+     "ring": 1.7,
+     "labelAt": [
+      5.2,
+      1.45,
+      -1.3
+     ],
+     "seat": {
+      "pos": [
+       5.14,
+       -1.3
+      ],
+      "face": [
+       -1.0,
+       0.0
+      ]
+     }
+    },
+    {
+     "name": "seat6",
+     "pos": [
+      4.48,
+      0.2
+     ],
+     "r": 0.35,
+     "ring": 1.7,
+     "labelAt": [
+      5.2,
+      1.45,
+      0.2
+     ],
+     "seat": {
+      "pos": [
+       5.14,
+       0.2
+      ],
+      "face": [
+       -1.0,
+       0.0
+      ]
+     }
+    },
+    {
+     "name": "seat7",
+     "pos": [
+      4.48,
+      1.7
+     ],
+     "r": 0.35,
+     "ring": 1.7,
+     "labelAt": [
+      5.2,
+      1.45,
+      1.7
+     ],
+     "seat": {
+      "pos": [
+       5.14,
+       1.7
+      ],
+      "face": [
+       -1.0,
+       0.0
+      ]
+     }
     },
     {
      "name": "counter",
      "pos": [
       -1.3,
-      -3.95
+      -3.72
      ],
-     "r": 0.65,
-     "ring": 3.0,
+     "r": 0.5,
+     "ring": 2.2,
      "labelAt": [
       -1.3,
-      1.75,
-      -4.7
+      2.05,
+      -4.2
      ]
     },
     {
      "name": "inner_door",
      "pos": [
       5.6,
-      -5.15
+      -5.1
      ],
      "r": 0.6,
      "ring": 3.0,
      "labelAt": [
       5.6,
-      2.55,
-      -5.9
+      1.55,
+      -5.85
      ]
     },
     {
@@ -2542,8 +3086,8 @@
      "ring": 3.2,
      "labelAt": [
       0.0,
-      3.2,
-      5.9
+      2.05,
+      5.85
      ]
     }
    ],
@@ -2561,7 +3105,7 @@
    "ceiling": "plaster_blown",
    "tile": {
     "floor": 2.5,
-    "wall": 2.0,
+    "wall": 4.4,
     "ceiling": 2.0
    },
    "skirt": {
@@ -2576,8 +3120,8 @@
     "t": 0.08
    },
    "ambient": {
-    "color": "#fff4e0",
-    "intensity": 0.55
+    "color": "#fff6ea",
+    "intensity": 0.7
    },
    "sun": {
     "from": [
@@ -2585,53 +3129,169 @@
      6.5,
      7.5
     ],
-    "color": "#fff1dc",
-    "intensity": 0.9
+    "color": "#fff4e4",
+    "intensity": 0.95
    },
    "lights": [
     {
      "type": "point",
      "pos": [
-      -3.5,
-      3.9000000000000004,
-      -1.5
+      -3.8,
+      3.85,
+      -1.4
      ],
-     "color": "#ffe9c8",
-     "intensity": 42,
-     "distance": 16,
-     "flicker": 0.25
+     "color": "#fff3e2",
+     "intensity": 30,
+     "distance": 13,
+     "decay": 1.4,
+     "flicker": 0.18,
+     "pattern": {
+      "period": 2.1,
+      "duty": 0.9,
+      "low": 0.42,
+      "offset": 0.0
+     }
     },
     {
      "type": "point",
      "pos": [
-      3.5,
-      3.9000000000000004,
-      -1.5
+      0.0,
+      3.85,
+      -1.4
      ],
-     "color": "#ffe9c8",
-     "intensity": 42,
-     "distance": 16,
-     "flicker": 0.25
+     "color": "#fff3e2",
+     "intensity": 30,
+     "distance": 13,
+     "decay": 1.4,
+     "flicker": 0.18,
+     "pattern": {
+      "period": 2.47,
+      "duty": 0.9,
+      "low": 0.42,
+      "offset": 0.61
+     }
+    },
+    {
+     "type": "point",
+     "pos": [
+      3.8,
+      3.85,
+      -1.4
+     ],
+     "color": "#fff3e2",
+     "intensity": 30,
+     "distance": 13,
+     "decay": 1.4,
+     "flicker": 0.18,
+     "pattern": {
+      "period": 2.84,
+      "duty": 0.9,
+      "low": 0.42,
+      "offset": 1.22
+     }
+    },
+    {
+     "type": "point",
+     "pos": [
+      -3.8,
+      3.85,
+      2.6
+     ],
+     "color": "#fff3e2",
+     "intensity": 30,
+     "distance": 13,
+     "decay": 1.4,
+     "flicker": 0.18,
+     "pattern": {
+      "period": 3.21,
+      "duty": 0.9,
+      "low": 0.42,
+      "offset": 1.83
+     }
+    },
+    {
+     "type": "point",
+     "pos": [
+      0.0,
+      3.85,
+      2.6
+     ],
+     "color": "#fff3e2",
+     "intensity": 30,
+     "distance": 13,
+     "decay": 1.4,
+     "flicker": 0.18,
+     "pattern": {
+      "period": 3.58,
+      "duty": 0.9,
+      "low": 0.42,
+      "offset": 2.44
+     }
+    },
+    {
+     "type": "point",
+     "pos": [
+      3.8,
+      3.85,
+      2.6
+     ],
+     "color": "#fff3e2",
+     "intensity": 30,
+     "distance": 13,
+     "decay": 1.4,
+     "flicker": 0.18,
+     "pattern": {
+      "period": 3.95,
+      "duty": 0.9,
+      "low": 0.42,
+      "offset": 3.05
+     }
     },
     {
      "type": "point",
      "pos": [
       0,
-      3.9000000000000004,
-      3.5
+      2.75,
+      -4.85
      ],
-     "color": "#ffe9c8",
-     "intensity": 34,
-     "distance": 16
+     "color": "#fff1de",
+     "intensity": 7,
+     "distance": 4.5
+    },
+    {
+     "type": "point",
+     "id": "inner_lamp",
+     "off": true,
+     "pos": [
+      5.6,
+      2.3,
+      -5.55
+     ],
+     "color": "#3dff7a",
+     "intensity": 2.4,
+     "distance": 3.2
+    },
+    {
+     "type": "point",
+     "id": "service_lamp",
+     "off": true,
+     "pos": [
+      -4.6,
+      2.3,
+      5.55
+     ],
+     "color": "#3dff7a",
+     "intensity": 2.4,
+     "distance": 3.2
     }
    ],
    "fog": {
-    "color": "#e9e3d6",
-    "near": 8,
-    "far": 34
+    "color": "#efe9dc",
+    "near": 5,
+    "far": 28
    },
-   "exposure": 1.05,
-   "vignette": 0.35,
+   "exposure": 1.5,
+   "vignette": 0.2,
    "spawn": [
     0,
     4.6,
@@ -2639,33 +3299,73 @@
    ],
    "props": [
     {
-     "type": "counter",
+     "type": "reception",
      "pos": [
       0,
       0,
-      -5.1
+      -4.7
      ],
      "w": 4.6,
-     "d": 0.9
+     "d": 0.8,
+     "h": 1.05,
+     "smudges": true
     },
     {
-     "type": "figure",
+     "type": "receptionist",
      "pos": [
       0,
       0,
-      -5.65
+      -5.62
      ],
-     "seated": true,
-     "suit": "lp_red",
-     "name": "receptionist"
+     "name": "receptionist",
+     "tilt": 36,
+     "dais": 0.25,
+     "daisZ": 0.07,
+     "daisD": 0.9,
+     "daisW": 4.5
     },
     {
-     "type": "dispenser",
+     "type": "receptionist_jaw",
      "pos": [
-      -3.4,
       0,
-      -5.0
+      0,
+      -5.62
+     ],
+     "name": "receptionist_jaw",
+     "tilt": 36,
+     "dais": 0.25,
+     "hidden": true
+    },
+    {
+     "type": "notice",
+     "pos": [
+      0,
+      3.43,
+      -4.245
+     ],
+     "w": 2.3,
+     "h": 0.3,
+     "text": "THE CANDIDATE WILL BE SEEN IN TURN.",
+     "plate": "#7a5f2a",
+     "ink": "#140f06"
+    },
+    {
+     "type": "speaker",
+     "pos": [
+      1.15,
+      2.95,
+      -4.7
      ]
+    },
+    {
+     "type": "fluoro",
+     "pos": [
+      0,
+      2.88,
+      -5.45
+     ],
+     "w": 1.6,
+     "d": 0.22
     },
     {
      "type": "clock",
@@ -2676,21 +3376,105 @@
      ]
     },
     {
-     "type": "placard",
+     "type": "queue",
      "pos": [
-      4.4,
-      1.9,
-      -5.98
-     ]
+      -1.3,
+      0,
+      -3.47
+     ],
+     "w": 1.4,
+     "len": 1.56
     },
     {
-     "type": "emblem",
+     "type": "ticketpost",
+     "pos": [
+      -2.35,
+      0,
+      -2.45
+     ],
+     "rot": 25,
+     "feed": true,
+     "name": "dispenser"
+    },
+    {
+     "type": "floorsheen",
      "pos": [
       0,
-      0.003,
+      0,
+      0
+     ],
+     "w": 14.0,
+     "d": 12.0,
+     "coffers": true,
+     "ceiling": 4.14,
+     "lamps": [
+      [
+       -3.8,
+       -1.4,
+       1.4,
+       0.4
+      ],
+      [
+       0.0,
+       -1.4,
+       1.4,
+       0.4
+      ],
+      [
+       3.8,
+       -1.4,
+       1.4,
+       0.4
+      ],
+      [
+       -3.8,
+       2.6,
+       1.4,
+       0.4
+      ],
+      [
+       0.0,
+       2.6,
+       1.4,
+       0.4
+      ],
+      [
+       3.8,
+       2.6,
+       1.4,
+       0.4
+      ]
+     ],
+     "fog": [
+      5,
+      28
+     ],
+     "tone": "#9ba4ae",
+     "gain": 0.4
+    },
+    {
+     "type": "monogram",
+     "pos": [
+      0,
+      0,
       0.6
      ],
-     "r": 1.5
+     "r": 1.5,
+     "name": "mosaic"
+    },
+    {
+     "type": "dust",
+     "pos": [
+      0,
+      0,
+      0.5
+     ],
+     "n": 90,
+     "w": 12,
+     "h": 2.6,
+     "d": 9.5,
+     "y": 1.2,
+     "opacity": 0.2
     },
     {
      "type": "glb",
@@ -2701,7 +3485,10 @@
      ],
      "rot": 45.0,
      "node": "lib_chair",
+     "mat": "lp_curtain",
+     "paint": "#45101a",
      "collide": true,
+     "name": "chair0",
      "fallback": "chair"
     },
     {
@@ -2713,7 +3500,10 @@
      ],
      "rot": 55.2,
      "node": "lib_chair",
+     "mat": "lp_curtain",
+     "paint": "#45101a",
      "collide": true,
+     "name": "chair1",
      "fallback": "chair"
     },
     {
@@ -2723,13 +3513,16 @@
       0,
       0.532
      ],
-     "rot": 95.4,
+     "rot": 128.0,
      "node": "lib_chair",
+     "mat": "lp_curtain",
+     "paint": "#45101a",
      "collide": true,
+     "name": "chair2",
      "fallback": "chair"
     },
     {
-     "type": "glb",
+     "type": "tipchair",
      "pos": [
       -3.973,
       0,
@@ -2737,8 +3530,10 @@
      ],
      "rot": 79.0,
      "node": "lib_chair",
-     "collide": true,
-     "fallback": "chair"
+     "mat": "lp_curtain",
+     "paint": "#45101a",
+     "tip": "back",
+     "name": "chair3"
     },
     {
      "type": "glb",
@@ -2749,7 +3544,10 @@
      ],
      "rot": -33.7,
      "node": "lib_chair",
+     "mat": "lp_curtain",
+     "paint": "#45101a",
      "collide": true,
+     "name": "chair4",
      "fallback": "chair"
     },
     {
@@ -2761,11 +3559,14 @@
      ],
      "rot": -64.5,
      "node": "lib_chair",
+     "mat": "lp_curtain",
+     "paint": "#45101a",
      "collide": true,
+     "name": "chair5",
      "fallback": "chair"
     },
     {
-     "type": "glb",
+     "type": "tipchair",
      "pos": [
       4.226,
       0,
@@ -2773,8 +3574,10 @@
      ],
      "rot": -41.0,
      "node": "lib_chair",
-     "collide": true,
-     "fallback": "chair"
+     "mat": "lp_curtain",
+     "paint": "#45101a",
+     "tip": "side",
+     "name": "chair6"
     },
     {
      "type": "glb",
@@ -2783,364 +3586,269 @@
       0,
       2.504
      ],
-     "rot": -86.0,
+     "rot": -125.0,
      "node": "lib_chair",
+     "mat": "lp_curtain",
+     "paint": "#45101a",
      "collide": true,
+     "name": "chair7",
      "fallback": "chair"
     },
     {
-     "type": "slip",
-     "pos": [
-      -5.217,
-      0.004,
-      -4.459
-     ],
-     "rot": 144.9
-    },
-    {
-     "type": "slip",
-     "pos": [
-      -2.639,
-      0.005,
-      -4.676
-     ],
-     "rot": 73.4
-    },
-    {
-     "type": "slip",
-     "pos": [
-      -5.665,
-      0.006,
-      -4.372
-     ],
-     "rot": 166.4
-    },
-    {
-     "type": "slip",
-     "pos": [
-      -5.077,
-      0.007,
-      -3.83
-     ],
-     "rot": 351.6
-    },
-    {
-     "type": "slip",
-     "pos": [
-      -3.196,
-      0.008,
-      -4.08
-     ],
-     "rot": 331.5
-    },
-    {
-     "type": "slip",
-     "pos": [
-      -3.264,
-      0.009,
-      -4.36
-     ],
-     "rot": 214.4
-    },
-    {
-     "type": "slip",
-     "pos": [
-      -1.241,
-      0.01,
-      -4.166
-     ],
-     "rot": 237.7
-    },
-    {
-     "type": "slip",
-     "pos": [
-      -3.143,
-      0.011,
-      -4.675
-     ],
-     "rot": 170.5
-    },
-    {
-     "type": "slip",
-     "pos": [
-      -1.697,
-      0.012,
-      -4.066
-     ],
-     "rot": 153.2
-    },
-    {
-     "type": "slip",
-     "pos": [
-      -3.534,
-      0.013,
-      -4.473
-     ],
-     "rot": 2.0
-    },
-    {
-     "type": "slip",
-     "pos": [
-      -4.283,
-      0.014,
-      -4.614
-     ],
-     "rot": 72.3
-    },
-    {
-     "type": "slip",
-     "pos": [
-      -1.632,
-      0.015,
-      -4.273
-     ],
-     "rot": 76.1
-    },
-    {
-     "type": "slip",
-     "pos": [
-      -4.006,
-      0.016,
-      -4.421
-     ],
-     "rot": 275.0
-    },
-    {
-     "type": "slip",
-     "pos": [
-      -3.722,
-      0.017,
-      -4.108
-     ],
-     "rot": 332.0
-    },
-    {
-     "type": "slip",
-     "pos": [
-      -3.097,
-      0.018,
-      -4.467
-     ],
-     "rot": 215.9
-    },
-    {
-     "type": "slip",
-     "pos": [
-      -4.798,
-      0.019,
-      -3.951
-     ],
-     "rot": 147.0
-    },
-    {
-     "type": "slip",
-     "pos": [
-      -3.159,
-      0.02,
-      -4.497
-     ],
-     "rot": 62.7
-    },
-    {
-     "type": "slip",
-     "pos": [
-      -3.056,
-      0.021,
-      -4.402
-     ],
-     "rot": 74.7
-    },
-    {
-     "type": "slip",
-     "pos": [
-      -3.224,
-      0.022,
-      -3.78
-     ],
-     "rot": 287.3
-    },
-    {
-     "type": "slip",
-     "pos": [
-      -1.912,
-      0.023,
-      -3.801
-     ],
-     "rot": 296.0
-    },
-    {
-     "type": "slip",
-     "pos": [
-      -2.877,
-      0.024,
-      -4.53
-     ],
-     "rot": 103.6
-    },
-    {
-     "type": "slip",
-     "pos": [
-      -2.019,
-      0.025,
-      -4.416
-     ],
-     "rot": 77.9
-    },
-    {
-     "type": "slip",
-     "pos": [
-      -2.945,
-      0.026,
-      -4.075
-     ],
-     "rot": 143.8
-    },
-    {
-     "type": "slip",
-     "pos": [
-      -4.139,
-      0.027,
-      -4.18
-     ],
-     "rot": 33.4
-    },
-    {
-     "type": "slip",
-     "pos": [
-      -1.561,
-      0.028,
-      -4.052
-     ],
-     "rot": 259.8
-    },
-    {
-     "type": "slip",
-     "pos": [
-      -4.377,
-      0.029,
-      -4.46
-     ],
-     "rot": 112.1
-    },
-    {
-     "type": "slip",
-     "pos": [
-      -4.312,
-      0.03,
-      -3.829
-     ],
-     "rot": 111.8
-    },
-    {
-     "type": "slip",
-     "pos": [
-      -3.783,
-      0.031,
-      -3.345
-     ],
-     "rot": 78.7
-    },
-    {
-     "type": "slip",
-     "pos": [
-      -4.287,
-      0.032,
-      -3.559
-     ],
-     "rot": 89.9
-    },
-    {
-     "type": "slip",
-     "pos": [
-      -3.394,
-      0.033,
-      -4.153
-     ],
-     "rot": 28.8
-    },
-    {
-     "type": "slip",
-     "pos": [
-      -2.304,
-      0.034,
-      -4.529
-     ],
-     "rot": 92.2
-    },
-    {
-     "type": "slip",
-     "pos": [
-      -2.345,
-      0.035,
-      -4.233
-     ],
-     "rot": 314.9
-    },
-    {
-     "type": "slip",
-     "pos": [
-      -5.242,
-      0.036,
-      -4.442
-     ],
-     "rot": 334.7
-    },
-    {
-     "type": "slip",
-     "pos": [
-      -2.861,
-      0.037,
-      -4.367
-     ],
-     "rot": 147.4
-    },
-    {
-     "type": "slip",
-     "pos": [
-      -4.63,
-      0.038,
-      -4.016
-     ],
-     "rot": 101.6
-    },
-    {
-     "type": "slip",
-     "pos": [
-      -4.706,
-      0.039,
-      -4.033
-     ],
-     "rot": 355.4
-    },
-    {
-     "type": "fluoro",
-     "pos": [
-      -3.5,
-      4.14,
-      -1.5
-     ],
-     "w": 1.4,
-     "d": 0.4
-    },
-    {
-     "type": "fluoro",
-     "pos": [
-      3.5,
-      4.14,
-      -1.5
-     ],
-     "w": 1.4,
-     "d": 0.4
-    },
-    {
-     "type": "fluoro",
+     "type": "palette",
      "pos": [
       0,
+      0,
+      0
+     ]
+    },
+    {
+     "type": "slippile",
+     "pos": [
+      -2.35,
+      0,
+      -2.45
+     ],
+     "n": 110,
+     "r": 0.7,
+     "seed": 99,
+     "drift": [
+      [
+       0.6,
+       1.1
+      ],
+      [
+       1.3,
+       1.9
+      ],
+      [
+       -0.5,
+       1.7
+      ],
+      [
+       2.1,
+       2.7
+      ],
+      [
+       0.9,
+       3.4
+      ],
+      [
+       2.7,
+       4.2
+      ],
+      [
+       1.7,
+       5.1
+      ],
+      [
+       -0.9,
+       3.1
+      ],
+      [
+       3.3,
+       5.9
+      ]
+     ]
+    },
+    {
+     "type": "fluoro",
+     "pos": [
+      -3.8,
       4.14,
-      3.5
+      -1.4
      ],
      "w": 1.4,
      "d": 0.4
+    },
+    {
+     "type": "fluoro",
+     "pos": [
+      0.0,
+      4.14,
+      -1.4
+     ],
+     "w": 1.4,
+     "d": 0.4
+    },
+    {
+     "type": "fluoro",
+     "pos": [
+      3.8,
+      4.14,
+      -1.4
+     ],
+     "w": 1.4,
+     "d": 0.4
+    },
+    {
+     "type": "fluoro",
+     "pos": [
+      -3.8,
+      4.14,
+      2.6
+     ],
+     "w": 1.4,
+     "d": 0.4
+    },
+    {
+     "type": "fluoro",
+     "pos": [
+      0.0,
+      4.14,
+      2.6
+     ],
+     "w": 1.4,
+     "d": 0.4
+    },
+    {
+     "type": "fluoro",
+     "pos": [
+      3.8,
+      4.14,
+      2.6
+     ],
+     "w": 1.4,
+     "d": 0.4
+    },
+    {
+     "type": "backing",
+     "pos": [
+      0,
+      0,
+      6.37
+     ],
+     "w": 2.9,
+     "h": 3.1,
+     "name": "front_dark",
+     "hidden": true
+    },
+    {
+     "type": "doorlamp",
+     "pos": [
+      5.6,
+      2.46,
+      -5.98
+     ],
+     "lens": "red",
+     "name": "inner_lamp_red"
+    },
+    {
+     "type": "doorlamp",
+     "pos": [
+      5.6,
+      2.46,
+      -5.98
+     ],
+     "lens": "green",
+     "name": "inner_lamp_green",
+     "hidden": true
+    },
+    {
+     "type": "doorlamp",
+     "pos": [
+      -4.6,
+      2.46,
+      5.98
+     ],
+     "rot": 180,
+     "lens": "red",
+     "name": "service_lamp_red"
+    },
+    {
+     "type": "doorlamp",
+     "pos": [
+      -4.6,
+      2.46,
+      5.98
+     ],
+     "rot": 180,
+     "lens": "green",
+     "name": "service_lamp_green",
+     "hidden": true
+    },
+    {
+     "type": "badgereader",
+     "pos": [
+      6.45,
+      1.25,
+      -5.97
+     ]
+    }
+   ],
+   "boxes": [
+    {
+     "min": [
+      -2.45,
+      2.95,
+      -6.0
+     ],
+     "max": [
+      2.45,
+      4.2,
+      -4.25
+     ],
+     "mat": "plaster_blown",
+     "collide": false,
+     "tile": 4.4
+    },
+    {
+     "min": [
+      -2.45,
+      0,
+      -6.0
+     ],
+     "max": [
+      -2.3,
+      2.95,
+      -4.8
+     ],
+     "mat": "plaster_blown",
+     "tile": 4.4
+    },
+    {
+     "min": [
+      2.3,
+      0,
+      -6.0
+     ],
+     "max": [
+      2.45,
+      2.95,
+      -4.8
+     ],
+     "mat": "plaster_blown",
+     "tile": 4.4
+    },
+    {
+     "min": [
+      -2.28,
+      0,
+      -4.71
+     ],
+     "max": [
+      2.28,
+      1.0,
+      -4.69
+     ],
+     "mat": "plaster_dark",
+     "invisible": true,
+     "shadow": false
+    },
+    {
+     "min": [
+      -2.3,
+      0,
+      -6.0
+     ],
+     "max": [
+      2.3,
+      2.95,
+      -5.97
+     ],
+     "mat": "plaster_dark",
+     "collide": false,
+     "tile": 4.4
     }
    ],
    "footstep": {
@@ -3220,15 +3928,16 @@
      "from": "out",
      "to": {
       "pos": [
-       0,
+       -0.9,
        1.6,
-       -2.8
+       -3.0
       ],
       "look": [
-       0,
-       1.1,
-       -5.65
-      ]
+       0.1,
+       1.45,
+       -5.6
+      ],
+      "fov": 44
      },
      "seconds": 4.0,
      "ease": "inout"
@@ -3242,25 +3951,27 @@
      "w": 2.6,
      "h": 2.9,
      "kind": "glass",
-     "locked": true
+     "locked": true,
+     "glass": "glass_dark"
     },
     {
      "name": "inner",
      "wall": "N",
      "x": 5.6,
-     "w": 1.1,
+     "w": 1.2,
      "h": 2.2,
      "kind": "door",
      "locked": true,
      "mat": "lp_beige",
-     "hinge": "R"
+     "hinge": "R",
+     "panel": "lp_grey"
     },
     {
      "name": "service",
      "wall": "S",
      "x": -4.6,
-     "w": 1.0,
-     "h": 2.1,
+     "w": 1.2,
+     "h": 2.2,
      "kind": "door",
      "locked": true,
      "mat": "lp_grey"
@@ -3269,79 +3980,175 @@
    "entry": "front",
    "zones": [
     {
-     "name": "seat_w",
+     "name": "seat0",
      "pos": [
-      -4.3,
-      -0.5
+      -4.959,
+      -2.831
      ],
-     "r": 0.7,
-     "ring": 2.2,
+     "r": 0.35,
+     "ring": 1.7,
      "labelAt": [
-      -4.6,
-      1.5,
-      -0.5
+      -5.469,
+      1.45,
+      -3.34
      ],
-     "box": [
-      [
-       -4.75,
-       -3.3
+     "seat": {
+      "pos": [
+       -5.426,
+       -3.297
       ],
-      [
-       -3.85,
-       2.3
+      "face": [
+       0.708,
+       0.707
       ]
-     ]
+     }
     },
     {
-     "name": "seat_e",
+     "name": "seat1",
      "pos": [
-      4.3,
-      -0.5
+      -5.313,
+      -0.421
      ],
-     "r": 0.7,
-     "ring": 2.2,
+     "r": 0.35,
+     "ring": 1.7,
      "labelAt": [
-      4.6,
-      1.5,
-      -0.5
+      -5.904,
+      1.45,
+      -0.832
      ],
-     "box": [
-      [
-       3.85,
-       -3.3
+     "seat": {
+      "pos": [
+       -5.855,
+       -0.798
       ],
-      [
-       4.75,
-       2.3
+      "face": [
+       0.821,
+       0.571
       ]
-     ]
+     }
+    },
+    {
+     "name": "seat2",
+     "pos": [
+      -4.96,
+      0.088
+     ],
+     "r": 0.35,
+     "ring": 1.7,
+     "labelAt": [
+      -5.527,
+      1.45,
+      0.532
+     ],
+     "seat": {
+      "pos": [
+       -5.48,
+       0.495
+      ],
+      "face": [
+       0.788,
+       -0.616
+      ]
+     }
+    },
+    {
+     "name": "seat4",
+     "pos": [
+      5.117,
+      -2.711
+     ],
+     "r": 0.35,
+     "ring": 1.7,
+     "labelAt": [
+      5.517,
+      1.45,
+      -3.31
+     ],
+     "seat": {
+      "pos": [
+       5.484,
+       -3.26
+      ],
+      "face": [
+       -0.555,
+       0.832
+      ]
+     }
+    },
+    {
+     "name": "seat5",
+     "pos": [
+      4.197,
+      -1.191
+     ],
+     "r": 0.35,
+     "ring": 1.7,
+     "labelAt": [
+      4.847,
+      1.45,
+      -1.501
+     ],
+     "seat": {
+      "pos": [
+       4.793,
+       -1.476
+      ],
+      "face": [
+       -0.902,
+       0.431
+      ]
+     }
+    },
+    {
+     "name": "seat7",
+     "pos": [
+      4.159,
+      2.091
+     ],
+     "r": 0.35,
+     "ring": 1.7,
+     "labelAt": [
+      4.749,
+      1.45,
+      2.504
+     ],
+     "seat": {
+      "pos": [
+       4.7,
+       2.47
+      ],
+      "face": [
+       -0.819,
+       -0.574
+      ]
+     }
     },
     {
      "name": "counter",
      "pos": [
       -1.3,
-      -3.95
+      -3.72
      ],
-     "r": 0.65,
-     "ring": 3.0,
+     "r": 0.5,
+     "ring": 2.2,
      "labelAt": [
       -1.3,
-      1.75,
-      -4.7
+      2.05,
+      -4.2
      ]
     },
     {
      "name": "inner_door",
      "pos": [
       5.6,
-      -5.15
+      -5.1
      ],
      "r": 0.6,
      "ring": 3.0,
      "labelAt": [
       5.6,
-      2.55,
-      -5.9
+      1.55,
+      -5.85
      ]
     },
     {
@@ -3354,8 +4161,8 @@
      "ring": 3.2,
      "labelAt": [
       0.0,
-      3.2,
-      5.9
+      2.05,
+      5.85
      ]
     }
    ],
@@ -3669,7 +4476,7 @@
    "ceiling": "plaster_dark",
    "tile": {
     "floor": 2.5,
-    "wall": 2.0,
+    "wall": 4.4,
     "ceiling": 2.0
    },
    "skirt": {
@@ -3684,7 +4491,7 @@
     "t": 0.08
    },
    "ambient": {
-    "color": "#fff4e0",
+    "color": "#dfe6ee",
     "intensity": 0.3
    },
    "sun": {
@@ -3693,44 +4500,118 @@
      6.5,
      7.5
     ],
-    "color": "#fff1dc",
-    "intensity": 0.7
+    "color": "#eef2f6",
+    "intensity": 0.6
    },
    "lights": [
     {
      "type": "point",
      "pos": [
-      -3.5,
-      3.9000000000000004,
-      -1.5
+      -3.8,
+      3.85,
+      -1.4
      ],
-     "color": "#ffe9c8",
-     "intensity": 22,
-     "distance": 16,
-     "flicker": 0
+     "color": "#eaf0f6",
+     "intensity": 11,
+     "distance": 13,
+     "decay": 1.4
     },
     {
      "type": "point",
      "pos": [
-      3.5,
-      3.9000000000000004,
-      -1.5
+      0.0,
+      3.85,
+      -1.4
      ],
-     "color": "#ffe9c8",
-     "intensity": 22,
-     "distance": 16,
-     "flicker": 0
+     "color": "#eaf0f6",
+     "intensity": 11,
+     "distance": 13,
+     "decay": 1.4
+    },
+    {
+     "type": "point",
+     "pos": [
+      3.8,
+      3.85,
+      -1.4
+     ],
+     "color": "#eaf0f6",
+     "intensity": 11,
+     "distance": 13,
+     "decay": 1.4
+    },
+    {
+     "type": "point",
+     "pos": [
+      -3.8,
+      3.85,
+      2.6
+     ],
+     "color": "#eaf0f6",
+     "intensity": 11,
+     "distance": 13,
+     "decay": 1.4
+    },
+    {
+     "type": "point",
+     "pos": [
+      0.0,
+      3.85,
+      2.6
+     ],
+     "color": "#eaf0f6",
+     "intensity": 11,
+     "distance": 13,
+     "decay": 1.4
+    },
+    {
+     "type": "point",
+     "pos": [
+      3.8,
+      3.85,
+      2.6
+     ],
+     "color": "#eaf0f6",
+     "intensity": 11,
+     "distance": 13,
+     "decay": 1.4
     },
     {
      "type": "point",
      "pos": [
       0,
-      3.9000000000000004,
-      3.5
+      2.75,
+      -4.85
      ],
-     "color": "#ffe9c8",
-     "intensity": 16,
-     "distance": 16
+     "color": "#e8eef4",
+     "intensity": 4.5,
+     "distance": 4.5
+    },
+    {
+     "type": "point",
+     "id": "inner_lamp",
+     "off": true,
+     "pos": [
+      5.6,
+      2.3,
+      -5.55
+     ],
+     "color": "#3dff7a",
+     "intensity": 2.4,
+     "distance": 3.2
+    },
+    {
+     "type": "point",
+     "id": "service_lamp",
+     "off": true,
+     "pos": [
+      -4.6,
+      2.3,
+      5.55
+     ],
+     "color": "#3dff7a",
+     "intensity": 2.4,
+     "distance": 3.2
     },
     {
      "type": "point",
@@ -3750,7 +4631,7 @@
     "far": 30
    },
    "exposure": 1.0,
-   "vignette": 0.6,
+   "vignette": 0.55,
    "spawn": [
     0,
     1.5,
@@ -3758,33 +4639,71 @@
    ],
    "props": [
     {
-     "type": "counter",
+     "type": "reception",
      "pos": [
       0,
       0,
-      -5.1
+      -4.7
      ],
      "w": 4.6,
-     "d": 0.9
+     "d": 0.8,
+     "h": 1.05,
+     "smudges": true
     },
     {
-     "type": "figure",
+     "type": "receptionist",
      "pos": [
       0,
       0,
-      -5.65
+      -5.62
      ],
-     "seated": true,
-     "suit": "lp_red",
-     "name": "receptionist"
+     "name": "receptionist",
+     "tilt": 36,
+     "dais": 0.25,
+     "daisZ": 0.07,
+     "daisD": 0.9,
+     "daisW": 4.5
     },
     {
-     "type": "dispenser",
+     "type": "receptionist_jaw",
      "pos": [
-      -3.4,
       0,
-      -5.0
+      0,
+      -5.62
+     ],
+     "name": "receptionist_jaw",
+     "tilt": 36,
+     "dais": 0.25,
+     "hidden": true
+    },
+    {
+     "type": "notice",
+     "pos": [
+      0,
+      3.43,
+      -4.245
+     ],
+     "w": 2.3,
+     "h": 0.3,
+     "text": "THE CANDIDATE WILL BE SEEN IN TURN."
+    },
+    {
+     "type": "speaker",
+     "pos": [
+      1.15,
+      2.95,
+      -4.7
      ]
+    },
+    {
+     "type": "fluoro",
+     "pos": [
+      0,
+      2.88,
+      -5.45
+     ],
+     "w": 1.6,
+     "d": 0.22
     },
     {
      "type": "clock",
@@ -3795,124 +4714,240 @@
      ]
     },
     {
-     "type": "placard",
+     "type": "queue",
      "pos": [
-      4.4,
-      1.9,
-      -5.98
+      -1.3,
+      0,
+      -3.47
+     ],
+     "w": 1.4,
+     "len": 1.56
+    },
+    {
+     "type": "ticketpost",
+     "pos": [
+      -2.35,
+      0,
+      -2.45
+     ],
+     "rot": 25,
+     "feed": false,
+     "name": "dispenser"
+    },
+    {
+     "type": "floorsheen",
+     "pos": [
+      0,
+      0,
+      0
+     ],
+     "w": 14.0,
+     "d": 12.0,
+     "coffers": false,
+     "ceiling": 4.14,
+     "lamps": [
+      [
+       -3.8,
+       -1.4,
+       1.4,
+       0.4
+      ],
+      [
+       0.0,
+       -1.4,
+       1.4,
+       0.4
+      ],
+      [
+       3.8,
+       -1.4,
+       1.4,
+       0.4
+      ],
+      [
+       -3.8,
+       2.6,
+       1.4,
+       0.4
+      ],
+      [
+       0.0,
+       2.6,
+       1.4,
+       0.4
+      ],
+      [
+       3.8,
+       2.6,
+       1.4,
+       0.4
+      ]
+     ],
+     "fog": [
+      10,
+      36
+     ],
+     "tone": "#aab1ba",
+     "gain": 0.8
+    },
+    {
+     "type": "monogram",
+     "pos": [
+      0,
+      0,
+      0.6
+     ],
+     "r": 1.5,
+     "name": "mosaic"
+    },
+    {
+     "type": "dust",
+     "pos": [
+      0,
+      0,
+      0.5
+     ],
+     "n": 90,
+     "w": 12,
+     "h": 2.6,
+     "d": 9.5,
+     "y": 1.2,
+     "opacity": 0.2
+    },
+    {
+     "type": "glb",
+     "pos": [
+      -5.2,
+      0,
+      -2.8
+     ],
+     "rot": 90,
+     "node": "lib_chair",
+     "mat": "lp_curtain",
+     "paint": "#45101a",
+     "collide": true,
+     "name": "chair0",
+     "fallback": "chair"
+    },
+    {
+     "type": "glb",
+     "pos": [
+      -5.2,
+      0,
+      -1.3
+     ],
+     "rot": 90,
+     "node": "lib_chair",
+     "mat": "lp_curtain",
+     "paint": "#45101a",
+     "collide": true,
+     "name": "chair1",
+     "fallback": "chair"
+    },
+    {
+     "type": "glb",
+     "pos": [
+      -5.2,
+      0,
+      0.2
+     ],
+     "rot": 90,
+     "node": "lib_chair",
+     "mat": "lp_curtain",
+     "paint": "#45101a",
+     "collide": true,
+     "name": "chair2",
+     "fallback": "chair"
+    },
+    {
+     "type": "glb",
+     "pos": [
+      -5.2,
+      0,
+      1.7
+     ],
+     "rot": 90,
+     "node": "lib_chair",
+     "mat": "lp_curtain",
+     "paint": "#45101a",
+     "collide": true,
+     "name": "chair3",
+     "fallback": "chair"
+    },
+    {
+     "type": "glb",
+     "pos": [
+      5.2,
+      0,
+      -2.8
+     ],
+     "rot": -90,
+     "node": "lib_chair",
+     "mat": "lp_curtain",
+     "paint": "#45101a",
+     "collide": true,
+     "name": "chair4",
+     "fallback": "chair"
+    },
+    {
+     "type": "glb",
+     "pos": [
+      5.2,
+      0,
+      -1.3
+     ],
+     "rot": -90,
+     "node": "lib_chair",
+     "mat": "lp_curtain",
+     "paint": "#45101a",
+     "collide": true,
+     "name": "chair5",
+     "fallback": "chair"
+    },
+    {
+     "type": "glb",
+     "pos": [
+      5.2,
+      0,
+      0.2
+     ],
+     "rot": -90,
+     "node": "lib_chair",
+     "mat": "lp_curtain",
+     "paint": "#45101a",
+     "collide": true,
+     "name": "chair6",
+     "fallback": "chair"
+    },
+    {
+     "type": "glb",
+     "pos": [
+      5.2,
+      0,
+      1.7
+     ],
+     "rot": -90,
+     "node": "lib_chair",
+     "mat": "lp_curtain",
+     "paint": "#45101a",
+     "collide": true,
+     "name": "chair7",
+     "fallback": "chair"
+    },
+    {
+     "type": "palette",
+     "pos": [
+      0,
+      0,
+      0
      ]
     },
     {
-     "type": "emblem",
-     "pos": [
-      0,
-      0.003,
-      0.6
-     ],
-     "r": 1.5
-    },
-    {
-     "type": "glb",
-     "pos": [
-      -5.2,
-      0,
-      -2.8
-     ],
-     "rot": 90,
-     "node": "lib_chair",
-     "collide": true,
-     "fallback": "chair"
-    },
-    {
-     "type": "glb",
-     "pos": [
-      -5.2,
-      0,
-      -1.3
-     ],
-     "rot": 90,
-     "node": "lib_chair",
-     "collide": true,
-     "fallback": "chair"
-    },
-    {
-     "type": "glb",
-     "pos": [
-      -5.2,
-      0,
-      0.2
-     ],
-     "rot": 90,
-     "node": "lib_chair",
-     "collide": true,
-     "fallback": "chair"
-    },
-    {
-     "type": "glb",
-     "pos": [
-      -5.2,
-      0,
-      1.7
-     ],
-     "rot": 90,
-     "node": "lib_chair",
-     "collide": true,
-     "fallback": "chair"
-    },
-    {
-     "type": "glb",
-     "pos": [
-      5.2,
-      0,
-      -2.8
-     ],
-     "rot": -90,
-     "node": "lib_chair",
-     "collide": true,
-     "fallback": "chair"
-    },
-    {
-     "type": "glb",
-     "pos": [
-      5.2,
-      0,
-      -1.3
-     ],
-     "rot": -90,
-     "node": "lib_chair",
-     "collide": true,
-     "fallback": "chair"
-    },
-    {
-     "type": "glb",
-     "pos": [
-      5.2,
-      0,
-      0.2
-     ],
-     "rot": -90,
-     "node": "lib_chair",
-     "collide": true,
-     "fallback": "chair"
-    },
-    {
-     "type": "glb",
-     "pos": [
-      5.2,
-      0,
-      1.7
-     ],
-     "rot": -90,
-     "node": "lib_chair",
-     "collide": true,
-     "fallback": "chair"
-    },
-    {
      "type": "fluoro",
      "pos": [
-      -3.5,
+      -3.8,
       4.14,
-      -1.5
+      -1.4
      ],
      "w": 1.4,
      "d": 0.4
@@ -3920,9 +4955,9 @@
     {
      "type": "fluoro",
      "pos": [
-      3.5,
+      0.0,
       4.14,
-      -1.5
+      -1.4
      ],
      "w": 1.4,
      "d": 0.4
@@ -3930,12 +4965,106 @@
     {
      "type": "fluoro",
      "pos": [
-      0,
+      3.8,
       4.14,
-      3.5
+      -1.4
      ],
      "w": 1.4,
      "d": 0.4
+    },
+    {
+     "type": "fluoro",
+     "pos": [
+      -3.8,
+      4.14,
+      2.6
+     ],
+     "w": 1.4,
+     "d": 0.4
+    },
+    {
+     "type": "fluoro",
+     "pos": [
+      0.0,
+      4.14,
+      2.6
+     ],
+     "w": 1.4,
+     "d": 0.4
+    },
+    {
+     "type": "fluoro",
+     "pos": [
+      3.8,
+      4.14,
+      2.6
+     ],
+     "w": 1.4,
+     "d": 0.4
+    },
+    {
+     "type": "backing",
+     "pos": [
+      0,
+      0,
+      6.37
+     ],
+     "w": 2.9,
+     "h": 3.1,
+     "name": "front_dark",
+     "hidden": true
+    },
+    {
+     "type": "doorlamp",
+     "pos": [
+      5.6,
+      2.46,
+      -5.98
+     ],
+     "lens": "red",
+     "name": "inner_lamp_red"
+    },
+    {
+     "type": "doorlamp",
+     "pos": [
+      5.6,
+      2.46,
+      -5.98
+     ],
+     "lens": "green",
+     "name": "inner_lamp_green",
+     "hidden": true
+    },
+    {
+     "type": "doorlamp",
+     "pos": [
+      -4.6,
+      2.46,
+      5.98
+     ],
+     "rot": 180,
+     "lens": "red",
+     "name": "service_lamp_red"
+    },
+    {
+     "type": "doorlamp",
+     "pos": [
+      -4.6,
+      2.46,
+      5.98
+     ],
+     "rot": 180,
+     "lens": "green",
+     "name": "service_lamp_green",
+     "hidden": true
+    },
+    {
+     "type": "badgereader",
+     "pos": [
+      6.45,
+      1.25,
+      -5.97
+     ]
     },
     {
      "type": "placard",
@@ -3965,6 +5094,81 @@
      "rot": 90,
      "node": "lib_payphone",
      "collide": true
+    }
+   ],
+   "boxes": [
+    {
+     "min": [
+      -2.45,
+      2.95,
+      -6.0
+     ],
+     "max": [
+      2.45,
+      4.2,
+      -4.25
+     ],
+     "mat": "plaster",
+     "collide": false,
+     "tile": 4.4
+    },
+    {
+     "min": [
+      -2.45,
+      0,
+      -6.0
+     ],
+     "max": [
+      -2.3,
+      2.95,
+      -4.8
+     ],
+     "mat": "plaster",
+     "tile": 4.4
+    },
+    {
+     "min": [
+      2.3,
+      0,
+      -6.0
+     ],
+     "max": [
+      2.45,
+      2.95,
+      -4.8
+     ],
+     "mat": "plaster",
+     "tile": 4.4
+    },
+    {
+     "min": [
+      -2.28,
+      0,
+      -4.71
+     ],
+     "max": [
+      2.28,
+      1.0,
+      -4.69
+     ],
+     "mat": "plaster_dark",
+     "invisible": true,
+     "shadow": false
+    },
+    {
+     "min": [
+      -2.3,
+      0,
+      -6.0
+     ],
+     "max": [
+      2.3,
+      2.95,
+      -5.97
+     ],
+     "mat": "plaster_dark",
+     "collide": false,
+     "tile": 4.4
     }
    ],
    "footstep": {
@@ -4055,19 +5259,20 @@
      "name": "inner",
      "wall": "N",
      "x": 5.6,
-     "w": 1.1,
+     "w": 1.2,
      "h": 2.2,
      "kind": "door",
      "locked": true,
      "mat": "lp_beige",
-     "hinge": "R"
+     "hinge": "R",
+     "panel": "lp_grey"
     },
     {
      "name": "service",
      "wall": "S",
      "x": -4.6,
-     "w": 1.0,
-     "h": 2.1,
+     "w": 1.2,
+     "h": 2.2,
      "kind": "door",
      "locked": true,
      "mat": "lp_grey"
@@ -4095,79 +5300,223 @@
    "entry": "side",
    "zones": [
     {
-     "name": "seat_w",
+     "name": "seat0",
      "pos": [
-      -4.3,
-      -0.5
+      -4.48,
+      -2.8
      ],
-     "r": 0.7,
-     "ring": 2.2,
+     "r": 0.35,
+     "ring": 1.7,
      "labelAt": [
-      -4.6,
-      1.5,
-      -0.5
+      -5.2,
+      1.45,
+      -2.8
      ],
-     "box": [
-      [
-       -4.75,
-       -3.3
+     "seat": {
+      "pos": [
+       -5.14,
+       -2.8
       ],
-      [
-       -3.85,
-       2.3
+      "face": [
+       1.0,
+       0.0
       ]
-     ]
+     }
     },
     {
-     "name": "seat_e",
+     "name": "seat1",
      "pos": [
-      4.3,
-      -0.5
+      -4.48,
+      -1.3
      ],
-     "r": 0.7,
-     "ring": 2.2,
+     "r": 0.35,
+     "ring": 1.7,
      "labelAt": [
-      4.6,
-      1.5,
-      -0.5
+      -5.2,
+      1.45,
+      -1.3
      ],
-     "box": [
-      [
-       3.85,
-       -3.3
+     "seat": {
+      "pos": [
+       -5.14,
+       -1.3
       ],
-      [
-       4.75,
-       2.3
+      "face": [
+       1.0,
+       0.0
       ]
-     ]
+     }
+    },
+    {
+     "name": "seat2",
+     "pos": [
+      -4.48,
+      0.2
+     ],
+     "r": 0.35,
+     "ring": 1.7,
+     "labelAt": [
+      -5.2,
+      1.45,
+      0.2
+     ],
+     "seat": {
+      "pos": [
+       -5.14,
+       0.2
+      ],
+      "face": [
+       1.0,
+       0.0
+      ]
+     }
+    },
+    {
+     "name": "seat3",
+     "pos": [
+      -4.48,
+      1.7
+     ],
+     "r": 0.35,
+     "ring": 1.7,
+     "labelAt": [
+      -5.2,
+      1.45,
+      1.7
+     ],
+     "seat": {
+      "pos": [
+       -5.14,
+       1.7
+      ],
+      "face": [
+       1.0,
+       0.0
+      ]
+     }
+    },
+    {
+     "name": "seat4",
+     "pos": [
+      4.48,
+      -2.8
+     ],
+     "r": 0.35,
+     "ring": 1.7,
+     "labelAt": [
+      5.2,
+      1.45,
+      -2.8
+     ],
+     "seat": {
+      "pos": [
+       5.14,
+       -2.8
+      ],
+      "face": [
+       -1.0,
+       0.0
+      ]
+     }
+    },
+    {
+     "name": "seat5",
+     "pos": [
+      4.48,
+      -1.3
+     ],
+     "r": 0.35,
+     "ring": 1.7,
+     "labelAt": [
+      5.2,
+      1.45,
+      -1.3
+     ],
+     "seat": {
+      "pos": [
+       5.14,
+       -1.3
+      ],
+      "face": [
+       -1.0,
+       0.0
+      ]
+     }
+    },
+    {
+     "name": "seat6",
+     "pos": [
+      4.48,
+      0.2
+     ],
+     "r": 0.35,
+     "ring": 1.7,
+     "labelAt": [
+      5.2,
+      1.45,
+      0.2
+     ],
+     "seat": {
+      "pos": [
+       5.14,
+       0.2
+      ],
+      "face": [
+       -1.0,
+       0.0
+      ]
+     }
+    },
+    {
+     "name": "seat7",
+     "pos": [
+      4.48,
+      1.7
+     ],
+     "r": 0.35,
+     "ring": 1.7,
+     "labelAt": [
+      5.2,
+      1.45,
+      1.7
+     ],
+     "seat": {
+      "pos": [
+       5.14,
+       1.7
+      ],
+      "face": [
+       -1.0,
+       0.0
+      ]
+     }
     },
     {
      "name": "counter",
      "pos": [
       -1.3,
-      -3.95
+      -3.72
      ],
-     "r": 0.65,
-     "ring": 3.0,
+     "r": 0.5,
+     "ring": 2.2,
      "labelAt": [
       -1.3,
-      1.75,
-      -4.7
+      2.05,
+      -4.2
      ]
     },
     {
      "name": "inner_door",
      "pos": [
       5.6,
-      -5.15
+      -5.1
      ],
      "r": 0.6,
      "ring": 3.0,
      "labelAt": [
       5.6,
-      2.55,
-      -5.9
+      1.55,
+      -5.85
      ]
     },
     {
@@ -4180,8 +5529,8 @@
      "ring": 3.2,
      "labelAt": [
       0.0,
-      3.2,
-      5.9
+      2.05,
+      5.85
      ]
     },
     {
@@ -17371,7 +18720,7 @@
    "ceiling": "plaster_dark",
    "tile": {
     "floor": 2.5,
-    "wall": 2.0,
+    "wall": 4.4,
     "ceiling": 2.0
    },
    "skirt": {
@@ -17386,8 +18735,8 @@
     "t": 0.08
    },
    "ambient": {
-    "color": "#fff4e0",
-    "intensity": 0.22
+    "color": "#dfe6ee",
+    "intensity": 0.24
    },
    "sun": {
     "from": [
@@ -17395,53 +18744,127 @@
      6.5,
      7.5
     ],
-    "color": "#fff1dc",
-    "intensity": 0.7
+    "color": "#eef2f6",
+    "intensity": 0.6
    },
    "lights": [
     {
      "type": "point",
      "pos": [
-      -3.5,
-      3.9000000000000004,
-      -1.5
+      -3.8,
+      3.85,
+      -1.4
      ],
-     "color": "#ffe9c8",
-     "intensity": 22,
-     "distance": 16,
-     "flicker": 0
+     "color": "#eaf0f6",
+     "intensity": 11,
+     "distance": 13,
+     "decay": 1.4
     },
     {
      "type": "point",
      "pos": [
-      3.5,
-      3.9000000000000004,
-      -1.5
+      0.0,
+      3.85,
+      -1.4
      ],
-     "color": "#ffe9c8",
-     "intensity": 22,
-     "distance": 16,
-     "flicker": 0
+     "color": "#eaf0f6",
+     "intensity": 11,
+     "distance": 13,
+     "decay": 1.4
+    },
+    {
+     "type": "point",
+     "pos": [
+      3.8,
+      3.85,
+      -1.4
+     ],
+     "color": "#eaf0f6",
+     "intensity": 11,
+     "distance": 13,
+     "decay": 1.4
+    },
+    {
+     "type": "point",
+     "pos": [
+      -3.8,
+      3.85,
+      2.6
+     ],
+     "color": "#eaf0f6",
+     "intensity": 11,
+     "distance": 13,
+     "decay": 1.4
+    },
+    {
+     "type": "point",
+     "pos": [
+      0.0,
+      3.85,
+      2.6
+     ],
+     "color": "#eaf0f6",
+     "intensity": 11,
+     "distance": 13,
+     "decay": 1.4
+    },
+    {
+     "type": "point",
+     "pos": [
+      3.8,
+      3.85,
+      2.6
+     ],
+     "color": "#eaf0f6",
+     "intensity": 11,
+     "distance": 13,
+     "decay": 1.4
     },
     {
      "type": "point",
      "pos": [
       0,
-      3.9000000000000004,
-      3.5
+      2.75,
+      -4.85
      ],
-     "color": "#ffe9c8",
-     "intensity": 16,
-     "distance": 16
+     "color": "#e8eef4",
+     "intensity": 4.5,
+     "distance": 4.5
+    },
+    {
+     "type": "point",
+     "id": "inner_lamp",
+     "off": true,
+     "pos": [
+      5.6,
+      2.3,
+      -5.55
+     ],
+     "color": "#3dff7a",
+     "intensity": 2.4,
+     "distance": 3.2
+    },
+    {
+     "type": "point",
+     "id": "service_lamp",
+     "off": true,
+     "pos": [
+      -4.6,
+      2.3,
+      5.55
+     ],
+     "color": "#3dff7a",
+     "intensity": 2.4,
+     "distance": 3.2
     }
    ],
    "fog": {
-    "color": "#1a1714",
+    "color": "#121518",
     "near": 10,
     "far": 36
    },
    "exposure": 1.0,
-   "vignette": 0.6,
+   "vignette": 0.55,
    "spawn": [
     -0.9,
     1.2,
@@ -17449,33 +18872,71 @@
    ],
    "props": [
     {
-     "type": "counter",
+     "type": "reception",
      "pos": [
       0,
       0,
-      -5.1
+      -4.7
      ],
      "w": 4.6,
-     "d": 0.9
+     "d": 0.8,
+     "h": 1.05,
+     "smudges": true
     },
     {
-     "type": "figure",
+     "type": "receptionist",
      "pos": [
       0,
       0,
-      -5.65
+      -5.62
      ],
-     "seated": true,
-     "suit": "lp_red",
-     "name": "receptionist"
+     "name": "receptionist",
+     "tilt": 36,
+     "dais": 0.25,
+     "daisZ": 0.07,
+     "daisD": 0.9,
+     "daisW": 4.5
     },
     {
-     "type": "dispenser",
+     "type": "receptionist_jaw",
      "pos": [
-      -3.4,
       0,
-      -5.0
+      0,
+      -5.62
+     ],
+     "name": "receptionist_jaw",
+     "tilt": 36,
+     "dais": 0.25,
+     "hidden": true
+    },
+    {
+     "type": "notice",
+     "pos": [
+      0,
+      3.43,
+      -4.245
+     ],
+     "w": 2.3,
+     "h": 0.3,
+     "text": "THE CANDIDATE WILL BE SEEN IN TURN."
+    },
+    {
+     "type": "speaker",
+     "pos": [
+      1.15,
+      2.95,
+      -4.7
      ]
+    },
+    {
+     "type": "fluoro",
+     "pos": [
+      0,
+      2.88,
+      -5.45
+     ],
+     "w": 1.6,
+     "d": 0.22
     },
     {
      "type": "clock",
@@ -17486,51 +18947,237 @@
      ]
     },
     {
-     "type": "placard",
+     "type": "queue",
      "pos": [
-      4.4,
-      1.9,
-      -5.98
+      -1.3,
+      0,
+      -3.47
+     ],
+     "w": 1.4,
+     "len": 1.56
+    },
+    {
+     "type": "ticketpost",
+     "pos": [
+      -2.35,
+      0,
+      -2.45
+     ],
+     "rot": 25,
+     "feed": false,
+     "name": "dispenser"
+    },
+    {
+     "type": "floorsheen",
+     "pos": [
+      0,
+      0,
+      0
+     ],
+     "w": 14.0,
+     "d": 12.0,
+     "coffers": false,
+     "ceiling": 4.14,
+     "lamps": [
+      [
+       -3.8,
+       -1.4,
+       1.4,
+       0.4
+      ],
+      [
+       0.0,
+       -1.4,
+       1.4,
+       0.4
+      ],
+      [
+       3.8,
+       -1.4,
+       1.4,
+       0.4
+      ],
+      [
+       -3.8,
+       2.6,
+       1.4,
+       0.4
+      ],
+      [
+       0.0,
+       2.6,
+       1.4,
+       0.4
+      ],
+      [
+       3.8,
+       2.6,
+       1.4,
+       0.4
+      ]
+     ],
+     "fog": [
+      10,
+      36
+     ],
+     "tone": "#aab1ba",
+     "gain": 0.8
+    },
+    {
+     "type": "monogram",
+     "pos": [
+      0,
+      0,
+      0.6
+     ],
+     "r": 1.5,
+     "name": "mosaic"
+    },
+    {
+     "type": "dust",
+     "pos": [
+      0,
+      0,
+      0.5
+     ],
+     "n": 90,
+     "w": 12,
+     "h": 2.6,
+     "d": 9.5,
+     "y": 1.2,
+     "opacity": 0.2
+    },
+    {
+     "type": "palette",
+     "pos": [
+      0,
+      0,
+      0
      ]
     },
     {
-     "type": "emblem",
+     "type": "fluoro",
+     "pos": [
+      -3.8,
+      4.14,
+      -1.4
+     ],
+     "w": 1.4,
+     "d": 0.4
+    },
+    {
+     "type": "fluoro",
+     "pos": [
+      0.0,
+      4.14,
+      -1.4
+     ],
+     "w": 1.4,
+     "d": 0.4
+    },
+    {
+     "type": "fluoro",
+     "pos": [
+      3.8,
+      4.14,
+      -1.4
+     ],
+     "w": 1.4,
+     "d": 0.4
+    },
+    {
+     "type": "fluoro",
+     "pos": [
+      -3.8,
+      4.14,
+      2.6
+     ],
+     "w": 1.4,
+     "d": 0.4
+    },
+    {
+     "type": "fluoro",
+     "pos": [
+      0.0,
+      4.14,
+      2.6
+     ],
+     "w": 1.4,
+     "d": 0.4
+    },
+    {
+     "type": "fluoro",
+     "pos": [
+      3.8,
+      4.14,
+      2.6
+     ],
+     "w": 1.4,
+     "d": 0.4
+    },
+    {
+     "type": "backing",
      "pos": [
       0,
-      0.003,
-      0.6
-     ],
-     "r": 1.5
-    },
-    {
-     "type": "fluoro",
-     "pos": [
-      -3.5,
-      4.14,
-      -1.5
-     ],
-     "w": 1.4,
-     "d": 0.4
-    },
-    {
-     "type": "fluoro",
-     "pos": [
-      3.5,
-      4.14,
-      -1.5
-     ],
-     "w": 1.4,
-     "d": 0.4
-    },
-    {
-     "type": "fluoro",
-     "pos": [
       0,
-      4.14,
-      3.5
+      6.37
      ],
-     "w": 1.4,
-     "d": 0.4
+     "w": 2.9,
+     "h": 3.1,
+     "name": "front_dark",
+     "hidden": true
+    },
+    {
+     "type": "doorlamp",
+     "pos": [
+      5.6,
+      2.46,
+      -5.98
+     ],
+     "lens": "red",
+     "name": "inner_lamp_red"
+    },
+    {
+     "type": "doorlamp",
+     "pos": [
+      5.6,
+      2.46,
+      -5.98
+     ],
+     "lens": "green",
+     "name": "inner_lamp_green",
+     "hidden": true
+    },
+    {
+     "type": "doorlamp",
+     "pos": [
+      -4.6,
+      2.46,
+      5.98
+     ],
+     "rot": 180,
+     "lens": "red",
+     "name": "service_lamp_red"
+    },
+    {
+     "type": "doorlamp",
+     "pos": [
+      -4.6,
+      2.46,
+      5.98
+     ],
+     "rot": 180,
+     "lens": "green",
+     "name": "service_lamp_green",
+     "hidden": true
+    },
+    {
+     "type": "badgereader",
+     "pos": [
+      6.45,
+      1.25,
+      -5.97
+     ]
     },
     {
      "type": "glb",
@@ -17587,6 +19234,81 @@
       1.2
      ],
      "rot": 10
+    }
+   ],
+   "boxes": [
+    {
+     "min": [
+      -2.45,
+      2.95,
+      -6.0
+     ],
+     "max": [
+      2.45,
+      4.2,
+      -4.25
+     ],
+     "mat": "plaster",
+     "collide": false,
+     "tile": 4.4
+    },
+    {
+     "min": [
+      -2.45,
+      0,
+      -6.0
+     ],
+     "max": [
+      -2.3,
+      2.95,
+      -4.8
+     ],
+     "mat": "plaster",
+     "tile": 4.4
+    },
+    {
+     "min": [
+      2.3,
+      0,
+      -6.0
+     ],
+     "max": [
+      2.45,
+      2.95,
+      -4.8
+     ],
+     "mat": "plaster",
+     "tile": 4.4
+    },
+    {
+     "min": [
+      -2.28,
+      0,
+      -4.71
+     ],
+     "max": [
+      2.28,
+      1.0,
+      -4.69
+     ],
+     "mat": "plaster_dark",
+     "invisible": true,
+     "shadow": false
+    },
+    {
+     "min": [
+      -2.3,
+      0,
+      -6.0
+     ],
+     "max": [
+      2.3,
+      2.95,
+      -5.97
+     ],
+     "mat": "plaster_dark",
+     "collide": false,
+     "tile": 4.4
     }
    ],
    "footstep": {
@@ -17739,19 +19461,20 @@
      "name": "inner",
      "wall": "N",
      "x": 5.6,
-     "w": 1.1,
+     "w": 1.2,
      "h": 2.2,
      "kind": "door",
      "locked": true,
      "mat": "lp_beige",
-     "hinge": "R"
+     "hinge": "R",
+     "panel": "lp_grey"
     },
     {
      "name": "service",
      "wall": "S",
      "x": -4.6,
-     "w": 1.0,
-     "h": 2.1,
+     "w": 1.2,
+     "h": 2.2,
      "kind": "door",
      "locked": true,
      "mat": "lp_grey"
@@ -17814,7 +19537,7 @@
       2.6999999999999997
      ],
      "color": "#ffd9a0",
-     "intensity": 2.4,
+     "intensity": 4.5,
      "distance": 8
     },
     {
@@ -17825,8 +19548,19 @@
       -2.6999999999999997
      ],
      "color": "#ffd9a0",
-     "intensity": 2.4,
+     "intensity": 4.5,
      "distance": 9
+    },
+    {
+     "type": "point",
+     "pos": [
+      0,
+      2.2,
+      0
+     ],
+     "color": "#ffd9a0",
+     "intensity": 3.6,
+     "distance": 8
     }
    ],
    "fog": {
@@ -17851,6 +19585,16 @@
       0,
       2.54,
       -2.7
+     ],
+     "w": 0.8,
+     "d": 0.2
+    },
+    {
+     "type": "fluoro",
+     "pos": [
+      0,
+      2.54,
+      0
      ],
      "w": 0.8,
      "d": 0.2
@@ -18540,6 +20284,17 @@
      "color": "#dfe6dc",
      "intensity": 2.6,
      "distance": 9
+    },
+    {
+     "type": "point",
+     "pos": [
+      0,
+      2.2,
+      0
+     ],
+     "color": "#dfe6dc",
+     "intensity": 2.08,
+     "distance": 8
     }
    ],
    "fog": {
@@ -18564,6 +20319,16 @@
       0,
       2.54,
       -2.85
+     ],
+     "w": 0.8,
+     "d": 0.2
+    },
+    {
+     "type": "fluoro",
+     "pos": [
+      0,
+      2.54,
+      0
      ],
      "w": 0.8,
      "d": 0.2
@@ -18909,6 +20674,17 @@
      "color": "#dfe6dc",
      "intensity": 2.6,
      "distance": 9
+    },
+    {
+     "type": "point",
+     "pos": [
+      0,
+      2.2,
+      0
+     ],
+     "color": "#dfe6dc",
+     "intensity": 2.08,
+     "distance": 8
     }
    ],
    "fog": {
@@ -18933,6 +20709,16 @@
       0,
       2.54,
       -3.4
+     ],
+     "w": 0.8,
+     "d": 0.2
+    },
+    {
+     "type": "fluoro",
+     "pos": [
+      0,
+      2.54,
+      0
      ],
      "w": 0.8,
      "d": 0.2
