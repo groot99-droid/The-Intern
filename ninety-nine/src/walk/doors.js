@@ -135,6 +135,19 @@ export function buildDoor(mats, spec, { wallT = 0.3 } = {}) {
   body.userData.doorBody = spec.name;
   group.add(body);
 
+  // A shut opaque leaf is a little smaller than its opening, and a low sun
+  // drew bright lines through the gaps across the shade: while shut, an
+  // unseen plug the size of the opening casts the shadow.
+  let plug = null;
+  if (kind === 'door' || kind === 'shutter' || kind === 'slide') {
+    plug = new THREE.Mesh(new THREE.BoxGeometry(w + 0.04, h + 0.02, 0.02), new THREE.MeshBasicMaterial({ colorWrite: false, depthWrite: false }));
+    plug.material.userData.owned = true;
+    plug.position.set(0, (h + 0.02) / 2, 0);
+    plug.castShadow = true;
+    plug.receiveShadow = false;
+    group.add(plug);
+  }
+
   let u = spec.open ? 1 : (spec.ajar || 0); // 0 shut .. 1 open (`ajar`: left a little open)
   let target = u;
   let speed = 1;
@@ -142,6 +155,7 @@ export function buildDoor(mats, spec, { wallT = 0.3 } = {}) {
   let rattleT = 0;
   let locked = !!spec.locked;
   animate(u);
+  if (plug) plug.visible = u <= 0.01;
 
   function settle() {
     const ws = waiters; waiters = [];
@@ -182,6 +196,7 @@ export function buildDoor(mats, spec, { wallT = 0.3 } = {}) {
       if (u !== target) {
         u = u < target ? Math.min(target, u + speed * dt) : Math.max(target, u - speed * dt);
         animate(u);
+        if (plug) plug.visible = u <= 0.01;
         if (u === target) settle();
       }
       if (rattleT > 0) {

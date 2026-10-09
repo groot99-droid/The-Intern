@@ -34,6 +34,7 @@
       select.value = key; fillShots(); if (shot) shotSel.value = shot;
       stage.setPlayerActive(false);
       await stage.preview(key);
+      stage.warm(); // compile the room's programs before its first frame
       await stage.playShot(key, shotSel.value);
     }
     async function walk(key) {

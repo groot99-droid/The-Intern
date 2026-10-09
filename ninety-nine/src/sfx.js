@@ -148,7 +148,10 @@ export function createSfx(audio) {
     play(name, opts) {
       const ctx = audio && audio.getContext ? audio.getContext() : null;
       const bus = audio && audio.getSfxBus ? audio.getSfxBus() : null;
-      if (!ctx || !bus) return; // silent no-op before S0's SUBMIT gesture (Doc 4 §7.4)
+      // silent no-op before the first activating gesture (Doc 4 §7.4), and
+      // while the context is suspended: cues scheduled on a frozen clock all
+      // fire at once when it resumes
+      if (!ctx || !bus || ctx.state !== 'running') return;
 
       const realFile = REAL_FILES[name];
       if (realFile && audio.playOneShot) {

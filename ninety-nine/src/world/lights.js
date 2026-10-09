@@ -65,6 +65,21 @@ export function createLightRig(scene, { points = 16, spots = 4, shadowMap = 2048
 
   const _dir = new THREE.Vector3();
   const _center = new THREE.Vector3();
+  const _right = new THREE.Vector3();
+  const _upL = new THREE.Vector3();
+  const _UP = new THREE.Vector3(0, 1, 0);
+
+  // A spec's own on/off level: `off` switches it, `fadeS` (a light beat's
+  // `seconds`) makes the switch a ramp.
+  function levelOf(s, dt) {
+    const want = s.off ? 0 : 1;
+    if (s.lvl === undefined) s.lvl = want;
+    if (s.lvl !== want) {
+      const step = s.fadeS ? dt / s.fadeS : 1;
+      s.lvl = want > s.lvl ? Math.min(want, s.lvl + step) : Math.max(want, s.lvl - step);
+    }
+    return s.lvl;
+  }
 
   function assign(pool, wanted, dt, t) {
     const wantedSet = new Set(wanted);
@@ -74,9 +89,9 @@ export function createLightRig(scene, { points = 16, spots = 4, shadowMap = 2048
     const newcomers = wanted.filter((s) => !held.has(s));
     for (const slot of pool) {
       if (slot.spec && !wantedSet.has(slot.spec)) {
-        // fading out; hand over once dark, or at once if someone is waiting
-        slot.fade = Math.max(0, slot.fade - dt / FADE_S);
-        if (slot.fade <= 0 || newcomers.length) slot.spec = null;
+        // fading out, faster while someone waits; handed over once dark
+        slot.fade = Math.max(0, slot.fade - dt / (newcomers.length ? FADE_S * 0.35 : FADE_S));
+        if (slot.fade <= 0) slot.spec = null;
       }
       if (!slot.spec && newcomers.length) { slot.spec = newcomers.shift(); slot.fade = 0; }
     }
@@ -89,7 +104,7 @@ export function createLightRig(scene, { points = 16, spots = 4, shadowMap = 2048
       l.color.set(s.color);
       l.distance = s.distance;
       l.decay = s.decay;
-      l.intensity = s.off ? 0 : s.intensity * flickerOf(s, t) * slot.fade * (s.scale === undefined ? 1 : s.scale);
+      l.intensity = s.intensity * flickerOf(s, t) * slot.fade * (s.scale === undefined ? 1 : s.scale) * levelOf(s, dt);
       if (l.isSpotLight) {
         l.angle = THREE.MathUtils.degToRad(s.angle);
         l.penumbra = s.penumbra;
@@ -118,9 +133,21 @@ export function createLightRig(scene, { points = 16, spots = 4, shadowMap = 2048
         _center.set(center[0], center[1], center[2]);
         const ext = env.shadowExtent || 14;
         // snap the shadow camera to its texel grid so shadows don't crawl
+        // (in light space: a low sun stretches a world-XZ step over a
+        // fraction of a texel, and every step re-rasterises the edges)
         const texel = (2 * ext) / sun.shadow.mapSize.x;
-        _center.x = Math.round(_center.x / texel) * texel;
-        _center.z = Math.round(_center.z / texel) * texel;
+        _right.crossVectors(_dir, _UP);
+        if (_right.lengthSq() > 1e-8) {
+          _right.normalize();
+          _upL.crossVectors(_right, _dir);
+          const sx = Math.round(_center.dot(_right) / texel) * texel;
+          const sy = Math.round(_center.dot(_upL) / texel) * texel;
+          const sd = _center.dot(_dir);
+          _center.copy(_right).multiplyScalar(sx).addScaledVector(_upL, sy).addScaledVector(_dir, sd);
+        } else {
+          _center.x = Math.round(_center.x / texel) * texel;
+          _center.z = Math.round(_center.z / texel) * texel;
+        }
         sun.position.copy(_center).addScaledVector(_dir, -60);
         sun.target.position.copy(_center);
         sun.target.updateMatrixWorld();
