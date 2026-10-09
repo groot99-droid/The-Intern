@@ -532,6 +532,365 @@ const BUILDERS = {
   // ---- polish: S7 descent -- end ----
   //
   // ---- polish: S8 + endings -- begin (that scene's new props go between these lines) ----
+  // A few of these animate themselves from onBeforeRender (the throb, the
+  // spreading stain, the curtain, the particulate): room.js has no per-prop
+  // animation beyond `swing`, and these must start when they are first SEEN,
+  // not when the page loaded. onBeforeRender only fires for what the camera
+  // actually draws, so "first rendered" is "first seen".
+  //
+  // The soggy package (S8 C): low-poly cardboard with a wet stain soaking up
+  // through it, taped shut, and a throb -- an arrhythmic swell of the box
+  // itself (Doc 1 §5 S8: "It throbs."). `open` is the box after OPEN THE
+  // BOX: flaps up, the application inside (his handwriting; Doc 1). There is
+  // no ring here: that is `wetring`, a prop of its own, so it stays on the
+  // counter when the package is lifted. Held in the hands it throbs too.
+  soggypackage(mats, o) {
+    const g = new THREE.Group();
+    const body = new THREE.Group();
+    g.add(body);
+    const w = 0.5, h = 0.32, d = 0.36;
+    const wet = 'wood'; // the photoreal dark-brown blotch of soaked cardboard
+    if (!o.open) {
+      body.add(box(mats, 'cardboard', w, h, d, 0, 0, 0));
+      body.add(box(mats, 'lp_beige', w + 0.006, 0.004, 0.07, 0, h, 0, { castShadow: false })); // tape over the lid seam
+      body.add(box(mats, 'lp_beige', 0.07, h * 0.4, d + 0.006, 0, h * 0.6, 0, { castShadow: false })); // and down the ends
+    } else {
+      body.add(box(mats, 'cardboard', w, 0.012, d, 0, 0, 0)); // bottom
+      for (const s of [-1, 1]) {
+        body.add(box(mats, 'cardboard', w, h, 0.012, 0, 0, s * (d / 2 - 0.006)));
+        body.add(box(mats, 'cardboard', 0.012, h, d, s * (w / 2 - 0.006), 0, 0));
+        // the flaps, folded back open (the tape slit down the middle)
+        const fz = box(mats, 'cardboard', w, 0.008, d / 2, 0, 0, 0);
+        fz.position.set(0, h + Math.sin(1.1) * d / 4, s * (d / 2 + Math.cos(1.1) * d / 4));
+        fz.rotation.x = -s * 1.1;
+        body.add(fz);
+        const fx = box(mats, 'cardboard', w / 2.2, 0.008, d, 0, 0, 0);
+        fx.position.set(s * (w / 2 + Math.cos(1.25) * w / 4.4), h + Math.sin(1.25) * w / 4.4, 0);
+        fx.rotation.z = s * 1.25;
+        body.add(fx);
+      }
+      // inside: the intake form, his answers, received six months ago --
+      // leaning up against the far wall so it is read from standing, and a
+      // second sheet slid out onto the table in front of the box
+      const sheet = (tilt, x, y, z, ry) => {
+        const sh = new THREE.Group();
+        sh.add(box(mats, 'lp_paper', 0.21, 0.004, 0.297, 0, 0, 0, { castShadow: false }));
+        for (let i = 0; i < 7; i++) sh.add(box(mats, 'lp_dark', 0.15 - (i % 3) * 0.03, 0.002, 0.007, -0.02 + (i % 3) * 0.008, 0.004, -0.115 + i * 0.036, { castShadow: false })); // the lines of his hand
+        sh.position.set(x, y, z);
+        sh.rotation.set(tilt, ry, 0, 'YXZ');
+        body.add(sh);
+      };
+      sheet(1.0, 0.03, 0.012 + 0.1485 * Math.sin(1.0), -d / 2 + 0.014 + 0.1485 * Math.cos(1.0), 0.06);
+      sheet(0, -0.06, 0.0, d / 2 + 0.1, -0.35);
+      body.add(box(mats, wet, w * 0.7, 0.002, d * 0.6, -0.04, 0.013, 0.03, { castShadow: false })); // the wet has gone through to the floor of the box
+    }
+    // the stain: dark and wet from the base up, creeping higher in tongues
+    body.add(box(mats, wet, w + 0.008, h * 0.42, d + 0.008, 0, -0.002, 0, { castShadow: false }));
+    for (const [x, z, sh] of [[-0.12, 1, 0.66], [0.15, 1, 0.55], [0.02, -1, 0.72], [-0.2, -1, 0.5]]) {
+      body.add(box(mats, wet, 0.09 + Math.abs(x) * 0.2, h * sh, 0.004, x, -0.002, z * (d / 2 + 0.005), { castShadow: false }));
+    }
+    for (const [z, s, sh] of [[0.05, 1, 0.62], [-0.08, -1, 0.7]]) {
+      body.add(box(mats, wet, 0.004, h * sh, 0.1, s * (w / 2 + 0.005), -0.002, z, { castShadow: false }));
+    }
+    if (!o.open && o.throb !== false) {
+      const amount = typeof o.throb === 'number' ? o.throb : 0.035;
+      body.children[0].onBeforeRender = () => {
+        const t = performance.now() / 1000;
+        // two pulses that never quite line up: arrhythmic, like something inside
+        const a = Math.pow(Math.max(0, Math.sin(t * 4.3)), 12) * 0.65 + Math.pow(Math.max(0, Math.sin(t * 2.7 + 1.3)), 16) * 0.45;
+        const k = amount * a;
+        body.scale.set(1 + k, 1 + k * 0.7, 1 + k);
+      };
+    }
+    return g;
+  },
+  // The dark wet ring the package leaves (Doc 1 §5 S8, Doc 2 S8_C): the
+  // outline of a soggy box bottom, and a fainter seep inside it. It spreads
+  // from the moment it is first seen (`spread`: how far, as a fraction;
+  // Doc 2: by a few millimetres on the counter, visibly across the glass).
+  wetring(mats, o) {
+    const g = new THREE.Group();
+    const ring = new THREE.Group();
+    g.add(ring);
+    const w = o.w || 0.6, d = o.d || 0.46, t = o.t || 0.04;
+    const m = o.mat || 'concrete_wet';
+    const flat = { castShadow: false };
+    ring.add(box(mats, m, w, 0.003, t, 0, 0, -d / 2 + t / 2, flat));
+    ring.add(box(mats, m, w, 0.003, t, 0, 0, d / 2 - t / 2, flat));
+    ring.add(box(mats, m, t, 0.003, d - 2 * t, -w / 2 + t / 2, 0, 0, flat));
+    ring.add(box(mats, m, t, 0.003, d - 2 * t, w / 2 - t / 2, 0, 0, flat));
+    ring.add(box(mats, m, w * 0.62, 0.0012, d * 0.5, 0.03, 0, 0.02, flat)); // the seep inside
+    ring.add(box(mats, m, t * 1.6, 0.003, t * 2.2, w / 2 + t * 0.4, 0, d * 0.18, flat)); // where it ran
+    const k = o.spread === undefined ? 0.06 : o.spread;
+    if (k > 0) {
+      let t0 = null;
+      ring.children[0].onBeforeRender = () => {
+        const now = performance.now() / 1000;
+        if (t0 === null) t0 = now;
+        const s = 1 + k * (1 - Math.exp(-(now - t0) / 30));
+        ring.scale.set(s, 1, s);
+      };
+    }
+    return g;
+  },
+  // A steel sorting table (S8 C: OPEN THE BOX): top, cutting mat, legs, a
+  // lower shelf of flattened cartons, a roll of tape. Top at `h`.
+  sortingtable(mats, o) {
+    const g = new THREE.Group();
+    const w = o.w || 2.0, d = o.d || 0.9, h = o.h || 0.9;
+    g.add(box(mats, 'lp_grey', w, 0.04, d, 0, h - 0.04, 0));
+    g.add(box(mats, 'lp_dark', w * 0.55, 0.004, d * 0.72, -w * 0.12, h, 0, { castShadow: false })); // cutting mat
+    for (const [x, z] of [[-w / 2 + 0.05, -d / 2 + 0.05], [w / 2 - 0.05, -d / 2 + 0.05], [-w / 2 + 0.05, d / 2 - 0.05], [w / 2 - 0.05, d / 2 - 0.05]]) g.add(box(mats, 'lp_grey', 0.05, h - 0.04, 0.05, x, 0, z));
+    g.add(box(mats, 'lp_grey', w - 0.08, 0.025, d - 0.08, 0, 0.2, 0));
+    g.add(box(mats, 'cardboard', w * 0.46, 0.09, d * 0.7, -w * 0.2, 0.225, 0.02));
+    g.add(box(mats, 'cardboard', w * 0.3, 0.05, d * 0.6, w * 0.25, 0.225, -0.05));
+    g.add(cylinder(mats, 'lp_beige', 0.055, 0.05, w * 0.36, h, -d * 0.25, 10)); // tape
+    g.add(box(mats, 'lp_paper', 0.22, 0.012, 0.3, w * 0.36, h, d * 0.12)); // a pad of slips
+    const body = box(mats, 'lp_grey', w, h, d, 0, 0, 0, { castShadow: false, collide: true });
+    body.visible = false;
+    g.add(body);
+    return g;
+  },
+  // A warehouse high-bay: a cable up into the dark, a driver box, a spun
+  // reflector, a lit lens and a glow plate (Doc 2 S8_C: "high bay lighting
+  // with real falloff"). `hang`: how far the cable rises out of sight.
+  highbay(mats, o) {
+    const g = new THREE.Group();
+    const hang = o.hang || 3.0;
+    g.add(box(mats, 'lp_black', 0.014, hang, 0.014, 0, 0.26, 0, { castShadow: false }));
+    g.add(box(mats, 'lp_dark', 0.18, 0.12, 0.18, 0, 0.14, 0, { castShadow: false }));
+    const shade = new THREE.Mesh(new THREE.CylinderGeometry(0.12, 0.42, 0.3, 10), mats.get('lp_grey'));
+    shade.position.y = 0.0;
+    g.add(shade);
+    const lens = new THREE.Mesh(new THREE.CylinderGeometry(0.38, 0.38, 0.02, 10), mats.get('lp_fluoro'));
+    lens.position.y = -0.16;
+    g.add(lens);
+    const glow = new THREE.Mesh(new THREE.PlaneGeometry(1.5, 1.5), mats.get('glow_fluoro'));
+    glow.rotation.x = Math.PI / 2; glow.position.y = -0.2;
+    g.add(glow);
+    return g;
+  },
+  // A work lamp on a long cord from high in the dark: shade and bulb. `lit`
+  // false is the same lamp switched off (a beat swaps the two and turns the
+  // light spec on: picking up the package lights the back of the hall).
+  worklamp(mats, o) {
+    const g = new THREE.Group();
+    const drop = o.drop || 1.0;
+    g.add(box(mats, 'lp_black', 0.014, drop, 0.014, 0, -drop, 0, { castShadow: false }));
+    const shade = new THREE.Mesh(new THREE.CylinderGeometry(0.06, 0.25, 0.2, 8), mats.get('lp_dark'));
+    shade.position.y = -drop - 0.1;
+    g.add(shade);
+    g.add(box(mats, o.lit ? 'lp_fluoro' : 'lp_grey', 0.09, 0.07, 0.09, 0, -drop - 0.26, 0, { castShadow: false }));
+    if (o.lit) g.add(box(mats, 'lp_sodium', 0.4, 0.004, 0.4, 0, -drop - 0.2, 0, { castShadow: false })); // the shade's lit underside
+    return g;
+  },
+  // Mail pigeonholes: a frame of cubbies with letters and small parcels
+  // left in some of them.
+  pigeonholes(mats, o) {
+    const g = new THREE.Group();
+    const w = o.w || 1.8, h = o.h || 1.9, d = o.d || 0.42, cols = o.cols || 6, rows = o.rows || 5;
+    const m = o.mat || 'lp_wood';
+    g.add(box(mats, m, w, h, 0.02, 0, 0, -d / 2 + 0.01));
+    for (let c = 0; c <= cols; c++) g.add(box(mats, m, 0.025, h, d, -w / 2 + c * (w / cols), 0, 0));
+    for (let r = 0; r <= rows; r++) g.add(box(mats, m, w + 0.025, 0.025, d, 0, r * (h - 0.025) / rows, 0));
+    const cw = w / cols, ch = (h - 0.025) / rows;
+    for (let i = 0; i < 13; i++) {
+      const c = (i * 5 + 2) % cols, r = (i * 3 + 1) % rows;
+      const parcel = i % 4 === 0;
+      g.add(box(mats, parcel ? 'cardboard' : 'lp_paper', cw * (parcel ? 0.7 : 0.8), parcel ? ch * 0.55 : 0.012 + (i % 3) * 0.02, d * 0.7, -w / 2 + (c + 0.5) * cw, r * ch + 0.025, 0.02));
+    }
+    const body = box(mats, m, w, h, d, 0, 0, 0, { castShadow: false, collide: true });
+    body.visible = false;
+    g.add(body);
+    return g;
+  },
+  // A store gondola: kick base, spine, tiers of product in blocks of colour
+  // (both faces, or one with `single` against a wall). Low-poly (C1).
+  gondola(mats, o) {
+    const g = new THREE.Group();
+    const w = o.w || 2.4, d = o.d || 0.9, h = o.h || 1.5, tiers = o.tiers || 4;
+    const single = !!o.single;
+    g.add(box(mats, 'lp_grey', w, h, 0.04, 0, 0, single ? -d / 2 + 0.02 : 0));
+    g.add(box(mats, 'lp_dark', w, 0.12, d, 0, 0, 0));
+    for (const s of [-1, 1]) g.add(box(mats, 'lp_grey', 0.03, h, d, s * (w / 2 - 0.015), 0, 0)); // end panels
+    const colours = ['lp_red', 'lp_beige', 'lp_blue', 'lp_white', 'lp_car6', 'lp_paper', 'lp_car2', 'lp_red', 'lp_car3', 'lp_beige'];
+    let k = o.seed || 0;
+    const runs = 4;
+    for (const s of single ? [1] : [-1, 1]) {
+      const sd = single ? d - 0.06 : d / 2 - 0.03;
+      const zc = single ? 0.02 : s * (d / 4 + 0.01);
+      for (let t = 0; t < tiers; t++) {
+        const y = 0.12 + t * ((h - 0.16) / tiers);
+        g.add(box(mats, 'lp_grey', w - 0.04, 0.02, sd, 0, y, zc));
+        // runs of product, one colour each, a gap here and there where it sold
+        const pitch = (w - 0.1) / runs;
+        for (let r = 0; r < runs; r++) {
+          const gap = (k % 5 === 0) ? pitch * 0.45 : 0.04;
+          const rw = pitch - gap;
+          const rh = 0.11 + ((k * 7) % 4) * 0.035;
+          g.add(box(mats, colours[k % colours.length], rw, rh, sd * (0.7 + ((k * 3) % 3) * 0.1), -w / 2 + 0.05 + r * pitch + rw / 2, y + 0.02, zc));
+          k += 3;
+        }
+        k += 1;
+      }
+    }
+    const body = box(mats, 'lp_grey', w, h, d, 0, 0, 0, { castShadow: false, collide: true });
+    body.visible = false;
+    g.add(body);
+    return g;
+  },
+  // A chest cooler (Doc 2 S8_H_IMG_OUT): a white tub, a grey rim, a lit
+  // well of boxed product under two sliding glass lids.
+  chestcooler(mats, o) {
+    const g = new THREE.Group();
+    const w = o.w || 1.8, d = o.d || 0.85, h = o.h || 0.85;
+    g.add(box(mats, 'lp_white', w, h - 0.06, d, 0, 0, 0, { collide: true }));
+    g.add(box(mats, 'lp_grey', w + 0.02, 0.06, d + 0.02, 0, h - 0.06, 0));
+    g.add(box(mats, 'lp_fluoro', w - 0.14, 0.01, d - 0.14, 0, h - 0.07, 0, { castShadow: false }));
+    for (let i = 0; i < 6; i++) g.add(box(mats, ['lp_blue', 'lp_red', 'lp_white'][i % 3], 0.22, 0.05, 0.3, -w / 2 + 0.24 + i * ((w - 0.48) / 5), h - 0.06, (i % 2 ? 0.12 : -0.12), { castShadow: false }));
+    for (const s of [-1, 1]) g.add(box(mats, 'lp_glass', w / 2 - 0.05, 0.012, d - 0.06, s * w / 4, h, 0, { castShadow: false }));
+    return g;
+  },
+  // The storefront door (S8 H / SE_EXPUL), standing as it was left: open
+  // outward (Doc 1 §6.4). `leaves` [left, right] in degrees out of the
+  // frame (toward local +z, the street). Static: the room's threshold box
+  // is what stops him, not the glass.
+  storedoor(mats, o) {
+    const g = new THREE.Group();
+    const w = o.w || 1.8, h = o.h || 2.25;
+    const open = o.leaves || [70, 70];
+    g.add(box(mats, 'lp_dark', 0.06, h + 0.06, 0.12, -w / 2 - 0.03, 0, 0));
+    g.add(box(mats, 'lp_dark', 0.06, h + 0.06, 0.12, w / 2 + 0.03, 0, 0));
+    g.add(box(mats, 'lp_dark', w + 0.12, 0.06, 0.12, 0, h, 0));
+    [-1, 1].forEach((s, i) => {
+      const pivot = new THREE.Group();
+      pivot.position.set(s * w / 2, 0, 0);
+      const lw = w / 2 - 0.015;
+      const cx = -s * lw / 2;
+      pivot.add(box(mats, 'lp_dark', 0.05, h, 0.05, -s * 0.025, 0, 0));
+      pivot.add(box(mats, 'lp_dark', 0.05, h, 0.05, -s * (lw - 0.025), 0, 0));
+      pivot.add(box(mats, 'lp_dark', lw, 0.1, 0.05, cx, 0, 0));
+      pivot.add(box(mats, 'lp_dark', lw, 0.06, 0.05, cx, h - 0.06, 0));
+      pivot.add(box(mats, 'glass', lw - 0.09, h - 0.18, 0.012, cx, 0.1, 0));
+      pivot.add(box(mats, 'lp_chrome', lw * 0.55, 0.035, 0.035, cx, 1.0, 0.05)); // push bar
+      pivot.rotation.y = s * THREE.MathUtils.degToRad(open[i] || 0);
+      g.add(pivot);
+    });
+    return g;
+  },
+  // His reflection in the storefront glass: a faceless cluster of static,
+  // untextured polygons roughly where a person's reflection should be
+  // (Doc 1 §6.4, Doc 2 S8_H_IMG_OUT). Present from the first frame; never
+  // moves. Flat chips, so it reads from either side of the glass.
+  polycluster(mats, o) {
+    const g = new THREE.Group();
+    const h = o.h || 1.75, w = o.w || 0.55;
+    let seed = o.seed || 99;
+    const rnd = () => { seed = (seed * 16807) % 2147483647; return (seed - 1) / 2147483646; };
+    const slots = ['lp_grey', 'lp_dark', 'lp_white', 'lp_grey', 'lp_black', 'lp_suit'];
+    const n = o.n || 20;
+    for (let i = 0; i < n; i++) {
+      const y = (i / n) * h * 0.9 + rnd() * 0.1;
+      const k = y > 1.5 ? 0.45 : y > 1.38 ? 0.3 : y > 0.85 ? 1.0 : 0.5; // head, neck, shoulders and chest, legs
+      const pw = (0.1 + rnd() * 0.2) * k * (w / 0.55);
+      const ph = 0.08 + rnd() * 0.2;
+      const chip = box(mats, slots[Math.floor(rnd() * slots.length)], pw, ph, 0.004, (rnd() - 0.5) * w * k * 0.8, y, (rnd() - 0.5) * 0.03, { castShadow: false });
+      chip.rotation.z = (rnd() - 0.5) * 1.6;
+      g.add(chip);
+    }
+    return g;
+  },
+  // An underwater pool lamp set in a tile face: chrome ring and lens, the
+  // one warm thing in the water. `lit` false is the same lamp gone dark.
+  poollamp(mats, o) {
+    const g = new THREE.Group();
+    const ring = new THREE.Mesh(new THREE.CylinderGeometry(0.2, 0.2, 0.04, 16), mats.get('lp_chrome'));
+    ring.rotation.x = Math.PI / 2;
+    g.add(ring);
+    const lens = new THREE.Mesh(new THREE.CylinderGeometry(0.16, 0.16, 0.05, 16), mats.get(o.lit === false ? 'lp_dark' : 'lp_fluoro'));
+    lens.rotation.x = Math.PI / 2; lens.position.z = 0.01;
+    g.add(lens);
+    if (o.lit !== false) {
+      const glow = new THREE.Mesh(new THREE.PlaneGeometry(1.1, 1.1), mats.get('glow_sodium'));
+      glow.position.z = 0.05;
+      g.add(glow);
+    }
+    return g;
+  },
+  // A floor grate of rusted bars in a frame (the dive): the building's, so
+  // photoreal rust (C1). Hinged on its -z edge; `open` swings it up (deg).
+  floorgrate(mats, o) {
+    const g = new THREE.Group();
+    const w = o.w || 2.4, d = o.d || 2.4, bars = o.bars || 9;
+    const hinge = new THREE.Group();
+    hinge.position.z = -d / 2;
+    g.add(hinge);
+    const m = o.mat || 'rust';
+    hinge.add(box(mats, m, w, 0.08, 0.08, 0, 0, 0.04));
+    hinge.add(box(mats, m, w, 0.08, 0.08, 0, 0, d - 0.04));
+    hinge.add(box(mats, m, 0.08, 0.08, d, -w / 2 + 0.04, 0, d / 2));
+    hinge.add(box(mats, m, 0.08, 0.08, d, w / 2 - 0.04, 0, d / 2));
+    for (let i = 1; i <= bars; i++) hinge.add(box(mats, m, 0.045, 0.06, d - 0.1, -w / 2 + i * (w / (bars + 1)), 0.01, d / 2));
+    for (const f of [1 / 3, 2 / 3]) hinge.add(box(mats, m, w - 0.1, 0.04, 0.04, 0, 0.02, d * f));
+    hinge.rotation.x = -THREE.MathUtils.degToRad(o.open || 0);
+    return g;
+  },
+  // A red curtain that is still swinging: from the moment it is first seen
+  // it sways from its rod, dying down to a stir that never quite stops
+  // (Doc 2 SE_PEND: "the curtain at the far end still swinging"). It
+  // swings about its own rod, whichever wall it hangs on.
+  swaycurtain(mats, o) {
+    const g = new THREE.Group();
+    const w = o.w || 2.2, h = o.h || 3.0;
+    const pivot = new THREE.Group();
+    pivot.position.y = h;
+    g.add(pivot);
+    const folds = Math.max(4, Math.round(w / 0.22));
+    for (let i = 0; i < folds; i++) {
+      const x = -w / 2 + (i + 0.5) * (w / folds);
+      pivot.add(box(mats, o.mat || 'lp_curtain', w / folds + 0.012, h - 0.04, 0.08 + (i % 2) * 0.06, x, -h + 0.02, (i % 2) * 0.03, { collide: true }));
+    }
+    g.add(box(mats, 'lp_brass', w + 0.24, 0.06, 0.12, 0, h, 0.02));
+    let t0 = null;
+    pivot.children[0].onBeforeRender = () => {
+      const now = performance.now() / 1000;
+      if (t0 === null) t0 = now;
+      const t = now - t0;
+      const amp = 0.014 + 0.075 * Math.exp(-t / 16);
+      pivot.rotation.x = Math.sin(t * 1.2) * amp;
+      pivot.rotation.z = Math.sin(t * 0.77 + 0.6) * amp * 0.22;
+    };
+    return g;
+  },
+  // Particulate drifting upward through the water (Doc 2 KLING H: "drifts
+  // upward past camera"): one Points cloud, wrapping from the top of its
+  // box back to the bottom.
+  motes(mats, o) {
+    const g = new THREE.Group();
+    const n = o.n || 400, w = o.w || 16, h = o.h || 10, d = o.d || 16, rise = o.rise || 0.05;
+    let seed = o.seed || 7;
+    const rnd = () => { seed = (seed * 16807) % 2147483647; return (seed - 1) / 2147483646; };
+    const base = new Float32Array(n * 3);
+    for (let i = 0; i < n; i++) { base[i * 3] = (rnd() - 0.5) * w; base[i * 3 + 1] = rnd() * h; base[i * 3 + 2] = (rnd() - 0.5) * d; }
+    const pos = base.slice();
+    const geo = new THREE.BufferGeometry();
+    geo.setAttribute('position', new THREE.BufferAttribute(pos, 3));
+    const mat = new THREE.PointsMaterial({ color: o.color || '#a8d8e0', size: o.size || 0.03, transparent: true, opacity: o.opacity || 0.55, depthWrite: false });
+    mat.userData.owned = true; // room.js dispose() frees it with the room
+    const pts = new THREE.Points(geo, mat);
+    pts.frustumCulled = false;
+    pts.onBeforeRender = () => {
+      const t = performance.now() / 1000;
+      for (let i = 0; i < n; i++) {
+        const y = base[i * 3 + 1] + t * rise * (0.6 + (i % 7) * 0.12);
+        pos[i * 3 + 1] = y - Math.floor(y / h) * h;
+        pos[i * 3] = base[i * 3] + Math.sin(t * 0.3 + i) * 0.06;
+      }
+      geo.attributes.position.needsUpdate = true;
+    };
+    g.add(pts);
+    return g;
+  },
   // ---- polish: S8 + endings -- end ----
   //
   // A model from assets/glb/library.glb (the open-source catalog, imported

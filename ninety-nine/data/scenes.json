@@ -766,6 +766,20 @@
           "ambience": "S8_C_AMB.wav",
           "beatZones": [
             {
+              "zone": "counter_near",
+              "beat": [
+                {
+                  "actor": {
+                    "name": "package",
+                    "speed": 0.32
+                  }
+                },
+                {
+                  "sfxCue": "package-drag"
+                }
+              ]
+            },
+            {
               "zone": "counter",
               "label": "THE PACKAGE",
               "beat": [
@@ -774,7 +788,23 @@
                 },
                 {
                   "hide": "package",
-                  "hold": "package"
+                  "hold": "soggypackage"
+                },
+                {
+                  "light": {
+                    "id": "docklamp",
+                    "on": true
+                  },
+                  "hide": "docklamp_dark",
+                  "show": "docklamp_lit"
+                },
+                {
+                  "light": {
+                    "id": "sortlamp",
+                    "on": true
+                  },
+                  "hide": "sortlamp_dark",
+                  "show": "sortlamp_lit"
                 }
               ]
             }
@@ -784,7 +814,13 @@
               "label": "DELIVER",
               "zone": "deliver",
               "exit": "deliveries",
-              "via": "CN_CORRIDOR_OFFICE"
+              "via": "CN_CORRIDOR_OFFICE",
+              "setFlag": "DELIVERED",
+              "beat": [
+                {
+                  "sfxCue": "door-buzz"
+                }
+              ]
             },
             "resist": {
               "label": "OPEN THE BOX",
@@ -794,17 +830,24 @@
               "via": "CN_CORRIDOR_OFFICE",
               "beat": [
                 {
-                  "sfxCue": "package-drag"
+                  "drop": true,
+                  "show": "openbox"
                 },
                 {
-                  "drop": true
+                  "sfxCue": "paper-handoff"
                 },
                 {
                   "caption": "box.contents",
-                  "holdMs": 3800
+                  "holdMs": 4800
                 },
                 {
-                  "waitMs": 2600
+                  "lookAt": "openbox",
+                  "lookY": 0.1,
+                  "seconds": 1.2,
+                  "holdMs": 3600
+                },
+                {
+                  "sfxCue": "door-buzz"
                 }
               ]
             }
@@ -819,15 +862,67 @@
             "succumb": {
               "label": "DIVE",
               "zone": "grate",
-              "to": "S8_H"
+              "to": "S8_H",
+              "approach": [
+                {
+                  "light": {
+                    "id": "gratelight2",
+                    "on": true
+                  }
+                }
+              ],
+              "beat": [
+                {
+                  "sfxCue": "door-rattle"
+                },
+                {
+                  "shake": {
+                    "seconds": 0.9,
+                    "amount": 0.03
+                  }
+                },
+                {
+                  "hide": "grate",
+                  "show": "grate_open"
+                },
+                {
+                  "hide": "pitplug",
+                  "sfxCue": "door-thud"
+                }
+              ]
             },
             "resist": {
               "label": "SWIM FOR THE PILLARS",
-              "zone": "pillars",
+              "zone": "pillar",
               "to": "S8_H",
               "beat": [
                 {
-                  "waitMs": 900
+                  "light": {
+                    "id": "poollight",
+                    "on": false
+                  },
+                  "hide": "poollamp",
+                  "show": "poollamp_dead",
+                  "sfxCue": "door-thud"
+                },
+                {
+                  "hide": "grate"
+                },
+                {
+                  "show": "grate_open"
+                },
+                {
+                  "hide": "pitplug",
+                  "light": {
+                    "id": "gratelight2",
+                    "on": true
+                  }
+                },
+                {
+                  "shake": {
+                    "seconds": 1.4,
+                    "amount": 0.05
+                  }
                 }
               ]
             }
