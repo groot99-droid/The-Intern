@@ -619,7 +619,8 @@ const BUILDERS = {
     ring.add(box(mats, m, w, 0.003, t, 0, 0, d / 2 - t / 2, flat));
     ring.add(box(mats, m, t, 0.003, d - 2 * t, -w / 2 + t / 2, 0, 0, flat));
     ring.add(box(mats, m, t, 0.003, d - 2 * t, w / 2 - t / 2, 0, 0, flat));
-    ring.add(box(mats, m, w * 0.62, 0.0012, d * 0.5, 0.03, 0, 0.02, flat)); // the seep inside
+    const f = o.fill || 0; // `fill`: a stain soaked through, not just its outline (the boardroom's glass)
+    ring.add(box(mats, m, w * (f || 0.62), 0.0012, d * (f || 0.5), f ? 0 : 0.03, 0, f ? 0 : 0.02, flat)); // the seep inside
     ring.add(box(mats, m, t * 1.6, 0.003, t * 2.2, w / 2 + t * 0.4, 0, d * 0.18, flat)); // where it ran
     const k = o.spread === undefined ? 0.06 : o.spread;
     if (k > 0) {

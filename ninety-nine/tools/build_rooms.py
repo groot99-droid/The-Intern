@@ -1294,7 +1294,7 @@ def boardroom():
     # him, as the camera leaves him: standing at the head, beside the chair (endings.json `show`)
     props.append(prop("blurfigure", [0.82, 0, -7.6], rot=-12, suit="lp_suit", name="self", hidden=True))
     props.append(prop("soggypackage", [0.0, 0.79, -1.6], rot=4, name="package"))
-    props.append(prop("wetring", [0.0, 0.791, -1.6], rot=4, w=0.62, d=0.48, spread=0.9, mat="lp_black", name="ring"))
+    props.append(prop("wetring", [0.0, 0.791, -1.6], rot=4, w=0.62, d=0.48, spread=0.9, fill=0.9, mat="lp_black", name="ring"))
     # C8: on the south wall, over the door -- never in frame with the mailroom's
     props.append(prop("clock", [-2.6, 2.6, D / 2 - 0.03], rot=180))
     # recessed downlights flush in the ceiling: pools of warm light on the glass

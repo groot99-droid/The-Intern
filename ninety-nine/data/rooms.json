@@ -17188,6 +17188,7 @@
      "w": 0.62,
      "d": 0.48,
      "spread": 0.9,
+     "fill": 0.9,
      "mat": "lp_black",
      "name": "ring"
     },
