@@ -21567,7 +21567,7 @@
      "fallback": "chair"
     },
     {
-     "type": "blurfigure",
+     "type": "figure",
      "pos": [
       -1.74,
       0,
@@ -21577,6 +21577,7 @@
      "seated": true,
      "suit": "lp_suit",
      "tie": true,
+     "face": "blur",
      "name": "board0"
     },
     {
@@ -21594,7 +21595,7 @@
      "fallback": "chair"
     },
     {
-     "type": "blurfigure",
+     "type": "figure",
      "pos": [
       1.74,
       0,
@@ -21604,6 +21605,7 @@
      "seated": true,
      "suit": "lp_suit",
      "tie": true,
+     "face": "blur",
      "name": "board1"
     },
     {
@@ -21621,7 +21623,7 @@
      "fallback": "chair"
     },
     {
-     "type": "blurfigure",
+     "type": "figure",
      "pos": [
       -1.74,
       0,
@@ -21631,6 +21633,7 @@
      "seated": true,
      "suit": "lp_suit",
      "tie": true,
+     "face": "blur",
      "name": "board2"
     },
     {
@@ -21648,7 +21651,7 @@
      "fallback": "chair"
     },
     {
-     "type": "blurfigure",
+     "type": "figure",
      "pos": [
       1.74,
       0,
@@ -21658,6 +21661,7 @@
      "seated": true,
      "suit": "lp_suit",
      "tie": true,
+     "face": "blur",
      "name": "board3"
     },
     {
@@ -21675,7 +21679,7 @@
      "fallback": "chair"
     },
     {
-     "type": "blurfigure",
+     "type": "figure",
      "pos": [
       -1.74,
       0,
@@ -21685,6 +21689,7 @@
      "seated": true,
      "suit": "lp_suit",
      "tie": true,
+     "face": "blur",
      "name": "board4"
     },
     {
@@ -21702,7 +21707,7 @@
      "fallback": "chair"
     },
     {
-     "type": "blurfigure",
+     "type": "figure",
      "pos": [
       1.74,
       0,
@@ -21712,6 +21717,7 @@
      "seated": true,
      "suit": "lp_suit",
      "tie": true,
+     "face": "blur",
      "name": "board5"
     },
     {
@@ -21729,7 +21735,7 @@
      "fallback": "chair"
     },
     {
-     "type": "blurfigure",
+     "type": "figure",
      "pos": [
       -1.74,
       0,
@@ -21739,6 +21745,7 @@
      "seated": true,
      "suit": "lp_suit",
      "tie": true,
+     "face": "blur",
      "name": "board6"
     },
     {
@@ -21756,7 +21763,7 @@
      "fallback": "chair"
     },
     {
-     "type": "blurfigure",
+     "type": "figure",
      "pos": [
       1.74,
       0,
@@ -21766,6 +21773,7 @@
      "seated": true,
      "suit": "lp_suit",
      "tie": true,
+     "face": "blur",
      "name": "board7"
     },
     {
@@ -21783,7 +21791,7 @@
      "fallback": "chair"
     },
     {
-     "type": "blurfigure",
+     "type": "figure",
      "pos": [
       -1.74,
       0,
@@ -21793,6 +21801,7 @@
      "seated": true,
      "suit": "lp_suit",
      "tie": true,
+     "face": "blur",
      "name": "board8"
     },
     {
@@ -21810,7 +21819,7 @@
      "fallback": "chair"
     },
     {
-     "type": "blurfigure",
+     "type": "figure",
      "pos": [
       1.74,
       0,
@@ -21820,6 +21829,7 @@
      "seated": true,
      "suit": "lp_suit",
      "tie": true,
+     "face": "blur",
      "name": "board9"
     },
     {
@@ -21837,7 +21847,7 @@
      "fallback": "chair"
     },
     {
-     "type": "blurfigure",
+     "type": "figure",
      "pos": [
       -1.74,
       0,
@@ -21847,6 +21857,7 @@
      "seated": true,
      "suit": "lp_suit",
      "tie": true,
+     "face": "blur",
      "name": "board10"
     },
     {
@@ -21864,7 +21875,7 @@
      "fallback": "chair"
     },
     {
-     "type": "blurfigure",
+     "type": "figure",
      "pos": [
       1.74,
       0,
@@ -21874,6 +21885,7 @@
      "seated": true,
      "suit": "lp_suit",
      "tie": true,
+     "face": "blur",
      "name": "board11"
     },
     {

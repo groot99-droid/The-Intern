@@ -1976,7 +1976,10 @@ def boardroom():
         for side in (-1, 1):
             rot = 90 if side < 0 else -90   # chairs and figures face +z at rot 0: these face the table
             props.append(glb("lib_chair", [side * 1.8, 0, z], rot=rot, fallback="chair", collide=True, mat="lp_wood", paint=LEATHER))
-            props.append(prop("blurfigure", [side * 1.74, 0, z], rot=rot, seated=True, suit="lp_suit", tie=True, name="board%d" % (i * 2 + (side > 0))))
+            # Doc 2 S8_C_IMG_OUT: "all blocky, all faceless, all identical
+            # posture" -- a blank grey head; the one blurred face at this
+            # table is his, when the camera leaves him (`self`)
+            props.append(prop("figure", [side * 1.74, 0, z], rot=rot, seated=True, suit="lp_suit", tie=True, face="blur", name="board%d" % (i * 2 + (side > 0))))
     # his chair at the head, pulled back from the glass, facing down the table;
     # on its seat the hundredth slip (Track C motif 2: the one slip in this room)
     props.append(glb("lib_chair", [0.0, 0, -8.15], rot=0, fallback="chair", name="mychair", mat="lp_wood", paint=LEATHER))

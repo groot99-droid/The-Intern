@@ -1387,7 +1387,12 @@
                 },
                 {
                   "hide": "package",
-                  "hold": "soggypackage"
+                  "hold": "soggypackage",
+                  "actor": {
+                    "name": "package",
+                    "from": 1,
+                    "to": 1
+                  }
                 },
                 {
                   "light": {
