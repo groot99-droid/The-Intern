@@ -1084,36 +1084,59 @@ def street():
         # the low sun's shadow map speckled the kerb stones laid over it)
         {"min": [-W / 2 - 3.0, 0, -D / 2 + 3.8], "max": [-KERB, PAVE, D / 2 - 2.4], "mat": "concrete", "floor": True, "shadow": False, "tile": 2.0},
         {"min": [KERB, 0, -D / 2 + 3.8], "max": [W / 2 + 3.0, PAVE, D / 2 - 2.4], "mat": "concrete", "floor": True, "shadow": False, "tile": 2.0},
-        # kerb stones, a lighter edge to every pavement
-        {"min": [-KERB - 0.28, 0, -D / 2 + 3.8], "max": [-KERB + 0.02, PAVE + 0.012, D / 2 - 2.4], "mat": "plaster_blown", "collide": False, "shadow": False, "tile": 1.0},
-        {"min": [KERB - 0.02, 0, -D / 2 + 3.8], "max": [KERB + 0.28, PAVE + 0.012, D / 2 - 2.4], "mat": "plaster_blown", "collide": False, "shadow": False, "tile": 1.0},
-        # wet gutters along both kerbs (Doc 2 S0_X)
-        {"min": [-KERB, 0, -D / 2 + 3.8], "max": [-KERB + 0.55, 0.006, D / 2 - 2.4], "mat": "concrete_wet", "collide": False, "shadow": False, "tile": 1.5},
-        {"min": [KERB - 0.55, 0, -D / 2 + 3.8], "max": [KERB, 0.006, D / 2 - 2.4], "mat": "concrete_wet", "collide": False, "shadow": False, "tile": 1.5},
+        # (the kerb stones, the wet gutters and the road paint are props --
+        # kerbs / roadmarks below -- not boxes: see props.js)
         # the dead end he comes out into: a kerb across it and his building's
         # brick end wall with its door (the stairs from the apartment behind)
         {"min": [-W / 2 - 3.0, 0, D / 2 - 2.4], "max": [W / 2 + 3.0, PAVE, D / 2], "mat": "concrete", "floor": True, "shadow": False, "tile": 2.0},
-        {"min": [-KERB - 0.28, 0, D / 2 - 2.42], "max": [KERB + 0.28, PAVE + 0.012, D / 2 - 2.12], "mat": "plaster_blown", "collide": False, "shadow": False, "tile": 1.0},
         {"min": [-24, 0, D / 2], "max": [-0.6, 18, D / 2 + WALL_T], "mat": "brick", "shadow": False, "tile": 0.5},
         {"min": [0.6, 0, D / 2], "max": [24, 18, D / 2 + WALL_T], "mat": "brick", "shadow": False, "tile": 0.5},
         {"min": [-0.6, 2.34, D / 2], "max": [0.6, 18, D / 2 + WALL_T], "mat": "brick", "shadow": False, "tile": 0.5},
+        # ...but its foot does: a caster sealed inside the wall, door height
+        # (2.7 m), lays a band of shade across the dead end, about 11 m down
+        # the street under the low sun. He steps out of his building's shade
+        # into the light, and the shut stoop leaf's own shadow (doors.js
+        # casts) falls inside it instead of running alone down the road
+        # (its ends run 1 cm into the wall beside the opening, so no sun
+        # leaks past the door's jambs)
+        {"min": [-24, 0, D / 2 + 0.06], "max": [-0.61, 2.7, D / 2 + WALL_T - 0.06], "mat": "brick", "collide": False, "tile": 0.5},
+        {"min": [0.61, 0, D / 2 + 0.06], "max": [24, 2.7, D / 2 + WALL_T - 0.06], "mat": "brick", "collide": False, "tile": 0.5},
+        {"min": [-0.61, 2.4, D / 2 + 0.06], "max": [0.61, 2.7, D / 2 + WALL_T - 0.06], "mat": "brick", "collide": False, "tile": 0.5},
+        # and the centimetre between his door's leaf and its frame
+        # (doors.js) is stopped just behind the frame, or the sun draws two
+        # bright lines from the door across that shade
+        {"min": [-0.615, PAVE, D / 2 + WALL_T - 0.01], "max": [-0.58, 2.45, D / 2 + WALL_T + 0.03], "mat": "lp_dark", "collide": False},
+        {"min": [0.58, PAVE, D / 2 + WALL_T - 0.01], "max": [0.615, 2.45, D / 2 + WALL_T + 0.03], "mat": "lp_dark", "collide": False},
+        {"min": [-0.615, 2.3, D / 2 + WALL_T - 0.01], "max": [0.615, 2.45, D / 2 + WALL_T + 0.03], "mat": "lp_dark", "collide": False},
         # his door's stone surround and step
         {"min": [-1.0, 0, D / 2 - 0.08], "max": [-0.66, 2.7, D / 2], "mat": "plaster_blown", "shadow": False, "tile": 1.2},
         {"min": [0.66, 0, D / 2 - 0.08], "max": [1.0, 2.7, D / 2], "mat": "plaster_blown", "shadow": False, "tile": 1.2},
         {"min": [-1.0, 2.4, D / 2 - 0.1], "max": [1.0, 2.7, D / 2], "mat": "plaster_blown", "shadow": False, "tile": 1.2},
     ]
+    # Kerb stones, wet gutters, road paint and manhole covers: the
+    # building's (photoreal), built by the kerbs / roadmarks props as flat or
+    # bump-less geometry -- as thin bump-mapped boxes their edge-on sides
+    # sparkled white down the street.
+    # kerb stones, a lighter edge to every pavement and across the dead end
+    props.append(prop("kerbs", [0, 0, 0], mat="plaster_blown", tile=1.0, boxes=[
+        r3([-KERB - 0.28, 0, -D / 2 + 3.8, -KERB + 0.02, PAVE + 0.012, D / 2 - 2.4]),
+        r3([KERB - 0.02, 0, -D / 2 + 3.8, KERB + 0.28, PAVE + 0.012, D / 2 - 2.4]),
+        r3([-KERB - 0.28, 0, D / 2 - 2.42, KERB + 0.28, PAVE + 0.012, D / 2 - 2.12]),
+    ]))
+    # wet gutters along both kerbs (Doc 2 S0_X)
+    props.append(prop("roadmarks", [0, 0, 0], mat="concrete_wet", tile=1.5, y=0.003, rects=[
+        r3([-KERB, -D / 2 + 3.8, -KERB + 0.55, D / 2 - 2.4]),
+        r3([KERB - 0.55, -D / 2 + 3.8, KERB, D / 2 - 2.4]),
+    ]))
     # road paint: a dashed centre line and the parking lanes' edges running at
     # the tower, a crossing before its forecourt
-    for z in range(-20, 28, 6):
-        boxes.append({"min": [-0.06, 0, z], "max": [0.06, 0.004, z + 2.6], "mat": "plaster_blown", "collide": False, "shadow": False, "tile": 1.0})
-    for s in (-1, 1):
-        boxes.append({"min": [s * (KERB - 2.3) - 0.1, 0, -D / 2 + 7.0], "max": [s * (KERB - 2.3) + 0.1, 0.005, D / 2 - 3.2], "mat": "plaster_blown", "collide": False, "shadow": False, "tile": 1.0})
-    for i in range(12):
-        x0 = -KERB + 0.35 + i * 1.05
-        boxes.append({"min": [x0, 0, -D / 2 + 5.0], "max": [x0 + 0.5, 0.004, -D / 2 + 7.4], "mat": "plaster_blown", "collide": False, "shadow": False, "tile": 1.0})
+    paint = [r3([-0.06, z, 0.06, z + 2.6]) for z in range(-20, 28, 6)]
+    paint += [r3([s * (KERB - 2.3) - 0.1, -D / 2 + 7.0, s * (KERB - 2.3) + 0.1, D / 2 - 3.2]) for s in (-1, 1)]
+    paint += [r3([-KERB + 0.35 + i * 1.05, -D / 2 + 5.0, -KERB + 0.35 + i * 1.05 + 0.5, -D / 2 + 7.4]) for i in range(12)]
+    props.append(prop("roadmarks", [0, 0, 0], mat="plaster_blown", tile=1.0, y=0.004, rects=paint))
     # two manhole covers
-    for (x, z) in ((2.3, -6.0), (-2.6, 15.0)):
-        boxes.append({"min": [x - 0.4, 0, z - 0.4], "max": [x + 0.4, 0.008, z + 0.4], "mat": "grate", "collide": False, "shadow": False, "tile": 0.8})
+    props.append(prop("roadmarks", [0, 0, 0], mat="grate", tile=0.8, y=0.005, rects=[
+        r3([x - 0.4, z - 0.4, x + 0.4, z + 0.4]) for (x, z) in ((2.3, -6.0), (-2.6, 15.0))]))
 
     # -- the tower: a forecourt and a step (the last ascent in the game), a
     # stone base with the entrance under a canopy, and a glass curtain wall
@@ -1122,11 +1145,12 @@ def street():
     boxes += [
         {"min": [-16, 0, TZ], "max": [16, 0.3, TZ + 3.2], "mat": "marble_light", "floor": True, "tile": 2.5},
         {"min": [-12, 0, TZ + 3.2], "max": [12, 0.15, TZ + 3.8], "mat": "marble_light", "floor": True, "tile": 2.5},
-        # the base, its face cut for the doors; it casts, so the joined
-        # vestibule and lobby behind it are not lit by the street's sun
-        {"min": [-16, 0, TZ - WALL_T], "max": [-1.3, 9.0, TZ], "mat": "concrete", "tile": 4.5},
-        {"min": [1.3, 0, TZ - WALL_T], "max": [16, 9.0, TZ], "mat": "concrete", "tile": 4.5},
-        {"min": [-1.3, 3.2, TZ - WALL_T], "max": [1.3, 9.0, TZ], "mat": "concrete", "tile": 4.5},
+        # the base, its face cut for the doors: dressed stone in metre
+        # courses (the blocks give the tower its scale); it casts, so the
+        # joined vestibule and lobby behind it are not lit by the street's sun
+        {"min": [-16, 0, TZ - WALL_T], "max": [-1.3, 9.0, TZ], "mat": "cinderblock", "tile": 2.0},
+        {"min": [1.3, 0, TZ - WALL_T], "max": [16, 9.0, TZ], "mat": "cinderblock", "tile": 2.0},
+        {"min": [-1.3, 3.2, TZ - WALL_T], "max": [1.3, 9.0, TZ], "mat": "cinderblock", "tile": 2.0},
         # dark stone surround to the doors
         {"min": [-1.75, 0.3, TZ], "max": [-1.3, 3.55, TZ + 0.12], "mat": "marble", "tile": 1.5},
         {"min": [1.3, 0.3, TZ], "max": [1.75, 3.55, TZ + 0.12], "mat": "marble", "tile": 1.5},

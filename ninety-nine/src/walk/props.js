@@ -866,6 +866,76 @@ const BUILDERS = {
     for (const [f, y] of bars) g.add(box(mats, 'lp_dark', w * f, 0.026, 0.004, 0, y * (h / 0.32) - 0.013, 0.033, { castShadow: false }));
     return g;
   },
+  // The street's paint, gutters and covers (SET_STREET): the building's, so
+  // the slot's photoreal texture -- but flat quads with no sides, and a
+  // bump-less copy of the slot. (As thin boxes, their 5 mm sides were seen
+  // edge-on down the street, where the derivative bump map's normal
+  // degenerates: every kerb and lane line sparkled with white dots in play.)
+  // o.rects: [[x0, z0, x1, z1], ...] in the prop's frame, at height o.y; one
+  // mesh, one draw call. Pulled toward the eye so it never fights the road.
+  roadmarks(mats, o) {
+    const y = o.y === undefined ? 0.004 : o.y;
+    const rects = o.rects || [];
+    const pos = new Float32Array(rects.length * 12);
+    const nrm = new Float32Array(rects.length * 12);
+    const idx = [];
+    rects.forEach(([x0, z0, x1, z1], i) => {
+      pos.set([x0, y, z0, x1, y, z0, x1, y, z1, x0, y, z1], i * 12);
+      for (let k = 0; k < 4; k++) nrm.set([0, 1, 0], i * 12 + k * 3);
+      const b = i * 4;
+      idx.push(b, b + 2, b + 1, b, b + 3, b + 2); // +y faces
+    });
+    const geo = new THREE.BufferGeometry();
+    geo.setAttribute('position', new THREE.BufferAttribute(pos, 3));
+    geo.setAttribute('normal', new THREE.BufferAttribute(nrm, 3));
+    geo.setIndex(idx);
+    applyWorldUV(geo, o.tile || 1.0);
+    // one bump-less copy per slot, kept with the library (it shares the
+    // slot's textures, so it is never the room's to dispose)
+    const cache = mats._s0Flat || (mats._s0Flat = new Map());
+    const key = `${o.mat || 'plaster_blown'}:road`;
+    if (!cache.has(key)) {
+      const c = mats.get(o.mat || 'plaster_blown').clone();
+      c.bumpMap = null;
+      c.bumpScale = 0;
+      c.polygonOffset = true;
+      c.polygonOffsetFactor = -1;
+      c.polygonOffsetUnits = -2;
+      cache.set(key, c);
+    }
+    const mesh = new THREE.Mesh(geo, cache.get(key));
+    mesh.castShadow = false;
+    mesh.receiveShadow = true;
+    const g = new THREE.Group();
+    g.add(mesh);
+    return g;
+  },
+  // Kerb stones (SET_STREET): the building's stone, a bump-less copy of the
+  // slot for the same reason as roadmarks (their road faces run edge-on to
+  // the eye down the street). o.boxes: [[x0, y0, z0, x1, y1, z1], ...] in the
+  // prop's frame. No collider: the pavement slabs under them are the floor.
+  kerbs(mats, o) {
+    const cache = mats._s0Flat || (mats._s0Flat = new Map());
+    const key = `${o.mat || 'plaster_blown'}:kerb`;
+    if (!cache.has(key)) {
+      const c = mats.get(o.mat || 'plaster_blown').clone();
+      c.bumpMap = null;
+      c.bumpScale = 0;
+      cache.set(key, c);
+    }
+    const mat = cache.get(key);
+    const g = new THREE.Group();
+    for (const [x0, y0, z0, x1, y1, z1] of o.boxes || []) {
+      const geo = new THREE.BoxGeometry(x1 - x0, y1 - y0, z1 - z0);
+      geo.translate((x0 + x1) / 2, (y0 + y1) / 2, (z0 + z1) / 2);
+      applyWorldUV(geo, o.tile || 1.0);
+      const m = new THREE.Mesh(geo, mat);
+      m.castShadow = false;
+      m.receiveShadow = true;
+      g.add(m);
+    }
+    return g;
+  },
   // ---- polish: S0 + street -- end ----
   //
   // ---- polish: S1-S2 waiting room -- begin (that scene's new props go between these lines) ----
