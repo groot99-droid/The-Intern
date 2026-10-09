@@ -307,15 +307,77 @@ def cn_chute():
 
 
 def waiting_room(hostile):
+    """S1 THE WAITING ROOM and S2 THE CALL (Doc 1 §5, Doc 2 S1/S2): one
+    lobby, entered from the street through the front glass doors.
+
+    C is sterile and ordered: eight maroon chairs in two perfect rows facing
+    the aisle, the brass V&A monogram in the wet marble between them, the
+    receptionist head-down behind photoreal glass at the end, cool even light
+    that never moves. H is the same room scattered and over-lit: the chairs
+    at wrong angles, two overturned, the dispenser feeding slips onto the
+    floor (every one 99), the lights pulsing on no rhythm, and the marble
+    reflecting a coffered ceiling that is not there.
+
+    Thresholds: S1 TAKE A SEAT is any upright chair (`seat0..7`, one zone
+    just off each seat's front edge) and STAY STANDING is the head of the
+    queue lane at the counter (`counter`); S2 STAND is the inner door beside
+    the counter (`inner_door`, its lamp turns green after the call) and RUN
+    is back to the front glass doors (`front_doors`; they hold, the service
+    door by the entrance opens instead). lobby_doors() (S3 H) and
+    pending_room() (SE PEND) are built from this room: the doorway names and
+    places stay put.
+    """
     W, H, D = 14.0, 4.2, 12.0
+    wall = "plaster_blown" if hostile else "plaster"
+    # One plaster tile the height of the room: the roller streaks don't jump at
+    # a seam half way up, and the scuffs stay low on the wall.
+    WALL_TILE = 4.4
     props = []
-    # Reception counter on the core wall, receptionist behind it, head down.
-    props.append(prop("counter", [0, 0, -D / 2 + 0.9], w=4.6, d=0.9))
-    props.append(prop("figure", [0, 0, -D / 2 + 0.35], seated=True, suit="lp_red", name="receptionist"))
-    props.append(prop("dispenser", [-3.4, 0, -D / 2 + 1.0]))
+    boxes = []
+    # -- reception: a booth on the core wall --------------------------------
+    # The counter with its photoreal glass (fingerprints on it, a speaking
+    # grille at her face), the receptionist on a dais behind it so her bowed
+    # head clears the ledge, a bulkhead over the booth carrying the placard
+    # and the small ceiling speaker grille (Doc 2 S2).
+    props.append(prop("reception", [0, 0, -4.7], w=4.6, d=0.8, h=1.05, smudges=True))
+    props.append(prop("receptionist", [0, 0, -5.62], name="receptionist", tilt=36, dais=0.25, daisZ=0.07, daisD=0.9, daisW=4.5))
+    props.append(prop("receptionist_jaw", [0, 0, -5.62], name="receptionist_jaw", tilt=36, dais=0.25, hidden=True))
+    boxes.append({"min": [-2.45, 2.95, -D / 2], "max": [2.45, H, -4.25], "mat": wall, "collide": False, "tile": WALL_TILE})
+    for sx in (-1, 1):  # the booth's side walls back to the glass, the counter between them
+        boxes.append({"min": [min(sx * 2.3, sx * 2.45), 0, -D / 2], "max": [max(sx * 2.3, sx * 2.45), 2.95, -4.8], "mat": wall, "tile": WALL_TILE})
+    # a thin spine inside the counter body: changes nothing for the player, but
+    # the dev autopilot's navgrid (rays cast from inside a box miss its faces)
+    # otherwise reads the counter as a walkable corridor into the booth
+    boxes.append({"min": [-2.28, 0, -4.71], "max": [2.28, 1.0, -4.69], "mat": "plaster_dark", "invisible": True, "shadow": False})
+    # its back wall, darker than the room's, so the glass reads clear and she reads against it
+    boxes.append({"min": [-2.3, 0, -D / 2], "max": [2.3, 2.95, -D / 2 + 0.03], "mat": "plaster_dark", "collide": False, "tile": WALL_TILE})
+    with open(os.path.join(HERE, "..", "text", "system.json"), encoding="utf-8") as fh:
+        placard = json.load(fh)["wait.placard"]
+    # (H: a deeper plate and ink, or the blown light bleaches the words off it)
+    props.append(prop("notice", [0, 3.43, -4.245], w=2.3, h=0.3, text=placard,
+                      **({"plate": "#7a5f2a", "ink": "#140f06"} if hostile else {})))
+    props.append(prop("speaker", [1.15, 2.95, -4.7]))
+    props.append(prop("fluoro", [0, 2.88, -5.45], w=1.6, d=0.22))
     props.append(prop("clock", [-4.6, 2.9, -D / 2 + 0.02]))
-    props.append(prop("placard", [4.4, 1.9, -D / 2 + 0.02]))
-    props.append(prop("emblem", [0, 0.003, 0.6], r=1.5))
+    # -- the queue: a stanchion lane to the counter's left, the dispenser at
+    # its mouth. Standing in it is STAY STANDING.
+    props.append(prop("queue", [-1.3, 0, -3.47], w=1.4, len=1.56))
+    props.append(prop("ticketpost", [-2.35, 0, -2.45], rot=25, feed=hostile, name="dispenser"))
+    # -- the floor: wet marble, the monogram at the centre -------------------
+    grid = [(-3.8, -1.4), (0.0, -1.4), (3.8, -1.4), (-3.8, 2.6), (0.0, 2.6), (3.8, 2.6)]
+    props.append(prop("floorsheen", [0, 0, 0], w=W, d=D, coffers=hostile, ceiling=round(H - 0.06, 2),
+                      lamps=[[lx, lz, 1.4, 0.4] for lx, lz in grid], fog=[5, 28] if hostile else [10, 36],
+                      tone="#9ba4ae" if hostile else "#aab1ba", gain=0.4 if hostile else 0.8))
+    props.append(prop("monogram", [0, 0, 0.6], r=1.5, name="mosaic"))
+    props.append(prop("dust", [0, 0, 0.5], n=90, w=12, h=2.6, d=9.5, y=1.2, opacity=0.2))
+    # -- the chairs -------------------------------------------------------------
+    # Accent chairs from the catalog, one flat maroon (Doc 2: `paint` deeper
+    # than the curtain slot, which reads fire-engine red here), low-poly (C1);
+    # each seat's zone is just off its front edge. (They stay `glb` props:
+    # pending_room() clears the rows by that type.) H's two overturned ones
+    # are `tipchair`s: the same model on its back / its side.
+    MAROON = "#45101a"
+    chairs = []
     rnd = random.Random(99)
     for side in (-1, 1):
         for i in range(4):
@@ -326,58 +388,95 @@ def waiting_room(hostile):
                 x += rnd.uniform(-1.4, 1.4)
                 z += rnd.uniform(-0.9, 0.9)
                 rot += rnd.uniform(-70, 70)
-            # The waiting chairs: the catalog's accent chair, low-poly (C1).
-            props.append(glb("lib_chair", [x, 0, z], round(rot, 1), fallback="chair", collide=True))
+            chairs.append([x, z, rot, None])
     if hostile:
-        # The dispenser feeds continuously: slips piling on the floor, all 99.
-        for i in range(36):
-            r = rnd.uniform(0.2, 2.6)
-            a = rnd.uniform(0, 6.28)
-            props.append(prop("slip", [-3.4 + r * 0.9 * math.cos(a), 0.004 + i * 0.001, -D / 2 + 1.3 + r * 0.6 * abs(math.sin(a))], round(rnd.uniform(0, 360), 1)))
-    lights = [
-        {"type": "point", "pos": [-3.5, H - 0.3, -1.5], "color": "#ffe9c8", "intensity": 42 if hostile else 22, "distance": 16, "flicker": 0.25 if hostile else 0},
-        {"type": "point", "pos": [3.5, H - 0.3, -1.5], "color": "#ffe9c8", "intensity": 42 if hostile else 22, "distance": 16, "flicker": 0.25 if hostile else 0},
-        {"type": "point", "pos": [0, H - 0.3, 3.5], "color": "#ffe9c8", "intensity": 34 if hostile else 16, "distance": 16},
-    ]
-    # Ceiling fixtures to go with the light (the building's, C1).
-    for lx, lz in ((-3.5, -1.5), (3.5, -1.5), (0, 3.5)):
+        # vacated at speed: two turned further off true, two knocked over
+        chairs[2][2] = 128.0
+        chairs[7][2] = -125.0
+        chairs[3][3] = "back"
+        chairs[6][3] = "side"
+    seats = []
+    for k, (x, z, rot, tip) in enumerate(chairs):
+        if tip:
+            props.append(prop("tipchair", [x, 0, z], round(rot, 1), node="lib_chair", mat="lp_curtain", paint=MAROON, tip=tip, name="chair%d" % k))
+            continue
+        props.append(glb("lib_chair", [x, 0, z], round(rot, 1), fallback="chair", mat="lp_curtain", paint=MAROON, collide=True, name="chair%d" % k))
+        # chairs face +z at rot 0 (the backrest is at the model's -z)
+        fx, fz = math.sin(math.radians(rot)), math.cos(math.radians(rot))
+        seats.append(("seat%d" % k, [x + 0.72 * fx, z + 0.72 * fz], [x, 1.45, z]))
+    props.append(prop("palette", [0, 0, 0]))  # the maroon, all the way (props.js palette)
+    if hostile:
+        # The dispenser feeds continuously (Doc 2 S1_H): a mound of slips
+        # under it, several drifted toward the foreground. Every one 99.
+        props.append(prop("slippile", [-2.35, 0, -2.45], n=110, r=0.7, seed=99,
+                          drift=[[0.6, 1.1], [1.3, 1.9], [-0.5, 1.7], [2.1, 2.7], [0.9, 3.4], [2.7, 4.2], [1.7, 5.1], [-0.9, 3.1], [3.3, 5.9]]))
+    # -- the building's light ------------------------------------------------
+    # C: cool, even, perfectly still. H: two stops too hot, each fixture
+    # pulsing on its own period so the room never finds a rhythm (Doc 2 KLING H).
+    lights = []
+    for i, (lx, lz) in enumerate(grid):
         props.append(prop("fluoro", [lx, H - 0.06, lz], w=1.4, d=0.4))
+        l = {"type": "point", "pos": [lx, H - 0.35, lz], "color": "#fff3e2" if hostile else "#eaf0f6",
+             "intensity": 30 if hostile else 11, "distance": 13, "decay": 1.4}
+        if hostile:
+            l["flicker"] = 0.18
+            l["pattern"] = {"period": round(2.1 + 0.37 * i, 2), "duty": 0.9, "low": 0.42, "offset": round(0.61 * i, 2)}
+        lights.append(l)
+    # the booth's own downlight on her and the glass
+    lights.append({"type": "point", "pos": [0, 2.75, -4.85], "color": "#fff1de" if hostile else "#e8eef4", "intensity": 7 if hostile else 4.5, "distance": 4.5})
+    # the door lamps: dark until they mean something (S2)
+    lights.append({"type": "point", "id": "inner_lamp", "off": True, "pos": [5.6, 2.3, -5.55], "color": "#3dff7a", "intensity": 2.4, "distance": 3.2})
+    lights.append({"type": "point", "id": "service_lamp", "off": True, "pos": [-4.6, 2.3, 5.55], "color": "#3dff7a", "intensity": 2.4, "distance": 3.2})
     rec = {
         "name": "THE WAITING ROOM",
         "size": [W, H, D],
-        "floor": "marble", "wall": "plaster_blown" if hostile else "plaster", "ceiling": "plaster_blown" if hostile else "plaster_dark",
-        "tile": {"floor": 2.5, "wall": 2.0, "ceiling": 2.0},
+        "floor": "marble", "wall": wall, "ceiling": "plaster_blown" if hostile else "plaster_dark",
+        "tile": {"floor": 2.5, "wall": WALL_TILE, "ceiling": 2.0},
         "skirt": {"mat": "marble", "h": 0.14, "t": 0.03, "tile": 2.5},
         "cornice": {"mat": "plaster_blown" if hostile else "plaster_dark", "h": 0.28, "t": 0.08},
-        "ambient": {"color": "#fff4e0", "intensity": 0.55 if hostile else 0.22},
-        "sun": {"from": [1.5, 6.5, 7.5], "color": "#fff1dc", "intensity": 0.9 if hostile else 0.7},
+        "ambient": {"color": "#fff6ea" if hostile else "#dfe6ee", "intensity": 0.7 if hostile else 0.24},
+        "sun": {"from": [1.5, 6.5, 7.5], "color": "#fff4e4" if hostile else "#eef2f6", "intensity": 0.95 if hostile else 0.6},
         "lights": lights,
-        "fog": {"color": "#e9e3d6" if hostile else "#1a1714", "near": 8 if hostile else 10, "far": 34 if hostile else 36},
-        "exposure": 1.05 if hostile else 1.0,
-        "vignette": 0.35 if hostile else 0.6,
+        "fog": {"color": "#efe9dc" if hostile else "#121518", "near": 5 if hostile else 10, "far": 28 if hostile else 36},
+        "exposure": 1.5 if hostile else 1.0,
+        "vignette": 0.2 if hostile else 0.55,
         "spawn": [0, 4.6, 0],
         "props": props,
+        "boxes": boxes,
         "footstep": {"filterHz": 1400, "gain": 0.09},
     }
     rec["shots"] = shots_for(rec, loop_seconds=14.0)
-    # S2 THE CALL plays in this room: a slow push toward the receptionist as
-    # the speaker clicks (S2_*_VID was 3 s of exactly this).
-    rec["shots"]["call"] = {"from": "out", "to": pose([0, EYE, -D / 2 + 3.2], [0, 1.1, -D / 2 + 0.35]), "seconds": 4.0, "ease": "inout"}
+    # S2 THE CALL: tight on the reception glass (Doc 2 S2), for previews.
+    rec["shots"]["call"] = {"from": "out", "to": pose([-0.9, EYE, -3.0], [0.1, 1.45, -5.6], fov=44), "seconds": 4.0, "ease": "inout"}
     # The lobby's doorways: the glass doors from the street (they close
-    # behind the candidate and the drone begins, C7), the inner door beside
-    # the counter that buzzes open when he answers the call, and a service
-    # door by the entrance that opens when he runs for the locked glass.
-    door(rec, "front", "S", 0.0, w=2.6, h=2.9, kind="glass", locked=True)
-    door(rec, "inner", "N", 5.6, w=1.1, h=2.2, kind="door", locked=True, mat="lp_beige", hinge="R")
-    door(rec, "service", "S", -4.6, w=1.0, h=2.1, kind="door", locked=True, mat="lp_grey")
+    # behind the candidate and the drone begins, C7; past them it is dark,
+    # C3), the inner door beside the counter that buzzes open when he answers
+    # the call, and a service door by the entrance that opens when he runs
+    # for the locked glass. Inner and service match their connectors' 1.2 m.
+    # (H: tinted glass. The shared clear glass goes milky in the blown light
+    # and stops reading as the dark behind it.)
+    door(rec, "front", "S", 0.0, w=2.6, h=2.9, kind="glass", locked=True, **({"glass": "glass_dark"} if hostile else {}))
+    door(rec, "inner", "N", 5.6, w=1.2, h=2.2, kind="door", locked=True, mat="lp_beige", hinge="R", panel="lp_grey")
+    door(rec, "service", "S", -4.6, w=1.2, h=2.2, kind="door", locked=True, mat="lp_grey")
     rec["entry"] = "front"
-    # S1: TAKE A SEAT (either row of chairs) / STAY STANDING (at the counter)
-    zone(rec, "seat_w", [-4.3, -0.5], box=[[-4.75, -3.3], [-3.85, 2.3]], ring=2.2, label_at=[-4.6, 1.5, -0.5])
-    zone(rec, "seat_e", [4.3, -0.5], box=[[3.85, -3.3], [4.75, 2.3]], ring=2.2, label_at=[4.6, 1.5, -0.5])
-    zone(rec, "counter", [-1.3, -3.95], r=0.65, ring=3.0, label_at=[-1.3, 1.75, -4.7])
-    # S2: STAND (the inner door) / RUN (back to the glass doors)
-    zone(rec, "inner_door", [5.6, -5.15], r=0.6, ring=3.0, label_at=[5.6, 2.55, -5.9])
-    zone(rec, "front_doors", [0.0, 4.95], r=0.75, ring=3.2, label_at=[0.0, 3.2, 5.9])
+    # Once the vestibule behind the front doors is gone, the doors show the
+    # dark (S1 onEnter shows this): no street, no sky after they close (C3).
+    props.append(prop("backing", [0, 0, D / 2 + WALL_T + 0.07], w=2.9, h=3.1, name="front_dark", hidden=True))
+    # The door lamps (red until they mean something) and the inner door's reader.
+    for nm, pos, rot in (("inner", [5.6, 2.46, -D / 2 + 0.02], 0), ("service", [-4.6, 2.46, D / 2 - 0.02], 180)):
+        props.append(prop("doorlamp", pos, rot, lens="red", name="%s_lamp_red" % nm))
+        props.append(prop("doorlamp", pos, rot, lens="green", name="%s_lamp_green" % nm, hidden=True))
+    props.append(prop("badgereader", [6.45, 1.25, -D / 2 + 0.03]))
+    # S1: TAKE A SEAT (any upright chair) / STAY STANDING (the head of the queue)
+    for name, pos, label in seats:
+        zone(rec, name, pos, r=0.35, ring=1.7, label_at=label)
+    zone(rec, "counter", [-1.3, -3.72], r=0.5, ring=2.2, label_at=[-1.3, 2.05, -4.2])
+    # S2: STAND (the inner door) / RUN (back to the glass doors). The words
+    # stand on the door, on its window / the dark glass, low enough to stay
+    # in view as he walks up to it (over the lintel they left the top of the
+    # screen a step before the commit, and read white on white in H).
+    zone(rec, "inner_door", [5.6, -5.1], r=0.6, ring=3.0, label_at=[5.6, 1.55, -5.85])
+    zone(rec, "front_doors", [0.0, 4.95], r=0.75, ring=3.2, label_at=[0.0, 2.05, 5.85])
     return rec
 
 
