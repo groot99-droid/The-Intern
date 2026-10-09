@@ -841,11 +841,12 @@ def mailroom():
             if (x + z) % 3 == 0:
                 props.append(glb("lib_pallets", [x + jx, 0, z + jz], rot=rot, fallback="boxtower", collide=True, n=n))
             else:
-                props.append(prop("boxtower", [x + jx, 0, z + jz], rot=rot, n=n))
+                # 3 to 11 m of cartons, up into the fog (one instanced mesh each)
+                props.append(prop("cartontower", [x + jx, 0, z + jz], rot=rot, n=2 * n - 2, seed=len(props) + 1))
     # The counter: laminate top on a dark body, the clerk behind it (static,
     # C5), the package at the clerk's end until he slides it across.
     props.append(prop("counter", [0, 0, -9.0], w=6.0, d=1.1, h=1.1, glass=False, mat="lp_dark", name="counter"))
-    props.append(prop("figure", [-0.1, 0, -9.95], face="blur", suit="lp_blue", name="clerk"))
+    props.append(prop("blurfigure", [-0.1, 0, -9.95], suit="lp_blue", name="clerk"))
     props.append(prop("soggypackage", [0.4, 1.16, -9.3], rot=12, name="package"))
     props.append(prop("wetring", [0.4, 1.161, -9.3], rot=12, w=0.6, d=0.46, name="ring"))
     props.append(glb("lib_mailsacks", [-4.7, 0, -6.3], rot=20, fallback=None, collide=True))
@@ -907,8 +908,6 @@ def mailroom():
     door(rec, "front", "S", 0.0, w=2.0, h=3.0, kind="door", mat="lp_dark")
     door(rec, "deliveries", "N", 0.0, w=1.6, h=2.6, kind="door", locked=True, mat="lp_dark")
     rec["entry"] = "front"
-    # As he comes near the counter the package is slid across (silent: the slide is the cue).
-    zone(rec, "counter_near", [0.4, -5.6], r=4.4, ring=4.4)
     zone(rec, "counter", [0.4, -7.85], r=0.6, ring=3.0, label_at=[0.4, 1.75, -8.8])
     zone(rec, "deliver", [0.0, -22.55], r=0.8, ring=4.0, armAfter="counter", label_at=[0.0, 2.75, -24.4])
     zone(rec, "sorting", [-6.3, -22.6], r=0.6, ring=3.0, armAfter="counter", label_at=[-6.3, 1.8, -23.75])
@@ -1281,19 +1280,19 @@ def boardroom():
     leaves him (he carried it in); for RETAINED it is already there, resealed,
     when he walks in -- the one he opened is still on the sorting table."""
     W, H, D = 9.0, 3.4, 18.0
-    props = [prop("table", [0, 0, -1.0], w=2.2, d=12.0, name="table")]
+    props = [prop("glasstable", [0, 0, -1.0], w=2.2, d=12.0, name="table")]
     for i in range(6):
         z = -6.0 + i * 2.0
         for side in (-1, 1):
             rot = 90 if side < 0 else -90   # chairs and figures face +z at rot 0: these face the table
             props.append(glb("lib_chair", [side * 1.8, 0, z], rot=rot, fallback="chair", collide=True))
-            props.append(prop("figure", [side * 1.74, 0, z], rot=rot, seated=True, face="blur", suit="lp_suit", tie=True, name="board%d" % (i * 2 + (side > 0))))
+            props.append(prop("blurfigure", [side * 1.74, 0, z], rot=rot, seated=True, suit="lp_suit", tie=True, name="board%d" % (i * 2 + (side > 0))))
     # his chair at the head, pulled back from the glass, facing down the table;
     # on its seat the hundredth slip (Track C motif 2: the one slip in this room)
     props.append(glb("lib_chair", [0.0, 0, -8.15], rot=0, fallback="chair", name="mychair"))
     props.append(prop("slip", [0.04, 0.582, -8.08], rot=14, name="hundredth"))
     # him, as the camera leaves him: standing at the head, beside the chair (endings.json `show`)
-    props.append(prop("figure", [0.82, 0, -7.6], rot=-12, face="blur", suit="lp_suit", name="self", hidden=True))
+    props.append(prop("blurfigure", [0.82, 0, -7.6], rot=-12, suit="lp_suit", name="self", hidden=True))
     props.append(prop("soggypackage", [0.0, 0.79, -1.6], rot=4, name="package"))
     props.append(prop("wetring", [0.0, 0.791, -1.6], rot=4, w=0.62, d=0.48, spread=0.9, mat="lp_black", name="ring"))
     # C8: on the south wall, over the door -- never in frame with the mailroom's
@@ -1311,9 +1310,10 @@ def boardroom():
     rec = {
         "name": "ONBOARDING",
         "size": [W, H, D],
-        "floor": "marble", "wall": "plaster_dark", "ceiling": "plaster_dark",
-        "tile": {"floor": 2.0, "wall": 2.0, "ceiling": 2.0},
-        "skirt": {"mat": "wood", "h": 0.95, "t": 0.03, "tile": 2.0},
+        "floor": "marble_light", "wall": "plaster_dark", "ceiling": "plaster_dark",
+        "tile": {"floor": 2.5, "wall": 2.0, "ceiling": 2.0},
+        # a dark veined marble wainscot: pristine, expensive air (Doc 2)
+        "skirt": {"mat": "marble", "h": 1.1, "t": 0.03, "tile": 2.5},
         "cornice": {"mat": "plaster_dark", "h": 0.3, "t": 0.08},
         "ambient": {"color": "#ffe9c8", "intensity": 0.16},
         "sun": {"from": [1.0, 5.0, 10.0], "color": "#ffe9c8", "intensity": 0.55},
@@ -1331,9 +1331,11 @@ def boardroom():
     # ASSIMILATION: the camera leaves him standing at the head -- his face the
     # blurred texture map -- and pulls back down the length of the table,
     # resolving on the twelve, him, the empty chair with the slip, the package.
-    s["ending"] = {"from": pose([0.75, 1.52, -5.7], [0.8, 1.48, -7.6], fov=40), "to": pose([0, 2.05, 8.2], [0, 0.8, -7.8], fov=58), "seconds": 10.0, "ease": "inout"}
-    # RETAINED: the same, shorter and lower, the resealed package kept in frame.
-    s["retained"] = {"from": pose([0.75, 1.52, -5.7], [0.8, 1.48, -7.6], fov=40), "to": pose([0.2, 1.4, 4.6], [0, 0.85, -6.0], fov=50), "seconds": 7.0, "ease": "inout"}
+    # It stops halfway down the glass, so the last frame still holds his face,
+    # the chair beside him with the slip, the twelve and the package.
+    s["ending"] = {"from": pose([0.75, 1.52, -5.7], [0.8, 1.48, -7.6], fov=40), "to": pose([0, 1.95, 1.4], [0.35, 1.0, -7.8], fov=52), "seconds": 10.0, "ease": "inout"}
+    # RETAINED: the same, shorter and lower, the resealed package close in frame.
+    s["retained"] = {"from": pose([0.75, 1.52, -5.7], [0.8, 1.48, -7.6], fov=40), "to": pose([0.15, 1.6, 1.3], [0.3, 0.85, -7.8], fov=46), "seconds": 7.0, "ease": "inout"}
     rec["shots"] = s
     door(rec, "front", "S", 0.0, w=1.4, h=2.4, kind="door", mat="lp_wood")
     rec["entry"] = "front"

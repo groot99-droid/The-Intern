@@ -61,6 +61,20 @@
     "show": [
       "hands"
     ],
+    "beats": [
+      {
+        "sfxCue": "speaker-click"
+      },
+      {
+        "caption": "call.hundred",
+        "className": "scene-caption-receptionist",
+        "holdMs": 2600
+      },
+      {
+        "waitMs": 900
+      }
+    ],
+    "_beatsNote": "Doc 1 §6.4: seated, the slip reading 99 in his hands, the speaker clicks: 'One hundred.' Waiting on the director: `beats` (the runBeats vocabulary) are meant to run after `show`, before the pull-back `shot`; until playEnding() runs them they are inert data.",
     "ambience": "S1_C_AMB.wav",
     "routes": {
       "S8_H": {

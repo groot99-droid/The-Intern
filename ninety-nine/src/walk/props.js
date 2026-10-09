@@ -633,6 +633,102 @@ const BUILDERS = {
     }
     return g;
   },
+  // A figure whose face is a blurred texture map (Doc 1 §5 S8 and §6.4; Doc
+  // 2 S8_C: "a clerk ... whose face is a smeared unreadable texture map"):
+  // the usual figure, a smeared portrait laid over the front of its head --
+  // something that was a face, run sideways until nothing can be read. Every
+  // blurfigure shares one small canvas texture. Static (C5).
+  blurfigure(mats, o) {
+    const g = BUILDERS.figure(mats, { ...o, face: 'blur' });
+    const self = BUILDERS.blurfigure;
+    if (!self._mat && typeof document !== 'undefined') {
+      const c = document.createElement('canvas');
+      c.width = 64; c.height = 64;
+      const x = c.getContext('2d');
+      x.fillStyle = '#9c9187'; x.fillRect(0, 0, 64, 64);
+      x.fillStyle = '#b8aa9a'; x.fillRect(10, 8, 44, 50);          // the lit oval of a face
+      x.fillStyle = '#4a403a'; x.fillRect(16, 24, 11, 6); x.fillRect(37, 24, 11, 6); // eyes
+      x.fillStyle = '#8a7a6e'; x.fillRect(29, 28, 6, 14);         // nose
+      x.fillStyle = '#5a3a36'; x.fillRect(22, 46, 20, 4);         // mouth
+      // smeared: blurred, then dragged sideways over itself
+      const copy = document.createElement('canvas');
+      copy.width = 64; copy.height = 64;
+      const cx = copy.getContext('2d');
+      cx.filter = 'blur(4px)';
+      cx.drawImage(c, 0, 0);
+      x.clearRect(0, 0, 64, 64);
+      x.drawImage(copy, 0, 0);
+      for (let i = -4; i <= 6; i++) { if (i) { x.globalAlpha = 0.3; x.drawImage(copy, i * 2.6, (i % 2) * 1.5 - 0.5); } }
+      x.globalAlpha = 1;
+      const tex = new THREE.CanvasTexture(c);
+      tex.colorSpace = THREE.SRGBColorSpace;
+      tex.magFilter = THREE.LinearFilter;
+      self._mat = new THREE.MeshLambertMaterial({ map: tex });
+    }
+    if (self._mat) {
+      const face = new THREE.Mesh(new THREE.PlaneGeometry(0.21, 0.23), self._mat);
+      face.position.set(0, 1.68 - (o.seated ? 0.45 : 0), 0.1115);
+      g.add(face);
+    }
+    return g;
+  },
+  // A tower of cartons stacked by hand up into the mailroom's fog (Doc 1 §5
+  // S8: "towers of photoreal cardboard fading into real volumetric fog"):
+  // `n` boxes, each a little off square and off true, as ONE instanced mesh
+  // (a 12 m tower is one draw call), with an invisible collider at its foot.
+  cartontower(mats, o) {
+    const g = new THREE.Group();
+    const n = Math.max(1, o.n || 12);
+    let seed = (o.seed || 1) * 7919 + n;
+    const rnd = () => { seed = (seed * 16807) % 2147483647; return (seed - 1) / 2147483646; };
+    const mesh = new THREE.InstancedMesh(new THREE.BoxGeometry(1, 1, 1), mats.get(o.mat || 'cardboard'), n);
+    mesh.castShadow = true;
+    mesh.receiveShadow = true;
+    const m = new THREE.Matrix4(), q = new THREE.Quaternion(), e = new THREE.Euler(), p = new THREE.Vector3(), s = new THREE.Vector3();
+    let y = 0, base = 0.8;
+    for (let i = 0; i < n; i++) {
+      const h = 0.42 + rnd() * 0.18;
+      const w = (0.68 + rnd() * 0.16) * (i === 0 ? 1.04 : 1), d = w * (0.85 + rnd() * 0.25);
+      if (i === 0) base = Math.max(w, d);
+      e.set(0, (rnd() - 0.5) * 0.22, 0);
+      q.setFromEuler(e);
+      p.set((rnd() - 0.5) * 0.12, y + h / 2, (rnd() - 0.5) * 0.12);
+      s.set(w, h, d);
+      m.compose(p, q, s);
+      mesh.setMatrixAt(i, m);
+      y += h;
+    }
+    mesh.instanceMatrix.needsUpdate = true;
+    mesh.computeBoundingSphere();
+    g.add(mesh);
+    const body = box(mats, 'cardboard', base, Math.min(y, 1.6), base, 0, 0, 0, { castShadow: false, collide: true });
+    body.visible = false;
+    g.add(body);
+    return g;
+  },
+  // The boardroom's vast glass table (Doc 2 S8_C_IMG_OUT: "a vast glass
+  // table with real refraction and reflection"): a clear photoreal slab with
+  // a dark bevelled edge, on two slim chrome trestles and a spine, so the
+  // twelve seated figures read through it. Top at 0.79 (as `table`).
+  glasstable(mats, o) {
+    const g = new THREE.Group();
+    const w = o.w || 2.2, d = o.d || 12.0, top = 0.79, t = 0.04;
+    g.add(box(mats, o.glass || 'glass', w, t, d, 0, top - t, 0, { castShadow: false }));
+    g.add(box(mats, 'glass_dark', w + 0.01, t * 0.5, 0.02, 0, top - t * 0.75, -d / 2, { castShadow: false })); // the edge, seen end on
+    g.add(box(mats, 'glass_dark', w + 0.01, t * 0.5, 0.02, 0, top - t * 0.75, d / 2, { castShadow: false }));
+    g.add(box(mats, 'glass_dark', 0.02, t * 0.5, d, -w / 2, top - t * 0.75, 0, { castShadow: false }));
+    g.add(box(mats, 'glass_dark', 0.02, t * 0.5, d, w / 2, top - t * 0.75, 0, { castShadow: false }));
+    g.add(box(mats, 'lp_chrome', 0.08, 0.05, d - 1.6, 0, top - t - 0.05, 0)); // the spine under the glass
+    for (const z of [-d / 2 + 1.4, d / 2 - 1.4]) {
+      g.add(box(mats, 'lp_chrome', w - 0.7, 0.04, 0.08, 0, top - t - 0.04, z)); // trestle head
+      for (const s of [-1, 1]) g.add(box(mats, 'lp_chrome', 0.05, top - t - 0.04, 0.05, s * (w / 2 - 0.4), 0, z));
+      g.add(box(mats, 'lp_chrome', w - 0.7, 0.03, 0.42, 0, 0, z, { castShadow: false })); // foot
+    }
+    const body = box(mats, 'lp_dark', w, top, d, 0, 0, 0, { castShadow: false, collide: true });
+    body.visible = false;
+    g.add(body);
+    return g;
+  },
   // A steel sorting table (S8 C: OPEN THE BOX): top, cutting mat, legs, a
   // lower shelf of flattened cartons, a roll of tape. Top at `h`.
   sortingtable(mats, o) {

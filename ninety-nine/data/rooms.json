@@ -13909,24 +13909,26 @@
      "fallback": "boxtower"
     },
     {
-     "type": "boxtower",
+     "type": "cartontower",
      "pos": [
       -15.754,
       0,
       -16.498
      ],
      "rot": 31,
-     "n": 12
+     "n": 22,
+     "seed": 2
     },
     {
-     "type": "boxtower",
+     "type": "cartontower",
      "pos": [
       -16.349,
       0,
       -11.83
      ],
      "rot": 58,
-     "n": 11
+     "n": 20,
+     "seed": 3
     },
     {
      "type": "glb",
@@ -13942,24 +13944,26 @@
      "fallback": "boxtower"
     },
     {
-     "type": "boxtower",
+     "type": "cartontower",
      "pos": [
       -16.493,
       0,
       -4.319
      ],
      "rot": 2,
-     "n": 8
+     "n": 14,
+     "seed": 5
     },
     {
-     "type": "boxtower",
+     "type": "cartontower",
      "pos": [
       -15.976,
       0,
       -0.031
      ],
      "rot": 48,
-     "n": 5
+     "n": 8,
+     "seed": 6
     },
     {
      "type": "glb",
@@ -13975,24 +13979,26 @@
      "fallback": "boxtower"
     },
     {
-     "type": "boxtower",
+     "type": "cartontower",
      "pos": [
       -15.856,
       0,
       7.853
      ],
      "rot": 84,
-     "n": 4
+     "n": 6,
+     "seed": 8
     },
     {
-     "type": "boxtower",
+     "type": "cartontower",
      "pos": [
       -16.194,
       0,
       12.23
      ],
      "rot": 63,
-     "n": 12
+     "n": 22,
+     "seed": 9
     },
     {
      "type": "glb",
@@ -14008,34 +14014,37 @@
      "fallback": "boxtower"
     },
     {
-     "type": "boxtower",
+     "type": "cartontower",
      "pos": [
       -15.952,
       0,
       19.445
      ],
      "rot": 89,
-     "n": 7
+     "n": 12,
+     "seed": 11
     },
     {
-     "type": "boxtower",
+     "type": "cartontower",
      "pos": [
       -12.422,
       0,
       -19.568
      ],
      "rot": 58,
-     "n": 11
+     "n": 20,
+     "seed": 12
     },
     {
-     "type": "boxtower",
+     "type": "cartontower",
      "pos": [
       -12.257,
       0,
       -16.172
      ],
      "rot": 54,
-     "n": 6
+     "n": 10,
+     "seed": 13
     },
     {
      "type": "glb",
@@ -14051,24 +14060,26 @@
      "fallback": "boxtower"
     },
     {
-     "type": "boxtower",
+     "type": "cartontower",
      "pos": [
       -11.757,
       0,
       -7.46
      ],
      "rot": 63,
-     "n": 12
+     "n": 22,
+     "seed": 15
     },
     {
-     "type": "boxtower",
+     "type": "cartontower",
      "pos": [
       -11.851,
       0,
       -4.229
      ],
      "rot": 45,
-     "n": 12
+     "n": 22,
+     "seed": 16
     },
     {
      "type": "glb",
@@ -14084,24 +14095,26 @@
      "fallback": "boxtower"
     },
     {
-     "type": "boxtower",
+     "type": "cartontower",
      "pos": [
       -12.336,
       0,
       3.693
      ],
      "rot": 1,
-     "n": 8
+     "n": 14,
+     "seed": 18
     },
     {
-     "type": "boxtower",
+     "type": "cartontower",
      "pos": [
       -12.188,
       0,
       7.72
      ],
      "rot": 54,
-     "n": 8
+     "n": 14,
+     "seed": 19
     },
     {
      "type": "glb",
@@ -14117,24 +14130,26 @@
      "fallback": "boxtower"
     },
     {
-     "type": "boxtower",
+     "type": "cartontower",
      "pos": [
       -11.811,
       0,
       15.54
      ],
      "rot": 84,
-     "n": 4
+     "n": 6,
+     "seed": 21
     },
     {
-     "type": "boxtower",
+     "type": "cartontower",
      "pos": [
       -12.358,
       0,
       20.32
      ],
      "rot": 38,
-     "n": 5
+     "n": 8,
+     "seed": 22
     },
     {
      "type": "glb",
@@ -14150,24 +14165,26 @@
      "fallback": "boxtower"
     },
     {
-     "type": "boxtower",
+     "type": "cartontower",
      "pos": [
       -7.923,
       0,
       -12.111
      ],
      "rot": 10,
-     "n": 5
+     "n": 8,
+     "seed": 24
     },
     {
-     "type": "boxtower",
+     "type": "cartontower",
      "pos": [
       -8.254,
       0,
       -8.486
      ],
      "rot": 10,
-     "n": 5
+     "n": 8,
+     "seed": 25
     },
     {
      "type": "glb",
@@ -14183,24 +14200,26 @@
      "fallback": "boxtower"
     },
     {
-     "type": "boxtower",
+     "type": "cartontower",
      "pos": [
       -8.014,
       0,
       -0.422
      ],
      "rot": 77,
-     "n": 5
+     "n": 8,
+     "seed": 27
     },
     {
-     "type": "boxtower",
+     "type": "cartontower",
      "pos": [
       -8.372,
       0,
       4.495
      ],
      "rot": 43,
-     "n": 10
+     "n": 18,
+     "seed": 28
     },
     {
      "type": "glb",
@@ -14216,24 +14235,26 @@
      "fallback": "boxtower"
     },
     {
-     "type": "boxtower",
+     "type": "cartontower",
      "pos": [
       -8.209,
       0,
       11.839
      ],
      "rot": 82,
-     "n": 11
+     "n": 20,
+     "seed": 30
     },
     {
-     "type": "boxtower",
+     "type": "cartontower",
      "pos": [
       -8.348,
       0,
       16.45
      ],
      "rot": 4,
-     "n": 6
+     "n": 10,
+     "seed": 31
     },
     {
      "type": "glb",
@@ -14262,24 +14283,26 @@
      "fallback": "boxtower"
     },
     {
-     "type": "boxtower",
+     "type": "cartontower",
      "pos": [
       8.574,
       0,
       -15.701
      ],
      "rot": 76,
-     "n": 12
+     "n": 22,
+     "seed": 34
     },
     {
-     "type": "boxtower",
+     "type": "cartontower",
      "pos": [
       8.383,
       0,
       -11.917
      ],
      "rot": 64,
-     "n": 7
+     "n": 12,
+     "seed": 35
     },
     {
      "type": "glb",
@@ -14295,24 +14318,26 @@
      "fallback": "boxtower"
     },
     {
-     "type": "boxtower",
+     "type": "cartontower",
      "pos": [
       7.408,
       0,
       -3.864
      ],
      "rot": 10,
-     "n": 9
+     "n": 16,
+     "seed": 37
     },
     {
-     "type": "boxtower",
+     "type": "cartontower",
      "pos": [
       8.513,
       0,
       0.578
      ],
      "rot": 28,
-     "n": 8
+     "n": 14,
+     "seed": 38
     },
     {
      "type": "glb",
@@ -14328,24 +14353,26 @@
      "fallback": "boxtower"
     },
     {
-     "type": "boxtower",
+     "type": "cartontower",
      "pos": [
       8.02,
       0,
       8.15
      ],
      "rot": 45,
-     "n": 8
+     "n": 14,
+     "seed": 40
     },
     {
-     "type": "boxtower",
+     "type": "cartontower",
      "pos": [
       8.182,
       0,
       11.531
      ],
      "rot": 62,
-     "n": 9
+     "n": 16,
+     "seed": 41
     },
     {
      "type": "glb",
@@ -14361,34 +14388,37 @@
      "fallback": "boxtower"
     },
     {
-     "type": "boxtower",
+     "type": "cartontower",
      "pos": [
       7.749,
       0,
       20.136
      ],
      "rot": 87,
-     "n": 12
+     "n": 22,
+     "seed": 43
     },
     {
-     "type": "boxtower",
+     "type": "cartontower",
      "pos": [
       12.523,
       0,
       -19.726
      ],
      "rot": 86,
-     "n": 9
+     "n": 16,
+     "seed": 44
     },
     {
-     "type": "boxtower",
+     "type": "cartontower",
      "pos": [
       12.208,
       0,
       -16.365
      ],
      "rot": 67,
-     "n": 12
+     "n": 22,
+     "seed": 45
     },
     {
      "type": "glb",
@@ -14404,24 +14434,26 @@
      "fallback": "boxtower"
     },
     {
-     "type": "boxtower",
+     "type": "cartontower",
      "pos": [
       12.28,
       0,
       -8.275
      ],
      "rot": 53,
-     "n": 5
+     "n": 8,
+     "seed": 47
     },
     {
-     "type": "boxtower",
+     "type": "cartontower",
      "pos": [
       12.149,
       0,
       -3.61
      ],
      "rot": 37,
-     "n": 8
+     "n": 14,
+     "seed": 48
     },
     {
      "type": "glb",
@@ -14437,24 +14469,26 @@
      "fallback": "boxtower"
     },
     {
-     "type": "boxtower",
+     "type": "cartontower",
      "pos": [
       11.693,
       0,
       3.695
      ],
      "rot": 31,
-     "n": 12
+     "n": 22,
+     "seed": 50
     },
     {
-     "type": "boxtower",
+     "type": "cartontower",
      "pos": [
       12.297,
       0,
       7.7
      ],
      "rot": 76,
-     "n": 12
+     "n": 22,
+     "seed": 51
     },
     {
      "type": "glb",
@@ -14470,34 +14504,37 @@
      "fallback": "boxtower"
     },
     {
-     "type": "boxtower",
+     "type": "cartontower",
      "pos": [
       11.866,
       0,
       16.186
      ],
      "rot": 72,
-     "n": 10
+     "n": 18,
+     "seed": 53
     },
     {
-     "type": "boxtower",
+     "type": "cartontower",
      "pos": [
       12.505,
       0,
       20.343
      ],
      "rot": 17,
-     "n": 4
+     "n": 6,
+     "seed": 54
     },
     {
-     "type": "boxtower",
+     "type": "cartontower",
      "pos": [
       16.132,
       0,
       -19.778
      ],
      "rot": 11,
-     "n": 5
+     "n": 8,
+     "seed": 55
     },
     {
      "type": "glb",
@@ -14513,24 +14550,26 @@
      "fallback": "boxtower"
     },
     {
-     "type": "boxtower",
+     "type": "cartontower",
      "pos": [
       15.552,
       0,
       -12.171
      ],
      "rot": 83,
-     "n": 5
+     "n": 8,
+     "seed": 57
     },
     {
-     "type": "boxtower",
+     "type": "cartontower",
      "pos": [
       15.784,
       0,
       -8.554
      ],
      "rot": 10,
-     "n": 6
+     "n": 10,
+     "seed": 58
     },
     {
      "type": "glb",
@@ -14546,24 +14585,26 @@
      "fallback": "boxtower"
     },
     {
-     "type": "boxtower",
+     "type": "cartontower",
      "pos": [
       16.27,
       0,
       0.12
      ],
      "rot": 40,
-     "n": 7
+     "n": 12,
+     "seed": 60
     },
     {
-     "type": "boxtower",
+     "type": "cartontower",
      "pos": [
       15.756,
       0,
       3.829
      ],
      "rot": 41,
-     "n": 5
+     "n": 8,
+     "seed": 61
     },
     {
      "type": "glb",
@@ -14579,24 +14620,26 @@
      "fallback": "boxtower"
     },
     {
-     "type": "boxtower",
+     "type": "cartontower",
      "pos": [
       15.921,
       0,
       11.589
      ],
      "rot": 49,
-     "n": 6
+     "n": 10,
+     "seed": 63
     },
     {
-     "type": "boxtower",
+     "type": "cartontower",
      "pos": [
       15.917,
       0,
       16.339
      ],
      "rot": 12,
-     "n": 12
+     "n": 22,
+     "seed": 64
     },
     {
      "type": "glb",
@@ -14626,13 +14669,12 @@
      "name": "counter"
     },
     {
-     "type": "figure",
+     "type": "blurfigure",
      "pos": [
       -0.1,
       0,
       -9.95
      ],
-     "face": "blur",
      "suit": "lp_blue",
      "name": "clerk"
     },
@@ -15041,15 +15083,6 @@
    ],
    "entry": "front",
    "zones": [
-    {
-     "name": "counter_near",
-     "pos": [
-      0.4,
-      -5.6
-     ],
-     "r": 4.4,
-     "ring": 4.4
-    },
     {
      "name": "counter",
      "pos": [
@@ -16623,19 +16656,19 @@
     3.4,
     18.0
    ],
-   "floor": "marble",
+   "floor": "marble_light",
    "wall": "plaster_dark",
    "ceiling": "plaster_dark",
    "tile": {
-    "floor": 2.0,
+    "floor": 2.5,
     "wall": 2.0,
     "ceiling": 2.0
    },
    "skirt": {
-    "mat": "wood",
-    "h": 0.95,
+    "mat": "marble",
+    "h": 1.1,
     "t": 0.03,
-    "tile": 2.0
+    "tile": 2.5
    },
    "cornice": {
     "mat": "plaster_dark",
@@ -16791,7 +16824,7 @@
    ],
    "props": [
     {
-     "type": "table",
+     "type": "glasstable",
      "pos": [
       0,
       0,
@@ -16814,7 +16847,7 @@
      "fallback": "chair"
     },
     {
-     "type": "figure",
+     "type": "blurfigure",
      "pos": [
       -1.74,
       0,
@@ -16822,7 +16855,6 @@
      ],
      "rot": 90,
      "seated": true,
-     "face": "blur",
      "suit": "lp_suit",
      "tie": true,
      "name": "board0"
@@ -16840,7 +16872,7 @@
      "fallback": "chair"
     },
     {
-     "type": "figure",
+     "type": "blurfigure",
      "pos": [
       1.74,
       0,
@@ -16848,7 +16880,6 @@
      ],
      "rot": -90,
      "seated": true,
-     "face": "blur",
      "suit": "lp_suit",
      "tie": true,
      "name": "board1"
@@ -16866,7 +16897,7 @@
      "fallback": "chair"
     },
     {
-     "type": "figure",
+     "type": "blurfigure",
      "pos": [
       -1.74,
       0,
@@ -16874,7 +16905,6 @@
      ],
      "rot": 90,
      "seated": true,
-     "face": "blur",
      "suit": "lp_suit",
      "tie": true,
      "name": "board2"
@@ -16892,7 +16922,7 @@
      "fallback": "chair"
     },
     {
-     "type": "figure",
+     "type": "blurfigure",
      "pos": [
       1.74,
       0,
@@ -16900,7 +16930,6 @@
      ],
      "rot": -90,
      "seated": true,
-     "face": "blur",
      "suit": "lp_suit",
      "tie": true,
      "name": "board3"
@@ -16918,7 +16947,7 @@
      "fallback": "chair"
     },
     {
-     "type": "figure",
+     "type": "blurfigure",
      "pos": [
       -1.74,
       0,
@@ -16926,7 +16955,6 @@
      ],
      "rot": 90,
      "seated": true,
-     "face": "blur",
      "suit": "lp_suit",
      "tie": true,
      "name": "board4"
@@ -16944,7 +16972,7 @@
      "fallback": "chair"
     },
     {
-     "type": "figure",
+     "type": "blurfigure",
      "pos": [
       1.74,
       0,
@@ -16952,7 +16980,6 @@
      ],
      "rot": -90,
      "seated": true,
-     "face": "blur",
      "suit": "lp_suit",
      "tie": true,
      "name": "board5"
@@ -16970,7 +16997,7 @@
      "fallback": "chair"
     },
     {
-     "type": "figure",
+     "type": "blurfigure",
      "pos": [
       -1.74,
       0,
@@ -16978,7 +17005,6 @@
      ],
      "rot": 90,
      "seated": true,
-     "face": "blur",
      "suit": "lp_suit",
      "tie": true,
      "name": "board6"
@@ -16996,7 +17022,7 @@
      "fallback": "chair"
     },
     {
-     "type": "figure",
+     "type": "blurfigure",
      "pos": [
       1.74,
       0,
@@ -17004,7 +17030,6 @@
      ],
      "rot": -90,
      "seated": true,
-     "face": "blur",
      "suit": "lp_suit",
      "tie": true,
      "name": "board7"
@@ -17022,7 +17047,7 @@
      "fallback": "chair"
     },
     {
-     "type": "figure",
+     "type": "blurfigure",
      "pos": [
       -1.74,
       0,
@@ -17030,7 +17055,6 @@
      ],
      "rot": 90,
      "seated": true,
-     "face": "blur",
      "suit": "lp_suit",
      "tie": true,
      "name": "board8"
@@ -17048,7 +17072,7 @@
      "fallback": "chair"
     },
     {
-     "type": "figure",
+     "type": "blurfigure",
      "pos": [
       1.74,
       0,
@@ -17056,7 +17080,6 @@
      ],
      "rot": -90,
      "seated": true,
-     "face": "blur",
      "suit": "lp_suit",
      "tie": true,
      "name": "board9"
@@ -17074,7 +17097,7 @@
      "fallback": "chair"
     },
     {
-     "type": "figure",
+     "type": "blurfigure",
      "pos": [
       -1.74,
       0,
@@ -17082,7 +17105,6 @@
      ],
      "rot": 90,
      "seated": true,
-     "face": "blur",
      "suit": "lp_suit",
      "tie": true,
      "name": "board10"
@@ -17100,7 +17122,7 @@
      "fallback": "chair"
     },
     {
-     "type": "figure",
+     "type": "blurfigure",
      "pos": [
       1.74,
       0,
@@ -17108,7 +17130,6 @@
      ],
      "rot": -90,
      "seated": true,
-     "face": "blur",
      "suit": "lp_suit",
      "tie": true,
      "name": "board11"
@@ -17135,14 +17156,13 @@
      "name": "hundredth"
     },
     {
-     "type": "figure",
+     "type": "blurfigure",
      "pos": [
       0.82,
       0,
       -7.6
      ],
      "rot": -12,
-     "face": "blur",
      "suit": "lp_suit",
      "name": "self",
      "hidden": true
@@ -17353,15 +17373,15 @@
      "to": {
       "pos": [
        0,
-       2.05,
-       8.2
+       1.95,
+       1.4
       ],
       "look": [
-       0,
-       0.8,
+       0.35,
+       1.0,
        -7.8
       ],
-      "fov": 58
+      "fov": 52
      },
      "seconds": 10.0,
      "ease": "inout"
@@ -17382,16 +17402,16 @@
      },
      "to": {
       "pos": [
-       0.2,
-       1.4,
-       4.6
+       0.15,
+       1.6,
+       1.3
       ],
       "look": [
-       0,
+       0.3,
        0.85,
-       -6.0
+       -7.8
       ],
-      "fov": 50
+      "fov": 46
      },
      "seconds": 7.0,
      "ease": "inout"

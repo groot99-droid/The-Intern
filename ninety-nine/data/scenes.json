@@ -764,21 +764,16 @@
           "room": "S8_C",
           "next": "E",
           "ambience": "S8_C_AMB.wav",
-          "beatZones": [
+          "_onEnterNote": "The clerk slides the package across the counter toward him as he walks out of the fog (Doc 2 KLING C: no arm animation beyond the package's linear slide): 0.48 m in about 9 s, done before he reaches it.",
+          "onEnter": [
             {
-              "zone": "counter_near",
-              "beat": [
-                {
-                  "actor": {
-                    "name": "package",
-                    "speed": 0.32
-                  }
-                },
-                {
-                  "sfxCue": "package-drag"
-                }
-              ]
-            },
+              "actor": {
+                "name": "package",
+                "speed": 0.055
+              }
+            }
+          ],
+          "beatZones": [
             {
               "zone": "counter",
               "label": "THE PACKAGE",
