@@ -913,74 +913,148 @@ def utility_corridor():
 
 
 def desk_void(monitor_on=False):
-    W, H, D = 24.0, 8.0, 24.0
+    """S5-C / S6-C (Doc 1 §5, Doc 2 S5_C): one unmarked desk alone in the
+    middle of a dark open floor, lit by a single overhead troffer whose
+    light gives out four metres from it. Carpet tile, a low ceiling, the
+    building's columns standing off in the dark. Low-poly: the desk, the
+    dark CRT, a heavy stapler, a chair, papers -- and at the pool's edge a
+    second desk whose terminal is still logged in as S. HARLOWE.
+
+    S5 STAPLE is the chair (the stapler under the label); WAKE THE TERMINAL
+    is Harlowe's desk, which wakes as he comes near. Either way the scene
+    carries on as S6 in the same room: the terminal wakes with the
+    requisition on it and two lamps come on in the dark -- a green one on
+    the pneumatic tube station (ORDER, west: the freight doors behind it
+    open onto the way down) and a red one on the call box (FLAG, east: four
+    rejections, then the service door behind it unlatches).
+    The compliant things stand west of the desk, the resisting ones east."""
+    W, H, D = 24.0, 3.0, 24.0
     props = [
         prop("desk", [0, 0, 0], w=1.7, d=0.85),
-        # The terminal: its screen quad is what MG-05 C's requisition sheet is
-        # projected onto (stage.screenRect reads the prop named `terminal`).
-        prop("monitor", [0.35, 0.75, -0.15], on=monitor_on, name="terminal"),
+        # The terminal: its screen quad is what S6 C's requisition is drawn on
+        # (screens.js draws into the prop named `terminal`).
+        prop("monitor", [0.32, 0.75, -0.17], on=monitor_on, name="terminal"),
+        prop("keyboard", [0.3, 0.75, 0.14]),
         glb("lib_chair_wood", [0, 0, 0.85], rot=180, fallback="chair"),
-        prop("stapler", [-0.45, 0.75, 0.05], rot=20),
-        prop("papers", [-0.15, 0.75, 0.1], h=0.06),
-        prop("clock", [2.6, 2.1, -2.4], rot=35),   # floating at the light pool's edge
+        prop("staplerheavy", [-0.46, 0.75, 0.06], rot=18, name="stapler"),
+        prop("papers", [-0.12, 0.75, 0.08], h=0.07),
+        prop("papers", [-0.6, 0.75, -0.22], rot=9, h=0.025),
         prop("slip", [0.55, 0.004, 1.4], rot=70),
-        # S5: a second terminal at the edge of the light, dark until he comes near (S. HARLOWE)
-        prop("desk", [6.0, 0, -4.2], w=1.1, d=0.7, mat="lp_grey"),
-        prop("monitor", [6.0, 0.75, -4.35], on=False, name="harlowe"),
-        # S6: where a requisition goes (ORDER) and where it is objected to (FLAG)
-        prop("tubestation", [-6.0, 0, -4.4], name="tube"),
-        prop("flagbox", [6.4, 0, 3.6], rot=-90, name="flagbox"),
+        # the troffer and the dust standing in its light
+        prop("fluoro", [0, H - 0.05, 0.1], w=1.2, d=0.6, name="troffer"),
+        prop("troffbeam", [0, 0, 0.1], h=H - 0.12, r0=0.55, r1=3.2, opacity=0.045),
+        # the building's columns, standing off in the dark on a 7.2 m grid
+        prop("pillar", [-7.2, 0, -7.2], w=0.6, h=H, mat="plaster_dark", cap=False, tile=1.2),
+        prop("pillar", [7.2, 0, -7.2], w=0.6, h=H, mat="plaster_dark", cap=False, tile=1.2),
+        prop("pillar", [-7.2, 0, 7.2], w=0.6, h=H, mat="plaster_dark", cap=False, tile=1.2),
+        prop("pillar", [7.2, 0, 7.2], w=0.6, h=H, mat="plaster_dark", cap=False, tile=1.2),
+        prop("clock", [-7.2, 2.15, -7.2 + 0.32]),  # C8: the same clock, on the column off the desk's left shoulder
+        # S5: a second terminal at the edge of the light, still logged in (S. HARLOWE);
+        # its chair pushed out the way S4's empty chair was (Track C motif 3)
+        prop("desk", [3.7, 0, -2.25], w=1.2, d=0.7, mat="lp_grey"),
+        prop("monitor", [3.75, 0.75, -2.4], on=False, name="harlowe"),
+        prop("lampdot", [3.89, 0.87, -2.21], mat="lp_sodium", r=0.008, name="harlowe_led"),  # standby
+        prop("keyboard", [3.7, 0.75, -2.02], rot=-6),
+        prop("papers", [3.32, 0.75, -2.15], rot=-14, h=0.012),
+        prop("mug", [4.16, 0.75, -2.08]),
+        glb("lib_chair_wood", [4.55, 0, -1.35], rot=220, fallback="chair"),
+        # S6: where a requisition goes (ORDER) and where it is objected to (FLAG).
+        # Both stand dark through S5; their lamps (lampdot) come on with S6.
+        prop("tubeorder", [-3.8, 0, -3.0], rot=52, h=H, name="tube"),
+        prop("canister", [-3.8, 0, -3.0], rot=52, name="canister"),
+        prop("lampdot", [-3.8, 0, -3.0], rot=52, at=[0.21, 1.335, 0.255], mat="lp_sign", r=0.042, hidden=True, name="tube_lamp"),
+        prop("callbox", [4.6, 0, 3.0], rot=-123, name="flagbox"),
+        prop("lampdot", [4.6, 0, 3.0], rot=-123, at=[-0.1, 1.64, 0.1], mat="lp_taillight", r=0.04, hidden=True, name="flag_lamp"),
     ]
     lights = [
-        {"type": "spot", "pos": [0, 5.5, 0.3], "target": [0, 0, 0], "color": "#ffe7c4", "intensity": 90, "distance": 14, "angle": 32, "penumbra": 0.7},
+        # the troffer: one pool, steady, soft-edged, gone four metres out
+        {"type": "spot", "pos": [0, H - 0.12, 0.1], "target": [0, 0, 0.05], "color": "#fff0d8", "intensity": 40, "distance": 10, "angle": 58, "penumbra": 0.6},
+        # the fixture's own spill on the ceiling tiles round it
+        {"type": "point", "pos": [0, H - 0.45, 0.1], "color": "#fff0d8", "intensity": 1.1, "distance": 3.0},
+        {"type": "point", "pos": [0.32, 1.15, 0.25], "color": "#7ad9a0", "intensity": 3, "distance": 3.5, "id": "terminal_glow", "off": not monitor_on},
+        {"type": "point", "pos": [3.75, 1.15, -1.9], "color": "#8fb0d8", "intensity": 2.6, "distance": 3.5, "id": "harlowe_glow", "off": True},
+        {"type": "point", "pos": [-3.4, 1.55, -2.85], "color": "#33ff77", "intensity": 1.8, "distance": 4.5, "id": "tube_lamp", "off": True},
+        {"type": "point", "pos": [4.35, 1.75, 2.85], "color": "#ff3a2a", "intensity": 1.7, "distance": 5.0, "id": "flag_lamp", "off": True},
     ]
-    lights.append({"type": "point", "pos": [0.35, 1.2, 0.2], "color": "#7ad9a0", "intensity": 4, "distance": 4, "id": "terminal_glow", "off": not monitor_on})
-    lights.append({"type": "point", "pos": [6.0, 1.3, -3.7], "color": "#7ad9a0", "intensity": 3, "distance": 4, "id": "harlowe_glow", "off": True})
-    lights.append({"type": "point", "pos": [-6.0, 2.2, -3.8], "color": "#33ff77", "intensity": 3, "distance": 4})
-    lights.append({"type": "point", "pos": [6.0, 1.9, 3.6], "color": "#ff4433", "intensity": 2.5, "distance": 4})
     rec = {
         "name": "THE REQUISITION" if monitor_on else "THE DESK",
         "size": [W, H, D],
-        "floor": "concrete", "wall": "void", "ceiling": "void",
-        "tile": {"floor": 3.0, "wall": 8.0, "ceiling": 8.0},
-        "ambient": {"color": "#ffffff", "intensity": 0.06},
-        "sun": {"from": [1.0, 6.0, 6.0], "color": "#ffe7c4", "intensity": 0.5},
+        "floor": "carpet", "wall": "void", "ceiling": "ceiling_tile",
+        "tile": {"floor": 2.0, "wall": 8.0, "ceiling": 1.2},
+        "ambient": {"color": "#d8d4cc", "intensity": 0.05},
+        # C2's shadow caster only: barely there, so the troffer is the light
+        "sun": {"from": [1.0, 6.0, 6.0], "color": "#ffe7c4", "intensity": 0.12},
         "lights": lights,
-        "fog": {"color": "#000000", "near": 3, "far": 16},
-        "vignette": 0.75,
-        "spawn": [0, 3.2, 0],
+        # the darkness comes from the light, not the fog
+        "fog": {"color": "#000000", "near": 7, "far": 22},
+        "exposure": 1.1,
+        "vignette": 0.72,
+        "grain": 0.035,
+        "spawn": [0, D / 2 - 1.3, 0],
         "props": props,
-        "footstep": {"filterHz": 600, "gain": 0.07},
+        "boxes": [],
+        "footstep": {"filterHz": 380, "gain": 0.06},
     }
-    rec["shots"] = shots_for(rec, out_dist=1.4, leave_dist=9.0, loop_seconds=16.0)
+    rec["shots"] = shots_for(rec, out_dist=3.0, leave_dist=9.0, loop_seconds=16.0)
+    # Preview poses (test/rooms.html): the desk from the chair, the screen over the shoulder.
+    rec["shots"]["desk"] = pose([0, 1.15, 1.0], [0.2, 0.85, -0.6])
+    rec["shots"]["screen"] = pose([0.3, 1.3, 0.95], [0.32, 0.98, -0.2])
+    rec["shots"]["harlowe"] = pose([3.75, 1.35, -1.15], [3.75, 1.0, -2.4])
     if monitor_on:
-        # Over the shoulder at the terminal: the screen fills the middle of frame.
-        rec["shots"]["in"] = pose([0.35, 1.45, 1.35], [0.35, 0.95, -0.2])
-        rec["shots"]["out"] = pose([0.35, 1.4, 1.1], [0.35, 0.95, -0.2])
+        rec["shots"]["in"] = rec["shots"]["screen"]
+        rec["shots"]["out"] = pose([0.3, 1.4, 1.2], [0.32, 0.95, -0.2])
         rec["shots"]["loop"]["sway"] = 0.012
     door(rec, "front", "S", 0.0, w=1.2, h=2.2, kind="door", mat="lp_dark")
-    door(rec, "freight", "N", 0.0, w=1.4, h=2.3, kind="door", locked=True, mat="lp_dark")
+    # ORDER: freight doors in the north wall, nine metres behind the tube station
+    door(rec, "freight", "N", -3.8, w=1.6, h=2.3, kind="slide", locked=True, mat="rust", frame="lp_dark")
+    # FLAG: a plain service door in the east wall behind the call box
+    door(rec, "service", "E", 3.0, w=1.0, h=2.1, kind="door", locked=True, mat="lp_grey")
     rec["entry"] = "front"
-    # S5: STAPLE at the desk / WAKE THE TERMINAL (approaching it sets SAW_HARLOWE)
-    zone(rec, "desk", [0.0, 1.05], r=0.5, ring=2.6, label_at=[-0.45, 1.25, 0.05])
-    zone(rec, "terminal", [6.0, -3.25], r=0.55, ring=2.6, label_at=[6.0, 1.6, -4.3])
-    # S6: ORDER at the tube station / FLAG at the red box
-    zone(rec, "tube", [-6.0, -3.35], r=0.55, ring=2.8, label_at=[-6.0, 2.5, -4.4])
-    zone(rec, "flagbox", [5.45, 3.6], r=0.55, ring=2.8, label_at=[6.3, 2.1, 3.6])
+    # S5: STAPLE at the chair (the label over the stapler) / WAKE THE TERMINAL
+    # at Harlowe's desk (coming near it wakes the screen: scenes.json `approach`)
+    zone(rec, "desk", [0.0, 1.05], r=0.5, ring=2.6, label_at=[-0.46, 1.2, 0.06])
+    zone(rec, "terminal", [3.7, -1.25], r=0.5, ring=2.6, label_at=[3.75, 1.5, -2.4])
+    # S6: ORDER at the tube station / FLAG at the call box; READ (no label, never
+    # commits) sits him back down in front of the requisition
+    zone(rec, "tube", [-3.17, -2.5], r=0.5, ring=2.6, label_at=[-3.8, 2.25, -3.0])
+    zone(rec, "flagbox", [3.97, 2.59], r=0.5, ring=2.6, label_at=[4.6, 2.05, 3.0])
+    zone(rec, "read", [0.0, 1.05], r=0.5, ring=2.0, label_at=[0.32, 1.45, -0.17])
     return rec
 
 
 def garage(depth=44.0, open_north=False):
-    """S5-H's parking level (Doc 1 §5: photoreal concrete, photoreal sodium
-    light, photoreal oil stains; rusted low-poly vehicles, no two the same).
-    A coffered slab on 8 m beam rows, square columns with a painted band, a
-    green band round the walls, one sodium tube per beam bay, bays marked by
-    wall plates. The cars are the catalog's low-poly vehicles, no two the
-    same model."""
-    W, H, D = 32.0, 3.4, depth
+    """S5-H's parking level and, one level down, S6-H's run and its edge
+    (Doc 1 §5, Doc 2 S5_H / S6_H / S7_H). Photoreal: raw concrete, the
+    sodium light's orange, oil stains, worn bay paint, haze. Low-poly:
+    rusted cars, the boom, the bench, the rail.
+
+    S5 H (open_north False): four rusted cars, no two the same model, none
+    from the same decade, two with a door hanging open; a fifth -- the
+    nearest one's model again -- parked in the far bay, hidden until he
+    rests. REST is the kerb island mid-left under the centre sodium; TAKE
+    THE SIDE DOOR is the unmarked steel door in the far right corner under
+    the only caged lamp. The ramp shutter at the north end (behind the boom)
+    is the way on after REST; the side door's stairwell after the door.
+
+    S6 H / S7 H (open_north True): the garage that does not end -- the same
+    pillar, the same four cars, the same stain in every bay -- and at its
+    end the concrete stops: below is the pool, water to the horizon, white
+    tiled pillars, no ceiling, no far wall. The room is BUILT LIT (the edge,
+    for S7 H however it is entered); S6 H's onEnter turns the pool lights
+    off (id `pool`), so the run ends in black, and either S6 threshold turns
+    them back on: that is the reveal. PUSH ON is the aisle running on into
+    the dark; STOP is the lit bench at the stop line, one metre short of the
+    lip. S7 H: JUMP is the gap in the guard rail, TURN BACK arms once he has
+    stood at the lip (edge_approach) and is the strip back by the pillars."""
+    W, H = 32.0, 3.4
+    if open_north:
+        # The run needs its length: 45 m of identical bays (17 s at a walk)
+        # before the end. build() still asks for 24 m; the run overrides it.
+        depth = max(depth, 48.0)
+    D = depth
     props = []
     lights = []
-    rnd = random.Random(55)
+    boxes = []
     beam_every = 8.0
     z0 = -D / 2 + 4.0
     zs = []
@@ -988,38 +1062,40 @@ def garage(depth=44.0, open_north=False):
     while z < D / 2:
         zs.append(z)
         z += beam_every
-    for x in range(-12, 13, 8):
+    bay_z = [zz + beam_every / 2 for zz in zs if zz + beam_every / 2 < D / 2 - 1.0]
+    for x in (-12, -4, 4, 12):
         for zz in zs:
             props.append(prop("pillar", [x, 0, zz], w=0.7, h=H, band="paint_green", bandH=1.1, tile=1.5))
-    bay_z = [zz + beam_every / 2 for zz in zs if zz + beam_every / 2 < D / 2 - 1.0]
-    for x in (-8, 8):
-        for i, bz in enumerate(bay_z):
-            props.append(prop("sodium", [x, H - 0.74, bz]))
-            lights.append({"type": "point", "pos": [x, H - 1.15, bz], "color": "#ffa040", "intensity": 42, "distance": 22, "flicker": 0.35 if i % 2 else 0.12})
-    for i, bz in enumerate(bay_z):
-        if i % 2 == 0:
-            props.append(prop("sodium", [0, H - 0.74, bz]))
-            lights.append({"type": "point", "pos": [0, H - 1.15, bz], "color": "#ffb060", "intensity": 24, "distance": 18, "flicker": 0.2})
-    for x in (-12, 12):
-        for zz in zs[::2]:
-            props.append(prop("wallplate", [x + (0.36 if x < 0 else -0.36), 1.9, zz], rot=90 if x < 0 else -90, w=1.1, h=0.5))
-    cars = ["lib_car_sedan", "lib_car_suv", "lib_car_pastel", "lib_car_cruiser", "lib_car_sedan2", "lib_car_taxi"]
-    car_mats = ["lp_car", "lp_car2", "lp_car3", "lp_car4", "lp_car5", "lp_car6"]
-    bays = []
-    for lane in (-1, 1):
-        for zz in zs:
-            for k in (-1, 1):
-                bays.append((lane * 10.0 + k * 2.6, zz + beam_every / 2))
-    rnd.shuffle(bays)
-    n_cars = 9 if depth > 30 else 4
-    for i, (bx, bz) in enumerate(bays[:n_cars]):
-        if abs(bz) > D / 2 - 3.0:
-            continue
-        rot = rnd.choice((0, 180)) + rnd.uniform(-7, 7)
-        props.append(glb(cars[i % len(cars)], [bx, 0, bz], rot=round(rot, 1), fallback="car", collide=True,
-                         mat=car_mats[i % len(car_mats)], len=round(rnd.uniform(3.9, 4.9), 2), w=round(rnd.uniform(1.65, 1.9), 2), hero=(i == 0), rust=0.6))
-    props.append(prop("slip", [1.4, 0.004, 3.0], rot=100))
-    props.append(prop("clock", [-W / 2 + 0.03, 2.4, D / 2 - 6.0], rot=90))  # C8: the same clock, on the west wall
+            if abs(x) == 4:
+                # the same wordless plate on the aisle face of every column (Doc 2: "columns' painted numbers")
+                props.append(prop("wallplate", [x - math.copysign(0.366, x), 1.75, zz], rot=90, w=0.42, h=0.3, mat="lp_red"))
+    for zz in zs[::2]:
+        for x in (-12, 12):
+            props.append(prop("wallplate", [x + (0.366 if x < 0 else -0.366), 1.9, zz], rot=90, w=0.6, h=0.4))
+    # Low-poly cars from the catalog, brought up to size (the models are
+    # ~3 m long); the box fallback is sized so it scales to the same car.
+    CAR_SCALE = 1.45
+
+    def car(node, x, zc, rot, mat, ajar=None, **kw):
+        kw.setdefault("collide", True)
+        props.append(glb(node, [x, 0, zc], rot=rot, fallback="car", mat=mat, scale=CAR_SCALE,
+                         len=round(4.4 / CAR_SCALE, 2), w=round(1.8 / CAR_SCALE, 2), rust=0.6, **kw))
+        if ajar:
+            # a door hanging open (the catalog model is one mesh; its nose is +z at
+            # rot 0): hinged at the front of the flank facing the aisle (-x for a car
+            # east of it), swung out; `ajar` is the door's colour
+            fwd = math.radians(rot)
+            side = -1.0 if x > 0 else 1.0
+            hx = x + side * 0.82 * math.cos(fwd) + 0.42 * math.sin(fwd)
+            hz = zc - side * 0.82 * math.sin(fwd) + 0.42 * math.cos(fwd)
+            # `tint`: the panel takes the colour the catalog car's body gets from `mat`
+            props.append(prop("cardoor", [hx, 0, hz], rot=rot + 180, mat=ajar, tint=mat, len=1.1, h=0.46, y=0.3, angle=-42 * side, window=node != "lib_car_cruiser"))
+
+    def stain(x0, z0_, x1, z1):
+        # a soft wet blotch (props.js oilstain), not a rectangle
+        n = len([p for p in props if p["type"] == "oilstain"])
+        props.append(prop("oilstain", [(x0 + x1) / 2, 0, (z0_ + z1) / 2], rot=(n * 67) % 180, w=round((x1 - x0) * 1.5, 2), d=round((z1 - z0_) * 1.5, 2), seed=n))
+
     rec = {
         "name": "THE GARAGE",
         "size": [W, H, D],
@@ -1027,95 +1103,192 @@ def garage(depth=44.0, open_north=False):
         "tile": {"floor": 3.0, "wall": 2.5, "ceiling": 2.5},
         "skirt": {"mat": "paint_green", "h": 1.1, "t": 0.02, "tile": 2.5},
         "beams": {"axis": "x", "every": beam_every, "offset": 4.0, "w": 0.7, "h": 0.7, "mat": "concrete", "tile": 2.5},
-        "ambient": {"color": "#ffb060", "intensity": 0.24},
-        "sun": {"from": [3.0, 5.0, D * 0.55], "color": "#ffb86a", "intensity": 0.6},
+        "ambient": {"color": "#ffb060", "intensity": 0.15},
+        "sun": {"from": [3.0, 5.0, D * 0.55], "color": "#ffb86a", "intensity": 0.35},
         "lights": lights,
-        "fog": {"color": "#160f08", "near": 8, "far": 48},
-        "exposure": 1.25,
-        "vignette": 0.55,
-        "grain": 0.025,
+        # a real haze of exhaust that has nowhere to go
+        "fog": {"color": "#1d1209", "near": 5, "far": 44},
+        "exposure": 1.05,
+        "vignette": 0.6,
+        "grain": 0.03,
         "spawn": [0, D / 2 - 3.0, 0],
         "props": props,
-        "boxes": [],
+        "boxes": boxes,
         "footstep": {"filterHz": 800, "gain": 0.1},
     }
-    rec["shots"] = shots_for(rec, out_dist=4.0, leave_dist=D - 6.0, loop_seconds=30.0)
-    door(rec, "front", "S", 0.0, w=1.4, h=2.3, kind="door", mat="lp_grey")
-    rec["entry"] = "front"
+
     if not open_north:
-        # S5 H: the curb to rest on, the stairwell door, the ramp shutter
-        rec["boxes"].append({"min": [-W / 2, 0, -6.0], "max": [-W / 2 + 0.75, 0.16, 6.0], "mat": "concrete", "floor": True, "tile": 1.5})
-        door(rec, "stairs", "E", -8.0, w=1.1, h=2.2, kind="door", locked=True, mat="lp_grey")
+        # ---- S5 H: the parking level -------------------------------------
+        for i, bz in enumerate(bay_z):
+            for x in (-8, 8):
+                props.append(prop("sodium", [x, H - 0.74, bz]))
+                lights.append({"type": "point", "pos": [x, H - 1.15, bz], "color": "#ffa040", "intensity": 40, "distance": 22, "flicker": 0.12 if (i + (x > 0)) % 2 else 0.06})
+        for bz in bay_z[::2]:
+            props.append(prop("sodium", [0, H - 0.74, bz]))
+            far = bz == bay_z[0]
+            # one at the far end strobes irregularly (Doc 2 S5_H)
+            l = {"type": "point", "pos": [0, H - 1.15, bz], "color": "#ffb060", "intensity": 24, "distance": 18, "flicker": 0.9 if far else 0.08}
+            if far:
+                l["pattern"] = {"period": 2.9, "duty": 0.7, "low": 0.08}
+            lights.append(l)
+        # four cars, no two the same model, four decades; two doors ajar
+        car("lib_car_cruiser", 7.4, 10.0, 2.0, "lp_car4", ajar="lp_beige")    # the fifties
+        car("lib_car_pastel", -7.4, -6.0, 178.0, "lp_car3")             # the eighties: nearest the kerb
+        car("lib_car_sedan", 7.4, -14.0, -4.0, "lp_car", ajar="lp_dark")     # the two-thousands
+        car("lib_car_suv", -12.6, 10.0, 181.0, "lp_car2")               # the twenty-tens
+        # the fifth: the nearest one's model again, in the far bay, there when he looks up from the kerb
+        # (no collider: hidden, it must not stand invisible in the way to the side door)
+        car("lib_car_pastel", 12.6, -14.2, 4.0, "lp_car3", hidden=True, name="fifth_car", collide=False)
+        for (x0, z0_, x1, z1) in ((6.9, 9.3, 7.9, 10.4), (-7.9, -6.6, -6.9, -5.5), (6.9, -14.6, 7.8, -13.6), (-11.8, -0.6, -11.1, 0.1), (10.6, 1.8, 11.5, 2.6), (12.1, -14.9, 12.9, -13.9)):
+            stain(x0, z0_, x1, z1)
+        # REST: a kerb island along the pillar line, its aisle edge worn white
+        boxes.append({"min": [-4.55, 0, -1.4], "max": [-3.45, 0.15, 5.4], "mat": "concrete", "floor": True, "tile": 1.5})
+        boxes.append({"min": [-3.53, 0.15, -1.4], "max": [-3.45, 0.152, 5.4], "mat": "plaster_blown", "collide": False, "shadow": False})
+        props.append(prop("slip", [-2.55, 0.004, 1.35], rot=100))
+        props.append(prop("clock", [-W / 2 + 0.03, 2.4, D / 2 - 6.0], rot=90))  # C8: the same clock, on the west wall
+        # THE SIDE DOOR: far right corner, a kerb landing, the only caged lamp, no signage
+        boxes.append({"min": [14.7, 0, -21.2], "max": [16.0, 0.15, -17.8], "mat": "paint_green", "floor": True, "tile": 1.5})
+        props.append(glb("lib_cagelamp", [15.78, 2.5, -19.5], rot=90, fallback=None))
+        lights.append({"type": "point", "pos": [15.3, 2.35, -19.5], "color": "#ffd9a8", "intensity": 6, "distance": 7})
+        # THE RAMP: a shutter in the north wall behind a boom barrier; arrows worn into the floor
+        props.append(prop("boom", [-2.75, 0, -20.4], len=5.2, name="boom_down"))
+        props.append(prop("boom", [-2.75, 0, -20.4], len=5.2, up=True, hidden=True, name="boom_up"))
+        for zz in (-12.6, -4.6):
+            boxes.append({"min": [-0.12, 0.001, zz], "max": [0.12, 0.004, zz + 1.6], "mat": "plaster_blown", "collide": False, "shadow": False})
+            boxes.append({"min": [-0.45, 0.001, zz - 0.3], "max": [0.45, 0.004, zz], "mat": "plaster_blown", "collide": False, "shadow": False})
+            boxes.append({"min": [-0.25, 0.001, zz - 0.55], "max": [0.25, 0.004, zz - 0.3], "mat": "plaster_blown", "collide": False, "shadow": False})
+        rec["shots"] = shots_for(rec, out_dist=4.0, leave_dist=D - 6.0, loop_seconds=30.0)
+        rec["shots"]["kerb"] = pose([-3.15, 0.95, 2.0], [-8.0, 0.7, -12.0])
+        rec["shots"]["side"] = pose([10.5, 1.6, -13.0], [16.0, 1.4, -19.5])
+        rec["shots"]["cruiser"] = pose([4.6, 1.5, 13.8], [7.4, 0.6, 10.0])
+        door(rec, "front", "S", 0.0, w=1.4, h=2.3, kind="door", mat="lp_grey")
+        door(rec, "stairs", "E", -19.5, w=1.1, h=2.2, kind="door", locked=True, mat="lp_grey")
         door(rec, "ramp", "N", 0.0, w=4.0, h=2.8, kind="shutter", locked=True, mat="lp_grey")
-        zone(rec, "curb", [-W / 2 + 1.1, 0.0], r=0.7, ring=3.0, label_at=[-W / 2 + 0.4, 1.4, 0.0])
-        zone(rec, "stairs", [W / 2 - 1.0, -8.0], r=0.6, ring=3.0, label_at=[W / 2 - 0.1, 2.5, -8.0])
-    if open_north:
-        # The run that does not end, ended: the concrete stops one metre
-        # ahead and below is the pool room -- water to the horizon, pale
-        # square pillars standing in it, no ceiling, no far wall (Doc 1 §5
-        # S6-H/S7-H). The fog closes it (C3).
-        rec["name"] = "THE EDGE"
-        rec["open"] = ["N"]
-        edge = -D / 2
-        rec["boxes"] = [
-            {"min": [-90, -4.3, edge - 120], "max": [90, -3.9, edge + 0.0], "mat": "water", "collide": False, "shadow": False, "tile": 5.0},
-            {"min": [-W / 2 - 0.3, -0.35, edge - 0.15], "max": [W / 2 + 0.3, 0, edge + 0.6], "mat": "concrete", "collide": False, "tile": 2.0},
-            {"min": [-W / 2 - 0.3, -0.9, edge - 0.02], "max": [W / 2 + 0.3, -0.35, edge + 0.3], "mat": "concrete_wet", "collide": False, "tile": 2.0},
-            # the barrier at the lip, broken where the guard rail is gone
-            {"min": [-W / 2, 0, edge - 0.4], "max": [-1.2, 1.2, edge - 0.2], "mat": "void", "collide": True, "invisible": True, "shadow": False},
-            {"min": [1.2, 0, edge - 0.4], "max": [W / 2, 1.2, edge - 0.2], "mat": "void", "collide": True, "invisible": True, "shadow": False},
-            {"min": [-6, -4.05, edge - 36], "max": [6, -4.0, edge - 30], "mat": "glow_water", "collide": False, "shadow": False},
-        ]
-        prnd = random.Random(7)
-        for x in range(-28, 29, 7):
-            for zz in range(-8, -90, -9):
-                jx = prnd.uniform(-0.8, 0.8)
-                rec["boxes"].append({"min": [x + jx - 0.7, -4.28, edge + zz - 0.7], "max": [x + jx + 0.7, 12.0, edge + zz + 0.7], "mat": "plaster", "collide": False, "tile": 2.0})
-        rec["fog"] = {"color": "#0b1e24", "near": 10, "far": 85}
-        rec["background"] = "#07171c"
-        kept = []
-        for l in rec["lights"]:
-            if l["pos"][2] > edge + 5:
-                l = dict(l)
-                l["intensity"] = round(l["intensity"] * (0.45 if l["pos"][2] < edge + 10 else 0.8), 1)
-                kept.append(l)
-        rec["lights"] = kept
-        rec["lights"].append({"type": "point", "pos": [0, 3.0, edge - 14], "color": "#4f9aa8", "intensity": 26, "distance": 70, "decay": 1.1})
-        rec["lights"].append({"type": "point", "pos": [-16, 5.0, edge - 34], "color": "#3f8a9c", "intensity": 22, "distance": 70, "decay": 1.1})
-        rec["lights"].append({"type": "point", "pos": [16, 5.0, edge - 34], "color": "#3f8a9c", "intensity": 22, "distance": 70, "decay": 1.1})
-        rec["lights"].append({"type": "point", "pos": [0, -3.2, edge - 33], "color": "#3ab8d0", "intensity": 40, "distance": 50, "decay": 1.2})
-        rec["ambient"] = {"color": "#5f9aa8", "intensity": 0.14}
-        rec["hemisphere"] = {"sky": "#2c5c68", "ground": "#06121a", "intensity": 0.22}
-        rec["sun"] = {"from": [2.0, 6.0, D * 0.55], "color": "#ffb86a", "intensity": 0.25}
-        rec["exposure"] = 1.0
-        rec["grain"] = 0.025
-        rec["spawn"] = [0, edge + 7.0, 0]
-        # THE RUN (MG-05 H): the camera runs down the bay toward the edge for
-        # as long as the player holds; the shot only moves while the room is
-        # "resumed", so stamina decides where it stops (never pingpong).
-        s = shots_for(rec, out_dist=5.5, leave_dist=6.2, loop_seconds=40.0)
-        s["in"] = pose([0, EYE, D / 2 - 3.0], [0, 1.3, edge])
-        s["loop"] = {"from": "in", "to": pose([0, EYE, edge + 1.1], [0, 1.1, edge - 4]), "seconds": 40.0, "pingpong": False, "ease": "linear", "sway": 0.05, "holdEnd": True}
-        s["out"] = pose([0, EYE, edge + 1.1], [0, 0.2, edge - 3.5])
-        # THE EDGE (S7 H): leaning out over the pool, and back.
-        s["lean"] = {"from": pose([0, EYE, edge + 1.1], [0, 1.0, edge - 6]), "to": pose([0, EYE - 0.25, edge + 0.6], [0, -2.5, edge - 2.5]), "seconds": 9.0, "pingpong": True, "ease": "inout", "sway": 0.02}
-        s["leave"] = {"from": "out", "to": pose([0, -1.0, edge - 1.2], [0, -6, edge - 3]), "seconds": 2.6, "ease": "in", "fadeOut": 0.9}
-        s["arrive"] = {"from": pose([0, EYE, D / 2 - 1.5], [0, 1.3, edge]), "to": "in", "seconds": 3.0, "ease": "out", "fadeIn": 1.0}
-        # THE FALL: off the lip, down into the water (to the dive, joined below)
-        s["fall"] = {"from": pose([0, EYE, edge + 0.4], [0, 0.4, edge - 4]), "to": pose([0, -4.0, edge - 5.5], [0, -9, edge - 6.5]), "seconds": 1.6, "ease": "in"}
-        rec["shots"] = s
-        # S6 H: PUSH ON down the bay / STOP at the line, on the bench
-        rec["boxes"].append({"min": [-W / 2 + 0.6, 0, 1.4], "max": [-0.6, 0.004, 1.55], "mat": "plaster_blown", "collide": False, "shadow": False})
-        rec["props"].append(prop("bench", [-5.0, 0, 2.4], name="bench"))
-        zone(rec, "push", [0.0, -8.4], r=0.9, ring=3.6, label_at=[0.0, 2.2, -9.6])
-        zone(rec, "stopline", [-5.0, 1.55], r=0.65, ring=2.8, label_at=[-5.0, 1.6, 2.4])
-        # S7 H: JUMP through the gap in the rail / TURN BACK (only once he has
-        # stood at the edge: walking up to it must not read as turning back)
-        zone(rec, "edge_approach", [0.0, edge + 2.0], r=3.0, ring=3.0, silent=True)
-        zone(rec, "gap", [0.0, edge + 0.55], r=0.6, ring=2.6, label_at=[0.0, 1.5, edge - 0.6])
-        zone(rec, "turnback", [0.0, edge + 7.0], r=1.2, ring=2.6, armAfter="edge_approach", label_at=[0.0, 2.3, edge + 8.5])
-        door(rec, "freight", "W", 4.0, w=1.2, h=2.2, kind="door", locked=True, mat="lp_grey")
-        anchor(rec, "drop", [0.0, -4.3, edge - 6.0], 0, vertical=True)
+        rec["entry"] = "front"
+        zone(rec, "curb", [-3.1, 2.0], r=0.55, ring=2.6, label_at=[-3.7, 1.2, 2.0])
+        zone(rec, "stairs", [15.1, -19.5], r=0.55, ring=2.8, label_at=[15.75, 2.45, -19.5])
+        return rec
+
+    # ---- S6 H / S7 H: the run, and the edge -----------------------------------
+    edge = -D / 2
+    rec["name"] = "THE EDGE"
+    rec["open"] = ["N"]
+    for i, bz in enumerate(bay_z):
+        last = bz == bay_z[0]
+        for x in (-8, 8):
+            props.append(prop("sodium", [x, H - 0.74, bz]))
+            # the last row reaches no further than the lip: past it the pool is
+            # pale and blue, and its pillars must not catch the garage's orange
+            lights.append({"type": "point", "pos": [x, H - 1.15, bz], "color": "#ffa040", "intensity": 36, "distance": 12 if last else 20, "flicker": 0.6 if last else 0.08})
+    # the same four cars, at the same offsets, in every bay; the same stain
+    for bz in bay_z:
+        car("lib_car_suv", -12.6, bz, 181.0, "lp_car2")
+        car("lib_car_pastel", -7.4, bz, 178.0, "lp_car3")
+        car("lib_car_cruiser", 7.4, bz, 2.0, "lp_car4", ajar="lp_beige")
+        car("lib_car_sedan", 12.6, bz, -4.0, "lp_car", ajar="lp_dark")
+        stain(4.75, bz - 1.3, 5.95, bz - 0.3)  # in the aisle's edge, where it is seen
+    # an arrow worn into the aisle in the last bay, pointing on into the dark
+    zz = bay_z[0] + 1.2
+    boxes.append({"min": [-0.12, 0.001, zz], "max": [0.12, 0.004, zz + 1.8], "mat": "plaster_blown", "collide": False, "shadow": False})
+    boxes.append({"min": [-0.45, 0.001, zz - 0.3], "max": [0.45, 0.004, zz], "mat": "plaster_blown", "collide": False, "shadow": False})
+    boxes.append({"min": [-0.25, 0.001, zz - 0.55], "max": [0.25, 0.004, zz - 0.3], "mat": "plaster_blown", "collide": False, "shadow": False})
+    props.append(prop("slip", [-5.6, 0.004, edge + 2.4], rot=40))
+    props.append(prop("clock", [-W / 2 + 0.03, 2.4, D / 2 - 6.0], rot=90))  # C8
+    gap = (-11.4, -4.6)  # THE GAP: where the rail is gone, in front of the bench
+    # THE LIP: a raw broken slab edge with rebar (the floor itself stops at
+    # `edge`; these hang off it), the pool's tiled wall dropping beneath it
+    lip = [(-16.3, -13.9, 0.22, 0.46), (-13.9, -11.2, 0.08, 0.38), (-11.2, -8.6, 0.3, 0.52), (-8.6, -6.1, 0.14, 0.41), (-6.1, -3.0, 0.26, 0.47),
+           (-3.0, -1.4, 0.1, 0.36), (-1.4, 1.4, 0.04, 0.3), (1.4, 3.6, 0.18, 0.44), (3.6, 6.8, 0.3, 0.5), (6.8, 9.1, 0.12, 0.4), (9.1, 12.2, 0.24, 0.47), (12.2, 16.3, 0.1, 0.39)]
+    for (x0, x1, over, thick) in lip:
+        boxes.append({"min": [x0, -thick, edge - over], "max": [x1, -0.004, edge + 0.4], "mat": "concrete", "collide": False, "tile": 2.0})
+        boxes.append({"min": [x0, -thick - 0.5, edge - over * 0.6], "max": [x1, -thick, edge + 0.4], "mat": "concrete_wet", "collide": False, "tile": 2.0})
+    for i, x in enumerate((-14.6, -10.6, -9.0, -7.4, -5.6, -1.0, 4.5, 9.8, 14.2)):
+        props.append(prop("rebar", [x, 0, edge - 0.02], n=5 if gap[0] < x < gap[1] else 3, len=1.6, seed=i))
+    # the barrier at the lip is invisible (the fall is always carried); the
+    # guard rail stands along it except across THE GAP in front of the bench,
+    # where the edge is raw and both torn ends of the rail are bent down
+    boxes.append({"min": [-W / 2, 0, edge - 0.4], "max": [W / 2, 1.2, edge - 0.2], "mat": "void", "collide": True, "invisible": True, "shadow": False})
+    props.append(prop("guardrail", [-W / 2 + 0.15, 0, edge + 0.22], len=gap[0] - (-W / 2 + 0.15), bend=1.4, h=0.7))
+    props.append(prop("guardrail", [W / 2 - 0.15, 0, edge + 0.22], rot=180, len=W / 2 - 0.15 - gap[1], bend=1.4, h=0.7))
+    # STOP: the bench at the stop line, one metre short of the lip, under the
+    # one steady lamp at the end of the run (light means stop; dark, push on)
+    props.append(prop("stopbench", [-8.0, 0, edge + 2.1], rot=180, w=1.8, name="bench"))
+    props.append(prop("paintline", [-8.0, 0.001, edge + 1.25], w=7.2, d=0.14, name="stop_line"))
+    props.append(prop("sodium", [-8.0, H - 0.74, edge + 2.2]))
+    lights.append({"type": "point", "pos": [-8.0, H - 1.15, edge + 2.2], "color": "#ffa040", "intensity": 22, "distance": 9})
+    # THE POOL: still water to the horizon, white tiled pillars rising out of
+    # it with no ceiling and no far wall; the fog closes it (C3). The surface
+    # is clear: the tiled floor three metres down shows through it. One kit
+    # (boxkit `poolkit`), so S6 H can hide it for the run and show it again.
+    kit = []
+    kit.append(["pool_tile", [-W / 2 - 0.3, -7.0, edge - 0.02], [W / 2 + 0.3, -0.9, edge + 0.5], 1.0])  # the pool's wall under the lip
+    # the tiled floor (dulled: polished tile threw every lamp back as a hot
+    # spot), with a deep well under the gap where the dive is joined when he
+    # goes in (the dive room fills it: 12 x 12 below the surface)
+    well = (-14.4, -1.6, edge - 12.4)
+    dull = {"rough": 0.6}
+    for (fx0, fx1, fz0, fz1) in ((-90, well[0], edge - 120, edge - 0.02), (well[1], 90, edge - 120, edge - 0.02), (well[0], well[1], edge - 120, well[2])):
+        kit.append(["pool_tile", [fx0, -7.2, fz0], [fx1, -7.0, fz1], 1.0, dull])
+    for (wx0, wz0, wx1, wz1) in ((well[0] - 0.2, well[2], well[0], edge), (well[1], well[2], well[1] + 0.2, edge), (well[0], well[2] - 0.2, well[1], well[2])):
+        kit.append(["pool_tile", [wx0, -18.9, wz0], [wx1, -7.0, wz1], 1.0, dull])
+    # THE WELL'S FLOOR, deep below the gap and seen only from the lip: a
+    # rusted grate glowing sick blue (Doc 2 S7_H_IMG_OUT), the one he will
+    # go through. Just under where the dive's own grate lands when it is joined.
+    kit.append(["pool_tile", [well[0], -18.9, well[2]], [well[1], -18.75, edge], 1.0, dull])
+    gx_ = (gap[0] + gap[1]) / 2
+    kit.append(["grate", [gx_ - 2.2, -18.76, edge - 8.2], [gx_ + 2.2, -18.7, edge - 3.8], 1.0])
+    kit.append(["glow_water", [gx_ - 2.6, -18.69, edge - 8.6], [gx_ + 2.6, -18.66, edge - 3.4], 1.0])
+    prnd = random.Random(7)
+    for x in range(-30, 31, 12):
+        for zz in range(-8, -93, -12):
+            jx = prnd.uniform(-0.4, 0.4)
+            if well[0] - 1 < x + jx < well[1] + 1 and edge + zz > well[2] - 1:
+                continue  # nothing stands in the well
+            kit.append(["pool_tile", [round(x + jx - 0.75, 3), -7.0, edge + zz - 0.75], [round(x + jx + 0.75, 3), 40.0, edge + zz + 0.75], 1.0])
+    # still, clear water to the horizon (props.js poolwater: clear looking
+    # down from the lip, a pale sheet toward the fog), part of the kit
+    water = {"y": -3.92, "from": [-90, edge - 120], "to": [90, edge - 0.02]}
+    props.append(prop("boxkit", [0, 0, 0], boxes=kit, water=water, name="poolkit"))
+    # sourceless pale light over the water (id `pool`: S6 H turns it off for
+    # the run); the last one is down the well, on the grate
+    for (px, py, pz, col, inten, dist) in ((-6.0, 2.5, edge - 4.5, "#d8eef0", 7, 16), (0, 4.0, edge - 16, "#cfe6ea", 30, 70), (-18, 6.0, edge - 38, "#b9dce2", 26, 70),
+                                            (18, 6.0, edge - 38, "#b9dce2", 26, 70), (gx_, -15.5, edge - 6.0, "#5fd0e4", 14, 9)):
+        lights.append({"type": "point", "pos": [px, py, pz], "color": col, "intensity": inten, "distance": dist, "decay": 1.1, "id": "pool"})
+    rec["fog"] = {"color": "#0a1618", "near": 12, "far": 85}
+    rec["background"] = "#0a1618"
+    rec["ambient"] = {"color": "#8fb4bc", "intensity": 0.035}
+    rec["sun"] = {"from": [2.0, 6.0, D * 0.55], "color": "#d2e4e8", "intensity": 0.1}
+    rec["exposure"] = 1.1
+    rec["grain"] = 0.03
+    rec["spawn"] = [0, D / 2 - 3.0, 0]
+    s = shots_for(rec, out_dist=5.5, leave_dist=D - 8.0, loop_seconds=40.0)
+    # previews: down the run, the stop line from the bench, the gap
+    s["in"] = pose([0, EYE, D / 2 - 3.0], [0, 1.3, edge])
+    s["bench"] = pose([-8.0, 1.08, edge + 2.05], [-8.0, 0.25, edge - 3.0])
+    gx = (gap[0] + gap[1]) / 2
+    s["gap"] = pose([gx, EYE, edge + 1.3], [gx, 0.2, edge - 3.5])
+    s["edge"] = pose([1.5, EYE, edge + 2.8], [gx, 0.2, edge - 1.0])
+    # THE EDGE (S7 H): leaning out over the pool through the gap, and back
+    s["lean"] = {"from": pose([gx, EYE, edge + 1.3], [gx, 1.0, edge - 6]), "to": pose([gx, EYE - 0.25, edge + 0.55], [gx, -2.5, edge - 2.5]), "seconds": 9.0, "pingpong": True, "ease": "inout", "sway": 0.02}
+    # THE FALL: off the lip at the gap, down into the water (to the dive, joined below)
+    s["fall"] = {"from": pose([gx, EYE, edge + 0.3], [gx, 0.4, edge - 4]), "to": pose([gx, -4.0, edge - 5.5], [gx, -9, edge - 6.5]), "seconds": 1.6, "ease": "in"}
+    rec["shots"] = s
+    door(rec, "front", "S", 0.0, w=4.0, h=2.8, kind="shutter", mat="lp_grey")
+    # the lift, for a run that comes out compliant (PUSH ON at +2): steel doors in the east wall at the end
+    door(rec, "freight", "E", edge + 2.0, w=1.6, h=2.3, kind="slide", locked=True, mat="rust", frame="lp_dark")
+    rec["entry"] = "front"
+    # S6 H: PUSH ON is the aisle and the east end running on into the dark (the
+    # whole strip short of the lip east of the bench); STOP is the bench
+    zone(rec, "push", [6.0, edge + 1.6], r=0.5, ring=3.2, box=[[-3.6, edge + 0.05], [W / 2 - 0.3, edge + 3.0]], label_at=[0.0, 2.15, edge + 1.4])
+    zone(rec, "stopline", [-8.0, edge + 2.1], r=0.6, ring=2.6, box=[[gap[0], edge + 0.05], [gap[1], edge + 2.55]], label_at=[-8.0, 1.55, edge + 2.1])
+    # S7 H: JUMP through the gap in the rail / TURN BACK (only once he has
+    # stood at the lip: walking up to it must not read as turning back)
+    # (the strip runs 1.45 m back from the edge: up against the rail he
+    # stands ~0.75 m from it, and a low frame rate can stop him a step short)
+    zone(rec, "edge_approach", [0.0, edge + 0.85], r=0.5, ring=0.5, box=[[-W / 2 + 0.3, edge + 0.25], [W / 2 - 0.3, edge + 1.45]], silent=True)
+    zone(rec, "gap", [gx, edge + 0.4], r=0.5, ring=2.6, box=[[gap[0], edge + 0.02], [gap[1], edge + 0.65]], label_at=[gx, 1.45, edge - 0.6])
+    zone(rec, "turnback", [0.0, edge + 5.0], r=0.5, ring=2.4, box=[[-W / 2 + 0.3, edge + 4.55], [W / 2 - 0.3, edge + 5.5]], armAfter="edge_approach", label_at=[0.0, 2.3, edge + 5.0])
+    anchor(rec, "drop", [gx, -4.3, edge - 6.0], 0, vertical=True)
     return rec
 
 

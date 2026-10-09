@@ -2635,6 +2635,396 @@ const BUILDERS = {
   // ---- polish: S4 floor -- end ----
   //
   // ---- polish: S5-S6 desk / garage -- begin (that scene's new props go between these lines) ----
+  // A heavy desk stapler (S5 C: STAPLE): base plate, anvil, hinge block, the
+  // magazine arm and its cover. Company property, low-poly (C1).
+  staplerheavy(mats) {
+    const g = new THREE.Group();
+    g.add(box(mats, 'lp_dark', 0.075, 0.018, 0.22, 0, 0, 0));
+    g.add(box(mats, 'lp_chrome', 0.05, 0.005, 0.05, 0, 0.018, -0.07)); // anvil
+    g.add(box(mats, 'lp_dark', 0.05, 0.032, 0.06, 0, 0.018, 0.075));   // hinge block
+    const arm = new THREE.Group();
+    arm.position.set(0, 0.05, 0.1);
+    arm.rotation.x = 0.05;
+    arm.add(box(mats, 'lp_chrome', 0.05, 0.026, 0.2, 0, -0.012, -0.1)); // magazine
+    arm.add(box(mats, 'lp_black', 0.058, 0.02, 0.215, 0, 0.012, -0.105)); // top cover
+    g.add(arm);
+    return g;
+  },
+  // Pneumatic tube station (S6 C: ORDER): a grey cabinet, a receiver head,
+  // an OUT tray tipped toward him, the tube rising `h` into the dark, an
+  // unlit lamp housing (the `lampdot` prop lights it when S6 begins). The
+  // canister in the tray is its own prop so ORDER can send it.
+  tubeorder(mats, o) {
+    const g = new THREE.Group();
+    const h = o.h || 3.0;
+    g.add(box(mats, 'lp_grey', 0.6, 1.05, 0.5, 0, 0, 0, { collide: true }));
+    g.add(box(mats, 'lp_dark', 0.62, 0.07, 0.52, 0, 0, 0));          // plinth
+    g.add(box(mats, 'lp_dark', 0.48, 0.52, 0.015, 0, 0.28, 0.255));  // door panel
+    g.add(box(mats, 'lp_brass', 0.03, 0.08, 0.02, 0.19, 0.5, 0.265)); // latch
+    g.add(box(mats, 'lp_grey', 0.42, 0.32, 0.34, 0, 1.05, -0.05));    // receiver head
+    g.add(box(mats, 'lp_dark', 0.3, 0.2, 0.02, 0, 1.11, 0.125));      // its hatch
+    const tray = box(mats, 'lp_dark', 0.44, 0.03, 0.22, 0, 0.98, 0.33);
+    tray.rotation.x = 0.16;
+    g.add(tray);
+    g.add(box(mats, 'lp_dark', 0.44, 0.06, 0.02, 0, 0.97, 0.44));     // tray lip
+    g.add(cylinder(mats, 'lp_chrome', 0.07, Math.max(0.2, h - 1.37), 0, 1.37, -0.05, 10)); // the tube
+    g.add(cylinder(mats, 'lp_dark', 0.095, 0.1, 0, 1.37, -0.05, 10)); // collar
+    g.add(cylinder(mats, 'lp_dark', 0.095, 0.06, 0, h - 0.06, -0.05, 10)); // ceiling flange
+    g.add(box(mats, 'lp_dark', 0.1, 0.1, 0.05, 0.21, 1.285, 0.22));  // lamp housing
+    return g;
+  },
+  // The canister waiting in the tube station's OUT tray (same pos/rot as the station).
+  canister(mats) {
+    const g = new THREE.Group();
+    const c = cylinder(mats, 'lp_brass', 0.045, 0.28, 0, 0, 0, 8);
+    c.rotation.z = Math.PI / 2;
+    c.position.set(0.02, 1.05, 0.33);
+    g.add(c);
+    for (const s of [-1, 1]) {
+      const e = cylinder(mats, 'lp_dark', 0.05, 0.03, 0, 0, 0, 8);
+      e.rotation.z = Math.PI / 2;
+      e.position.set(0.02 + s * 0.14, 1.05, 0.33);
+      g.add(e);
+    }
+    return g;
+  },
+  // A red call box on a post (S6 C: FLAG): hooded box, face plate, the
+  // handset on its hook, an unlit lamp housing on top (lampdot lights it).
+  callbox(mats) {
+    const g = new THREE.Group();
+    g.add(box(mats, 'lp_dark', 0.09, 1.25, 0.09, 0, 0, 0, { collide: true }));
+    g.add(box(mats, 'lp_dark', 0.3, 0.03, 0.3, 0, 0, 0));            // foot plate
+    g.add(box(mats, 'lp_red', 0.32, 0.44, 0.2, 0, 1.12, 0.03));
+    g.add(box(mats, 'lp_red', 0.36, 0.04, 0.24, 0, 1.56, 0.03));     // hood
+    g.add(box(mats, 'lp_dark', 0.22, 0.26, 0.01, 0.0, 1.19, 0.135)); // face plate
+    g.add(box(mats, 'lp_black', 0.06, 0.22, 0.05, 0.09, 1.2, 0.165)); // handset
+    g.add(box(mats, 'lp_black', 0.04, 0.03, 0.06, 0.09, 1.42, 0.155)); // hook
+    g.add(box(mats, 'lp_black', 0.015, 0.22, 0.015, 0.09, 0.98, 0.15)); // cord
+    g.add(box(mats, 'lp_dark', 0.09, 0.09, 0.05, -0.1, 1.595, 0.07)); // lamp housing
+    return g;
+  },
+  // A small lit lamp face (`mat`: lp_sign green, lp_taillight red, lp_sodium
+  // amber), at local `at` inside a parent's pos/rot. The S6 C lamps are
+  // `hidden` until the requisition is up; Harlowe's standby LED is always on.
+  lampdot(mats, o) {
+    const g = new THREE.Group();
+    const r = o.r || 0.02;
+    const [x, y, z] = o.at || [0, 0, 0];
+    g.add(box(mats, o.mat || 'lp_sign', r * 2, r * 2, Math.max(0.006, r * 0.8), x, y - r, z, { castShadow: false }));
+    return g;
+  },
+  // Dust standing in the troffer's light (Doc 2 S5_C): a faint additive cone
+  // from the fixture to the carpet. The building's light (C1), not a prop's.
+  // Soft-edged: the cone fades where it is seen edge-on (its silhouette) and
+  // toward the floor, so it reads as lit dust, not a stage spotlight's hard
+  // shaft.
+  troffbeam(mats, o) {
+    const g = new THREE.Group();
+    const h = o.h || 2.9, r0 = o.r0 || 0.5, r1 = o.r1 || 2.8;
+    const mat = new THREE.ShaderMaterial({
+      uniforms: { uColor: { value: new THREE.Color(o.color || '#fff0d8') }, uOpacity: { value: o.opacity || 0.035 } },
+      vertexShader: `varying vec3 vN; varying vec3 vV; varying float vY;
+        void main() {
+          vec4 mv = modelViewMatrix * vec4(position, 1.0);
+          vN = normalize(normalMatrix * normal); vV = normalize(-mv.xyz); vY = uv.y;
+          gl_Position = projectionMatrix * mv;
+        }`,
+      fragmentShader: `uniform vec3 uColor; uniform float uOpacity; varying vec3 vN; varying vec3 vV; varying float vY;
+        void main() {
+          float face = abs(dot(normalize(vN), normalize(vV)));
+          float a = uOpacity * pow(face, 2.2) * mix(0.25, 1.6, vY * vY);
+          gl_FragColor = vec4(uColor, a);
+        }`,
+      transparent: true, blending: THREE.AdditiveBlending, depthWrite: false, side: THREE.DoubleSide, fog: false
+    });
+    mat.userData.owned = true;
+    const cone = new THREE.Mesh(new THREE.CylinderGeometry(r0, r1, h, 28, 1, true), mat);
+    cone.position.y = h / 2;
+    cone.castShadow = false;
+    cone.receiveShadow = false;
+    cone.renderOrder = 3;
+    g.add(cone);
+    return g;
+  },
+  // A parking boom barrier (S5 H, in front of the ramp shutter): a post and
+  // a red-and-white arm along local +x; `up` raises it. Decorative only --
+  // the shutter is what bars the ramp -- so nothing here collides.
+  boom(mats, o) {
+    const g = new THREE.Group();
+    const len = o.len || 4.0;
+    g.add(box(mats, 'lp_dark', 0.32, 1.0, 0.32, 0, 0, 0));
+    g.add(box(mats, 'lp_grey', 0.36, 0.06, 0.36, 0, 1.0, 0));
+    g.add(box(mats, 'lp_dark', 0.14, 0.14, 0.14, 0.2, 0.84, 0));      // pivot
+    const arm = new THREE.Group();
+    arm.position.set(0.2, 0.91, 0);
+    const n = Math.max(2, Math.round(len / 0.5));
+    for (let i = 0; i < n; i++) arm.add(box(mats, i % 2 ? 'lp_white' : 'lp_red', len / n, 0.09, 0.06, (i + 0.5) * len / n, -0.045, 0));
+    arm.rotation.z = o.up ? 1.4 : 0;
+    g.add(arm);
+    if (!o.up) g.add(box(mats, 'lp_dark', 0.08, 0.86, 0.08, len + 0.1, 0, 0)); // the arm's rest post
+    return g;
+  },
+  // A car door hanging open beside a catalog car (whose model is one mesh):
+  // the hinge at the group origin, the panel swung `angle` degrees out,
+  // `len` long, its sill at `y`, tinted `mat` like the car. With `tint`
+  // (the car's own palette slot) the panel takes the colour library.js
+  // gives the catalog car's light surfaces (white lerped 0.8 toward the
+  // slot), so door and body match; without the library it is the slot
+  // itself, like the box fallback car.
+  cardoor(mats, o, ctx) {
+    const g = new THREE.Group();
+    const len = o.len || 1.0, h = o.h || 0.45, y = o.y === undefined ? 0.28 : o.y, m = o.mat || 'lp_car';
+    const leaf = new THREE.Group();
+    leaf.rotation.y = THREE.MathUtils.degToRad(o.angle === undefined ? 50 : o.angle);
+    const panel = box(mats, o.tint || m, 0.06, h, len, 0, y, len / 2);
+    if (o.tint && mats.isLowPoly(o.tint) && ctx && ctx.library && ctx.library.loaded()) {
+      const base = mats.get(o.tint);
+      const pm = base.clone();
+      pm.onBeforeCompile = base.onBeforeCompile; // keep the PS1 vertex snap (clone() drops it)
+      pm.customProgramCacheKey = base.customProgramCacheKey;
+      pm.color = new THREE.Color(1, 1, 1).lerp(base.color, 0.8);
+      pm.userData.owned = true;
+      panel.material = pm;
+    }
+    leaf.add(panel);
+    leaf.add(box(mats, 'lp_rust', 0.065, h * 0.22, len * 0.45, 0, y, len * 0.7)); // rust eating the bottom rear corner
+    if (o.window !== false) leaf.add(box(mats, 'lp_glass', 0.02, h * 0.6, len * 0.78, 0, y + h, len * 0.45));
+    leaf.add(box(mats, 'lp_chrome', 0.04, 0.03, 0.1, -0.04, y + h * 0.75, len - 0.14)); // handle
+    g.add(leaf);
+    return g;
+  },
+  // A W-beam guard rail on posts along local +x, `len` long; the last `bend`
+  // metres twisted down and out over the drop (Doc 2 S7_H: "a section of
+  // bent guard rail"). An invisible body stops him at the rail unless
+  // collide is false.
+  guardrail(mats, o) {
+    const g = new THREE.Group();
+    const len = o.len || 4, bend = Math.min(o.bend || 0, len - 0.5), h = o.h || 0.75;
+    const straight = len - bend;
+    const m = o.mat || 'lp_grey';
+    for (let x = 0.05; x <= straight + 1e-3; x += 1.25) g.add(box(mats, 'lp_dark', 0.08, h + 0.04, 0.1, x, 0, 0));
+    g.add(box(mats, m, straight, 0.3, 0.05, straight / 2, h - 0.32, 0.075));
+    g.add(box(mats, 'lp_chrome', straight, 0.06, 0.04, straight / 2, h - 0.2, 0.1)); // the beam's ridge
+    if (bend > 0) {
+      const piv = new THREE.Group();
+      piv.position.set(straight, h - 0.17, 0.075);
+      piv.rotation.set(0, 0.45, -0.85);
+      piv.add(box(mats, m, bend, 0.3, 0.05, bend / 2, -0.15, 0));
+      piv.add(box(mats, 'lp_dark', 0.08, 0.5, 0.1, bend * 0.4, -0.55, -0.04)); // a post torn half out
+      g.add(piv);
+    }
+    if (o.collide !== false) {
+      const body = box(mats, 'lp_dark', straight, 1.1, 0.24, straight / 2, 0, 0.05, { castShadow: false, collide: true });
+      body.visible = false;
+      g.add(body);
+    }
+    return g;
+  },
+  // The bench at the stop line (S6 H: STOP sits him on it). Slatted back on
+  // local -z; nothing collides, so the threshold can stand on the seat.
+  stopbench(mats, o) {
+    const g = new THREE.Group();
+    const w = o.w || 1.8, m = o.mat || 'lp_wood';
+    g.add(box(mats, m, w, 0.05, 0.42, 0, 0.43, 0));
+    for (let i = 0; i < 3; i++) g.add(box(mats, m, w, 0.08, 0.03, 0, 0.56 + i * 0.11, -0.2));
+    for (const x of [-w / 2 + 0.14, w / 2 - 0.14]) {
+      g.add(box(mats, 'lp_dark', 0.06, 0.43, 0.36, x, 0, 0));
+      g.add(box(mats, 'lp_dark', 0.05, 0.88, 0.05, x, 0, -0.215));
+    }
+    return g;
+  },
+  // Rebar stubs out of a broken slab edge (S6 H / S7 H): `n` bars across
+  // `len`, poking out along local -z, each bent its own way. Building
+  // steel, photoreal rust (C1).
+  rebar(mats, o) {
+    const g = new THREE.Group();
+    const n = o.n || 6, len = o.len || 3.0;
+    for (let i = 0; i < n; i++) {
+      const k = Math.sin((i + 1) * 12.9898 + (o.seed || 0) * 78.233) * 43758.5453;
+      const f = k - Math.floor(k);
+      const L = 0.14 + f * 0.34;
+      const bar = new THREE.Mesh(new THREE.BoxGeometry(0.018, 0.018, L), mats.get('rust'));
+      bar.geometry.translate(0, 0, -L / 2);
+      bar.position.set(-len / 2 + (i + 0.5) * len / n + (f - 0.5) * 0.25, -0.05 - f * 0.16, 0);
+      bar.rotation.set((f - 0.45) * 0.9, (f - 0.5) * 0.8, 0); // some droop, some stand up past the lip
+      bar.receiveShadow = true;
+      g.add(bar);
+    }
+    return g;
+  },
+  // A painted line on the floor (photoreal paint, the building's): the stop
+  // line in S6 H, `w` x `d`.
+  paintline(mats, o) {
+    const g = new THREE.Group();
+    g.add(box(mats, o.mat || 'plaster_blown', o.w || 1.0, 0.003, o.d || 0.12, 0, 0, 0, { castShadow: false }));
+    return g;
+  },
+  // A set of building boxes that can be shown and hidden as one (beats show
+  // and hide props, not boxes): `boxes` is [[slot, [x0,y0,z0], [x1,y1,z1], tile], ...]
+  // in the prop's frame, built like room.js boxes (world-tiled UVs, nothing
+  // collides). S6 H's pool kit is hidden for the run and shown for the edge.
+  // An entry's optional fifth element {rough} gives that box a duller copy of
+  // the slot (the pool floor: polished tile threw every light back as a hot
+  // spot). Boxes that share a slot and finish are merged into one mesh (the
+  // pool is ~60 boxes). `water` adds a poolwater surface to the kit.
+  boxkit(mats, o, ctx) {
+    const g = new THREE.Group();
+    const groups = new Map();
+    for (const [slot, a, b, tile, opts] of o.boxes || []) {
+      const geo = new THREE.BoxGeometry(b[0] - a[0], b[1] - a[1], b[2] - a[2]);
+      geo.translate((a[0] + b[0]) / 2, (a[1] + b[1]) / 2, (a[2] + b[2]) / 2);
+      applyWorldUV(geo, tile || 2.0);
+      const rough = opts && opts.rough !== undefined ? opts.rough : null;
+      const key = slot + '|' + rough;
+      if (!groups.has(key)) groups.set(key, { slot, rough, geos: [] });
+      groups.get(key).geos.push(geo);
+    }
+    // one geometry per finish: the boxes' indexed attributes laid end to end
+    const merge = (geos) => {
+      if (geos.length === 1) return geos[0];
+      const pos = [], nor = [], uvs = [], idx = [];
+      let base = 0;
+      for (const geo of geos) {
+        pos.push(...geo.attributes.position.array);
+        nor.push(...geo.attributes.normal.array);
+        uvs.push(...geo.attributes.uv.array);
+        for (const i of geo.index.array) idx.push(i + base);
+        base += geo.attributes.position.count;
+        geo.dispose();
+      }
+      const out = new THREE.BufferGeometry();
+      out.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3));
+      out.setAttribute('normal', new THREE.Float32BufferAttribute(nor, 3));
+      out.setAttribute('uv', new THREE.Float32BufferAttribute(uvs, 2));
+      out.setIndex(idx);
+      return out;
+    };
+    // a duller copy of a building slot, one per (material library, slot,
+    // roughness), kept for the page's life: it shares the slot's textures,
+    // so a room must not dispose it
+    const cache = BUILDERS.boxkit.dull || (BUILDERS.boxkit.dull = new WeakMap());
+    const dulled = (slot, rough) => {
+      if (!cache.has(mats)) cache.set(mats, new Map());
+      const byKey = cache.get(mats);
+      const key = slot + '|' + rough;
+      if (!byKey.has(key)) {
+        const mm = mats.get(slot).clone();
+        mm.roughness = rough;
+        if (mm.roughnessMap) mm.roughnessMap = null;
+        byKey.set(key, mm);
+      }
+      return byKey.get(key);
+    };
+    for (const { slot, rough, geos } of groups.values()) {
+      const m = new THREE.Mesh(merge(geos), rough === null ? mats.get(slot) : dulled(slot, rough));
+      m.castShadow = false;
+      m.receiveShadow = true;
+      g.add(m);
+    }
+    if (o.water) g.add(BUILDERS.poolwater(mats, o.water, ctx));
+    return g;
+  },
+  // Still, clear water (S6 H / S7 H): a sheet at `y` over [x0, z0]..[x1, z1].
+  // Seen from above, near the lip, it is almost clear (the tiled floor shows
+  // through, tinted); toward the horizon it turns to a pale reflecting sheet
+  // (Fresnel), and the fog takes it. Perfectly still: nothing moves on it.
+  poolwater(mats, o) {
+    const g = new THREE.Group();
+    const [x0, z0] = o.from || [-60, -60], [x1, z1] = o.to || [60, 0];
+    const geo = new THREE.PlaneGeometry(x1 - x0, z1 - z0);
+    geo.rotateX(-Math.PI / 2);
+    geo.translate((x0 + x1) / 2, o.y || 0, (z0 + z1) / 2);
+    // what the surface reflects: no ceiling, so black overhead, and a pale
+    // band low on the horizon where the fog and the far pillars would be
+    // (an equirect canvas, made once and kept: rooms never dispose it)
+    let sky = BUILDERS.poolwater.skyTex;
+    if (!sky) {
+      const c = document.createElement('canvas');
+      c.width = 64; c.height = 64;
+      const x = c.getContext('2d');
+      const grd = x.createLinearGradient(0, 0, 0, 64);
+      grd.addColorStop(0.0, '#020506');
+      grd.addColorStop(0.36, '#06110f');
+      grd.addColorStop(0.47, '#5d8f96');
+      grd.addColorStop(0.5, '#a9cdd0');
+      grd.addColorStop(0.53, '#1a3236');
+      grd.addColorStop(1.0, '#020506');
+      x.fillStyle = grd;
+      x.fillRect(0, 0, 64, 64);
+      sky = new THREE.CanvasTexture(c);
+      sky.mapping = THREE.EquirectangularReflectionMapping;
+      sky.colorSpace = THREE.SRGBColorSpace;
+      BUILDERS.poolwater.skyTex = sky;
+    }
+    const mat = new THREE.MeshStandardMaterial({
+      color: new THREE.Color(o.color || '#2f7f88'), roughness: o.rough === undefined ? 0.2 : o.rough, metalness: 0,
+      envMap: sky, envMapIntensity: o.sheen === undefined ? 1.4 : o.sheen,
+      transparent: true, depthWrite: false
+    });
+    const minA = o.clear === undefined ? 0.22 : o.clear;
+    mat.onBeforeCompile = (shader) => {
+      shader.fragmentShader = shader.fragmentShader.replace('#include <opaque_fragment>', `{
+          float cosT = clamp(dot(normalize(vViewPosition), normal), 0.0, 1.0);
+          diffuseColor.a = mix(${minA.toFixed(3)}, 0.96, pow(1.0 - cosT, 3.0));
+        }
+        #include <opaque_fragment>`);
+    };
+    mat.customProgramCacheKey = () => 'poolwater' + minA;
+    mat.userData.owned = true;
+    const m = new THREE.Mesh(geo, mat);
+    m.castShadow = false;
+    m.receiveShadow = false;
+    m.renderOrder = 1;
+    g.add(m);
+    return g;
+  },
+  // Oil on concrete (S5 H / S6 H): a soft, wet, dark blotch `w` x `d` lying
+  // on the floor, one of four shapes (`seed`), catching the sodium lights.
+  // The building's (photoreal), not a rectangle.
+  oilstain(mats, o) {
+    const g = new THREE.Group();
+    const w = o.w || 1.0, d = o.d || 0.8, k = ((o.seed || 0) % 4 + 4) % 4;
+    const geo = new THREE.PlaneGeometry(w, d);
+    geo.rotateX(-Math.PI / 2);
+    const uv = geo.attributes.uv;
+    for (let i = 0; i < uv.count; i++) uv.setXY(i, (uv.getX(i) + (k % 2)) / 2, (uv.getY(i) + (k >> 1)) / 2);
+    // one shared material for every stain, made once and kept (rooms never
+    // dispose it): a 2 x 2 atlas of soft blotches, dark and glossy
+    let mat = BUILDERS.oilstain.mat;
+    if (!mat) {
+      const N = 256, c = document.createElement('canvas');
+      c.width = N; c.height = N;
+      const x = c.getContext('2d');
+      let seed = 1234567;
+      const rnd = () => { seed = (seed * 16807) % 2147483647; return seed / 2147483647; };
+      for (let cell = 0; cell < 4; cell++) {
+        const cx = (cell % 2) * N / 2 + N / 4, cy = (cell >> 1) * N / 2 + N / 4;
+        // a main pool, satellite drips, a smear: radial falloffs, alpha only
+        const blobs = [[0, 0, 0.62, 0.5]];
+        for (let i = 0; i < 7; i++) blobs.push([(rnd() - 0.5) * 0.8, (rnd() - 0.5) * 0.7, 0.12 + rnd() * 0.28, 0.25 + rnd() * 0.35]);
+        for (const [bx, by, br, ba] of blobs) {
+          const px = cx + bx * N / 4, py = cy + by * N / 4, r = br * N / 4;
+          const grd = x.createRadialGradient(px, py, 0, px, py, r);
+          grd.addColorStop(0, `rgba(14,11,8,${ba})`);
+          grd.addColorStop(0.55, `rgba(14,11,8,${ba * 0.7})`);
+          grd.addColorStop(1, 'rgba(14,11,8,0)');
+          x.fillStyle = grd;
+          x.beginPath(); x.arc(px, py, r, 0, Math.PI * 2); x.fill();
+        }
+      }
+      const tex = new THREE.CanvasTexture(c);
+      tex.colorSpace = THREE.SRGBColorSpace;
+      mat = new THREE.MeshStandardMaterial({ map: tex, transparent: true, depthWrite: false, roughness: 0.16, metalness: 0.15, polygonOffset: true, polygonOffsetFactor: -2, polygonOffsetUnits: -2 });
+      BUILDERS.oilstain.mat = mat;
+    }
+    const m = new THREE.Mesh(geo, mat);
+    m.position.y = o.y === undefined ? 0.006 : o.y;
+    m.castShadow = false;
+    m.receiveShadow = true;
+    m.renderOrder = 1;
+    g.add(m);
+    return g;
+  },
   // ---- polish: S5-S6 desk / garage -- end ----
   //
   // ---- polish: S7 descent -- begin (that scene's new props go between these lines) ----
