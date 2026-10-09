@@ -183,8 +183,14 @@ const BUILDERS = {
     g.add(box(mats, suit, 0.44, 0.6, 0.24, 0, 0.9, 0));
     g.add(box(mats, suit, 0.56, 0.1, 0.26, 0, 1.44, 0)); // shoulders
     g.add(box(mats, 'lp_skin', 0.1, 0.06, 0.1, 0, 1.5, 0)); // neck
-    g.add(box(mats, o.face === 'blur' ? 'lp_grey' : 'lp_skin', 0.22, 0.24, 0.22, 0, 1.56, 0));
-    g.add(box(mats, 'lp_dark', 0.24, 0.08, 0.24, 0, 1.78, 0)); // hair
+    // `headDown` (degrees): the head bowed forward from the neck -- she
+    // speaks without raising it (C5)
+    const head = new THREE.Group();
+    head.position.y = 1.5;
+    head.add(box(mats, o.face === 'blur' ? 'lp_grey' : 'lp_skin', 0.22, 0.24, 0.22, 0, 0.06, 0));
+    head.add(box(mats, 'lp_dark', 0.24, 0.08, 0.24, 0, 0.28, 0)); // hair
+    if (o.headDown) head.rotation.x = (o.headDown === true ? 30 : o.headDown) * Math.PI / 180;
+    g.add(head);
     for (const s of [-1, 1]) {
       g.add(box(mats, suit, 0.12, 0.58, 0.12, s * 0.3, 0.92, 0));
       g.add(box(mats, 'lp_skin', 0.1, 0.12, 0.1, s * 0.3, 0.8, 0)); // low-poly hands (C6)

@@ -88,8 +88,9 @@
                 },
                 {
                   "sit": {
+                    "into": true,
                     "eye": 1.12,
-                    "seconds": 1.3,
+                    "seconds": 1.6,
                     "holdMs": 2800
                   }
                 }
@@ -141,8 +142,9 @@
                 },
                 {
                   "sit": {
+                    "into": true,
                     "eye": 1.12,
-                    "seconds": 1.3,
+                    "seconds": 1.6,
                     "holdMs": 2800
                   }
                 }
@@ -218,6 +220,28 @@
           "friction": {
             "t0": 10,
             "t1": 45
+          },
+          "idle": {
+            "seconds": 25,
+            "beat": [
+              {
+                "sfxCue": "speaker-click"
+              },
+              {
+                "show": "receptionist_jaw"
+              },
+              {
+                "caption": "call.compliant",
+                "holdMs": 2600,
+                "className": "scene-caption-receptionist"
+              },
+              {
+                "waitMs": 1600
+              },
+              {
+                "hide": "receptionist_jaw"
+              }
+            ]
           },
           "thresholds": {
             "succumb": {
@@ -332,6 +356,28 @@
           "friction": {
             "t0": 10,
             "t1": 45
+          },
+          "idle": {
+            "seconds": 25,
+            "beat": [
+              {
+                "sfxCue": "speaker-click"
+              },
+              {
+                "show": "receptionist_jaw"
+              },
+              {
+                "caption": "call.hostile",
+                "holdMs": 2600,
+                "className": "scene-caption-receptionist"
+              },
+              {
+                "waitMs": 1600
+              },
+              {
+                "hide": "receptionist_jaw"
+              }
+            ]
           },
           "thresholds": {
             "succumb": {

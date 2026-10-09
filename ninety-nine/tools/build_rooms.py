@@ -197,7 +197,7 @@ def drop_props(rec, pred):
 CN_STYLE = {
     "office":  {"floor": "carpet", "wall": "plaster_dark", "ceiling": "ceiling_tile", "lamp": "#e6eaf2", "lamp_i": 3.2, "skirt": "plaster_dark"},
     "service": {"floor": "concrete_wet", "wall": "cinderblock", "ceiling": "concrete", "lamp": "#dfe6dc", "lamp_i": 2.6, "skirt": "paint_green"},
-    "home":    {"floor": "carpet", "wall": "plaster_dark", "ceiling": "plaster_dark", "lamp": "#ffd9a0", "lamp_i": 2.4, "skirt": "plaster_dark"},
+    "home":    {"floor": "carpet", "wall": "plaster_dark", "ceiling": "plaster_dark", "lamp": "#ffd9a0", "lamp_i": 4.5, "skirt": "plaster_dark"},
     "marble":  {"floor": "marble", "wall": "plaster_dark", "ceiling": "plaster_dark", "lamp": "#fff1dc", "lamp_i": 4.0, "skirt": "marble"},
     "garage":  {"floor": "garage_floor", "wall": "concrete", "ceiling": "concrete", "lamp": "#ffa040", "lamp_i": 10, "skirt": "paint_green"},
 }
@@ -260,6 +260,9 @@ def cn_stairs(name, style, drop=3.0, width=1.6, height=2.6, rise=0.2, tread=0.3,
     rec["lights"].append({"type": "point", "pos": [0, height - 0.4, top - landing / 2], "color": st["lamp"], "intensity": st["lamp_i"], "distance": 8})
     rec["lights"].append({"type": "point", "pos": [0, height - 0.4, -top + landing / 2], "color": st["lamp"], "intensity": st["lamp_i"], "distance": 9})
     rec["props"].append(prop("fluoro", [0, height - 0.06, -top + landing / 2], w=0.8, d=0.2))
+    # and one over the middle of the flight, so the treads read from the top
+    rec["props"].append(prop("fluoro", [0, height - 0.06, 0], w=0.8, d=0.2))
+    rec["lights"].append({"type": "point", "pos": [0, height - 0.4, 0], "color": st["lamp"], "intensity": round(st["lamp_i"] * 0.8, 2), "distance": 8})
     rec["drop"] = drop
     return rec
 
@@ -306,7 +309,7 @@ def cn_chute():
     return rec
 
 
-def waiting_room(hostile):
+def waiting_room(hostile, dark_front=None):
     """S1 THE WAITING ROOM and S2 THE CALL (Doc 1 §5, Doc 2 S1/S2): one
     lobby, entered from the street through the front glass doors.
 
@@ -403,7 +406,7 @@ def waiting_room(hostile):
         props.append(glb("lib_chair", [x, 0, z], round(rot, 1), fallback="chair", mat="lp_curtain", paint=MAROON, collide=True, name="chair%d" % k))
         # chairs face +z at rot 0 (the backrest is at the model's -z)
         fx, fz = math.sin(math.radians(rot)), math.cos(math.radians(rot))
-        seats.append(("seat%d" % k, [x + 0.72 * fx, z + 0.72 * fz], [x, 1.45, z]))
+        seats.append(("seat%d" % k, [x + 0.72 * fx, z + 0.72 * fz], [x, 1.45, z], {"pos": r3([x + 0.06 * fx, z + 0.06 * fz]), "face": r3([fx, fz])}))
     props.append(prop("palette", [0, 0, 0]))  # the maroon, all the way (props.js palette)
     if hostile:
         # The dispenser feeds continuously (Doc 2 S1_H): a mound of slips
@@ -455,7 +458,11 @@ def waiting_room(hostile):
     # for the locked glass. Inner and service match their connectors' 1.2 m.
     # (H: tinted glass. The shared clear glass goes milky in the blown light
     # and stops reading as the dark behind it.)
-    door(rec, "front", "S", 0.0, w=2.6, h=2.9, kind="glass", locked=True, **({"glass": "glass_dark"} if hostile else {}))
+    # the lobby's own front doors read dark from inside (C3: nothing of the
+    # street once they close); S3 H's lobby_doors() keeps them clear, since
+    # its dead street is seen through them
+    dark = hostile if dark_front is None else dark_front
+    door(rec, "front", "S", 0.0, w=2.6, h=2.9, kind="glass", locked=True, **({"glass": "glass_dark"} if dark else {}))
     door(rec, "inner", "N", 5.6, w=1.2, h=2.2, kind="door", locked=True, mat="lp_beige", hinge="R", panel="lp_grey")
     door(rec, "service", "S", -4.6, w=1.2, h=2.2, kind="door", locked=True, mat="lp_grey")
     rec["entry"] = "front"
@@ -468,8 +475,8 @@ def waiting_room(hostile):
         props.append(prop("doorlamp", pos, rot, lens="green", name="%s_lamp_green" % nm, hidden=True))
     props.append(prop("badgereader", [6.45, 1.25, -D / 2 + 0.03]))
     # S1: TAKE A SEAT (any upright chair) / STAY STANDING (the head of the queue)
-    for name, pos, label in seats:
-        zone(rec, name, pos, r=0.35, ring=1.7, label_at=label)
+    for name, pos, label, seat in seats:
+        zone(rec, name, pos, r=0.35, ring=1.7, label_at=label, seat=seat)
     zone(rec, "counter", [-1.3, -3.72], r=0.5, ring=2.2, label_at=[-1.3, 2.05, -4.2])
     # S2: STAND (the inner door) / RUN (back to the glass doors). The words
     # stand on the door, on its window / the dark glass, low enough to stay
@@ -1366,7 +1373,7 @@ def build():
     rooms = {
         "S0_X": apartment(),
         "SET_STREET": street(),
-        "S1_C": waiting_room(False),
+        "S1_C": waiting_room(False, dark_front=True),
         "S1_H": waiting_room(True),
         "S2_C": {"alias": "S1_C", "_note": "The call comes in the same room."},
         "S2_H": {"alias": "S1_H", "_note": "The call comes in the same room."},
