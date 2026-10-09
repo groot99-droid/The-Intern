@@ -971,10 +971,10 @@ def freight_elevator():
     for z in (-0.85, 0.85):
         boxes.append({"min": [-hx, H - 0.09, z - 0.07], "max": [hx, H, z + 0.07], "mat": "rust", "tile": 1.2, "collide": False, "shadow": False})
 
-    lit = 41  # the one lit button (props.js panel: column 5, row 6)
+    lit = 41  # the one lit button (props.js cabpanel: column 5, row 6)
     bx, by = -0.15 + (lit % 6) * 0.06, 0.7 + 0.1 + (lit // 6) * 0.095 + 0.02
     button = [hx - 0.06, round(by, 3), round(pz + bx, 3)]
-    ind = [0.0, 2.33, hz]  # the indicator, over the doors, facing in
+    ind = [0.0, 2.31, hz]  # the indicator, over the doors, facing in (scaled 1.2: 0.58 m wide)
     rec = {
         "name": "THE DESCENT",
         "size": [W, H, D],
@@ -985,8 +985,8 @@ def freight_elevator():
         # C2: from the doors' side, aimed at the core
         "sun": {"from": [0.4, 3.0, 3.6], "color": "#ffd9a8", "intensity": 0.45},
         "lights": [
-            # the caged bulb
-            {"type": "point", "pos": [0, H - 0.42, 0.0], "color": "#ffcf9a", "intensity": 7.5, "distance": 6.5, "flicker": 0.2},
+            # the caged bulb: the light is the bulb, inside its guard
+            {"type": "point", "pos": [0, H - 0.32, 0.0], "color": "#ffcf9a", "intensity": 7.0, "distance": 6.5, "flicker": 0.2},
             # the lit button's real light on the real metal
             {"type": "point", "pos": [button[0] - 0.12, button[1], button[2]], "color": "#33ff77", "intensity": 1.1, "distance": 1.4, "id": "button_glow"},
             # the indicator's amber on the lintel
@@ -998,19 +998,21 @@ def freight_elevator():
         "spawn": [0, 0.6, 0],
         "holdEntry": True,  # the cab doors stay open behind him until he chooses
         "props": [
-            prop("panel", [hx - 0.025, 0.7, pz], rot=-90, name="panel"),
+            prop("cabpanel", [hx - 0.025, 0.7, pz], rot=-90, lit=lit, name="panel"),
             prop("clock", [-hx + PAD + 0.04, 1.92, 0.05], rot=90),
             prop("slip", [-0.55, 0.004, 0.75], rot=200),
-            glb("lib_cagelamp", [0, H - 0.3, 0.0], fallback="cagebulb"),
+            # the caged bulb (photoreal in Doc 2's list, so not the catalog's
+            # white lamp): plate, stem, bare bulb, a rust wire guard
+            prop("cagebulb", [0, H - 0.42, 0.0], h=0.42),
             # the floor indicator: a housing with its dark segments, and one
             # lit layer per reading; the beats show one and hide the last
-            prop("floorind", ind, rot=180, ghost=True, name="ind_face"),
-            prop("floorind", ind, rot=180, text=" --", name="ind_dash"),
-            prop("floorind", ind, rot=180, text=" b1", name="ind_b1", hidden=True),
-            prop("floorind", ind, rot=180, text=" b2", name="ind_b2", hidden=True),
-            prop("floorind", ind, rot=180, text=" b7", name="ind_b7", hidden=True),
-            prop("floorind", ind, rot=180, text="b12", name="ind_b12", hidden=True),
-            prop("floorind", ind, rot=180, text=" = ", name="ind_glyph", hidden=True),
+            prop("floorind", ind, rot=180, scale=1.2, ghost=True, name="ind_face"),
+            prop("floorind", ind, rot=180, scale=1.2, text=" --", name="ind_dash"),
+            prop("floorind", ind, rot=180, scale=1.2, text=" b1", name="ind_b1", hidden=True),
+            prop("floorind", ind, rot=180, scale=1.2, text=" b2", name="ind_b2", hidden=True),
+            prop("floorind", ind, rot=180, scale=1.2, text=" b7", name="ind_b7", hidden=True),
+            prop("floorind", ind, rot=180, scale=1.2, text="b12", name="ind_b12", hidden=True),
+            prop("floorind", ind, rot=180, scale=1.2, text=" = ", name="ind_glyph", hidden=True),
             # the scissor gate just inside the doors, folded against the
             # jamb on arrival; three frames of its close
             prop("scissorgate", [0.0, 0, hz - 0.01], rot=180, w=1.6, h=2.1, ext=0.1, link="lp_brass", name="gate_0"),

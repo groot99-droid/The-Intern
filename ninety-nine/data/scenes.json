@@ -830,6 +830,10 @@
           "room": "S7_C",
           "next": "S8",
           "ambience": "S7_C_AMB.wav",
+          "idle": {
+            "seconds": 25,
+            "commit": "resist"
+          },
           "thresholds": {
             "succumb": {
               "label": "DESCEND",
@@ -839,7 +843,7 @@
               "beat": [
                 {
                   "sfxCue": "deadbolt",
-                  "waitMs": 300
+                  "waitMs": 250
                 },
                 {
                   "lookAt": "ind_face",
@@ -865,54 +869,45 @@
                 },
                 {
                   "sfxCue": "door-thud",
-                  "show": "ind_b1",
-                  "hide": "ind_dash",
-                  "waitMs": 900
-                },
-                {
-                  "lookAt": "ind_face",
-                  "lookY": -0.62,
-                  "seconds": 0.5
+                  "waitMs": 600
                 },
                 {
                   "ride": {
-                    "drop": 3.0,
-                    "seconds": 2.1,
-                    "shake": 0
-                  }
-                },
-                {
-                  "show": "ind_b2",
-                  "hide": "ind_b1",
-                  "ride": {
-                    "drop": 7.5,
-                    "seconds": 2.9,
-                    "shake": 0
-                  }
-                },
-                {
-                  "show": "ind_b7",
-                  "hide": "ind_b2",
-                  "ride": {
-                    "drop": 6.0,
-                    "seconds": 1.6,
-                    "shake": 0
-                  }
-                },
-                {
-                  "show": "ind_b12",
-                  "hide": "ind_b7",
-                  "ride": {
-                    "drop": 3.5,
-                    "seconds": 2.7,
-                    "shake": 0
+                    "drop": 20,
+                    "seconds": 9.5,
+                    "shake": 0,
+                    "stops": [
+                      {
+                        "at": 0.05,
+                        "show": "ind_b1",
+                        "hide": "ind_dash"
+                      },
+                      {
+                        "at": 0.23,
+                        "show": "ind_b2",
+                        "hide": "ind_b1"
+                      },
+                      {
+                        "at": 0.47,
+                        "show": "ind_b7",
+                        "hide": "ind_b2"
+                      },
+                      {
+                        "at": 0.8,
+                        "show": "ind_b12",
+                        "hide": "ind_b7"
+                      },
+                      {
+                        "at": 0.97,
+                        "show": "ind_glyph",
+                        "hide": "ind_b12"
+                      }
+                    ]
                   }
                 },
                 {
                   "sfxCue": "door-thud",
-                  "show": "ind_glyph",
-                  "hide": "ind_b12",
-                  "waitMs": 1500
+                  "waitMs": 1200
                 },
                 {
                   "sfxCue": "door-rattle",
@@ -967,49 +962,48 @@
                   "seconds": 0.9
                 },
                 {
-                  "show": "ind_b1",
-                  "hide": "ind_dash",
                   "ride": {
-                    "drop": 3.0,
-                    "seconds": 2.1,
-                    "shake": 0
-                  }
-                },
-                {
-                  "show": "ind_b2",
-                  "hide": "ind_b1",
-                  "ride": {
-                    "drop": 7.5,
-                    "seconds": 2.9,
-                    "shake": 0
-                  }
-                },
-                {
-                  "show": "ind_b7",
-                  "hide": "ind_b2",
-                  "ride": {
-                    "drop": 6.0,
-                    "seconds": 1.6,
-                    "shake": 0
-                  }
-                },
-                {
-                  "sfxCue": "metal-tear-screech",
-                  "show": "ind_b12",
-                  "hide": "ind_b7",
-                  "close": "cab",
-                  "seconds": 0.7,
-                  "ride": {
-                    "drop": 3.5,
-                    "seconds": 2.7,
-                    "shake": 0
+                    "drop": 20,
+                    "seconds": 9.5,
+                    "shake": 0,
+                    "stops": [
+                      {
+                        "at": 0.05,
+                        "show": "ind_b1",
+                        "hide": "ind_dash"
+                      },
+                      {
+                        "at": 0.23,
+                        "show": "ind_b2",
+                        "hide": "ind_b1"
+                      },
+                      {
+                        "at": 0.47,
+                        "show": "ind_b7",
+                        "hide": "ind_b2"
+                      },
+                      {
+                        "at": 0.66,
+                        "sfxCue": "metal-tear-screech",
+                        "close": "cab",
+                        "seconds": 0.8
+                      },
+                      {
+                        "at": 0.8,
+                        "show": "ind_b12",
+                        "hide": "ind_b7"
+                      },
+                      {
+                        "at": 0.97,
+                        "show": "ind_glyph",
+                        "hide": "ind_b12"
+                      }
+                    ]
                   }
                 },
                 {
                   "sfxCue": "door-thud",
-                  "show": "ind_glyph",
-                  "hide": "ind_b12",
-                  "waitMs": 1500
+                  "waitMs": 1200
                 },
                 {
                   "sfxCue": "door-rattle",
@@ -1064,19 +1058,18 @@
                   "sfxCue": [
                     "door-thud",
                     "concrete-grains"
-                  ],
-                  "caption": "edge.only",
-                  "holdMs": 3200
+                  ]
                 },
                 {
                   "shake": {
-                    "seconds": 1.6,
+                    "seconds": 1.4,
                     "amount": 0.05
                   }
                 },
                 {
                   "sfxCue": "concrete-grains",
-                  "waitMs": 400
+                  "caption": "edge.only",
+                  "holdMs": 3200
                 }
               ]
             }

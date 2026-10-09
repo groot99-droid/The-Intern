@@ -14855,11 +14855,11 @@
      "type": "point",
      "pos": [
       0,
-      2.18,
+      2.2800000000000002,
       0.0
      ],
      "color": "#ffcf9a",
-     "intensity": 7.5,
+     "intensity": 7.0,
      "distance": 6.5,
      "flicker": 0.2
     },
@@ -14902,13 +14902,14 @@
    "holdEntry": true,
    "props": [
     {
-     "type": "panel",
+     "type": "cabpanel",
      "pos": [
       1.475,
       0.7,
       -0.64
      ],
      "rot": -90,
+     "lit": 41,
      "name": "panel"
     },
     {
@@ -14930,23 +14931,23 @@
      "rot": 200
     },
     {
-     "type": "glb",
+     "type": "cagebulb",
      "pos": [
       0,
-      2.3,
+      2.18,
       0.0
      ],
-     "node": "lib_cagelamp",
-     "fallback": "cagebulb"
+     "h": 0.42
     },
     {
      "type": "floorind",
      "pos": [
       0.0,
-      2.33,
+      2.31,
       1.7
      ],
      "rot": 180,
+     "scale": 1.2,
      "ghost": true,
      "name": "ind_face"
     },
@@ -14954,10 +14955,11 @@
      "type": "floorind",
      "pos": [
       0.0,
-      2.33,
+      2.31,
       1.7
      ],
      "rot": 180,
+     "scale": 1.2,
      "text": " --",
      "name": "ind_dash"
     },
@@ -14965,10 +14967,11 @@
      "type": "floorind",
      "pos": [
       0.0,
-      2.33,
+      2.31,
       1.7
      ],
      "rot": 180,
+     "scale": 1.2,
      "text": " b1",
      "name": "ind_b1",
      "hidden": true
@@ -14977,10 +14980,11 @@
      "type": "floorind",
      "pos": [
       0.0,
-      2.33,
+      2.31,
       1.7
      ],
      "rot": 180,
+     "scale": 1.2,
      "text": " b2",
      "name": "ind_b2",
      "hidden": true
@@ -14989,10 +14993,11 @@
      "type": "floorind",
      "pos": [
       0.0,
-      2.33,
+      2.31,
       1.7
      ],
      "rot": 180,
+     "scale": 1.2,
      "text": " b7",
      "name": "ind_b7",
      "hidden": true
@@ -15001,10 +15006,11 @@
      "type": "floorind",
      "pos": [
       0.0,
-      2.33,
+      2.31,
       1.7
      ],
      "rot": 180,
+     "scale": 1.2,
      "text": "b12",
      "name": "ind_b12",
      "hidden": true
@@ -15013,10 +15019,11 @@
      "type": "floorind",
      "pos": [
       0.0,
-      2.33,
+      2.31,
       1.7
      ],
      "rot": 180,
+     "scale": 1.2,
      "text": " = ",
      "name": "ind_glyph",
      "hidden": true

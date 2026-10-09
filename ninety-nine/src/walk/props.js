@@ -1287,20 +1287,103 @@ const BUILDERS = {
     merge(links, o.link || 'lp_grey');
     return g;
   },
-  // A caged bulb under the cab's ceiling (the fallback for the catalog's
-  // cage lamp): a ceiling plate, the bulb and its wire guard. Origin at the
-  // bottom of the guard, like the catalog model; `h` is how far up the
-  // ceiling is.
+  // The cab's caged bulb (Doc 2 S7_C lists it with the photoreal things:
+  // the building's light, C1): a ceiling plate and a short stem, a bare bulb
+  // and a wire guard of six ribs and three rings, in the building's rust.
+  // Only the bulb itself is emissive. Origin at the bottom of the guard;
+  // `h` is how far up the ceiling is. Two meshes: the guard and the bulb.
   cagebulb(mats, o) {
     const g = new THREE.Group();
-    const h = o.h || 0.3;
-    g.add(box(mats, 'lp_dark', 0.22, 0.03, 0.22, 0, h - 0.03, 0, { castShadow: false }));
-    g.add(box(mats, 'lp_fluoro', 0.09, 0.12, 0.09, 0, h - 0.17, 0, { castShadow: false }));
-    for (const [x, z] of [[-0.08, -0.08], [0.08, -0.08], [-0.08, 0.08], [0.08, 0.08]]) g.add(box(mats, 'lp_dark', 0.012, h - 0.03, 0.012, x, 0, z, { castShadow: false }));
-    g.add(box(mats, 'lp_dark', 0.18, 0.012, 0.18, 0, 0, 0, { castShadow: false }));
-    const glow = new THREE.Mesh(new THREE.PlaneGeometry(0.8, 0.8), mats.get('glow_fluoro'));
-    glow.rotation.x = Math.PI / 2; glow.position.y = 0.02;
-    g.add(glow);
+    const h = o.h || 0.34;
+    const mergeInto = (parts, mat) => {
+      const pos = [], nor = [], uv = [];
+      for (const p of parts) {
+        const q = p.index ? p.toNonIndexed() : p;
+        pos.push(...q.attributes.position.array);
+        nor.push(...q.attributes.normal.array);
+        uv.push(...q.attributes.uv.array);
+      }
+      const geo = new THREE.BufferGeometry();
+      geo.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3));
+      geo.setAttribute('normal', new THREE.Float32BufferAttribute(nor, 3));
+      geo.setAttribute('uv', new THREE.Float32BufferAttribute(uv, 2));
+      const m = new THREE.Mesh(geo, mat);
+      m.castShadow = false;
+      m.receiveShadow = true;
+      g.add(m);
+      return m;
+    };
+    const top = Math.min(0.16, h - 0.1); // the guard's top ring; the stem and plate above it
+    const R = 0.075, N = 6, wire = 0.008, stem = h - 0.06 - top;
+    const parts = [
+      new THREE.BoxGeometry(0.2, 0.025, 0.2).translate(0, h - 0.0125, 0), // ceiling plate
+      new THREE.CylinderGeometry(0.016, 0.016, stem, 6).translate(0, top + 0.035 + stem / 2, 0), // stem
+      new THREE.CylinderGeometry(0.034, 0.03, 0.05, 8).translate(0, top + 0.01, 0) // socket
+    ];
+    for (let i = 0; i < N; i++) {
+      const a = (i / N) * Math.PI * 2;
+      // a rib: down the side, bowed out at the middle ring
+      parts.push(new THREE.BoxGeometry(wire, top - 0.02, wire).translate(Math.cos(a) * R, (top - 0.02) / 2 + 0.01, Math.sin(a) * R));
+      for (const [y, r] of [[0.01, R * 0.8], [top * 0.55, R], [top, R * 0.7]]) {
+        const a2 = a + Math.PI / N;
+        const side = 2 * r * Math.sin(Math.PI / N);
+        parts.push(new THREE.BoxGeometry(side, wire, wire).rotateY(-a2 + Math.PI / 2).translate(Math.cos(a2) * r * Math.cos(Math.PI / N), y, Math.sin(a2) * r * Math.cos(Math.PI / N)));
+      }
+    }
+    parts.push(new THREE.BoxGeometry(R * 1.6, wire, wire).translate(0, 0.01, 0), new THREE.BoxGeometry(wire, wire, R * 1.6).translate(0, 0.01, 0)); // the bottom cross
+    mergeInto(parts, mats.get(o.mat || 'rust'));
+    const bulb = new THREE.Mesh(new THREE.IcosahedronGeometry(0.042, 1).translate(0, top - 0.06, 0), mats.get('lp_fluoro'));
+    bulb.castShadow = false;
+    g.add(bulb);
+    return g;
+  },
+  // The cab's control panel (Doc 1 S7, Doc 3 MG-06 C): the company's, so
+  // low-poly -- 66 buttons in a tall grid, exactly one lit, on a dark plate
+  // with a brass bezel. Same layout and origin as `panel` (bottom centre of
+  // the plate's back, facing +z; button i at column i % 6, row i / 6) so a
+  // threshold placed on `panel`'s lit button still lands on this one. The
+  // lit button carries a green halo; its real light on the real metal is a
+  // room light (build_rooms.py). Five meshes, not sixty-seven.
+  cabpanel(mats, o) {
+    const g = new THREE.Group();
+    const lit = o.lit === undefined ? 41 : o.lit;
+    const W = 0.42, H = 1.2, cols = 6, rows = 11;
+    const merge = (parts, slot) => {
+      const pos = [], nor = [];
+      for (const p of parts) {
+        const q = p.index ? p.toNonIndexed() : p;
+        pos.push(...q.attributes.position.array);
+        nor.push(...q.attributes.normal.array);
+      }
+      const geo = new THREE.BufferGeometry();
+      geo.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3));
+      geo.setAttribute('normal', new THREE.Float32BufferAttribute(nor, 3));
+      const m = new THREE.Mesh(geo, mats.get(slot));
+      m.castShadow = false;
+      m.receiveShadow = true;
+      g.add(m);
+      return m;
+    };
+    const b = (w, h, d, x, y, z) => new THREE.BoxGeometry(w, h, d).translate(x, y + h / 2, z);
+    merge([b(W, H, 0.04, 0, 0, 0)], o.plate || 'lp_dark');
+    merge([
+      b(W + 0.03, 0.025, 0.05, 0, -0.012, 0.005), b(W + 0.03, 0.025, 0.05, 0, H - 0.013, 0.005),
+      b(0.025, H, 0.05, -W / 2 - 0.002, 0, 0.005), b(0.025, H, 0.05, W / 2 + 0.002, 0, 0.005),
+      b(0.24, 0.05, 0.006, 0, H - 0.1, 0.022) // a blank plate where a maker's name would be
+    ], 'lp_brass');
+    const unlit = [];
+    for (let i = 0; i < cols * rows; i++) {
+      if (i === lit) continue;
+      const c = i % cols, r = Math.floor(i / cols);
+      unlit.push(b(0.036, 0.036, 0.016, -0.15 + c * 0.06, 0.1 + r * 0.095 + 0.002, 0.028));
+    }
+    merge(unlit, 'lp_grey');
+    const lc = lit % cols, lr = Math.floor(lit / cols);
+    const lx = -0.15 + lc * 0.06, ly = 0.1 + lr * 0.095;
+    merge([b(0.042, 0.042, 0.022, lx, ly - 0.001, 0.031)], 'lp_sign');
+    const halo = new THREE.Mesh(new THREE.PlaneGeometry(0.11, 0.11), mats.get('glow_green'));
+    halo.position.set(lx, ly + 0.02, 0.046);
+    g.add(halo);
     return g;
   },
   // ---- polish: S7 descent -- end ----
