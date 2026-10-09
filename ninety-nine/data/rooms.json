@@ -3533,6 +3533,17 @@
      }
     },
     {
+     "type": "curtainvoid",
+     "pos": [
+      0,
+      0,
+      -7.1
+     ],
+     "w": 3.0,
+     "h": 3.2,
+     "name": "curtain_void"
+    },
+    {
      "type": "placard",
      "pos": [
       1.78,
@@ -4060,6 +4071,17 @@
      "text": "ENTER",
      "on": false,
      "name": "entersign"
+    },
+    {
+     "type": "curtainvoid",
+     "pos": [
+      -5.4,
+      0,
+      -6.1
+     ],
+     "w": 3.0,
+     "h": 3.2,
+     "name": "curtain_void"
     },
     {
      "type": "placard",

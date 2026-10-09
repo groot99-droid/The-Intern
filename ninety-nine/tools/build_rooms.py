@@ -400,6 +400,9 @@ def threshold_corridor():
         prop("entersign", [0, 2.8, N + 0.07], w=1.0, h=0.24, text="ENTER", sync={"color": "#33ff77", "intensity": 9}, name="entersign"),
         prop("badgescanner", [W / 2 - 0.02, 1.12, -6.05], rot=-90, name="badgereader"),
         prop("dustmotes", [0, 0.2, N + 1.1], size=[3.8, 2.9, 1.8], count=150, sync={"color": "#33ff77", "intensity": 9}),  # dust in the green (Doc 2)
+        # behind the curtain, pure black (Doc 2): a one-sided black inside
+        # the wall's depth, so the passage is not seen until he is through
+        prop("curtainvoid", [0, 0, N - 0.1], w=3.0, h=3.2, name="curtain_void"),
         # the way back: a plate by the glass, and its sign, dead
         prop("placard", [1.78, 1.45, D / 2 - 0.02], rot=180),
         prop("entersign", [0, 2.88, D / 2 - 0.07], rot=180, w=0.8, h=0.2, text="EXIT", on=False, name="exitsign"),
@@ -508,7 +511,7 @@ def lobby_doors():
     # (the service door: red until TRY THE DOOR opens it), so no lamp is left
     # on a bare wall.
     def over(d, up, out):
-        y = d.get("y", 0) + d["h"] + up
+        y = round(d.get("y", 0) + d["h"] + up, 3)
         return {"N": ([d["x"], y, -D / 2 + out], 0), "S": ([d["x"], y, D / 2 - out], 180),
                 "E": ([W / 2 - out, y, d["x"]], -90), "W": ([-W / 2 + out, y, d["x"]], 90)}[d["wall"]]
     for nm in dropped:
@@ -531,6 +534,7 @@ def lobby_doors():
     # the curtain in the far corner, dressed as S3 C's, its sign dead
     rec["props"].append(prop("velvetdrape", [-5.4, 0, -D / 2], w=3.0, h=3.25, gap=1.75, pelmet=0.6, off=0.05, dress="curtain", name="velvet"))
     rec["props"].append(prop("entersign", [-5.4, 3.36, -D / 2 + 0.07], w=0.9, h=0.22, text="ENTER", on=False, name="entersign"))
+    rec["props"].append(prop("curtainvoid", [-5.4, 0, -D / 2 - 0.1], w=3.0, h=3.2, name="curtain_void"))
     # the doors' plate, the one 99 at their foot, the payphone in the corner
     rec["props"].append(prop("placard", [fx + fw / 2 + 0.85, 1.5, D / 2 - 0.02], rot=180))
     rec["props"].append(prop("slip", [fx + 0.6, 0.004, D / 2 - 1.2], rot=15))

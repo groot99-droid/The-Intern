@@ -721,7 +721,7 @@ const BUILDERS = {
             ctx.shadowColor = 'rgba(80,255,140,0.9)';
             ctx.shadowBlur = ch * 0.12;
             ctx.fillStyle = '#9dffbf';
-          } else ctx.fillStyle = '#1d3326';
+          } else ctx.fillStyle = '#3a5747'; // dead: the letters still faintly there
           ctx.fillText(word, cw / 2, ch * 0.54);
         });
         const faceMat = owned(new THREE.MeshBasicMaterial({ map: tex }));
@@ -876,6 +876,25 @@ const BUILDERS = {
         g.add(pts);
         return g;
       },
+      // The black behind the parted curtain (Doc 2 S3_C_IMG_OUT: "Behind it,
+      // pure black, no detail resolvable"): a matte black plane standing in
+      // the curtain doorway's depth, inside the wall, wider and taller than
+      // the opening (the wall hides the rest). One-sided and untouched by
+      // light and fog, it is seen only from the room: through the parted
+      // curtain there is nothing (not the passage joined behind, its lamps,
+      // or the sign's green spilling into it) until he has walked through
+      // it, and from the passage it is not there. Origin: the plane's foot,
+      // centred; it faces +z (the room).
+      curtainvoid(mats, o) {
+        const g = new THREE.Group();
+        const w = o.w || 3.0, h = o.h || 3.2;
+        const m = new THREE.Mesh(new THREE.PlaneGeometry(w, h), owned(new THREE.MeshBasicMaterial({ color: 0x000000, fog: false })));
+        m.position.set(0, h / 2, 0);
+        m.castShadow = false;
+        m.receiveShadow = false;
+        g.add(m);
+        return g;
+      },
       // The street from S0, seen from inside the lobby's locked glass doors
       // (Doc 1 S3 H: "the street from S0, but with no sun and no shadows at
       // all"; Doc 2: "flat grey light, and no shadows whatsoever cast by any
@@ -1014,11 +1033,12 @@ const BUILDERS = {
             const door = room.children.find((ch) => ch.name === `door:${o.dressGlass}`);
             if (door) {
               const milky = mats.get('glass');
-              const clear = owned(new THREE.MeshStandardMaterial({
-                // not mirror-smooth: the lobby's lamps make a soft sheen on
-                // it, not two bright points that read as lamps lit outside
-                color: new THREE.Color('#c9d6da'), roughness: o.glassRough || 0.2, metalness: 0.1,
-                transparent: true, opacity: o.glassOpacity || 0.07, depthWrite: false
+              // a faint tint lit by the lobby, with no highlights: the
+              // lobby's ceiling lamps made bright points (or, rougher, soft
+              // blobs) on the pane that read as lamps lit in the dead street
+              const clear = owned(new THREE.MeshLambertMaterial({
+                color: new THREE.Color('#c9d6da'),
+                transparent: true, opacity: o.glassOpacity || 0.08, depthWrite: false
               }));
               door.traverse((ch) => { if (ch.isMesh && ch.material === milky) ch.material = clear; });
             }
