@@ -18184,6 +18184,7 @@
      "node": "lib_pallets",
      "collide": true,
      "n": 7,
+     "mat": "lp_wood",
      "fallback": "boxtower"
     },
     {
@@ -18195,6 +18196,7 @@
      ],
      "rot": 31,
      "n": 22,
+     "cols": 2,
      "seed": 2
     },
     {
@@ -18206,6 +18208,7 @@
      ],
      "rot": 58,
      "n": 20,
+     "cols": 2,
      "seed": 3
     },
     {
@@ -18219,6 +18222,7 @@
      "node": "lib_pallets",
      "collide": true,
      "n": 10,
+     "mat": "lp_wood",
      "fallback": "boxtower"
     },
     {
@@ -18230,6 +18234,7 @@
      ],
      "rot": 2,
      "n": 14,
+     "cols": 2,
      "seed": 5
     },
     {
@@ -18241,6 +18246,7 @@
      ],
      "rot": 48,
      "n": 8,
+     "cols": 2,
      "seed": 6
     },
     {
@@ -18254,6 +18260,7 @@
      "node": "lib_pallets",
      "collide": true,
      "n": 10,
+     "mat": "lp_wood",
      "fallback": "boxtower"
     },
     {
@@ -18265,6 +18272,7 @@
      ],
      "rot": 84,
      "n": 6,
+     "cols": 2,
      "seed": 8
     },
     {
@@ -18276,6 +18284,7 @@
      ],
      "rot": 63,
      "n": 22,
+     "cols": 2,
      "seed": 9
     },
     {
@@ -18289,6 +18298,7 @@
      "node": "lib_pallets",
      "collide": true,
      "n": 5,
+     "mat": "lp_wood",
      "fallback": "boxtower"
     },
     {
@@ -18300,6 +18310,7 @@
      ],
      "rot": 89,
      "n": 12,
+     "cols": 2,
      "seed": 11
     },
     {
@@ -18311,6 +18322,7 @@
      ],
      "rot": 58,
      "n": 20,
+     "cols": 2,
      "seed": 12
     },
     {
@@ -18322,6 +18334,7 @@
      ],
      "rot": 54,
      "n": 10,
+     "cols": 2,
      "seed": 13
     },
     {
@@ -18335,6 +18348,7 @@
      "node": "lib_pallets",
      "collide": true,
      "n": 9,
+     "mat": "lp_wood",
      "fallback": "boxtower"
     },
     {
@@ -18346,6 +18360,7 @@
      ],
      "rot": 63,
      "n": 22,
+     "cols": 2,
      "seed": 15
     },
     {
@@ -18357,6 +18372,7 @@
      ],
      "rot": 45,
      "n": 22,
+     "cols": 2,
      "seed": 16
     },
     {
@@ -18370,6 +18386,7 @@
      "node": "lib_pallets",
      "collide": true,
      "n": 12,
+     "mat": "lp_wood",
      "fallback": "boxtower"
     },
     {
@@ -18381,6 +18398,7 @@
      ],
      "rot": 1,
      "n": 14,
+     "cols": 2,
      "seed": 18
     },
     {
@@ -18392,6 +18410,7 @@
      ],
      "rot": 54,
      "n": 14,
+     "cols": 2,
      "seed": 19
     },
     {
@@ -18405,6 +18424,7 @@
      "node": "lib_pallets",
      "collide": true,
      "n": 6,
+     "mat": "lp_wood",
      "fallback": "boxtower"
     },
     {
@@ -18416,6 +18436,7 @@
      ],
      "rot": 84,
      "n": 6,
+     "cols": 2,
      "seed": 21
     },
     {
@@ -18427,6 +18448,7 @@
      ],
      "rot": 38,
      "n": 8,
+     "cols": 2,
      "seed": 22
     },
     {
@@ -18440,6 +18462,7 @@
      "node": "lib_pallets",
      "collide": true,
      "n": 10,
+     "mat": "lp_wood",
      "fallback": "boxtower"
     },
     {
@@ -18451,6 +18474,7 @@
      ],
      "rot": 10,
      "n": 8,
+     "cols": 2,
      "seed": 24
     },
     {
@@ -18462,6 +18486,7 @@
      ],
      "rot": 10,
      "n": 8,
+     "cols": 2,
      "seed": 25
     },
     {
@@ -18475,6 +18500,7 @@
      "node": "lib_pallets",
      "collide": true,
      "n": 12,
+     "mat": "lp_wood",
      "fallback": "boxtower"
     },
     {
@@ -18486,6 +18512,7 @@
      ],
      "rot": 77,
      "n": 8,
+     "cols": 2,
      "seed": 27
     },
     {
@@ -18497,6 +18524,7 @@
      ],
      "rot": 43,
      "n": 18,
+     "cols": 2,
      "seed": 28
     },
     {
@@ -18510,6 +18538,7 @@
      "node": "lib_pallets",
      "collide": true,
      "n": 9,
+     "mat": "lp_wood",
      "fallback": "boxtower"
     },
     {
@@ -18521,6 +18550,7 @@
      ],
      "rot": 82,
      "n": 20,
+     "cols": 2,
      "seed": 30
     },
     {
@@ -18532,6 +18562,7 @@
      ],
      "rot": 4,
      "n": 10,
+     "cols": 2,
      "seed": 31
     },
     {
@@ -18545,6 +18576,7 @@
      "node": "lib_pallets",
      "collide": true,
      "n": 5,
+     "mat": "lp_wood",
      "fallback": "boxtower"
     },
     {
@@ -18558,6 +18590,7 @@
      "node": "lib_pallets",
      "collide": true,
      "n": 5,
+     "mat": "lp_wood",
      "fallback": "boxtower"
     },
     {
@@ -18569,6 +18602,7 @@
      ],
      "rot": 76,
      "n": 22,
+     "cols": 2,
      "seed": 34
     },
     {
@@ -18580,6 +18614,7 @@
      ],
      "rot": 64,
      "n": 12,
+     "cols": 2,
      "seed": 35
     },
     {
@@ -18593,6 +18628,7 @@
      "node": "lib_pallets",
      "collide": true,
      "n": 7,
+     "mat": "lp_wood",
      "fallback": "boxtower"
     },
     {
@@ -18604,6 +18640,7 @@
      ],
      "rot": 10,
      "n": 16,
+     "cols": 2,
      "seed": 37
     },
     {
@@ -18615,6 +18652,7 @@
      ],
      "rot": 28,
      "n": 14,
+     "cols": 2,
      "seed": 38
     },
     {
@@ -18628,6 +18666,7 @@
      "node": "lib_pallets",
      "collide": true,
      "n": 9,
+     "mat": "lp_wood",
      "fallback": "boxtower"
     },
     {
@@ -18639,6 +18678,7 @@
      ],
      "rot": 45,
      "n": 14,
+     "cols": 2,
      "seed": 40
     },
     {
@@ -18650,6 +18690,7 @@
      ],
      "rot": 62,
      "n": 16,
+     "cols": 2,
      "seed": 41
     },
     {
@@ -18663,6 +18704,7 @@
      "node": "lib_pallets",
      "collide": true,
      "n": 7,
+     "mat": "lp_wood",
      "fallback": "boxtower"
     },
     {
@@ -18674,6 +18716,7 @@
      ],
      "rot": 87,
      "n": 22,
+     "cols": 2,
      "seed": 43
     },
     {
@@ -18685,6 +18728,7 @@
      ],
      "rot": 86,
      "n": 16,
+     "cols": 2,
      "seed": 44
     },
     {
@@ -18696,6 +18740,7 @@
      ],
      "rot": 67,
      "n": 22,
+     "cols": 2,
      "seed": 45
     },
     {
@@ -18709,6 +18754,7 @@
      "node": "lib_pallets",
      "collide": true,
      "n": 11,
+     "mat": "lp_wood",
      "fallback": "boxtower"
     },
     {
@@ -18720,6 +18766,7 @@
      ],
      "rot": 53,
      "n": 8,
+     "cols": 2,
      "seed": 47
     },
     {
@@ -18731,6 +18778,7 @@
      ],
      "rot": 37,
      "n": 14,
+     "cols": 2,
      "seed": 48
     },
     {
@@ -18744,6 +18792,7 @@
      "node": "lib_pallets",
      "collide": true,
      "n": 10,
+     "mat": "lp_wood",
      "fallback": "boxtower"
     },
     {
@@ -18755,6 +18804,7 @@
      ],
      "rot": 31,
      "n": 22,
+     "cols": 2,
      "seed": 50
     },
     {
@@ -18766,6 +18816,7 @@
      ],
      "rot": 76,
      "n": 22,
+     "cols": 2,
      "seed": 51
     },
     {
@@ -18779,6 +18830,7 @@
      "node": "lib_pallets",
      "collide": true,
      "n": 5,
+     "mat": "lp_wood",
      "fallback": "boxtower"
     },
     {
@@ -18790,6 +18842,7 @@
      ],
      "rot": 72,
      "n": 18,
+     "cols": 2,
      "seed": 53
     },
     {
@@ -18801,6 +18854,7 @@
      ],
      "rot": 17,
      "n": 6,
+     "cols": 2,
      "seed": 54
     },
     {
@@ -18812,6 +18866,7 @@
      ],
      "rot": 11,
      "n": 8,
+     "cols": 2,
      "seed": 55
     },
     {
@@ -18825,6 +18880,7 @@
      "node": "lib_pallets",
      "collide": true,
      "n": 5,
+     "mat": "lp_wood",
      "fallback": "boxtower"
     },
     {
@@ -18836,6 +18892,7 @@
      ],
      "rot": 83,
      "n": 8,
+     "cols": 2,
      "seed": 57
     },
     {
@@ -18847,6 +18904,7 @@
      ],
      "rot": 10,
      "n": 10,
+     "cols": 2,
      "seed": 58
     },
     {
@@ -18860,6 +18918,7 @@
      "node": "lib_pallets",
      "collide": true,
      "n": 7,
+     "mat": "lp_wood",
      "fallback": "boxtower"
     },
     {
@@ -18871,6 +18930,7 @@
      ],
      "rot": 40,
      "n": 12,
+     "cols": 2,
      "seed": 60
     },
     {
@@ -18882,6 +18942,7 @@
      ],
      "rot": 41,
      "n": 8,
+     "cols": 2,
      "seed": 61
     },
     {
@@ -18895,6 +18956,7 @@
      "node": "lib_pallets",
      "collide": true,
      "n": 9,
+     "mat": "lp_wood",
      "fallback": "boxtower"
     },
     {
@@ -18906,6 +18968,7 @@
      ],
      "rot": 49,
      "n": 10,
+     "cols": 2,
      "seed": 63
     },
     {
@@ -18917,6 +18980,7 @@
      ],
      "rot": 12,
      "n": 22,
+     "cols": 2,
      "seed": 64
     },
     {
@@ -18930,6 +18994,7 @@
      "node": "lib_pallets",
      "collide": true,
      "n": 9,
+     "mat": "lp_wood",
      "fallback": "boxtower"
     },
     {
@@ -18943,7 +19008,7 @@
      "d": 1.1,
      "h": 1.1,
      "glass": false,
-     "mat": "lp_dark",
+     "mat": "lp_grey",
      "name": "counter"
     },
     {
@@ -18987,7 +19052,8 @@
      ],
      "rot": 20,
      "node": "lib_mailsacks",
-     "collide": true
+     "collide": true,
+     "mat": "lp_beige"
     },
     {
      "type": "boxtower",
@@ -19125,7 +19191,8 @@
      ],
      "rot": 20,
      "node": "lib_crate",
-     "collide": true
+     "collide": true,
+     "mat": "lp_wood"
     },
     {
      "type": "clock",
@@ -19145,6 +19212,18 @@
      "hang": 8.6
     },
     {
+     "type": "lightcone",
+     "pos": [
+      -12,
+      7.42,
+      -16
+     ],
+     "h": 7.42,
+     "r0": 0.38,
+     "r1": 3.1,
+     "strength": 0.07
+    },
+    {
      "type": "highbay",
      "pos": [
       -12,
@@ -19154,6 +19233,18 @@
      "hang": 8.6
     },
     {
+     "type": "lightcone",
+     "pos": [
+      -12,
+      7.42,
+      -6
+     ],
+     "h": 7.42,
+     "r0": 0.38,
+     "r1": 3.1,
+     "strength": 0.07
+    },
+    {
      "type": "highbay",
      "pos": [
       -12,
@@ -19161,6 +19252,18 @@
       8
      ],
      "hang": 8.6
+    },
+    {
+     "type": "lightcone",
+     "pos": [
+      -12,
+      7.42,
+      8
+     ],
+     "h": 7.42,
+     "r0": 0.38,
+     "r1": 3.1,
+     "strength": 0.07
     },
     {
      "type": "highbay",
@@ -19172,6 +19275,18 @@
      "hang": 8.6
     },
     {
+     "type": "lightcone",
+     "pos": [
+      0,
+      7.42,
+      -16
+     ],
+     "h": 7.42,
+     "r0": 0.38,
+     "r1": 3.1,
+     "strength": 0.07
+    },
+    {
      "type": "highbay",
      "pos": [
       0,
@@ -19181,6 +19296,18 @@
      "hang": 8.6
     },
     {
+     "type": "lightcone",
+     "pos": [
+      0,
+      7.42,
+      -6
+     ],
+     "h": 7.42,
+     "r0": 0.38,
+     "r1": 3.1,
+     "strength": 0.07
+    },
+    {
      "type": "highbay",
      "pos": [
       0,
@@ -19188,6 +19315,18 @@
       8
      ],
      "hang": 8.6
+    },
+    {
+     "type": "lightcone",
+     "pos": [
+      0,
+      7.42,
+      8
+     ],
+     "h": 7.42,
+     "r0": 0.38,
+     "r1": 3.1,
+     "strength": 0.07
     },
     {
      "type": "highbay",
@@ -19199,6 +19338,18 @@
      "hang": 8.6
     },
     {
+     "type": "lightcone",
+     "pos": [
+      12,
+      7.42,
+      -16
+     ],
+     "h": 7.42,
+     "r0": 0.38,
+     "r1": 3.1,
+     "strength": 0.07
+    },
+    {
      "type": "highbay",
      "pos": [
       12,
@@ -19208,6 +19359,18 @@
      "hang": 8.6
     },
     {
+     "type": "lightcone",
+     "pos": [
+      12,
+      7.42,
+      -6
+     ],
+     "h": 7.42,
+     "r0": 0.38,
+     "r1": 3.1,
+     "strength": 0.07
+    },
+    {
      "type": "highbay",
      "pos": [
       12,
@@ -19215,6 +19378,18 @@
       8
      ],
      "hang": 8.6
+    },
+    {
+     "type": "lightcone",
+     "pos": [
+      12,
+      7.42,
+      8
+     ],
+     "h": 7.42,
+     "r0": 0.38,
+     "r1": 3.1,
+     "strength": 0.07
     }
    ],
    "footstep": {
@@ -19994,6 +20169,250 @@
      "color": "#a8d8e0",
      "opacity": 0.5,
      "rise": 0.05
+    },
+    {
+     "type": "caustics",
+     "pos": [
+      0,
+      0,
+      0
+     ],
+     "rects": [
+      [
+       -13.0,
+       13.0,
+       -13.0,
+       0.15000000000000005
+      ],
+      [
+       -13.0,
+       13.0,
+       2.85,
+       13.0
+      ],
+      [
+       -13.0,
+       -1.3499999999999999,
+       0.15000000000000005,
+       2.85
+      ],
+      [
+       1.3499999999999999,
+       13.0,
+       0.15000000000000005,
+       2.85
+      ]
+     ],
+     "strength": 0.24,
+     "scale": 2.2
+    },
+    {
+     "type": "caustics",
+     "pos": [
+      -9.997,
+      0,
+      -10.239
+     ],
+     "w": 1.2,
+     "d": 1.2,
+     "h": 12.0,
+     "u": -9.55,
+     "strength": 0.42
+    },
+    {
+     "type": "caustics",
+     "pos": [
+      -9.539,
+      0,
+      -3.849
+     ],
+     "w": 1.2,
+     "d": 1.2,
+     "h": 12.0,
+     "u": -5.59,
+     "strength": 0.42
+    },
+    {
+     "type": "caustics",
+     "pos": [
+      -9.7,
+      0,
+      3.062
+     ],
+     "w": 1.2,
+     "d": 1.2,
+     "h": 12.0,
+     "u": -1.62,
+     "strength": 0.42
+    },
+    {
+     "type": "caustics",
+     "pos": [
+      -10.369,
+      0,
+      9.76
+     ],
+     "w": 1.2,
+     "d": 1.2,
+     "h": 12.0,
+     "u": 2.34,
+     "strength": 0.42
+    },
+    {
+     "type": "caustics",
+     "pos": [
+      -3.898,
+      0,
+      -9.843
+     ],
+     "w": 1.2,
+     "d": 1.2,
+     "h": 12.0,
+     "u": -7.15,
+     "strength": 0.42
+    },
+    {
+     "type": "caustics",
+     "pos": [
+      -3.25,
+      0,
+      -3.25
+     ],
+     "w": 1.2,
+     "d": 1.2,
+     "h": 12.0,
+     "u": -3.18,
+     "strength": 0.42
+    },
+    {
+     "type": "caustics",
+     "pos": [
+      -3.25,
+      0,
+      3.25
+     ],
+     "w": 1.2,
+     "d": 1.2,
+     "h": 12.0,
+     "u": 0.78,
+     "strength": 0.42
+    },
+    {
+     "type": "caustics",
+     "pos": [
+      -3.852,
+      0,
+      9.177
+     ],
+     "w": 1.2,
+     "d": 1.2,
+     "h": 12.0,
+     "u": 4.75,
+     "strength": 0.42
+    },
+    {
+     "type": "caustics",
+     "pos": [
+      3.144,
+      0,
+      -9.292
+     ],
+     "w": 1.2,
+     "d": 1.2,
+     "h": 12.0,
+     "u": -4.75,
+     "strength": 0.42
+    },
+    {
+     "type": "caustics",
+     "pos": [
+      3.25,
+      0,
+      -3.25
+     ],
+     "w": 1.2,
+     "d": 1.2,
+     "h": 12.0,
+     "u": -0.78,
+     "strength": 0.42
+    },
+    {
+     "type": "caustics",
+     "pos": [
+      3.25,
+      0,
+      3.25
+     ],
+     "w": 1.2,
+     "d": 1.2,
+     "h": 12.0,
+     "u": 3.18,
+     "strength": 0.42
+    },
+    {
+     "type": "caustics",
+     "pos": [
+      2.723,
+      0,
+      9.363
+     ],
+     "w": 1.2,
+     "d": 1.2,
+     "h": 12.0,
+     "u": 7.15,
+     "strength": 0.42
+    },
+    {
+     "type": "caustics",
+     "pos": [
+      9.928,
+      0,
+      -9.123
+     ],
+     "w": 1.2,
+     "d": 1.2,
+     "h": 12.0,
+     "u": -2.34,
+     "strength": 0.42
+    },
+    {
+     "type": "caustics",
+     "pos": [
+      9.858,
+      0,
+      -3.395
+     ],
+     "w": 1.2,
+     "d": 1.2,
+     "h": 12.0,
+     "u": 1.62,
+     "strength": 0.42
+    },
+    {
+     "type": "caustics",
+     "pos": [
+      10.417,
+      0,
+      2.615
+     ],
+     "w": 1.2,
+     "d": 1.2,
+     "h": 12.0,
+     "u": 5.59,
+     "strength": 0.42
+    },
+    {
+     "type": "caustics",
+     "pos": [
+      10.252,
+      0,
+      9.455
+     ],
+     "w": 1.2,
+     "d": 1.2,
+     "h": 12.0,
+     "u": 9.55,
+     "strength": 0.42
     }
    ],
    "footstep": {
@@ -20204,13 +20623,13 @@
      ],
      "max": [
       2.04,
-      3.2,
+      2.36,
       8.06
      ],
      "mat": "glass_dark",
      "collide": true,
-     "shadow": false,
-     "tile": 3.0
+     "invisible": true,
+     "shadow": false
     },
     {
      "min": [
@@ -20220,29 +20639,28 @@
      ],
      "max": [
       6.3,
-      3.2,
+      2.36,
       8.06
      ],
      "mat": "glass_dark",
      "collide": true,
-     "shadow": false,
-     "tile": 3.0
+     "invisible": true,
+     "shadow": false
     },
     {
      "min": [
-      2.04,
+      -6.0,
       2.36,
-      8.0
+      7.96
      ],
      "max": [
-      3.96,
-      3.2,
+      6.0,
+      2.9000000000000004,
       8.06
      ],
-     "mat": "glass_dark",
-     "collide": true,
-     "shadow": false,
-     "tile": 3.0
+     "mat": "plaster",
+     "collide": false,
+     "tile": 2.0
     },
     {
      "min": [
@@ -20266,7 +20684,7 @@
      ],
      "max": [
       2.06,
-      3.2,
+      2.36,
       8.09
      ],
      "mat": "concrete",
@@ -20281,7 +20699,7 @@
      ],
      "max": [
       4.02,
-      3.2,
+      2.36,
       8.09
      ],
      "mat": "concrete",
@@ -20678,6 +21096,28 @@
      "name": "reflection"
     },
     {
+     "type": "shopglass",
+     "pos": [
+      0.0,
+      0,
+      8.03
+     ],
+     "panes": [
+      [
+       -6.3,
+       2.04,
+       0,
+       2.36
+      ],
+      [
+       3.96,
+       6.3,
+       0,
+       2.36
+      ]
+     ]
+    },
+    {
      "type": "fluoro",
      "pos": [
       -1.6,
@@ -20938,7 +21378,7 @@
    "wall": "plaster_dark",
    "ceiling": "plaster_dark",
    "tile": {
-    "floor": 2.5,
+    "floor": 6.0,
     "wall": 2.0,
     "ceiling": 2.0
    },
@@ -20946,7 +21386,7 @@
     "mat": "marble",
     "h": 1.1,
     "t": 0.03,
-    "tile": 2.5
+    "tile": 7.0
    },
    "cornice": {
     "mat": "plaster_dark",
@@ -21122,6 +21562,8 @@
      "rot": 90,
      "node": "lib_chair",
      "collide": true,
+     "mat": "lp_wood",
+     "paint": "#3b241c",
      "fallback": "chair"
     },
     {
@@ -21147,6 +21589,8 @@
      "rot": -90,
      "node": "lib_chair",
      "collide": true,
+     "mat": "lp_wood",
+     "paint": "#3b241c",
      "fallback": "chair"
     },
     {
@@ -21172,6 +21616,8 @@
      "rot": 90,
      "node": "lib_chair",
      "collide": true,
+     "mat": "lp_wood",
+     "paint": "#3b241c",
      "fallback": "chair"
     },
     {
@@ -21197,6 +21643,8 @@
      "rot": -90,
      "node": "lib_chair",
      "collide": true,
+     "mat": "lp_wood",
+     "paint": "#3b241c",
      "fallback": "chair"
     },
     {
@@ -21222,6 +21670,8 @@
      "rot": 90,
      "node": "lib_chair",
      "collide": true,
+     "mat": "lp_wood",
+     "paint": "#3b241c",
      "fallback": "chair"
     },
     {
@@ -21247,6 +21697,8 @@
      "rot": -90,
      "node": "lib_chair",
      "collide": true,
+     "mat": "lp_wood",
+     "paint": "#3b241c",
      "fallback": "chair"
     },
     {
@@ -21272,6 +21724,8 @@
      "rot": 90,
      "node": "lib_chair",
      "collide": true,
+     "mat": "lp_wood",
+     "paint": "#3b241c",
      "fallback": "chair"
     },
     {
@@ -21297,6 +21751,8 @@
      "rot": -90,
      "node": "lib_chair",
      "collide": true,
+     "mat": "lp_wood",
+     "paint": "#3b241c",
      "fallback": "chair"
     },
     {
@@ -21322,6 +21778,8 @@
      "rot": 90,
      "node": "lib_chair",
      "collide": true,
+     "mat": "lp_wood",
+     "paint": "#3b241c",
      "fallback": "chair"
     },
     {
@@ -21347,6 +21805,8 @@
      "rot": -90,
      "node": "lib_chair",
      "collide": true,
+     "mat": "lp_wood",
+     "paint": "#3b241c",
      "fallback": "chair"
     },
     {
@@ -21372,6 +21832,8 @@
      "rot": 90,
      "node": "lib_chair",
      "collide": true,
+     "mat": "lp_wood",
+     "paint": "#3b241c",
      "fallback": "chair"
     },
     {
@@ -21397,6 +21859,8 @@
      "rot": -90,
      "node": "lib_chair",
      "collide": true,
+     "mat": "lp_wood",
+     "paint": "#3b241c",
      "fallback": "chair"
     },
     {
@@ -21421,7 +21885,17 @@
      ],
      "node": "lib_chair",
      "name": "mychair",
+     "mat": "lp_wood",
+     "paint": "#3b241c",
      "fallback": "chair"
+    },
+    {
+     "type": "palette",
+     "pos": [
+      0,
+      0,
+      0
+     ]
     },
     {
      "type": "slip",
@@ -21432,6 +21906,18 @@
      ],
      "rot": 14,
      "name": "hundredth"
+    },
+    {
+     "type": "numslip",
+     "pos": [
+      0.04,
+      0.582,
+      -8.08
+     ],
+     "rot": 14,
+     "n": 100,
+     "bare": true,
+     "name": "hundredth_print"
     },
     {
      "type": "blurfigure",
@@ -22076,6 +22562,34 @@
      "opacity": 0.2
     },
     {
+     "type": "glb",
+     "pos": [
+      -0.9,
+      0,
+      1.2
+     ],
+     "rot": 90,
+     "node": "lib_chair",
+     "name": "mychair",
+     "mat": "lp_curtain",
+     "paint": "#45101a",
+     "fallback": "chair"
+    },
+    {
+     "type": "glb",
+     "pos": [
+      0.9,
+      0,
+      1.2
+     ],
+     "rot": -90,
+     "node": "lib_chair",
+     "name": "vacated",
+     "mat": "lp_curtain",
+     "paint": "#45101a",
+     "fallback": "chair"
+    },
+    {
      "type": "palette",
      "pos": [
       0,
@@ -22208,30 +22722,6 @@
      ]
     },
     {
-     "type": "glb",
-     "pos": [
-      -0.9,
-      0,
-      1.2
-     ],
-     "rot": 90,
-     "node": "lib_chair",
-     "name": "mychair",
-     "fallback": "chair"
-    },
-    {
-     "type": "glb",
-     "pos": [
-      0.9,
-      0,
-      1.2
-     ],
-     "rot": -90,
-     "node": "lib_chair",
-     "name": "vacated",
-     "fallback": "chair"
-    },
-    {
      "type": "hands",
      "pos": [
       -0.3,
@@ -22240,7 +22730,18 @@
      ],
      "rot": -90,
      "name": "hands",
-     "slip": true,
+     "hidden": true
+    },
+    {
+     "type": "numslip",
+     "pos": [
+      -0.24,
+      0.872,
+      1.2
+     ],
+     "rot": -90,
+     "n": 99,
+     "name": "slip99",
      "hidden": true
     },
     {

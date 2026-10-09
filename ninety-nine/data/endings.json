@@ -11,7 +11,8 @@
         "flag": "NEVER_SAT",
         "hide": [
           "mychair",
-          "hundredth"
+          "hundredth",
+          "hundredth_print"
         ],
         "note": "Doc 1 §2.5 / §6.4: if NEVER_SAT there is no chair for him at all in the boardroom; he remains standing at the table for the length of the hold."
       },
@@ -59,8 +60,10 @@
     "autoSeconds": 90,
     "preShot": "sit",
     "show": [
-      "hands"
+      "hands",
+      "slip99"
     ],
+    "_showNote": "`slip99` is the slip in his hands, printed 99 (Doc 1 §6.4: uncalled).",
     "beats": [
       {
         "sfxCue": "speaker-click"
@@ -94,7 +97,8 @@
         "flag": "NEVER_SAT",
         "hide": [
           "mychair",
-          "hundredth"
+          "hundredth",
+          "hundredth_print"
         ]
       }
     ],

@@ -3070,17 +3070,85 @@ const BUILDERS = {
       }
       // inside: the intake form, his answers, received six months ago --
       // leaning up against the far wall so it is read from standing, and a
-      // second sheet slid out onto the table in front of the box
+      // second sheet slid out onto the table in front of the box. The form
+      // is printed: the firm, APPLICATION, the three fields of S0's form
+      // (text/form.json), his answers in a hand too wet to read, and the
+      // firm's RECEIVED stamp (Doc 1 §5 S8: "Dated six months ago").
+      const self = BUILDERS.soggypackage;
+      if (!self._form && typeof document !== 'undefined') {
+        const c = document.createElement('canvas');
+        c.width = 256; c.height = 364;
+        const x = c.getContext('2d');
+        x.fillStyle = '#e8e2d0'; x.fillRect(0, 0, 256, 364);
+        x.fillStyle = '#2b2b2b';
+        x.textAlign = 'center';
+        x.font = 'bold 15px "Times New Roman", Times, serif';
+        x.fillText('VELLUM & ASHE, LLP', 128, 32);
+        x.font = 'bold 30px "Times New Roman", Times, serif';
+        x.fillText('APPLICATION', 128, 66);
+        x.fillRect(20, 78, 216, 3);
+        x.textAlign = 'left';
+        const labels = ['NAME, FOR THE RECORD', 'THE CANDIDATE WILL COMPLY', 'PREFERRED HOURS'];
+        let seed = 31;
+        const rnd = () => { seed = (seed * 16807) % 2147483647; return (seed - 1) / 2147483646; };
+        labels.forEach((t, i) => {
+          const y0 = 104 + i * 62;
+          x.fillStyle = '#2b2b2b';
+          x.font = '11px "Times New Roman", Times, serif';
+          x.fillText(t, 26, y0);
+          x.fillRect(26, y0 + 28, 204, 1);
+          // his answer: a hand, run by the wet until it cannot be read
+          x.strokeStyle = 'rgba(30,34,70,0.9)'; x.lineWidth = 3.4;
+          x.beginPath();
+          let px = 34, py = y0 + 22;
+          x.moveTo(px, py);
+          const n = 9 + Math.floor(rnd() * 8);
+          for (let k = 0; k < n; k++) { const nx = px + 6 + rnd() * 9; x.quadraticCurveTo(px + rnd() * 6, py - 10 - rnd() * 6, nx, py + (rnd() - 0.5) * 4); px = nx; }
+          x.stroke();
+        });
+        // RECEIVED, and under it the date, run with the wet (six months
+        // ago: the caption says it; no calendar date is canon)
+        x.save();
+        x.translate(160, 306); x.rotate(-0.16);
+        x.strokeStyle = 'rgba(150,26,32,0.9)'; x.fillStyle = 'rgba(150,26,32,0.9)'; x.lineWidth = 4.5;
+        x.strokeRect(-80, -30, 160, 60);
+        x.textAlign = 'center';
+        x.font = 'bold 27px Arial, Helvetica, sans-serif';
+        x.fillText('RECEIVED', 0, 0);
+        x.filter = 'blur(1.5px)';
+        x.fillRect(-44, 10, 24, 11); x.fillRect(-12, 10, 24, 11); x.fillRect(20, 10, 28, 11);
+        x.restore();
+        // the wet, soaked up from the bottom of the box
+        const grd = x.createLinearGradient(0, 364, 0, 230);
+        grd.addColorStop(0, 'rgba(70,50,30,0.55)'); grd.addColorStop(1, 'rgba(70,50,30,0)');
+        x.fillStyle = grd; x.fillRect(0, 230, 256, 134);
+        const tex = new THREE.CanvasTexture(c);
+        tex.colorSpace = THREE.SRGBColorSpace;
+        tex.anisotropy = 4;
+        self._form = new THREE.MeshLambertMaterial({ map: tex });
+      }
+      const formMat = self._form || null;
       const sheet = (tilt, x, y, z, ry) => {
         const sh = new THREE.Group();
         sh.add(box(mats, 'lp_paper', 0.21, 0.004, 0.297, 0, 0, 0, { castShadow: false }));
-        for (let i = 0; i < 7; i++) sh.add(box(mats, 'lp_dark', 0.15 - (i % 3) * 0.03, 0.002, 0.007, -0.02 + (i % 3) * 0.008, 0.004, -0.115 + i * 0.036, { castShadow: false })); // the lines of his hand
+        if (formMat) {
+          const face = new THREE.Mesh(new THREE.PlaneGeometry(0.205, 0.292), formMat);
+          face.rotation.x = -Math.PI / 2; // lying on the sheet, its top edge toward -z
+          face.position.y = 0.0045;
+          sh.add(face);
+        } else {
+          for (let i = 0; i < 7; i++) sh.add(box(mats, 'lp_dark', 0.15 - (i % 3) * 0.03, 0.002, 0.007, -0.02 + (i % 3) * 0.008, 0.004, -0.115 + i * 0.036, { castShadow: false })); // the lines of his hand
+        }
         sh.position.set(x, y, z);
         sh.rotation.set(tilt, ry, 0, 'YXZ');
         body.add(sh);
       };
-      sheet(1.0, 0.03, 0.012 + 0.1485 * Math.sin(1.0), -d / 2 + 0.014 + 0.1485 * Math.cos(1.0), 0.06);
-      sheet(0, -0.06, 0.0, d / 2 + 0.1, -0.35);
+      // one still in the box, standing up out of it against the back wall
+      sheet(1.42, 0.03, 0.09 + 0.1485 * Math.sin(1.42), -d / 2 + 0.016 + 0.1485 * Math.cos(1.42), 0.05);
+      // and the first page, pulled out and propped against the front of the
+      // box, its face up toward whoever opened it
+      const lean = 1.065;
+      sheet(lean, -0.03, 0.002 + 0.1485 * Math.sin(lean), d / 2 + 0.012 + 0.1485 * Math.cos(lean), -0.12);
       body.add(box(mats, wet, w * 0.7, 0.002, d * 0.6, -0.04, 0.013, 0.03, { castShadow: false })); // the wet has gone through to the floor of the box
     }
     // the stain: dark and wet from the base up, creeping higher in tongues
@@ -3176,28 +3244,43 @@ const BUILDERS = {
   // S8: "towers of photoreal cardboard fading into real volumetric fog"):
   // `n` boxes, each a little off square and off true, as ONE instanced mesh
   // (a 12 m tower is one draw call), with an invisible collider at its foot.
+  // `cols` 2 stacks each course two cartons by two (a pallet's footprint),
+  // so a tower reads as a stack, not a column; the top course may be short.
   cartontower(mats, o) {
     const g = new THREE.Group();
     const n = Math.max(1, o.n || 12);
+    const cols = Math.max(1, Math.min(3, o.cols || 1));
     let seed = (o.seed || 1) * 7919 + n;
     const rnd = () => { seed = (seed * 16807) % 2147483647; return (seed - 1) / 2147483646; };
-    const mesh = new THREE.InstancedMesh(new THREE.BoxGeometry(1, 1, 1), mats.get(o.mat || 'cardboard'), n);
+    const mesh = new THREE.InstancedMesh(new THREE.BoxGeometry(1, 1, 1), mats.get(o.mat || 'cardboard'), n * cols * cols);
     mesh.castShadow = true;
     mesh.receiveShadow = true;
     const m = new THREE.Matrix4(), q = new THREE.Quaternion(), e = new THREE.Euler(), p = new THREE.Vector3(), s = new THREE.Vector3();
-    let y = 0, base = 0.8;
+    const pitch = 0.76;
+    let y = 0, base = 0.8, k = 0;
     for (let i = 0; i < n; i++) {
-      const h = 0.42 + rnd() * 0.18;
-      const w = (0.68 + rnd() * 0.16) * (i === 0 ? 1.04 : 1), d = w * (0.85 + rnd() * 0.25);
-      if (i === 0) base = Math.max(w, d);
-      e.set(0, (rnd() - 0.5) * 0.22, 0);
-      q.setFromEuler(e);
-      p.set((rnd() - 0.5) * 0.12, y + h / 2, (rnd() - 0.5) * 0.12);
-      s.set(w, h, d);
-      m.compose(p, q, s);
-      mesh.setMatrixAt(i, m);
+      const h = 0.42 + rnd() * 0.18;              // one height per course: nothing above floats
+      const yaw = (rnd() - 0.5) * (cols > 1 ? 0.1 : 0.22);
+      const ox = (rnd() - 0.5) * 0.12, oz = (rnd() - 0.5) * 0.12;
+      const cy = Math.cos(yaw), sy = Math.sin(yaw);
+      for (let a = 0; a < cols; a++) {
+        for (let b = 0; b < cols; b++) {
+          if (cols > 1 && i === n - 1 && i > 0 && rnd() < 0.35) continue; // the top course, short a carton or two
+          const w = (cols > 1 ? 0.66 + rnd() * 0.08 : (0.68 + rnd() * 0.16) * (i === 0 ? 1.04 : 1));
+          const d = cols > 1 ? 0.66 + rnd() * 0.08 : w * (0.85 + rnd() * 0.25);
+          if (i === 0 && a === 0 && b === 0) base = cols > 1 ? pitch * cols : Math.max(w, d);
+          const lx = (a - (cols - 1) / 2) * pitch + (rnd() - 0.5) * 0.04, lz = (b - (cols - 1) / 2) * pitch + (rnd() - 0.5) * 0.04;
+          e.set(0, yaw + (rnd() - 0.5) * 0.06, 0);
+          q.setFromEuler(e);
+          p.set(ox + lx * cy + lz * sy, y + h / 2, oz - lx * sy + lz * cy);
+          s.set(w, h * (0.97 + rnd() * 0.03), d);
+          m.compose(p, q, s);
+          mesh.setMatrixAt(k++, m);
+        }
+      }
       y += h;
     }
+    mesh.count = k;
     mesh.instanceMatrix.needsUpdate = true;
     mesh.computeBoundingSphere();
     g.add(mesh);
@@ -3485,6 +3568,204 @@ const BUILDERS = {
       geo.attributes.position.needsUpdate = true;
     };
     g.add(pts);
+    return g;
+  },
+  // A queue slip with its number printed on it (Doc 1 §6.4: in PENDING
+  // the slip in his hand reads 99, uncalled; in ASSIMILATION the empty
+  // chair beside him holds a slip reading 100). `n` the number. Read from
+  // the prop's +z side at rot 0 (the number's top toward -z). `bare`: the
+  // print alone, laid on a plain `slip` prop in the same place (a room's
+  // one motif slip stays a `slip`: build_rooms.py counts them).
+  numslip(mats, o) {
+    const g = new THREE.Group();
+    const self = BUILDERS.numslip;
+    const key = String(o.n === undefined ? 99 : o.n);
+    self._tex = self._tex || {};
+    if (!self._tex[key] && typeof document !== 'undefined') {
+      const c = document.createElement('canvas');
+      c.width = 128; c.height = 80;
+      const x = c.getContext('2d');
+      x.fillStyle = '#e8e2d0'; x.fillRect(0, 0, 128, 80);
+      x.fillStyle = '#2b2b2b';
+      x.font = `bold ${key.length > 2 ? 46 : 56}px Arial, Helvetica, sans-serif`;
+      x.textAlign = 'center'; x.textBaseline = 'middle';
+      x.fillText(key, 64, 43);
+      const t = new THREE.CanvasTexture(c);
+      t.colorSpace = THREE.SRGBColorSpace;
+      t.anisotropy = 4;
+      self._tex[key] = t;
+    }
+    const w = o.w || 0.08, d = o.d || 0.05;
+    if (!o.bare) g.add(box(mats, 'lp_paper', w, 0.003, d, 0, 0, 0, { castShadow: false }));
+    if (self._tex[key]) {
+      const mat = new THREE.MeshLambertMaterial({ map: self._tex[key] });
+      mat.userData.owned = true; // the room frees it (the texture re-uploads if another slip uses it)
+      const face = new THREE.Mesh(new THREE.PlaneGeometry(w * 0.98, d * 0.98), mat);
+      face.rotation.x = -Math.PI / 2;
+      face.position.y = o.bare ? 0.0046 : 0.0034; // on a `slip` (4 mm) or on its own (3 mm)
+      face.receiveShadow = true;
+      g.add(face);
+    }
+    return g;
+  },
+  // A shaft of high-bay light down through the mailroom's fog (Doc 1 §5
+  // S8: "real volumetric fog"; Doc 2 S8_C: "high bay lighting with real
+  // falloff"): an open cone, brightest under the lamp and gone by the
+  // floor, added to what is behind it and never writing depth. The fog
+  // takes it to black with distance, not to grey (it is light, not
+  // matter), so the far shafts drown in the fog with the towers.
+  lightcone(mats, o) {
+    const g = new THREE.Group();
+    const h = o.h || 7.0, r0 = o.r0 || 0.38, r1 = o.r1 || 3.0, k = o.strength === undefined ? 0.07 : o.strength;
+    const geo = new THREE.CylinderGeometry(r0, r1, h, 24, 8, true);
+    const col = new THREE.Color(o.color || '#e6ecff');
+    const pos = geo.attributes.position;
+    const c = new Float32Array(pos.count * 3);
+    for (let i = 0; i < pos.count; i++) {
+      const t = Math.min(1, Math.max(0, (pos.getY(i) + h / 2) / h)); // 0 at the floor, 1 at the lamp (clamped: pow() of a hair below 0 is NaN)
+      const a = k * Math.pow(t, 1.8);
+      c[i * 3] = col.r * a; c[i * 3 + 1] = col.g * a; c[i * 3 + 2] = col.b * a;
+    }
+    geo.setAttribute('color', new THREE.BufferAttribute(c, 3));
+    const mat = new THREE.MeshBasicMaterial({ vertexColors: true, transparent: true, blending: THREE.AdditiveBlending, depthWrite: false, side: THREE.DoubleSide });
+    mat.onBeforeCompile = (shader) => {
+      shader.fragmentShader = shader.fragmentShader.replace('#include <fog_fragment>', THREE.ShaderChunk.fog_fragment.replace('fogColor', 'vec3(0.0)'));
+    };
+    mat.customProgramCacheKey = () => 'lightcone';
+    mat.userData.owned = true;
+    const cone = new THREE.Mesh(geo, mat);
+    cone.position.y = -h / 2;
+    cone.castShadow = false;
+    cone.receiveShadow = false;
+    cone.renderOrder = 2;
+    g.add(cone);
+    return g;
+  },
+  // The storefront glass (S8 H / SE_EXPUL), drawn by the store and not by
+  // the room's shell: dark photoreal glass a little less than mirror-sharp,
+  // so the tubes overhead come back off it as soft smears of light and not
+  // as pin-points that read as a night sky beyond it (C3). The room's
+  // invisible boxes in the same place are what he walks into. `panes`:
+  // [[x0, x1, y0, y1], ...] in the prop's frame, on its z = 0 plane.
+  shopglass(mats, o) {
+    const g = new THREE.Group();
+    const mat = new THREE.MeshStandardMaterial({ color: o.color || '#1b2325', metalness: 0.35, roughness: o.roughness === undefined ? 0.34 : o.roughness, transparent: true, opacity: o.opacity || 0.58, depthWrite: false });
+    mat.userData.owned = true;
+    for (const [x0, x1, y0, y1] of o.panes || []) {
+      const pane = new THREE.Mesh(new THREE.BoxGeometry(x1 - x0, y1 - y0, o.t || 0.02), mat);
+      pane.position.set((x0 + x1) / 2, (y0 + y1) / 2, 0);
+      pane.castShadow = false;
+      pane.receiveShadow = false;
+      g.add(pane);
+    }
+    return g;
+  },
+  // Caustics from the surface far above, moving across the dive's tiled
+  // pillars and its floor (Doc 2 S8_H: "real caustics from a surface far
+  // above"; KLING H: "Caustics move across the pillars"). Light, so the
+  // building's (C1): a web of bright arcs, added to the tile under it, two
+  // samplings of one tiling texture drifting apart so the web crawls and
+  // its bright knots come and go, strongest near the surface. The fog takes
+  // it to black with depth. Without `rects`: a sleeve round a pillar `w` x
+  // `d` x `h` (its origin at the pillar's foot). With `rects`: flat patches
+  // [[x0, x1, z0, z1], ...] just over the floor. One material for all.
+  caustics(mats, o) {
+    const g = new THREE.Group();
+    const self = BUILDERS.caustics;
+    if (!self._mat && typeof document !== 'undefined') {
+      // the web: the edges of a tiling Voronoi field (F2 - F1 small), the
+      // way light focused by a rippled surface lies in a net of bright seams
+      const S = 160, N = 22;
+      const c = document.createElement('canvas');
+      c.width = S; c.height = S;
+      const x = c.getContext('2d');
+      let seed = 4111;
+      const rnd = () => { seed = (seed * 16807) % 2147483647; return (seed - 1) / 2147483646; };
+      const pts = [];
+      for (let i = 0; i < N; i++) {
+        const px = rnd() * S, py = rnd() * S;
+        for (const dx of [-S, 0, S]) for (const dy of [-S, 0, S]) pts.push(px + dx, py + dy); // wrapped: it tiles
+      }
+      const img = x.createImageData(S, S);
+      const edge = S / Math.sqrt(N) * 0.12;
+      for (let py = 0; py < S; py++) {
+        for (let px = 0; px < S; px++) {
+          let f1 = 1e9, f2 = 1e9;
+          for (let i = 0; i < pts.length; i += 2) {
+            const ddx = pts[i] - px, ddy = pts[i + 1] - py;
+            const dd = ddx * ddx + ddy * ddy;
+            if (dd < f1) { f2 = f1; f1 = dd; } else if (dd < f2) f2 = dd;
+          }
+          const e = Math.max(0, 1 - (Math.sqrt(f2) - Math.sqrt(f1)) / edge);
+          const v = Math.round(255 * e * e);
+          const o4 = (py * S + px) * 4;
+          img.data[o4] = v; img.data[o4 + 1] = v; img.data[o4 + 2] = v; img.data[o4 + 3] = 255;
+        }
+      }
+      x.putImageData(img, 0, 0);
+      const tex = new THREE.CanvasTexture(c);
+      tex.wrapS = tex.wrapT = THREE.RepeatWrapping;
+      const uT = { value: 0 };
+      const mat = new THREE.MeshBasicMaterial({ map: tex, vertexColors: true, transparent: true, blending: THREE.AdditiveBlending, depthWrite: false, polygonOffset: true, polygonOffsetFactor: -2, polygonOffsetUnits: -2 });
+      mat.onBeforeCompile = (shader) => {
+        shader.uniforms.uT = uT;
+        shader.fragmentShader = 'uniform float uT;\n' + shader.fragmentShader
+          .replace('#include <map_fragment>', [
+            '#ifdef USE_MAP',
+            '  vec3 cA = texture2D( map, vMapUv + vec2( uT * 0.021, uT * 0.013 ) ).rgb;',
+            '  float cB = texture2D( map, vMapUv * 1.31 + vec2( -uT * 0.017, uT * 0.026 ) ).r;',
+            '  diffuseColor.rgb *= cA * ( 0.3 + 1.7 * cB );',
+            '#endif'
+          ].join('\n'))
+          .replace('#include <fog_fragment>', THREE.ShaderChunk.fog_fragment.replace('fogColor', 'vec3(0.0)'));
+      };
+      mat.customProgramCacheKey = () => 'caustics';
+      self._mat = mat;
+      self._uT = uT;
+    }
+    if (!self._mat) return g;
+    const tint = new THREE.Color(o.color || '#8fe6f2');
+    const k = o.strength === undefined ? 0.6 : o.strength;
+    const scale = o.scale || 1.8; // metres per tile of the web
+    const tick = () => { self._uT.value = performance.now() / 1000; };
+    const shade = (geo, fade) => {
+      const pos = geo.attributes.position, nrm = geo.attributes.normal, uv = geo.attributes.uv;
+      const col = new Float32Array(pos.count * 3);
+      for (let i = 0; i < pos.count; i++) {
+        const px = pos.getX(i), py = pos.getY(i), pz = pos.getZ(i);
+        const nx = Math.abs(nrm.getX(i)), nz = Math.abs(nrm.getZ(i));
+        if (nx > 0.5) uv.setXY(i, (pz + (o.u || 0)) / scale, py / scale);
+        else if (nz > 0.5) uv.setXY(i, (px + (o.u || 0)) / scale, py / scale);
+        else uv.setXY(i, px / scale, pz / scale);
+        const a = k * fade(py);
+        col[i * 3] = tint.r * a; col[i * 3 + 1] = tint.g * a; col[i * 3 + 2] = tint.b * a;
+      }
+      uv.needsUpdate = true;
+      geo.setAttribute('color', new THREE.BufferAttribute(col, 3));
+    };
+    if (o.rects) {
+      for (const [x0, x1, z0, z1] of o.rects) {
+        const geo = new THREE.PlaneGeometry(x1 - x0, z1 - z0, 1, 1);
+        geo.rotateX(-Math.PI / 2);
+        geo.translate((x0 + x1) / 2, 0, (z0 + z1) / 2);
+        shade(geo, () => 1);
+        const m = new THREE.Mesh(geo, self._mat);
+        m.position.y = o.lift || 0.012;
+        m.onBeforeRender = tick;
+        m.renderOrder = 2;
+        g.add(m);
+      }
+      return g;
+    }
+    const w = o.w || 1.2, d = o.d || 1.2, h = o.h || 10;
+    const geo = new THREE.BoxGeometry(w + 0.02, h, d + 0.02, 1, 6, 1);
+    geo.translate(0, h / 2, 0);
+    // bright under the surface, a faint crawl by the floor
+    shade(geo, (y) => 0.1 + 0.9 * Math.pow(Math.min(1, Math.max(0, y / h)), 1.6));
+    const m = new THREE.Mesh(geo, self._mat);
+    m.onBeforeRender = tick;
+    m.renderOrder = 2;
+    g.add(m);
     return g;
   },
   // ---- polish: S8 + endings -- end ----

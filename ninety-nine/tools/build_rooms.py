@@ -1349,17 +1349,18 @@ def mailroom():
             if z <= -12 and (abs(x) == 4 or (x, z) == (-8, -20)):
                 continue  # the back hall behind the counter: the deliveries door and the sorting table
             if (x + z) % 3 == 0:
-                props.append(glb("lib_pallets", [x + jx, 0, z + jz], rot=rot, fallback="boxtower", collide=True, n=n))
+                # pallets of mail sacks, tinted (the catalog model is white)
+                props.append(glb("lib_pallets", [x + jx, 0, z + jz], rot=rot, fallback="boxtower", collide=True, n=n, mat="lp_wood"))
             else:
-                # 3 to 11 m of cartons, up into the fog (one instanced mesh each)
-                props.append(prop("cartontower", [x + jx, 0, z + jz], rot=rot, n=2 * n - 2, seed=len(props) + 1))
+                # 3 to 11 m of cartons, two by two, up into the fog (one instanced mesh each)
+                props.append(prop("cartontower", [x + jx, 0, z + jz], rot=rot, n=2 * n - 2, cols=2, seed=len(props) + 1))
     # The counter: laminate top on a dark body, the clerk behind it (static,
     # C5), the package at the clerk's end until he slides it across.
-    props.append(prop("counter", [0, 0, -9.0], w=6.0, d=1.1, h=1.1, glass=False, mat="lp_dark", name="counter"))
+    props.append(prop("counter", [0, 0, -9.0], w=6.0, d=1.1, h=1.1, glass=False, mat="lp_grey", name="counter"))
     props.append(prop("blurfigure", [-0.1, 0, -9.95], suit="lp_blue", name="clerk"))
     props.append(prop("soggypackage", [0.4, 1.16, -9.3], rot=12, name="package"))
     props.append(prop("wetring", [0.4, 1.161, -9.3], rot=12, w=0.6, d=0.46, name="ring"))
-    props.append(glb("lib_mailsacks", [-4.7, 0, -6.3], rot=20, fallback=None, collide=True))
+    props.append(glb("lib_mailsacks", [-4.7, 0, -6.3], rot=20, fallback=None, collide=True, mat="lp_beige"))
     props.append(prop("boxtower", [4.7, 0, -9.1], rot=17, n=2))
     props.append(prop("slip", [-1.2, 0.004, -6.0], rot=45))
     # The back hall. DELIVER: the deliveries door in the north wall, a steel
@@ -1376,13 +1377,15 @@ def mailroom():
     props.append(prop("pigeonholes", [-9.4, 0, -24.72], w=2.4, h=1.9, d=0.42))
     props.append(prop("boxtower", [-3.9, 0, -24.3], rot=8, n=2))
     props.append(prop("boxtower", [-3.4, 0, -23.5], rot=31, n=1))
-    props.append(glb("lib_crate", [-7.9, 0, -23.0], rot=20, fallback=None, collide=True))
+    props.append(glb("lib_crate", [-7.9, 0, -23.0], rot=20, fallback=None, collide=True, mat="lp_wood"))
     props.append(prop("clock", [-2.6, 3.4, -D / 2 + 0.03]))
     # High-bays hanging out of the fog (C1: the light is the building's).
     lights = []
     for fx in (-12, 0, 12):
         for fz in (-16, -6, 8):
             props.append(prop("highbay", [fx, 7.6, fz], hang=8.6))
+            # its light falling through the fog to the floor
+            props.append(prop("lightcone", [fx, 7.42, fz], h=7.42, r0=0.38, r1=3.1, strength=0.07))
             lights.append({"type": "point", "pos": [fx, 7.1, fz], "color": "#e6ecff", "intensity": 30, "distance": 22, "flicker": 0.15 if (fx, fz) == (12, -16) else 0})
     lights.append({"type": "point", "pos": [0.0, 2.9, -23.9], "color": "#ffcf96", "intensity": 16, "distance": 9, "id": "docklamp", "off": True})
     lights.append({"type": "point", "pos": [-6.3, 1.95, -23.5], "color": "#ffcf96", "intensity": 16, "distance": 8, "id": "sortlamp", "off": True})
@@ -1438,6 +1441,7 @@ def convenience_store():
     the staff door under the green lamp opens (endings.json `routes`)."""
     W, H, D = 12.0, 3.2, 16.0
     DX0, DX1 = 2.1, 3.9   # the door's opening, in the right bay of the storefront
+    GH = 2.36             # the glass's head: the door frame's, a fascia above
     props = []
     # low gondolas either side of the central aisle (he sees the glass over them)
     for i, (x, z) in enumerate(((-3.0, -3.4), (3.0, -3.4), (-3.0, 0.4), (3.0, 0.4))):
@@ -1454,6 +1458,7 @@ def convenience_store():
     # the door, standing open outward; his reflection at the glass, centre bay
     props.append(prop("storedoor", [(DX0 + DX1) / 2, 0, D / 2 + 0.03], w=DX1 - DX0, h=2.3, leaves=[70, 66], name="storedoor"))
     props.append(prop("polycluster", [0.0, 0, D / 2 - 0.03], w=0.55, h=1.75, seed=99, name="reflection"))
+    props.append(prop("shopglass", [0.0, 0, D / 2 + 0.03], panes=[[-W / 2 - 0.3, DX0 - 0.06, 0, GH], [DX1 + 0.06, W / 2 + 0.3, 0, GH]]))
     lights = []
     for fx in (-1.6, 1.6):
         for fz in (-5.5, -1.5, 2.5, 6.5):
@@ -1471,13 +1476,15 @@ def convenience_store():
         "skirt": {"mat": "plaster_dark", "h": 0.1, "t": 0.02},
         "open": ["S"],
         "boxes": [
-            # The storefront: glass either side of the door and over it, the header, two mullions.
-            {"min": [-W / 2 - 0.3, 0, D / 2], "max": [DX0 - 0.06, H, D / 2 + 0.06], "mat": "glass_dark", "collide": True, "shadow": False, "tile": 3.0},
-            {"min": [DX1 + 0.06, 0, D / 2], "max": [W / 2 + 0.3, H, D / 2 + 0.06], "mat": "glass_dark", "collide": True, "shadow": False, "tile": 3.0},
-            {"min": [DX0 - 0.06, 2.36, D / 2], "max": [DX1 + 0.06, H, D / 2 + 0.06], "mat": "glass_dark", "collide": True, "shadow": False, "tile": 3.0},
+            # The storefront: glass either side of the door up to the door's
+            # head (what he walks into here; the `shopglass` prop draws it),
+            # a plaster fascia over it all, the header, two mullions.
+            {"min": [-W / 2 - 0.3, 0, D / 2], "max": [DX0 - 0.06, GH, D / 2 + 0.06], "mat": "glass_dark", "collide": True, "invisible": True, "shadow": False},
+            {"min": [DX1 + 0.06, 0, D / 2], "max": [W / 2 + 0.3, GH, D / 2 + 0.06], "mat": "glass_dark", "collide": True, "invisible": True, "shadow": False},
+            {"min": [-W / 2, GH, D / 2 - 0.04], "max": [W / 2, H - 0.3, D / 2 + 0.06], "mat": "plaster", "collide": False, "tile": 2.0},
             {"min": [-W / 2 - 0.3, H - 0.3, D / 2], "max": [W / 2 + 0.3, H + 0.2, D / 2 + 0.3], "mat": "plaster", "collide": False},
-            {"min": [DX0 - 0.12, 0, D / 2 - 0.03], "max": [DX0 - 0.04, H, D / 2 + 0.09], "mat": "concrete", "collide": False, "tile": 1.0},
-            {"min": [DX1 + 0.04, 0, D / 2 - 0.03], "max": [DX1 + 0.12, H, D / 2 + 0.09], "mat": "concrete", "collide": False, "tile": 1.0},
+            {"min": [DX0 - 0.12, 0, D / 2 - 0.03], "max": [DX0 - 0.04, GH, D / 2 + 0.09], "mat": "concrete", "collide": False, "tile": 1.0},
+            {"min": [DX1 + 0.04, 0, D / 2 - 0.03], "max": [DX1 + 0.12, GH, D / 2 + 0.09], "mat": "concrete", "collide": False, "tile": 1.0},
             # The threshold. He cannot render out there.
             {"min": [DX0, 0, D / 2 + 0.02], "max": [DX1, 2.3, D / 2 + 0.1], "mat": "void", "collide": True, "invisible": True, "shadow": False},
             # Outside, photoreal and empty: wet pavement, the kerb, asphalt into black. A step
@@ -1869,12 +1876,14 @@ def dive():
     # The colonnade: tiled pillars from the floor to the surface, on a loose grid.
     rnd = random.Random(7)
     MARK = (-3.25, -3.25)              # SWIM FOR THE PILLARS: the lamp-lit one
+    sleeves = []                       # the caustics crawling over each pillar
     for gx in (-9.75, -3.25, 3.25, 9.75):
         for gz in (-9.75, -3.25, 3.25, 9.75):
             inner = abs(gx) < 4 and abs(gz) < 4
             px = gx + (0 if inner else rnd.uniform(-0.7, 0.7))
             pz = gz + (0 if inner else rnd.uniform(-0.7, 0.7))
             boxes.append({"min": [round(px - 0.6, 3), -0.2, round(pz - 0.6, 3)], "max": [round(px + 0.6, 3), H, round(pz + 0.6, 3)], "mat": "pool_tile", "tile": 1.2})
+            sleeves.append(prop("caustics", [px, 0, pz], w=1.2, d=1.2, h=H, u=round(gx * 0.37 + gz * 0.61, 2), strength=0.42))
     mx, mz = MARK
     props = [
         # the pool lamp on the marked pillar's south face, and the same lamp dead
@@ -1889,7 +1898,10 @@ def dive():
         prop("wallplate", [GX, -PIT, z0 + 0.32], w=G, h=PIT - 0.2, mat="lp_black", name="pitplug"),
         # particulate drifting upward through the water
         prop("motes", [0, 0.6, 1.0], n=520, w=18, h=10.5, d=18, size=0.03, color="#a8d8e0", opacity=0.5, rise=0.05),
-    ]
+        # and the caustics on the floor, round the grate's hole (Doc 2 S8_H)
+        prop("caustics", [0, 0, 0], rects=[[-W / 2, W / 2, -D / 2, z0 - 0.15], [-W / 2, W / 2, z1 + 0.15, D / 2],
+                                            [-W / 2, x0 - 0.15, z0 - 0.15, z1 + 0.15], [x1 + 0.15, W / 2, z0 - 0.15, z1 + 0.15]], strength=0.24, scale=2.2),
+    ] + sleeves
     rec = {
         "name": "THE DIVE",
         "size": [W, H, D],
@@ -1957,17 +1969,22 @@ def boardroom():
     leaves him (he carried it in); for RETAINED it is already there, resealed,
     when he walks in -- the one he opened is still on the sorting table."""
     W, H, D = 9.0, 3.4, 18.0
+    LEATHER = "#3b241c"
     props = [prop("glasstable", [0, 0, -1.0], w=2.2, d=12.0, name="table")]
     for i in range(6):
         z = -6.0 + i * 2.0
         for side in (-1, 1):
             rot = 90 if side < 0 else -90   # chairs and figures face +z at rot 0: these face the table
-            props.append(glb("lib_chair", [side * 1.8, 0, z], rot=rot, fallback="chair", collide=True))
+            props.append(glb("lib_chair", [side * 1.8, 0, z], rot=rot, fallback="chair", collide=True, mat="lp_wood", paint=LEATHER))
             props.append(prop("blurfigure", [side * 1.74, 0, z], rot=rot, seated=True, suit="lp_suit", tie=True, name="board%d" % (i * 2 + (side > 0))))
     # his chair at the head, pulled back from the glass, facing down the table;
     # on its seat the hundredth slip (Track C motif 2: the one slip in this room)
-    props.append(glb("lib_chair", [0.0, 0, -8.15], rot=0, fallback="chair", name="mychair"))
+    props.append(glb("lib_chair", [0.0, 0, -8.15], rot=0, fallback="chair", name="mychair", mat="lp_wood", paint=LEATHER))
+    # the chairs in one flat dark leather (the catalog chair is white): S1's `palette` prop paints the catalog props placed before it
+    props.append(prop("palette", [0, 0, 0]))
     props.append(prop("slip", [0.04, 0.582, -8.08], rot=14, name="hundredth"))
+    # printed: it reads 100 (Doc 1 §6.4); hidden with it for NEVER_SAT (endings.json)
+    props.append(prop("numslip", [0.04, 0.582, -8.08], rot=14, n=100, bare=True, name="hundredth_print"))
     # him, as the camera leaves him: standing at the head, beside the chair (endings.json `show`)
     props.append(prop("blurfigure", [0.82, 0, -7.6], rot=-12, suit="lp_suit", name="self", hidden=True))
     props.append(prop("soggypackage", [0.0, 0.79, -1.6], rot=4, name="package"))
@@ -1988,9 +2005,9 @@ def boardroom():
         "name": "ONBOARDING",
         "size": [W, H, D],
         "floor": "marble_light", "wall": "plaster_dark", "ceiling": "plaster_dark",
-        "tile": {"floor": 2.5, "wall": 2.0, "ceiling": 2.0},
+        "tile": {"floor": 6.0, "wall": 2.0, "ceiling": 2.0},  # big slabs: the veins read as marble, not scribble
         # a dark veined marble wainscot: pristine, expensive air (Doc 2)
-        "skirt": {"mat": "marble", "h": 1.1, "t": 0.03, "tile": 2.5},
+        "skirt": {"mat": "marble", "h": 1.1, "t": 0.03, "tile": 7.0},
         "cornice": {"mat": "plaster_dark", "h": 0.3, "t": 0.08},
         "ambient": {"color": "#ffe9c8", "intensity": 0.16},
         "sun": {"from": [1.0, 5.0, 10.0], "color": "#ffe9c8", "intensity": 0.55},
@@ -2032,10 +2049,22 @@ def pending_room():
     rec = waiting_room(False)
     rec["name"] = "PENDING REVIEW"
     W, H, D = rec["size"]
-    rec["props"] = [p for p in rec["props"] if p["type"] != "glb"]  # the rows go; two chairs face each other
-    rec["props"].append(glb("lib_chair", [-0.9, 0, 1.2], rot=90, fallback="chair", name="mychair"))
-    rec["props"].append(glb("lib_chair", [0.9, 0, 1.2], rot=-90, fallback="chair", name="vacated"))
-    rec["props"].append(prop("hands", [-0.3, 0.84, 1.2], rot=-90, name="hands", slip=True, hidden=True))
+    # The rows go; two chairs face each other -- the same maroon chairs as
+    # S1's, so they go in where the rows were, before the room's `palette`
+    # prop, which paints only the catalog props placed before it.
+    rows = [p for p in rec["props"] if p["type"] == "glb"]
+    paint = {k: rows[0][k] for k in ("mat", "paint") if rows and k in rows[0]}
+    at = next(i for i, p in enumerate(rec["props"]) if p["type"] == "glb")
+    rec["props"] = [p for p in rec["props"] if p["type"] != "glb"]
+    rec["props"][at:at] = [
+        glb("lib_chair", [-0.9, 0, 1.2], rot=90, fallback="chair", name="mychair", **paint),
+        glb("lib_chair", [0.9, 0, 1.2], rot=-90, fallback="chair", name="vacated", **paint),
+    ]
+    assert any(p["type"] == "palette" for p in rec["props"][at + 2:]), "SE_PEND: the chairs must come before the palette"
+    # His hands, and the slip in them reading 99, uncalled (Doc 1 §6.4);
+    # the printed slip is a prop of its own (endings.json PENDING `show`).
+    rec["props"].append(prop("hands", [-0.3, 0.84, 1.2], rot=-90, name="hands", hidden=True))
+    rec["props"].append(prop("numslip", [-0.24, 0.872, 1.2], rot=-90, n=99, name="slip99", hidden=True))
     rec["props"].append(prop("swaycurtain", [W / 2 - 0.1, 0, 1.2], rot=-90, w=2.2, h=3.0, name="farcurtain"))
     rec["props"].append(prop("slip", [0.92, 0.582, 1.18], rot=10))  # left on the vacated seat
     rec["spawn"] = [-0.9, 1.2, -90]
