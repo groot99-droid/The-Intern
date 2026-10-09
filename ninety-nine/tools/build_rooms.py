@@ -471,9 +471,12 @@ def waiting_room(hostile):
     for name, pos, label in seats:
         zone(rec, name, pos, r=0.35, ring=1.7, label_at=label)
     zone(rec, "counter", [-1.3, -3.72], r=0.5, ring=2.2, label_at=[-1.3, 2.05, -4.2])
-    # S2: STAND (the inner door) / RUN (back to the glass doors)
-    zone(rec, "inner_door", [5.6, -5.1], r=0.6, ring=3.0, label_at=[5.6, 2.62, -5.85])
-    zone(rec, "front_doors", [0.0, 4.95], r=0.75, ring=3.2, label_at=[0.0, 3.25, 5.9])
+    # S2: STAND (the inner door) / RUN (back to the glass doors). The words
+    # stand on the door, on its window / the dark glass, low enough to stay
+    # in view as he walks up to it (over the lintel they left the top of the
+    # screen a step before the commit, and read white on white in H).
+    zone(rec, "inner_door", [5.6, -5.1], r=0.6, ring=3.0, label_at=[5.6, 1.55, -5.85])
+    zone(rec, "front_doors", [0.0, 4.95], r=0.75, ring=3.2, label_at=[0.0, 2.05, 5.85])
     return rec
 
 

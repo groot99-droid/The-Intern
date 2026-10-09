@@ -539,6 +539,9 @@ const BUILDERS = {
     }
     // a flat inlay that stays on top of the floor under it
     const inlayMat = (color, extra = {}) => own(new THREE.MeshLambertMaterial({ color, polygonOffset: true, polygonOffsetFactor: -3, polygonOffsetUnits: -3, ...extra }));
+    // brass let into the marble (the building's, photoreal): metal that
+    // catches the ceiling lights, not flat yellow paint
+    const brassMat = (color, extra = {}) => own(new THREE.MeshStandardMaterial({ color, metalness: 0.6, roughness: 0.32, polygonOffset: true, polygonOffsetFactor: -3, polygonOffsetUnits: -3, ...extra }));
     // a bar lying in the floor plane from (x0, z0) to (x1, z1)
     function floorBar(mat, x0, z0, x1, z1, w, h = 0.003) {
       const len = Math.hypot(x1 - x0, z1 - z0);
@@ -798,10 +801,17 @@ const BUILDERS = {
       // A wall placard with the company's words on it (`text`, from
       // text/system.json -- C4: never "you"). Low-poly signage: a flat brass
       // plate, engraved, in a dark frame. Its back sits on the prop's origin.
+      // The frame is a rim round the plate, not a board behind it: the lp_
+      // vertex snap moves a board's corners on screen but not in depth, and
+      // from the seats it won the depth test over the plate and blacked the
+      // words out.
       notice(mats, o) {
         const g = new THREE.Group();
-        const w = o.w || 1.2, h = o.h || 0.22;
-        g.add(box(mats, 'lp_dark', w + 0.05, h + 0.05, 0.016, 0, -(h + 0.05) / 2, 0.008));
+        const w = o.w || 1.2, h = o.h || 0.22, rim = 0.025, rd = 0.024;
+        for (const s of [-1, 1]) {
+          g.add(box(mats, 'lp_dark', w + 2 * rim, rim, rd, 0, s * (h + rim) / 2 - rim / 2, rd / 2));
+          g.add(box(mats, 'lp_dark', rim, h, rd, s * (w + rim) / 2, -h / 2, rd / 2));
+        }
         const px = 2048, py = Math.max(64, Math.round(px * h / w));
         const tex = canvasTexture(px, py, (c, W, H) => {
           c.fillStyle = o.plate || '#a8863c'; c.fillRect(0, 0, W, H);
@@ -817,7 +827,7 @@ const BUILDERS = {
           c.fillStyle = o.ink || '#2a2214'; c.fillText(text, W / 2, H / 2 + 1);
         });
         const plate = new THREE.Mesh(new THREE.PlaneGeometry(w, h), own(new THREE.MeshLambertMaterial({ map: tex })));
-        plate.position.set(0, 0, 0.0175);
+        plate.position.set(0, 0, 0.012); // inside the rim, off the wall
         plate.receiveShadow = true;
         g.add(plate);
         return g;
@@ -961,8 +971,8 @@ const BUILDERS = {
       monogram(mats, o) {
         const g = new THREE.Group();
         const R = o.r || 1.5, s = R / 1.5;
-        const brass = inlayMat(o.brass || '#9a7834', { emissive: new THREE.Color('#120d04') });
-        const reveal = inlayMat('#c9a04a', { emissive: new THREE.Color('#2a1e08'), transparent: true, opacity: 0, depthWrite: false, polygonOffsetFactor: -4, polygonOffsetUnits: -4 });
+        const brass = brassMat(o.brass || '#b48f45', { emissive: new THREE.Color('#0e0a04') });
+        const reveal = brassMat('#d2aa55', { emissive: new THREE.Color('#241a08'), transparent: true, opacity: 0, depthWrite: false, polygonOffsetFactor: -4, polygonOffsetUnits: -4 });
         const revealDark = inlayMat('#231d12', { transparent: true, opacity: 0, depthWrite: false, polygonOffsetFactor: -5, polygonOffsetUnits: -5 });
         const bar = (mat, x0, z0, x1, z1, w) => g.add(floorBar(mat, x0 * s, z0 * s, x1 * s, z1 * s, w * s));
         const ringMesh = (mat, r0, r1) => {

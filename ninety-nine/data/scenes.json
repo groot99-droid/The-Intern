@@ -185,6 +185,9 @@
           ],
           "onEnter": [
             {
+              "show": "front_dark"
+            },
+            {
               "waitMs": 600
             },
             {
@@ -289,6 +292,9 @@
             }
           ],
           "onEnter": [
+            {
+              "show": "front_dark"
+            },
             {
               "waitMs": 300
             },
