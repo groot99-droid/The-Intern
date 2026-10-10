@@ -1,5 +1,5 @@
 {
-  "_comment": "Doc 1 §2.4 resolveEnding() output maps here. Each ending is a room of the building (data/rooms.json `room`) the candidate walks into: stepping into its `zone` (or `autoSeconds` passing) takes the camera -- `preShot` first if there is one, then `show` puts props in place, then the pull-back `shot` -- and a dead-still `holdSeconds` before the card (Doc 2: a 4 second hold with no motion whatsoever). `label` is the ending zone's label, if any. `flagOverlays` hide props on arrival when a flag is set. `routes` is the way on from a room that is not the ending's (the store's staff door, toward the waiting room). Doc 1 §6.4 for card text (textKey resolved via text.js against /text/endings.json). C4 is deliberately broken only on these cards -- 'you' appears exactly once per card.",
+  "_comment": "Doc 1 §2.4 resolveEnding() output maps here. Each ending is a room of the building (data/rooms.json `room`) the candidate walks into: stepping into its `zone` (or `autoSeconds` passing) takes the camera -- `preShot` first if there is one, then `show` puts props in place, then the room's own `beats` (the runBeats vocabulary), then the pull-back `shot` -- and a dead-still `holdSeconds` before the card (Doc 2: a 4 second hold with no motion whatsoever). `label` is the ending zone's label, if any. `flagOverlays` hide props on arrival when a flag is set. `routes` is the way on from a room that is not the ending's (the store's staff door, toward the waiting room). Doc 1 §6.4 for card text (textKey resolved via text.js against /text/endings.json). C4 is deliberately broken only on these cards -- 'you' appears exactly once per card.",
   "ASSIMILATION": {
     "id": "SE_ASSIM",
     "room": "SE_ASSIM",
@@ -77,7 +77,7 @@
         "waitMs": 900
       }
     ],
-    "_beatsNote": "Doc 1 §6.4: seated, the slip reading 99 in his hands, the speaker clicks: 'One hundred.' Waiting on the director: `beats` (the runBeats vocabulary) are meant to run after `show`, before the pull-back `shot`; until playEnding() runs them they are inert data.",
+    "_beatsNote": "Doc 1 §6.4: seated, the slip reading 99 in his hands, the speaker clicks: 'One hundred.' playEnding() runs `beats` after the preShot sits him down and `show` puts the hands and the slip in his lap, before the pull-back `shot`.",
     "ambience": "S1_C_AMB.wav",
     "routes": {
       "S8_H": {

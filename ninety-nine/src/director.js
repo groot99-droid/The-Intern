@@ -633,14 +633,19 @@ export function createDirector({ manifest, endings, state, stage, audio = null, 
     stage.setPlayerActive(false);
     const inst = w.inst;
     const ending = w.ending;
+    // whatever he carried in (the package, after DELIVER) is gone before he
+    // sits; ASSIMILATION's own copy of it is the room's, under flagOverlays
+    dropHeld();
     if (ending.preShot) await shotFromHere(inst, ending.preShot, 1.0);
     if (gone()) return;
+    // seated, the props are in place before anything happens (PENDING: the
+    // 99 slip already in his hands); not before the preShot, or they would
+    // float over the empty chair while he walks up to it
+    for (const n of ending.show || []) setVisible(inst, n, true);
     // the room's own last moment (PENDING: the speaker clicks, "One hundred.",
     // the Muzak starts its eight bars again)
     if (ending.beats) await runBeats(ending.beats, inst);
     if (gone()) return;
-    for (const n of ending.show || []) setVisible(inst, n, true);
-    dropHeld();
     await shotFromHere(inst, ending.shot, ending.carrySeconds || 2.0);
     if (gone()) return;
     await wait((ending.holdSeconds || 4) * 1000);

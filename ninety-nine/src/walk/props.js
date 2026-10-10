@@ -1772,7 +1772,9 @@ const BUILDERS = {
           for (const sw of sways) {
             const p = sw.m.geometry.attributes.position;
             for (let i = 0; i < p.count; i++) {
-              const v = (sw.base[i * 3 + 1] - sw.y0) / sw.ph;
+              // clamped: the base is float32, so the top row can sit a hair
+              // above y0 + ph, and a negative base to pow() is NaN
+              const v = Math.min(1, Math.max(0, (sw.base[i * 3 + 1] - sw.y0) / sw.ph));
               const fall = Math.pow(1 - v, 1.6);
               const x = sw.base[i * 3];
               p.array[i * 3 + 2] = sw.base[i * 3 + 2] + swayAmp * fall * (Math.sin(t * 0.83 + x * 1.9 + phase) * 0.7 + Math.sin(t * 0.37 - x * 0.7) * 0.3);
@@ -3711,29 +3713,42 @@ const BUILDERS = {
   },
   // A red curtain that is still swinging: from the moment it is first seen
   // it sways from its rod, dying down to a stir that never quite stops
-  // (Doc 2 SE_PEND: "the curtain at the far end still swinging"). It
-  // swings about its own rod, whichever wall it hangs on.
+  // (Doc 2 SE_PEND: "the curtain at the far end still swinging"). It is the
+  // building's velvet, the same photoreal drape as S3's curtain (C1), hung
+  // whole (no gap, no pelmet) from a pivot at the rod. It swings out into
+  // the room and back to its wall, never through it. A still, invisible
+  // body where it hangs keeps him from walking into it.
   swaycurtain(mats, o) {
     const g = new THREE.Group();
     const w = o.w || 2.2, h = o.h || 3.0;
     const pivot = new THREE.Group();
     pivot.position.y = h;
     g.add(pivot);
-    const folds = Math.max(4, Math.round(w / 0.22));
-    for (let i = 0; i < folds; i++) {
-      const x = -w / 2 + (i + 0.5) * (w / folds);
-      pivot.add(box(mats, o.mat || 'lp_curtain', w / folds + 0.012, h - 0.04, 0.08 + (i % 2) * 0.06, x, -h + 0.02, (i % 2) * 0.03, { collide: true }));
-    }
-    g.add(box(mats, 'lp_brass', w + 0.24, 0.06, 0.12, 0, h, 0.02));
+    const drape = BUILDERS.velvetdrape(mats, { w, h: h - 0.02, gap: 0, pelmet: 0, sway: 0.008, off: 0.02, pos: o.pos });
+    drape.position.y = -(h - 0.02);
+    pivot.add(drape);
+    const body = box(mats, 'lp_curtain', w, h - 0.04, 0.16, 0, 0.02, 0.1, { collide: true, castShadow: false });
+    body.visible = false;
+    g.add(body);
     let t0 = null;
-    pivot.children[0].onBeforeRender = () => {
+    let lastFrame = -1;
+    const swing = (renderer) => {
+      const f = renderer.info.render.frame;
+      if (f === lastFrame) return; // once a frame, whichever mesh is drawn first
+      lastFrame = f;
       const now = performance.now() / 1000;
       if (t0 === null) t0 = now;
       const t = now - t0;
       const amp = 0.014 + 0.075 * Math.exp(-t / 16);
-      pivot.rotation.x = Math.sin(t * 1.2) * amp;
+      // rotation.x < 0 carries the hem toward +z, into the room
+      pivot.rotation.x = -amp * (0.5 + 0.5 * Math.sin(t * 1.2));
       pivot.rotation.z = Math.sin(t * 0.77 + 0.6) * amp * 0.22;
     };
+    drape.traverse((c) => {
+      if (!c.isMesh) return;
+      const own = c.onBeforeRender;
+      c.onBeforeRender = function (renderer, ...rest) { swing(renderer); return own.call(this, renderer, ...rest); };
+    });
     return g;
   },
   // Particulate drifting upward through the water (Doc 2 KLING H: "drifts
