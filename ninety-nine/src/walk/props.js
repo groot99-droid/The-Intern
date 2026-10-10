@@ -582,7 +582,7 @@ const BUILDERS = {
   },
   // Dust in the CRT's light (Doc 2 S0_X: "dust in the air"): a few dozen
   // still motes, one draw call. Box w x h x d around the prop's origin.
-  dust(mats, o) {
+  crtdust(mats, o) {
     const n = o.n || 40, w = o.w || 0.5, h = o.h || 0.5, d = o.d || 0.7;
     const pos = new Float32Array(n * 3);
     const home = new Float32Array(n * 3);
@@ -1470,7 +1470,7 @@ const BUILDERS = {
       // Dust in the ceiling light: the only thing that moves in the C room
       // (Doc 2 S1 KLING C, "a slow drift of dust in the ceiling light").
       // `n` motes in a `w` x `h` x `d` volume above the origin, drifting.
-      dust(mats, o) {
+      lobbydust(mats, o) {
         const g = new THREE.Group();
         const n = o.n || 90, w = o.w || 10, h = o.h || 2.4, d = o.d || 8, y0 = o.y || 1.4;
         const r = rng(o.seed || 5);
@@ -3129,7 +3129,7 @@ const BUILDERS = {
   // and a wire guard of six ribs and three rings, in the building's rust.
   // Only the bulb itself is emissive. Origin at the bottom of the guard;
   // `h` is how far up the ceiling is. Two meshes: the guard and the bulb.
-  cagebulb(mats, o) {
+  cabbulb(mats, o) {
     const g = new THREE.Group();
     const h = o.h || 0.34;
     const mergeInto = (parts, mat) => {

@@ -38,5 +38,5 @@ Doc 1 names the prologue `S0_C_*`; Doc 2 and these files use `S0_X_*`.
 
 - `S{n}_{R}_SFX_*` one-shots still missing: stapler thud, CRT degauss, door screech, car alarm,
   package drag, concrete grains, chute scrape (sfx.js synthesises stand-ins).
-- NEVER_SAT variant of the ASSIMILATION boardroom: not a file. The boardroom's `emptychair` prop
-  is hidden when NEVER_SAT is set (data/endings.json `flagOverlays`).
+- NEVER_SAT variant of the ASSIMILATION boardroom: not a file. The boardroom's `mychair` prop and
+  the hundredth slip on it are hidden when NEVER_SAT is set (data/endings.json `flagOverlays`).

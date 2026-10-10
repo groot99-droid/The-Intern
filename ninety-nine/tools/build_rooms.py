@@ -372,7 +372,7 @@ def waiting_room(hostile, dark_front=None):
                       lamps=[[lx, lz, 1.4, 0.4] for lx, lz in grid], fog=[5, 28] if hostile else [10, 36],
                       tone="#9ba4ae" if hostile else "#aab1ba", gain=0.4 if hostile else 0.8))
     props.append(prop("monogram", [0, 0, 0.6], r=1.5, name="mosaic"))
-    props.append(prop("dust", [0, 0, 0.5], n=90, w=12, h=2.6, d=9.5, y=1.2, opacity=0.2))
+    props.append(prop("lobbydust", [0, 0, 0.5], n=90, w=12, h=2.6, d=9.5, y=1.2, opacity=0.2))
     # -- the chairs -------------------------------------------------------------
     # Accent chairs from the catalog, one flat maroon (Doc 2: `paint` deeper
     # than the curtain slot, which reads fire-engine red here), low-poly (C1);
@@ -1417,7 +1417,7 @@ def freight_elevator():
             prop("slip", [-0.55, 0.004, 0.75], rot=200),
             # the caged bulb (photoreal in Doc 2's list, so not the catalog's
             # white lamp): plate, stem, bare bulb, a rust wire guard
-            prop("cagebulb", [0, H - 0.42, 0.0], h=0.42),
+            prop("cabbulb", [0, H - 0.42, 0.0], h=0.42),
             # the floor indicator: a housing with its dark segments, and one
             # lit layer per reading; the beats show one and hide the last
             prop("floorind", ind, rot=180, scale=1.2, ghost=True, name="ind_face"),
@@ -1688,7 +1688,7 @@ def apartment():
         # the way out, before it opens: light from the stairwell under the door
         prop("doorglow", [-1.3, 0, D / 2 - 0.02], rot=180, w=1.1),
         # dust in the CRT's light (Doc 2 S0_X)
-        prop("dust", [0.3, 0.9, -D / 2 + 1.35], n=26, w=0.6, h=0.55, d=0.7, size=0.0035, opacity=0.45),
+        prop("crtdust", [0.3, 0.9, -D / 2 + 1.35], n=26, w=0.6, h=0.55, d=0.7, size=0.0035, opacity=0.45),
     ]
     rec = {
         "name": "THE UPLOAD",

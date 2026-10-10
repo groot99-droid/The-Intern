@@ -90,6 +90,21 @@ export async function run() {
     }
   });
 
+  await runCase('props.js: no builder name is defined twice (the polish blocks share one table; a later key silently replaces an earlier one)', async () => {
+    const src = (await fetch('../src/walk/props.js').then((r) => r.text())).split('\n');
+    const start = src.findIndex((l) => /^const BUILDERS = \{/.test(l));
+    const end = src.findIndex((l, i) => i > start && /^\};/.test(l));
+    assert(start >= 0 && end > start, 'BUILDERS table not found');
+    const seen = new Map();
+    for (let i = start + 1; i < end; i++) {
+      const m = /^(?: {2}| {6})([A-Za-z_]\w*)\s*(?:\(\s*mats\b|:\s*\(\s*mats\b)/.exec(src[i]);
+      if (!m) continue;
+      assert(!seen.has(m[1]), `builder "${m[1]}" defined at props.js:${seen.get(m[1])} and again at props.js:${i + 1}`);
+      seen.set(m[1], i + 1);
+    }
+    assert(seen.size > 50, `only ${seen.size} builders found -- the scan has gone stale`);
+  });
+
   await runCase('rooms.json: every built room except S0_X is entered through a door or an anchor of its own', () => {
     for (const [key, rec] of built) {
       if (key === 'S0_X') { assert(!rec.entry, 'S0_X is where the game starts: no entry'); continue; }

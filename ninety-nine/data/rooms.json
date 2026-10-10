@@ -385,7 +385,7 @@
      "w": 1.1
     },
     {
-     "type": "dust",
+     "type": "crtdust",
      "pos": [
       0.3,
       0.9,
@@ -3414,7 +3414,7 @@
      "name": "mosaic"
     },
     {
-     "type": "dust",
+     "type": "lobbydust",
      "pos": [
       0,
       0,
@@ -4490,7 +4490,7 @@
      "name": "mosaic"
     },
     {
-     "type": "dust",
+     "type": "lobbydust",
      "pos": [
       0,
       0,
@@ -5935,7 +5935,7 @@
      "name": "mosaic"
     },
     {
-     "type": "dust",
+     "type": "lobbydust",
      "pos": [
       0,
       0,
@@ -17868,7 +17868,7 @@
      "rot": 200
     },
     {
-     "type": "cagebulb",
+     "type": "cabbulb",
      "pos": [
       0,
       2.18,
@@ -23380,7 +23380,7 @@
      "name": "mosaic"
     },
     {
-     "type": "dust",
+     "type": "lobbydust",
      "pos": [
       0,
       0,
