@@ -1453,30 +1453,67 @@ def freight_elevator():
 
 
 def mailroom():
-    W, H, D = 40.0, 10.0, 50.0
+    """S8 C, THE DELIVERY: a cavernous mailroom, towers of cardboard receding
+    into real fog, high-bays hanging out of the dark. A clerk whose face is a
+    blurred texture map slides a soggy package across the laminate counter as
+    the candidate comes near; it throbs, and when he lifts it a dark wet ring
+    stays behind. Picking it up lights two lamps at the back of the hall,
+    behind the counter: over the deliveries door (DELIVER, through to the
+    boardroom) and over the sorting table with the box cutter on it (OPEN
+    THE BOX). Doc 1 §5 S8, Doc 2 S8_C."""
+    W, H, D = 40.0, 16.0, 50.0
     props = []
     rnd = random.Random(8)
     for x in range(-16, 17, 4):
         for z in range(-20, 21, 4):
             if (abs(x) < 5 and z > -12) or abs(x) < 4:
-                continue  # keep the approach lane clear, spawn to counter to the deliveries door
+                continue  # the approach lane, door to counter
+            # drawn before the next skip, so every tower that stays keeps its place
+            jx, jz = rnd.uniform(-0.6, 0.6), rnd.uniform(-0.6, 0.6)
+            rot, n = rnd.randint(0, 90), rnd.randint(4, 12)
+            if z <= -12 and (abs(x) == 4 or (x, z) == (-8, -20)):
+                continue  # the back hall behind the counter: the deliveries door and the sorting table
             if (x + z) % 3 == 0:
-                props.append(glb("lib_pallets", [x + rnd.uniform(-0.6, 0.6), 0, z + rnd.uniform(-0.6, 0.6)], rot=rnd.randint(0, 90), fallback="boxtower", collide=True, n=rnd.randint(4, 12)))
+                # pallets of mail sacks, tinted (the catalog model is white)
+                props.append(glb("lib_pallets", [x + jx, 0, z + jz], rot=rot, fallback="boxtower", collide=True, n=n, mat="lp_wood"))
             else:
-                props.append(prop("boxtower", [x + rnd.uniform(-0.6, 0.6), 0, z + rnd.uniform(-0.6, 0.6)], rot=rnd.randint(0, 90), n=rnd.randint(4, 12)))
-    props.append(glb("lib_guarddesk", [0, 0, -9.0], fallback="counter", collide=True, w=6.0, d=1.0, glass=False, mat="lp_dark"))
-    props.append(prop("figure", [0.0, 0, -9.9], face="blur", suit="lp_blue", name="clerk"))
-    props.append(prop("package", [0.4, 1.16, -8.9], rot=15, name="package"))
-    props.append(glb("lib_mailsacks", [3.2, 0, -8.6], rot=20, fallback=None))
-    props.append(prop("clock", [3.6, 4.2, -14.0], rot=20))
+                # 3 to 11 m of cartons, two by two, up into the fog (one instanced mesh each)
+                props.append(prop("cartontower", [x + jx, 0, z + jz], rot=rot, n=2 * n - 2, cols=2, seed=len(props) + 1))
+    # The counter: laminate top on a dark body, the clerk behind it (static,
+    # C5), the package at the clerk's end until he slides it across.
+    props.append(prop("counter", [0, 0, -9.0], w=6.0, d=1.1, h=1.1, glass=False, mat="lp_grey", name="counter"))
+    props.append(prop("blurfigure", [-0.1, 0, -9.95], suit="lp_blue", name="clerk"))
+    props.append(prop("soggypackage", [0.4, 1.16, -9.3], rot=12, name="package"))
+    props.append(prop("wetring", [0.4, 1.161, -9.3], rot=12, w=0.6, d=0.46, name="ring"))
+    props.append(glb("lib_mailsacks", [-4.7, 0, -6.3], rot=20, fallback=None, collide=True, mat="lp_beige"))
+    props.append(prop("boxtower", [4.7, 0, -9.1], rot=17, n=2))
     props.append(prop("slip", [-1.2, 0.004, -6.0], rot=45))
-    # OPEN THE BOX: a sorting table with a box cutter, off the lane
-    props.append(prop("table", [-3.5, 0, -3.5], w=1.2, d=2.0, name="sorting"))
-    props.append(prop("boxcutter", [-3.3, 0.76, -3.2], rot=30))
+    # The back hall. DELIVER: the deliveries door in the north wall, a steel
+    # plate before it, a lamp over it. OPEN THE BOX: the sorting table to its
+    # left under a work lamp, pigeonholes against the wall. Both lamps are
+    # dark until he has the package (scenes.json S8 C beat zone `counter`).
+    props.append(prop("worklamp", [0.0, 15.6, -24.35], drop=12.2, name="docklamp_dark"))
+    props.append(prop("worklamp", [0.0, 15.6, -24.35], drop=12.2, lit=True, name="docklamp_lit", hidden=True))
+    props.append(prop("sortingtable", [-6.3, 0, -23.75], w=2.0, d=0.9, name="sortingtable"))
+    props.append(prop("boxcutter", [-5.72, 0.903, -23.55], rot=30, name="boxcutter"))
+    props.append(prop("soggypackage", [-6.35, 0.9, -23.72], rot=-8, open=True, name="openbox", hidden=True))
+    props.append(prop("worklamp", [-6.3, 15.6, -23.75], drop=13.3, name="sortlamp_dark"))
+    props.append(prop("worklamp", [-6.3, 15.6, -23.75], drop=13.3, lit=True, name="sortlamp_lit", hidden=True))
+    props.append(prop("pigeonholes", [-9.4, 0, -24.72], w=2.4, h=1.9, d=0.42))
+    props.append(prop("boxtower", [-3.9, 0, -24.3], rot=8, n=2))
+    props.append(prop("boxtower", [-3.4, 0, -23.5], rot=31, n=1))
+    props.append(glb("lib_crate", [-7.9, 0, -23.0], rot=20, fallback=None, collide=True, mat="lp_wood"))
+    props.append(prop("clock", [-2.6, 3.4, -D / 2 + 0.03]))
+    # High-bays hanging out of the fog (C1: the light is the building's).
+    lights = []
     for fx in (-12, 0, 12):
-        for fz in (-14, 0, 14):
-            props.append(prop("fluoro", [fx, 7.5, fz], w=2.4, d=0.4))
-    lights = [{"type": "point", "pos": [fx, 7.0, fz], "color": "#e6ecff", "intensity": 30, "distance": 22, "flicker": 0.15 if (fx, fz) == (12, -14) else 0} for fx in (-12, 0, 12) for fz in (-14, 0, 14)]
+        for fz in (-16, -6, 8):
+            props.append(prop("highbay", [fx, 7.6, fz], hang=8.6))
+            # its light falling through the fog to the floor
+            props.append(prop("lightcone", [fx, 7.42, fz], h=7.42, r0=0.38, r1=3.1, strength=0.07))
+            lights.append({"type": "point", "pos": [fx, 7.1, fz], "color": "#e6ecff", "intensity": 30, "distance": 22, "flicker": 0.15 if (fx, fz) == (12, -16) else 0})
+    lights.append({"type": "point", "pos": [0.0, 2.9, -23.9], "color": "#ffcf96", "intensity": 16, "distance": 9, "id": "docklamp", "off": True})
+    lights.append({"type": "point", "pos": [-6.3, 1.95, -23.5], "color": "#ffcf96", "intensity": 16, "distance": 8, "id": "sortlamp", "off": True})
     rec = {
         "name": "THE DELIVERY",
         "size": [W, H, D],
@@ -1487,40 +1524,75 @@ def mailroom():
         "ambient": {"color": "#dfe6f0", "intensity": 0.12},
         "sun": {"from": [4.0, 9.0, 26.0], "color": "#e6ecff", "intensity": 0.45},
         "lights": lights,
-        "fog": {"color": "#70747b", "near": 9, "far": 52},
+        "fog": {"color": "#666b72", "near": 5, "far": 40},
+        "boxes": [
+            # the steel plate before the deliveries door
+            {"min": [-1.1, 0, -D / 2], "max": [1.1, 0.012, -D / 2 + 1.3], "mat": "grate", "floor": True, "collide": False, "tile": 1.0},
+        ],
         "spawn": [0, 16.0, 0],
         "props": props,
         "footstep": {"filterHz": 700, "gain": 0.09},
     }
+    # The clerk's slide (Doc 2 KLING C: "no arm animation beyond the
+    # package's linear slide"): the package and its ring, toward him.
+    rec["actors"] = {"package": {"path": [[0.4, -9.3], [0.4, -8.82]], "face": False, "carry": ["ring"]}}
     s = shots_for(rec, out_dist=6.0, leave_dist=23.0, loop_seconds=20.0)
     # The walk to the counter (S8_C_VID): spawn to the clerk, 8 s.
-    s["push"] = {"from": "in", "to": pose([0, EYE, -7.2], [0.3, 1.15, -9.6]), "seconds": 8.0, "ease": "inout"}
-    s["out"] = pose([0, EYE, -7.2], [0.3, 1.15, -9.6])
+    s["push"] = {"from": "in", "to": pose([0, EYE, -7.3], [0.3, 1.15, -9.5]), "seconds": 8.0, "ease": "inout"}
+    s["out"] = pose([0, EYE, -7.3], [0.3, 1.15, -9.5])
+    # the back hall with both lamps: the door and the sorting table
+    s["dock"] = pose([-1.8, EYE, -16.5], [-3.0, 1.2, -25.0])
     rec["shots"] = s
     door(rec, "front", "S", 0.0, w=2.0, h=3.0, kind="door", mat="lp_dark")
     door(rec, "deliveries", "N", 0.0, w=1.6, h=2.6, kind="door", locked=True, mat="lp_dark")
     rec["entry"] = "front"
-    zone(rec, "counter", [0.4, -7.85], r=0.6, ring=3.0, label_at=[0.4, 1.7, -8.9])
-    zone(rec, "deliver", [0.0, -22.6], r=0.8, ring=4.0, armAfter="counter", label_at=[0.0, 3.0, -24.6])
-    zone(rec, "sorting", [-2.45, -3.5], r=0.6, ring=2.6, armAfter="counter", label_at=[-3.5, 1.5, -3.5])
+    zone(rec, "counter", [0.4, -7.85], r=0.6, ring=3.0, label_at=[0.4, 1.75, -8.8])
+    zone(rec, "deliver", [0.0, -22.55], r=0.8, ring=4.0, armAfter="counter", label_at=[0.0, 2.75, -24.4])
+    zone(rec, "sorting", [-6.3, -22.6], r=0.6, ring=3.0, armAfter="counter", label_at=[-6.3, 1.8, -23.75])
     return rec
 
 
 def convenience_store():
+    """S8 H / SE_EXPUL: an empty convenience store at midnight (Doc 2
+    S8_H_IMG_OUT). Waxed linoleum, fluorescent tubes (one flickers twice,
+    irregularly), low-poly gondolas of product, a chest cooler, a counter
+    and a register; the storefront glass and the black street beyond it.
+    The chute lets him out through a hatch low in the north wall, at the
+    head of the central aisle, looking down it at the glass. His
+    reflection in the glass is a faceless cluster of static polygons. The
+    door stands open outward onto a street that is photoreal and empty, and
+    he cannot render out there: an invisible threshold stops him in the
+    doorway, which is where EXPULSION plays (Doc 1 §6.4). For PENDING REVIEW
+    the staff door under the green lamp opens (endings.json `routes`)."""
     W, H, D = 12.0, 3.2, 16.0
+    DX0, DX1 = 2.1, 3.9   # the door's opening, in the right bay of the storefront
+    GH = 2.36             # the glass's head: the door frame's, a fascia above
     props = []
-    for x in (-3.2, 0.0, 3.2):
-        for z in (-2.5, 1.5):
-            props.append(glb("lib_shelf", [x, 0, z], fallback="shelf", collide=True, w=2.4, d=0.7, tiers=4, h=1.8))
-    props.append(prop("cooler", [0, 0, -D / 2 + 0.42], w=8.0))
-    props.append(prop("counter", [-4.2, 0, 5.2], w=2.6, d=0.9, glass=False, mat="lp_grey"))
-    props.append(prop("monitor", [-4.6, 1.16, 5.2], on=False))
-    props.append(prop("clock", [W / 2 - 0.03, 2.4, 0.0], rot=-90))
-    props.append(prop("slip", [1.6, 0.004, 4.0], rot=140))
-    for fx in (-3, 3):
-        for fz in (-5, -1, 3, 7):
+    # low gondolas either side of the central aisle (he sees the glass over them)
+    for i, (x, z) in enumerate(((-3.0, -3.4), (3.0, -3.4), (-3.0, 0.4), (3.0, 0.4))):
+        props.append(prop("gondola", [x, 0, z], w=2.4, d=0.9, h=1.35, seed=i * 5))
+    # along the north wall, either side of the chute's hatch: shelving and the cooler
+    props.append(prop("gondola", [-3.1, 0, -D / 2 + 0.3], w=4.2, d=0.5, h=1.9, tiers=5, single=True, seed=11))
+    props.append(prop("cooler", [3.3, 0, -D / 2 + 0.42], w=4.4))
+    props.append(prop("chestcooler", [0.0, 0, 3.0], w=1.6, d=0.8))
+    props.append(prop("counter", [-4.2, 0, 5.4], w=2.6, d=0.9, glass=False, mat="lp_grey"))
+    props.append(prop("monitor", [-4.55, 1.16, 5.4], rot=90, on=False))
+    props.append(prop("clock", [W / 2 - 0.03, 2.4, -2.0], rot=-90))
+    props.append(prop("slip", [1.3, 0.004, 5.0], rot=140))
+    props.append(prop("sign", [W / 2 - 0.08, 2.4, 3.0], rot=-90, w=0.5, h=0.18))
+    # the door, standing open outward; his reflection at the glass, centre bay
+    props.append(prop("storedoor", [(DX0 + DX1) / 2, 0, D / 2 + 0.03], w=DX1 - DX0, h=2.3, leaves=[70, 66], name="storedoor"))
+    props.append(prop("polycluster", [0.0, 0, D / 2 - 0.03], w=0.55, h=1.75, seed=99, name="reflection"))
+    props.append(prop("shopglass", [0.0, 0, D / 2 + 0.03], panes=[[-W / 2 - 0.3, DX0 - 0.06, 0, GH], [DX1 + 0.06, W / 2 + 0.3, 0, GH]]))
+    lights = []
+    for fx in (-1.6, 1.6):
+        for fz in (-5.5, -1.5, 2.5, 6.5):
             props.append(prop("fluoro", [fx, H - 0.06, fz], w=1.2, d=0.3))
-    lights = [{"type": "point", "pos": [fx, H - 0.4, fz], "color": "#f0f4ff", "intensity": 8, "distance": 10, "flicker": 0.3 if (fx, fz) == (-3, 3) else 0} for fx in (-3, 3) for fz in (-5, -1, 3, 7)]
+            l = {"type": "point", "pos": [fx, H - 0.4, fz], "color": "#f0f4ff", "intensity": 8, "distance": 10}
+            if (fx, fz) == (1.6, 2.5):
+                l["flicker"] = 0.3
+                l["pattern"] = {"period": 6.3, "duty": 0.93, "low": 0.08}
+            lights.append(l)
     rec = {
         "name": "THE STORE",
         "size": [W, H, D],
@@ -1529,40 +1601,59 @@ def convenience_store():
         "skirt": {"mat": "plaster_dark", "h": 0.1, "t": 0.02},
         "open": ["S"],
         "boxes": [
-            # Storefront glass: the street outside is photoreal and empty and he cannot render out there -- it stays black.
-            {"min": [-W / 2 - 0.3, 0, D / 2], "max": [W / 2 + 0.3, H, D / 2 + 0.06], "mat": "glass_dark", "collide": True, "shadow": False, "tile": 3.0},
+            # The storefront: glass either side of the door up to the door's
+            # head (what he walks into here; the `shopglass` prop draws it),
+            # a plaster fascia over it all, the header, two mullions.
+            {"min": [-W / 2 - 0.3, 0, D / 2], "max": [DX0 - 0.06, GH, D / 2 + 0.06], "mat": "glass_dark", "collide": True, "invisible": True, "shadow": False},
+            {"min": [DX1 + 0.06, 0, D / 2], "max": [W / 2 + 0.3, GH, D / 2 + 0.06], "mat": "glass_dark", "collide": True, "invisible": True, "shadow": False},
+            {"min": [-W / 2, GH, D / 2 - 0.04], "max": [W / 2, H - 0.3, D / 2 + 0.06], "mat": "plaster", "collide": False, "tile": 2.0},
             {"min": [-W / 2 - 0.3, H - 0.3, D / 2], "max": [W / 2 + 0.3, H + 0.2, D / 2 + 0.3], "mat": "plaster", "collide": False},
-            {"min": [-0.06, 0, D / 2 - 0.02], "max": [0.06, H, D / 2 + 0.1], "mat": "concrete", "collide": False, "tile": 1.0},
+            {"min": [DX0 - 0.12, 0, D / 2 - 0.03], "max": [DX0 - 0.04, GH, D / 2 + 0.09], "mat": "concrete", "collide": False, "tile": 1.0},
+            {"min": [DX1 + 0.04, 0, D / 2 - 0.03], "max": [DX1 + 0.12, GH, D / 2 + 0.09], "mat": "concrete", "collide": False, "tile": 1.0},
+            # The threshold. He cannot render out there.
+            {"min": [DX0, 0, D / 2 + 0.02], "max": [DX1, 2.3, D / 2 + 0.1], "mat": "void", "collide": True, "invisible": True, "shadow": False},
+            # Outside, photoreal and empty: wet pavement, the kerb, asphalt into black. A step
+            # down from the store (C3); nothing out there, no sky.
+            {"min": [-W / 2 - 6, -0.12, D / 2 + 0.06], "max": [W / 2 + 6, -0.02, D / 2 + 3.2], "mat": "concrete_wet", "collide": False, "tile": 2.0},
+            {"min": [-W / 2 - 6, -0.24, D / 2 + 3.2], "max": [W / 2 + 6, -0.05, D / 2 + 3.4], "mat": "concrete", "collide": False, "tile": 1.0},
+            {"min": [-W / 2 - 6, -0.34, D / 2 + 3.4], "max": [W / 2 + 6, -0.22, D / 2 + 30], "mat": "asphalt", "collide": False, "tile": 3.0},
+            # the chute's mouth: a rusted frame round the hatch, low in the north wall
+            {"min": [-0.62, 1.1, -D / 2], "max": [0.62, 1.24, -D / 2 + 0.06], "mat": "rust", "collide": False, "tile": 1.0},
+            {"min": [-0.62, 0, -D / 2], "max": [-0.5, 1.1, -D / 2 + 0.06], "mat": "rust", "collide": False, "tile": 1.0},
+            {"min": [0.5, 0, -D / 2], "max": [0.62, 1.1, -D / 2 + 0.06], "mat": "rust", "collide": False, "tile": 1.0},
         ],
         "ambient": {"color": "#f0f4ff", "intensity": 0.22},
-        "sun": {"from": [1.0, 5.0, 12.0], "color": "#f4f6ff", "intensity": 0.4},
+        "sun": {"from": [1.0, 5.0, 12.0], "color": "#f4f6ff", "intensity": 0.3},
         "lights": lights,
-        "fog": {"color": "#05070a", "near": 14, "far": 30},
+        "fog": {"color": "#05070a", "near": 9, "far": 23},
         "exposure": 1.0,
         "vignette": 0.45,
         "background": "#000000",
-        "spawn": [0, 6.0, 0],
+        "spawn": [0, -D / 2 + 1.6, 180],
         "props": props,
         "footstep": {"filterHz": 1100, "gain": 0.08},
     }
     s = shots_for(rec, out_dist=3.0, leave_dist=5.5, loop_seconds=14.0)
-    # Expelled onto the linoleum (S8_H_VID_STORE): static on the storefront
-    # glass, the fluorescent above flickering.
-    s["in"] = pose([0, EYE, -1.0], [0, 1.3, D / 2])
-    s["out"] = pose([0, EYE, 1.0], [0, 1.3, D / 2])
-    s["arrive"] = {"from": pose([0, 0.6, -2.0], [0, 1.3, D / 2]), "to": "in", "seconds": 3.0, "ease": "out", "fadeIn": 1.2}
-    # EXPULSION: pushing toward the glass, the door open outward, nothing
-    # rendering in the doorway -- the push ends inside the black beyond it.
-    s["ending"] = {"from": "out", "to": pose([0, EYE, D / 2 + 1.6], [0, 1.2, D / 2 + 12]), "seconds": 7.0, "ease": "inout", "fadeOut": 1.4}
-    s["leave"] = {"from": "out", "to": pose([0, EYE, D / 2 - 0.5], [0, 1.2, D / 2 + 12]), "seconds": 3.0, "ease": "in", "fadeOut": 1.1}
-    # expelled from the chute onto the linoleum
-    s["land"] = {"from": pose([-W / 2 + 0.2, 0.5, -4.0], [0, 0.3, -4.0]), "to": pose([-W / 2 + 1.6, EYE, -4.0], [0, 1.3, D / 2]), "seconds": 1.8, "ease": "out"}
+    # On his feet after the chute: the storefront ahead, his reflection in it.
+    s["in"] = pose([0, EYE, -D / 2 + 1.6], [0, 1.3, D / 2])
+    s["out"] = pose([1.4, EYE, 5.0], [3.0, 1.3, D / 2 + 4])
+    s["loop"] = {"from": "in", "to": "out", "seconds": 14.0, "pingpong": True, "ease": "inout", "sway": 0.035}
+    s["arrive"] = {"from": pose([0, 0.45, -D / 2 - 0.2], [0, 0.4, 0.0]), "to": "in", "seconds": 3.0, "ease": "out"}
+    s["leave"] = {"from": "out", "to": pose([DX0 + 0.9, EYE, D / 2 - 0.5], [DX0 + 0.9, 1.25, D / 2 + 12]), "seconds": 3.0, "ease": "in"}
+    # EXPULSION: he steps into the open doorway, looking out at the empty
+    # street -- and the camera withdraws without him: the open door, nothing
+    # rendering in the doorway, his reflection at the glass (Doc 2 SE_EXPUL).
+    s["ending"] = {"from": pose([(DX0 + DX1) / 2, EYE, D / 2 - 0.55], [(DX0 + DX1) / 2, 1.35, D / 2 + 9], fov=52),
+                   "to": pose([-0.4, 1.62, 3.3], [1.5, 1.3, D / 2]), "seconds": 9.0, "ease": "inout"}
+    # expelled from the chute onto the linoleum, getting up at the head of the aisle
+    s["land"] = {"from": pose([0, 0.45, -D / 2 - 0.2], [0, 0.4, 0.0]), "to": pose([0, EYE, -D / 2 + 1.6], [0, 1.3, D / 2]), "seconds": 1.8, "ease": "out"}
     rec["shots"] = s
-    door(rec, "hatch", "W", -4.0, w=1.0, h=1.1, kind="open")
-    door(rec, "staff", "E", -5.0, w=1.0, h=2.1, kind="door", locked=True, mat="lp_grey")
+    door(rec, "hatch", "N", 0.0, w=1.0, h=1.1, kind="open")
+    door(rec, "staff", "E", 3.0, w=1.0, h=2.1, kind="door", locked=True, mat="lp_grey")
     rec["entry"] = "hatch"
     rec["holdEntry"] = True
-    zone(rec, "storefront", [0.0, 6.7], r=0.8, ring=3.5, label_at=[0.0, 2.6, 7.9])
+    # EXPULSION: the open door
+    zone(rec, "door", [(DX0 + DX1) / 2, D / 2 - 0.7], r=0.6, ring=3.0, label_at=[(DX0 + DX1) / 2, 2.6, D / 2 + 0.2])
     return rec
 
 
@@ -1878,138 +1969,250 @@ def street():
 
 
 def dive():
-    """S8 H, the dive: underwater, jagged low-poly hands against the
-    caustics, below a rusted grate with sick blue light behind it."""
-    W, H, D = 12.0, 14.0, 12.0
+    """S8 H, THE DIVE: underwater, mid-depth (Doc 2 S8_H). Tiled pillars
+    descend into blue-green attenuation; particulate drifts upward; the
+    surface is a moving caustic overhead. Far below, a rusted grate with sick
+    blue light behind it: DIVE. The nearest pillar on the left carries a pool
+    lamp, the one warm thing in the water: SWIM FOR THE PILLARS -- and when he
+    reaches it the lamp dies and the current takes him down to the grate
+    anyway (C3: refusing the descent still descends). He can only sink: the
+    swim ceiling is where he went under. The low-poly hands were removed at
+    the author's request; nothing of him is in frame.
+
+    Under the grate is a lit pit; its north side is where the chute (CN_CHUTE,
+    attached at the `grate` anchor) opens, so the carried move goes down
+    through the open grate and in through the chute's mouth, below the floor."""
+    W, H, D = 26.0, 12.0, 26.0
+    GX, GZ, G = 0.0, 1.5, 2.4          # the grate: centre, size
+    PIT = 2.3                         # the pit under it
+    x0, x1, z0, z1 = GX - G / 2, GX + G / 2, GZ - G / 2, GZ + G / 2
+    boxes = []
+    # the pool floor, with the grate's hole in it (noFloor: swimming never stands on it)
+    for a, b in (([-W / 2, -0.2, -D / 2], [W / 2, 0, z0]), ([-W / 2, -0.2, z1], [W / 2, 0, D / 2]),
+                 ([-W / 2, -0.2, z0], [x0, 0, z1]), ([x1, -0.2, z0], [W / 2, 0, z1])):
+        boxes.append({"min": a, "max": b, "mat": "pool_tile", "floor": True, "tile": 1.5})
+    # the pit: rust-streaked walls on three sides, its floor glowing
+    boxes.append({"min": [x0, -PIT, z1 - 0.1], "max": [x1, -0.2, z1], "mat": "rust", "collide": False, "tile": 1.5})
+    boxes.append({"min": [x0, -PIT, z0], "max": [x0 + 0.1, -0.2, z1], "mat": "rust", "collide": False, "tile": 1.5})
+    boxes.append({"min": [x1 - 0.1, -PIT, z0], "max": [x1, -0.2, z1], "mat": "rust", "collide": False, "tile": 1.5})
+    boxes.append({"min": [x0, -PIT - 0.05, z0], "max": [x1, -PIT, z1], "mat": "glow_water", "collide": False, "shadow": False})
+    boxes.append({"min": [x0 - 0.15, 0, z0 - 0.15], "max": [x1 + 0.15, 0.03, z0], "mat": "rust", "collide": False, "tile": 1.0})
+    boxes.append({"min": [x0 - 0.15, 0, z1], "max": [x1 + 0.15, 0.03, z1 + 0.15], "mat": "rust", "collide": False, "tile": 1.0})
+    # The colonnade: tiled pillars from the floor to the surface, on a loose grid.
+    rnd = random.Random(7)
+    MARK = (-3.25, -3.25)              # SWIM FOR THE PILLARS: the lamp-lit one
+    sleeves = []                       # the caustics crawling over each pillar
+    for gx in (-9.75, -3.25, 3.25, 9.75):
+        for gz in (-9.75, -3.25, 3.25, 9.75):
+            inner = abs(gx) < 4 and abs(gz) < 4
+            px = gx + (0 if inner else rnd.uniform(-0.7, 0.7))
+            pz = gz + (0 if inner else rnd.uniform(-0.7, 0.7))
+            boxes.append({"min": [round(px - 0.6, 3), -0.2, round(pz - 0.6, 3)], "max": [round(px + 0.6, 3), H, round(pz + 0.6, 3)], "mat": "pool_tile", "tile": 1.2})
+            sleeves.append(prop("caustics", [px, 0, pz], w=1.2, d=1.2, h=H, u=round(gx * 0.37 + gz * 0.61, 2), strength=0.42))
+    mx, mz = MARK
+    props = [
+        # the pool lamp on the marked pillar's south face, and the same lamp dead
+        prop("poollamp", [mx, 7.6, mz + 0.62], name="poollamp"),
+        prop("poollamp", [mx, 7.6, mz + 0.62], lit=False, name="poollamp_dead", hidden=True),
+        prop("clock", [3.25, 7.3, -3.25 + 0.63]),
+        prop("slip", [GX + 1.75, 0.004, GZ + 1.6], rot=60),
+        # the grate over the pit, and the same grate pried up on its north edge
+        prop("floorgrate", [GX, 0.0, GZ], w=G, d=G, name="grate"),
+        prop("floorgrate", [GX, 0.0, GZ], w=G, d=G, open=104, name="grate_open", hidden=True),
+        # the pit's north side until the chute opens there
+        prop("wallplate", [GX, -PIT, z0 + 0.32], w=G, h=PIT - 0.2, mat="lp_black", name="pitplug"),
+        # particulate drifting upward through the water
+        prop("motes", [0, 0.6, 1.0], n=520, w=18, h=10.5, d=18, size=0.03, color="#a8d8e0", opacity=0.5, rise=0.05),
+        # and the caustics on the floor, round the grate's hole (Doc 2 S8_H)
+        prop("caustics", [0, 0, 0], rects=[[-W / 2, W / 2, -D / 2, z0 - 0.15], [-W / 2, W / 2, z1 + 0.15, D / 2],
+                                            [-W / 2, x0 - 0.15, z0 - 0.15, z1 + 0.15], [x1 + 0.15, W / 2, z0 - 0.15, z1 + 0.15]], strength=0.24, scale=2.2),
+        # and the surface itself, far above: the same web, bright, seen from below
+        prop("caustics", [0, H - 0.06, 0], rects=[[-W / 2, W / 2, -D / 2, D / 2]], down=True, strength=0.28, scale=1.8, color="#a8eef8"),
+    ] + sleeves
     rec = {
         "name": "THE DIVE",
         "size": [W, H, D],
-        "floor": "grate", "wall": "pool_tile", "ceiling": "water",
-        "tile": {"floor": 1.0, "wall": 1.5, "ceiling": 4.0},
-        "boxes": [
-            {"min": [-4, -3.0, -4], "max": [4, -0.2, 4], "mat": "glow_water", "collide": False, "shadow": False},
-            {"min": [-W / 2, -0.25, -D / 2], "max": [W / 2, -0.2, D / 2], "mat": "rust", "collide": False, "tile": 2.0},
-        ],
-        "ambient": {"color": "#3a8aa0", "intensity": 0.35},
-        "hemisphere": {"sky": "#2b6a7c", "ground": "#061a22", "intensity": 0.6},
-        "sun": {"from": [1.0, 13.0, 3.0], "color": "#8fd8ea", "intensity": 0.9},
+        "floor": "pool_tile", "wall": "pool_tile", "ceiling": "water",
+        "noFloor": True,
+        "tile": {"floor": 1.5, "wall": 1.5, "ceiling": 4.0},
+        "boxes": boxes,
+        "ambient": {"color": "#2f7f95", "intensity": 0.3},
+        "hemisphere": {"sky": "#2b6a7c", "ground": "#061a22", "intensity": 0.55},
+        "sun": {"from": [3.0, 12.0, 10.0], "color": "#8fd8ea", "intensity": 0.8},
         "lights": [
-            {"type": "point", "pos": [0, 0.6, 0], "color": "#3ab8d0", "intensity": 30, "distance": 20, "flicker": 0.4},
-            {"type": "point", "pos": [3, 9.0, -3], "color": "#5fc8dc", "intensity": 18, "distance": 24, "flicker": 0.25},
-            {"type": "point", "pos": [-3, 9.0, 3], "color": "#5fc8dc", "intensity": 18, "distance": 24, "flicker": 0.3},
+            # the sick blue under the grate; it grows as he comes down (the DIVE approach)
+            {"type": "point", "pos": [GX, -1.3, GZ], "color": "#3ab8d0", "intensity": 34, "distance": 16, "flicker": 0.15, "id": "gratelight"},
+            {"type": "point", "pos": [GX, -0.5, GZ], "color": "#46c4dc", "intensity": 30, "distance": 20, "id": "gratelight2", "off": True},
+            # the pool lamp
+            {"type": "point", "pos": [mx, 7.6, mz + 1.1], "color": "#ffe8b8", "intensity": 10, "distance": 9, "id": "poollight"},
+            # the surface's light, far above
+            {"type": "point", "pos": [-6, 10.5, 6], "color": "#5fc8dc", "intensity": 14, "distance": 22},
+            {"type": "point", "pos": [6, 10.5, -6], "color": "#5fc8dc", "intensity": 14, "distance": 22},
+            {"type": "point", "pos": [6, 10.5, 8], "color": "#5fc8dc", "intensity": 12, "distance": 22},
         ],
-        "fog": {"color": "#0a2a38", "near": 2, "far": 20},
+        "fog": {"color": "#0a2a38", "near": 3, "far": 24},
         "background": "#061c26",
         "exposure": 1.0,
         "vignette": 0.6,
         "grain": 0.04,
-        "spawn": [0, 2.0, 0],
-        "props": [
-            prop("clock", [-W / 2 + 0.03, 4.0, -2.0], rot=90),
-            prop("slip", [1.2, 0.004, -1.0], rot=60),
-        ],
-        "footstep": {"filterHz": 300, "gain": 0.03},
+        "spawn": [0, 4.6, 0],
+        "props": props,
+        # swimming makes no footfalls
+        "footstep": {"filterHz": 200, "gain": 0.001},
     }
     s = shots_for(rec, out_dist=0.5, leave_dist=1.0, loop_seconds=10.0)
-    s["in"] = pose([0, 9.0, 2.0], [0, 0, 0])
-    s["out"] = pose([0, 2.2, 1.6], [0, -0.2, 0])
-    # Descending motion toward the grate (S8_H_VID, 8 s), then the hold
-    # above it while THE BREATH (MG-07 H) runs.
-    s["descend"] = {"from": "in", "to": "out", "seconds": 8.0, "ease": "inout", "sway": 0.06}
-    s["loop"] = {"from": "out", "to": pose([0.2, 2.0, 1.4], [0, -0.2, 0]), "seconds": 6.0, "pingpong": True, "ease": "inout", "sway": 0.06}
-    # Through the grate into the dry concrete chute (black), then the store.
-    s["leave"] = {"from": "out", "to": pose([0, -1.5, 0.2], [0, -6, -0.5]), "seconds": 2.8, "ease": "in", "fadeOut": 1.0}
-    s["arrive"] = {"from": pose([0, 12.0, 3.0], [0, 0, 0]), "to": "in", "seconds": 2.4, "ease": "out", "fadeIn": 1.4}
+    # Where he hangs after going under: the grate glowing below, the lamp-lit pillar up to the left.
+    s["in"] = pose([0, H - 1.4, 4.6], [-0.9, 5.4, -0.2])
+    # above the grate, looking down at it
+    s["out"] = pose([GX, 2.6, GZ + 2.7], [GX, -0.6, GZ])
+    s["loop"] = {"from": "in", "to": "out", "seconds": 10.0, "pingpong": True, "ease": "inout", "sway": 0.06}
+    # through the open grate, down into the pit, turning toward the chute's mouth
+    s["grate"] = {"from": "out", "to": pose([GX, -1.4, GZ + 0.1], [GX, -1.7, -1.5]), "seconds": 2.2, "ease": "in"}
+    s["leave"] = {"from": "out", "to": pose([GX, -1.4, GZ + 0.1], [GX, -1.7, -1.5]), "seconds": 2.2, "ease": "in"}
     # the splash: from the surface down into the water, before he swims
-    s["sink"] = {"from": pose([0, H - 0.2, 0.0], [0, 6, -2.0]), "to": pose([0, H - 3.5, 0.6], [0, 4, -2.5]), "seconds": 2.2, "ease": "out"}
-    # through the grate, dragged by the current
-    s["grate"] = {"from": "out", "to": pose([0, 0.3, 0.1], [0, -4, -0.3]), "seconds": 2.0, "ease": "in"}
+    s["sink"] = {"from": pose([0, H - 0.2, 4.5], [0, 6.0, 1.0]), "to": pose([0, H - 1.4, 4.6], [-0.9, 5.4, -0.2]), "seconds": 2.2, "ease": "out"}
+    s["arrive"] = {"from": pose([0, H - 0.2, 4.5], [0, 6.0, 1.0]), "to": "in", "seconds": 2.2, "ease": "out"}
     rec["shots"] = s
-    # the tiled pillars at the corners (SWIM FOR THE PILLARS)
-    for px, pz in ((-4.3, -4.3), (4.3, -4.3), (-4.3, 4.3), (4.3, 4.3)):
-        rec["boxes"].append({"min": [px - 0.45, 0, pz - 0.45], "max": [px + 0.45, H, pz + 0.45], "mat": "pool_tile", "collide": True, "tile": 1.5})
-    anchor(rec, "surface", [0.0, H, 0.0], 0, vertical=True)
-    anchor(rec, "grate", [0.0, -0.3, 0.0], 0, vertical=True)
+    anchor(rec, "surface", [0.0, H, 4.5], 0, vertical=True)
+    # the chute hangs from here: its mouth is the pit's north side, its roof under the floor
+    anchor(rec, "grate", [GX, -1.7, z0 - 0.6], 0, vertical=True)
     rec["entry"] = "surface"
-    rec["swim"] = {"floorY": 0.9, "ceilingY": H - 0.7}
-    zone(rec, "grate", [0.0, 1.0, 0.0], r=1.3, ring=4.0, label_at=[0.0, 2.6, 0.0])
-    zone(rec, "pillars", [-3.3, 6.0, -3.3], r=1.1, ring=3.5, label_at=[-4.3, 7.6, -4.3])
+    # he can only sink: the ceiling is where he went under (C3)
+    rec["swim"] = {"floorY": 0.9, "ceilingY": H - 1.4}
+    zone(rec, "grate", [GX, 1.2, GZ], r=1.4, ring=7.0, label_at=[GX, 2.7, GZ])
+    zone(rec, "pillar", [mx, 7.6, mz + 1.5], r=1.1, ring=4.2, label_at=[mx, 9.0, mz + 0.9])
     return rec
 
 
 def boardroom():
-    """SE_ASSIM: the boardroom. A long glass table, twelve seated figures who
-    do not breathe, one empty chair at the head with the hundredth slip in
-    front of it (Track C motif 2)."""
+    """SE_ASSIM / SE_RETAINED: the boardroom (Doc 2 S8_C_IMG_OUT). A vast glass
+    table on marble under recessed light, twelve seated figures who do not
+    breathe, and at the head his chair, pulled out from the glass and empty,
+    the hundredth slip on its seat. He walks up to it; the camera leaves him
+    standing beside it, his face the blurred texture map, the chair beside him
+    empty with the slip on it, and pulls back down the table (Doc 1 §6.4).
+    NEVER_SAT hides the chair: no chair for him at all (endings.json). The
+    package is on the glass: for ASSIMILATION it appears there when the camera
+    leaves him (he carried it in); for RETAINED it is already there, resealed,
+    when he walks in -- the one he opened is still on the sorting table."""
     W, H, D = 9.0, 3.4, 18.0
-    props = [prop("table", [0, 0, -1.0], w=2.2, d=12.0, name="table")]
+    LEATHER = "#3b241c"
+    props = [prop("glasstable", [0, 0, -1.0], w=2.2, d=12.0, name="table")]
     for i in range(6):
         z = -6.0 + i * 2.0
         for side in (-1, 1):
-            props.append(glb("lib_chair", [side * 1.7, 0, z], rot=90 if side > 0 else -90, fallback="chair"))
-            props.append(prop("figure", [side * 1.65, 0, z], rot=90 if side > 0 else -90, seated=True, face="blur", suit="lp_suit", name="board%d" % (i * 2 + (side > 0))))
-    props.append(glb("lib_chair", [0.0, 0, -8.0], rot=0, fallback="chair", name="emptychair"))   # the head of the table, facing back down it
-    props.append(prop("slip", [0.45, 0.76, -6.6], rot=12, name="hundredth"))
-    props.append(prop("package", [0.0, 0.76, -1.6], rot=4, name="package"))
-    props.append(prop("clock", [-W / 2 + 0.03, 2.5, -4.0], rot=90))
-    for z in (-6, -2, 2):
-        props.append(prop("pendant", [0, H, z], drop=0.8))
+            rot = 90 if side < 0 else -90   # chairs and figures face +z at rot 0: these face the table
+            props.append(glb("lib_chair", [side * 1.8, 0, z], rot=rot, fallback="chair", collide=True, mat="lp_wood", paint=LEATHER))
+            # Doc 2 S8_C_IMG_OUT: "all blocky, all faceless, all identical
+            # posture" -- a blank grey head; the one blurred face at this
+            # table is his, when the camera leaves him (`self`)
+            props.append(prop("figure", [side * 1.74, 0, z], rot=rot, seated=True, suit="lp_suit", tie=True, face="blur", name="board%d" % (i * 2 + (side > 0))))
+    # his chair at the head, pulled back from the glass, facing down the table;
+    # on its seat the hundredth slip (Track C motif 2: the one slip in this room)
+    props.append(glb("lib_chair", [0.0, 0, -8.15], rot=0, fallback="chair", name="mychair", mat="lp_wood", paint=LEATHER))
+    # the chairs in one flat dark leather (the catalog chair is white): S1's `palette` prop paints the catalog props placed before it
+    props.append(prop("palette", [0, 0, 0]))
+    props.append(prop("slip", [0.04, 0.582, -8.08], rot=14, name="hundredth"))
+    # printed: it reads 100 (Doc 1 §6.4); hidden with it for NEVER_SAT (endings.json)
+    props.append(prop("numslip", [0.04, 0.582, -8.08], rot=14, n=100, bare=True, name="hundredth_print"))
+    # him, as the camera leaves him: standing at the head, beside the chair (endings.json `show`)
+    props.append(prop("blurfigure", [0.82, 0, -7.6], rot=-12, suit="lp_suit", name="self", hidden=True))
+    props.append(prop("soggypackage", [0.0, 0.79, -1.6], rot=4, name="package"))
+    props.append(prop("wetring", [0.0, 0.791, -1.6], rot=4, w=0.62, d=0.48, spread=0.9, fill=0.9, mat="lp_black", name="ring"))
+    # C8: on the south wall, over the door -- never in frame with the mailroom's
+    props.append(prop("clock", [-2.6, 2.6, D / 2 - 0.03], rot=180))
+    # recessed downlights flush in the ceiling: pools of warm light on the glass
+    for z in (-6.5, -2.5, 1.5):
+        props.append(prop("fluoro", [0, H - 0.03, z], w=0.5, d=0.5))
+    props.append(prop("fluoro", [0.4, H - 0.03, -8.2], w=0.5, d=0.5))
+    for x in (-3.2, 3.2):
+        for z in (-5.0, 3.0):
+            props.append(prop("fluoro", [x, H - 0.03, z], w=0.4, d=0.4))
+    lights = [{"type": "spot", "pos": [0, H - 0.1, z], "target": [0, 0.79, z], "angle": 36, "penumbra": 0.65, "intensity": 42, "distance": 10, "decay": 1.2, "color": "#ffe2b8"} for z in (-6.5, -2.5, 1.5)]
+    lights.append({"type": "spot", "pos": [0.4, H - 0.1, -8.2], "target": [0.3, 0.0, -7.9], "angle": 32, "penumbra": 0.6, "intensity": 30, "distance": 9, "decay": 1.2, "color": "#ffe2b8"})
+    lights += [{"type": "point", "pos": [x, H - 0.4, z], "color": "#ffe2b8", "intensity": 8, "distance": 8} for x in (-3.2, 3.2) for z in (-5.0, 3.0)]
     rec = {
         "name": "ONBOARDING",
         "size": [W, H, D],
-        "floor": "carpet", "wall": "plaster_dark", "ceiling": "plaster_dark",
-        "tile": {"floor": 1.5, "wall": 2.0, "ceiling": 2.0},
-        "skirt": {"mat": "marble", "h": 0.12, "t": 0.03, "tile": 2.5},
+        "floor": "marble_light", "wall": "plaster_dark", "ceiling": "plaster_dark",
+        "tile": {"floor": 6.0, "wall": 2.0, "ceiling": 2.0},  # big slabs: the veins read as marble, not scribble
+        # a dark veined marble wainscot: pristine, expensive air (Doc 2)
+        "skirt": {"mat": "marble", "h": 1.1, "t": 0.03, "tile": 7.0},
         "cornice": {"mat": "plaster_dark", "h": 0.3, "t": 0.08},
-        "ambient": {"color": "#ffe9c8", "intensity": 0.12},
-        "sun": {"from": [1.0, 5.0, 10.0], "color": "#ffe9c8", "intensity": 0.5},
-        "lights": [{"type": "point", "pos": [0, H - 1.1, z], "color": "#ffe2b8", "intensity": 14, "distance": 12} for z in (-6, -2, 2)],
+        "ambient": {"color": "#ffe9c8", "intensity": 0.16},
+        "sun": {"from": [1.0, 5.0, 10.0], "color": "#ffe9c8", "intensity": 0.55},
+        "lights": lights,
         "fog": {"color": "#0d0b09", "near": 6, "far": 30},
-        "vignette": 0.6,
-        "spawn": [0, 7.0, 0],
+        "exposure": 1.15,
+        "vignette": 0.55,
+        "spawn": [0, 7.4, 0],
         "props": props,
-        "footstep": {"filterHz": 380, "gain": 0.04},
+        "footstep": {"filterHz": 1300, "gain": 0.05},
     }
     s = shots_for(rec, out_dist=2.0, leave_dist=12.0, loop_seconds=18.0)
-    s["in"] = pose([0, EYE, 6.4], [0, 1.0, -8.0], fov=50)
-    s["out"] = pose([0, EYE, 4.8], [0, 1.0, -8.0], fov=50)
-    # ASSIMILATION: pulling back down the table, resolving on the twelve
-    # faces and the empty chair at the head.
-    s["ending"] = {"from": pose([0, 1.4, -2.5], [0, 0.95, -8.0], fov=44), "to": pose([0, 1.7, 7.4], [0, 0.9, -8.0], fov=56), "seconds": 9.0, "ease": "inout"}
-    # RETAINED: the same pull-back, shorter, the package still on the table.
-    s["retained"] = {"from": pose([0, 1.3, -0.4], [0, 0.78, -6.6], fov=40), "to": pose([0, 1.7, 7.4], [0, 0.9, -8.0], fov=56), "seconds": 7.0, "ease": "inout"}
+    s["in"] = pose([1.2, EYE, 7.4], [0, 1.0, -8.0], fov=50)
+    s["out"] = pose([0, EYE, 6.2], [0, 1.0, -8.0], fov=50)
+    # ASSIMILATION: the camera leaves him standing at the head -- his face the
+    # blurred texture map -- and pulls back down the length of the table,
+    # resolving on the twelve, him, the empty chair with the slip, the package.
+    # It stops halfway down the glass, so the last frame still holds his face,
+    # the chair beside him with the slip, the twelve and the package.
+    s["ending"] = {"from": pose([0.75, 1.52, -5.7], [0.8, 1.48, -7.6], fov=40), "to": pose([0, 1.95, 1.4], [0.35, 1.0, -7.8], fov=52), "seconds": 10.0, "ease": "inout"}
+    # RETAINED: the same, shorter and lower, the resealed package close in frame.
+    s["retained"] = {"from": pose([0.75, 1.52, -5.7], [0.8, 1.48, -7.6], fov=40), "to": pose([0.15, 1.6, 1.3], [0.3, 0.85, -7.8], fov=46), "seconds": 7.0, "ease": "inout"}
     rec["shots"] = s
     door(rec, "front", "S", 0.0, w=1.4, h=2.4, kind="door", mat="lp_wood")
     rec["entry"] = "front"
-    zone(rec, "head", [0.0, -7.6], r=0.6, ring=3.0, label_at=[0.0, 1.9, -8.0])
+    # beside his chair at the head (the ending zone: the chair is the marker)
+    zone(rec, "head", [0.82, -7.6], r=0.5, ring=2.5, label_at=[0.4, 1.9, -8.1])
     return rec
 
 
 def pending_room():
-    """SE_PEND: the waiting room from a seated position, the slip reading 99
-    in low-poly hands; an empty chair opposite, recently vacated, and the
-    curtain at the far end still swinging."""
+    """SE_PEND: the waiting room again (Doc 1 §6.4, Doc 2 SE_PEND). He comes
+    back in through the inner door he left by in S2. In the middle of the
+    room two chairs face each other: his, and one recently vacated, the slip
+    on its seat; past it, on the east wall, a red curtain still swinging --
+    someone has just gone through. TAKE A SEAT: he sits, the slip reading 99
+    in his low-poly hands (C6), and the camera lifts from the hands to the
+    empty chair and the curtain. The receptionist does not look up (C5)."""
     rec = waiting_room(False)
     rec["name"] = "PENDING REVIEW"
     W, H, D = rec["size"]
-    rec["props"] = [p for p in rec["props"] if p["type"] != "glb"]  # the rows go; two chairs face each other
-    rec["props"].append(glb("lib_chair", [-0.9, 0, 1.2], rot=-90, fallback="chair"))
-    rec["props"].append(glb("lib_chair", [0.9, 0, 1.2], rot=90, fallback="chair", name="vacated"))
-    rec["props"].append(prop("hands", [-0.6, 0.95, 1.2], rot=-90, name="hands", slip=True, hidden=True))
-    rec["props"].append(prop("curtain", [0, 0, -D / 2 + 0.05], w=2.2, h=3.0, name="farcurtain", swing=True))
-    rec["props"].append(prop("slip", [0.9, 0.45, 1.2], rot=10))  # the hundredth? no: the one he holds is drawn by the hands; this one on the vacated seat
+    # The rows go; two chairs face each other -- the same maroon chairs as
+    # S1's, so they go in where the rows were, before the room's `palette`
+    # prop, which paints only the catalog props placed before it.
+    rows = [p for p in rec["props"] if p["type"] == "glb"]
+    paint = {k: rows[0][k] for k in ("mat", "paint") if rows and k in rows[0]}
+    at = next(i for i, p in enumerate(rec["props"]) if p["type"] == "glb")
+    rec["props"] = [p for p in rec["props"] if p["type"] != "glb"]
+    rec["props"][at:at] = [
+        glb("lib_chair", [-0.9, 0, 1.2], rot=90, fallback="chair", name="mychair", **paint),
+        glb("lib_chair", [0.9, 0, 1.2], rot=-90, fallback="chair", name="vacated", **paint),
+    ]
+    assert any(p["type"] == "palette" for p in rec["props"][at + 2:]), "SE_PEND: the chairs must come before the palette"
+    # His hands, and the slip in them reading 99, uncalled (Doc 1 §6.4);
+    # the printed slip is a prop of its own (endings.json PENDING `show`).
+    rec["props"].append(prop("hands", [-0.3, 0.84, 1.2], rot=-90, name="hands", hidden=True))
+    rec["props"].append(prop("numslip", [-0.24, 0.872, 1.2], rot=-90, n=99, name="slip99", hidden=True))
+    rec["props"].append(prop("swaycurtain", [W / 2 - 0.1, 0, 1.2], rot=-90, w=2.2, h=3.0, name="farcurtain"))
+    rec["props"].append(prop("slip", [0.92, 0.582, 1.18], rot=10))  # left on the vacated seat
     rec["spawn"] = [-0.9, 1.2, -90]
     s = shots_for(rec, eye=1.15, out_dist=0.3, leave_dist=1.0, loop_seconds=10.0)
-    s["in"] = pose([-0.75, 1.15, 1.2], [0.9, 0.7, 1.2], fov=52)
-    s["out"] = pose([-0.75, 1.15, 1.2], [0.9, 0.7, 1.2], fov=52)
-    s["ending"] = {"from": pose([-0.75, 1.15, 1.2], [-0.2, 0.9, 1.2], fov=52), "to": pose([-0.75, 1.15, 1.2], [1.6, 0.8, 0.6], fov=52), "seconds": 7.0, "ease": "inout", "sway": 0.015}
+    # seated: down at the hands and the slip, then up at the empty chair and the curtain
+    s["in"] = pose([-0.75, 1.15, 1.2], [-0.2, 0.8, 1.2], fov=52)
+    s["out"] = pose([-0.75, 1.15, 1.2], [2.4, 0.95, 1.05], fov=52)
+    s["ending"] = {"from": pose([-0.75, 1.15, 1.2], [-0.2, 0.8, 1.2], fov=52), "to": pose([-0.75, 1.15, 1.2], [2.4, 0.95, 1.05], fov=52), "seconds": 7.0, "ease": "inout", "sway": 0.015}
     s.pop("call", None)
-    # sitting down to wait, before the pull-back
-    s["sit"] = {"from": pose([-1.6, EYE, 1.2], [0.9, 1.0, 1.2]), "to": pose([-0.75, 1.15, 1.2], [-0.2, 0.9, 1.2], fov=52), "seconds": 1.8, "ease": "inout"}
+    # sitting down to wait: beside the chair, a quarter turn, down into it (two
+    # quarter turns, never a half: a carried look that swings through 180 flips)
+    s["sit"] = {"from": pose([-0.9, EYE, 0.5], [-0.9, 1.0, 3.5]), "to": pose([-0.75, 1.15, 1.2], [-0.2, 0.8, 1.2], fov=52), "seconds": 1.8, "ease": "inout"}
+    # what he sees coming back in through the inner door (for previews)
+    s["entry"] = pose([5.6, EYE, -4.4], [-0.6, 1.0, 1.6])
     rec["shots"] = s
     rec["entry"] = "inner"
-    rec["zones"] = [z for z in rec.get("zones", []) if False]
-    zone(rec, "seat", [-1.55, 1.2], r=0.55, ring=2.6, label_at=[-0.9, 1.3, 1.2])
+    rec["zones"] = []
+    zone(rec, "seat", [-0.9, 0.42], r=0.5, ring=2.6, label_at=[-0.9, 1.45, 1.2])
     return rec
 
 

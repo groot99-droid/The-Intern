@@ -18770,7 +18770,7 @@
    "name": "THE DELIVERY",
    "size": [
     40.0,
-    10.0,
+    16.0,
     50.0
    ],
    "floor": "concrete",
@@ -18805,8 +18805,8 @@
      "type": "point",
      "pos": [
       -12,
-      7.0,
-      -14
+      7.1,
+      -16
      ],
      "color": "#e6ecff",
      "intensity": 30,
@@ -18817,8 +18817,8 @@
      "type": "point",
      "pos": [
       -12,
-      7.0,
-      0
+      7.1,
+      -6
      ],
      "color": "#e6ecff",
      "intensity": 30,
@@ -18829,8 +18829,8 @@
      "type": "point",
      "pos": [
       -12,
-      7.0,
-      14
+      7.1,
+      8
      ],
      "color": "#e6ecff",
      "intensity": 30,
@@ -18841,8 +18841,8 @@
      "type": "point",
      "pos": [
       0,
-      7.0,
-      -14
+      7.1,
+      -16
      ],
      "color": "#e6ecff",
      "intensity": 30,
@@ -18853,8 +18853,8 @@
      "type": "point",
      "pos": [
       0,
-      7.0,
-      0
+      7.1,
+      -6
      ],
      "color": "#e6ecff",
      "intensity": 30,
@@ -18865,8 +18865,8 @@
      "type": "point",
      "pos": [
       0,
-      7.0,
-      14
+      7.1,
+      8
      ],
      "color": "#e6ecff",
      "intensity": 30,
@@ -18877,8 +18877,8 @@
      "type": "point",
      "pos": [
       12,
-      7.0,
-      -14
+      7.1,
+      -16
      ],
      "color": "#e6ecff",
      "intensity": 30,
@@ -18889,8 +18889,8 @@
      "type": "point",
      "pos": [
       12,
-      7.0,
-      0
+      7.1,
+      -6
      ],
      "color": "#e6ecff",
      "intensity": 30,
@@ -18901,20 +18901,64 @@
      "type": "point",
      "pos": [
       12,
-      7.0,
-      14
+      7.1,
+      8
      ],
      "color": "#e6ecff",
      "intensity": 30,
      "distance": 22,
      "flicker": 0
+    },
+    {
+     "type": "point",
+     "pos": [
+      0.0,
+      2.9,
+      -23.9
+     ],
+     "color": "#ffcf96",
+     "intensity": 16,
+     "distance": 9,
+     "id": "docklamp",
+     "off": true
+    },
+    {
+     "type": "point",
+     "pos": [
+      -6.3,
+      1.95,
+      -23.5
+     ],
+     "color": "#ffcf96",
+     "intensity": 16,
+     "distance": 8,
+     "id": "sortlamp",
+     "off": true
     }
    ],
    "fog": {
-    "color": "#70747b",
-    "near": 9,
-    "far": 52
+    "color": "#666b72",
+    "near": 5,
+    "far": 40
    },
+   "boxes": [
+    {
+     "min": [
+      -1.1,
+      0,
+      -25.0
+     ],
+     "max": [
+      1.1,
+      0.012,
+      -23.7
+     ],
+     "mat": "grate",
+     "floor": true,
+     "collide": false,
+     "tile": 1.0
+    }
+   ],
    "spawn": [
     0,
     16.0,
@@ -18932,27 +18976,32 @@
      "node": "lib_pallets",
      "collide": true,
      "n": 7,
+     "mat": "lp_wood",
      "fallback": "boxtower"
     },
     {
-     "type": "boxtower",
+     "type": "cartontower",
      "pos": [
       -15.754,
       0,
       -16.498
      ],
      "rot": 31,
-     "n": 12
+     "n": 22,
+     "cols": 2,
+     "seed": 2
     },
     {
-     "type": "boxtower",
+     "type": "cartontower",
      "pos": [
       -16.349,
       0,
       -11.83
      ],
      "rot": 58,
-     "n": 11
+     "n": 20,
+     "cols": 2,
+     "seed": 3
     },
     {
      "type": "glb",
@@ -18965,27 +19014,32 @@
      "node": "lib_pallets",
      "collide": true,
      "n": 10,
+     "mat": "lp_wood",
      "fallback": "boxtower"
     },
     {
-     "type": "boxtower",
+     "type": "cartontower",
      "pos": [
       -16.493,
       0,
       -4.319
      ],
      "rot": 2,
-     "n": 8
+     "n": 14,
+     "cols": 2,
+     "seed": 5
     },
     {
-     "type": "boxtower",
+     "type": "cartontower",
      "pos": [
       -15.976,
       0,
       -0.031
      ],
      "rot": 48,
-     "n": 5
+     "n": 8,
+     "cols": 2,
+     "seed": 6
     },
     {
      "type": "glb",
@@ -18998,27 +19052,32 @@
      "node": "lib_pallets",
      "collide": true,
      "n": 10,
+     "mat": "lp_wood",
      "fallback": "boxtower"
     },
     {
-     "type": "boxtower",
+     "type": "cartontower",
      "pos": [
       -15.856,
       0,
       7.853
      ],
      "rot": 84,
-     "n": 4
+     "n": 6,
+     "cols": 2,
+     "seed": 8
     },
     {
-     "type": "boxtower",
+     "type": "cartontower",
      "pos": [
       -16.194,
       0,
       12.23
      ],
      "rot": 63,
-     "n": 12
+     "n": 22,
+     "cols": 2,
+     "seed": 9
     },
     {
      "type": "glb",
@@ -19031,37 +19090,44 @@
      "node": "lib_pallets",
      "collide": true,
      "n": 5,
+     "mat": "lp_wood",
      "fallback": "boxtower"
     },
     {
-     "type": "boxtower",
+     "type": "cartontower",
      "pos": [
       -15.952,
       0,
       19.445
      ],
      "rot": 89,
-     "n": 7
+     "n": 12,
+     "cols": 2,
+     "seed": 11
     },
     {
-     "type": "boxtower",
+     "type": "cartontower",
      "pos": [
       -12.422,
       0,
       -19.568
      ],
      "rot": 58,
-     "n": 11
+     "n": 20,
+     "cols": 2,
+     "seed": 12
     },
     {
-     "type": "boxtower",
+     "type": "cartontower",
      "pos": [
       -12.257,
       0,
       -16.172
      ],
      "rot": 54,
-     "n": 6
+     "n": 10,
+     "cols": 2,
+     "seed": 13
     },
     {
      "type": "glb",
@@ -19074,27 +19140,32 @@
      "node": "lib_pallets",
      "collide": true,
      "n": 9,
+     "mat": "lp_wood",
      "fallback": "boxtower"
     },
     {
-     "type": "boxtower",
+     "type": "cartontower",
      "pos": [
       -11.757,
       0,
       -7.46
      ],
      "rot": 63,
-     "n": 12
+     "n": 22,
+     "cols": 2,
+     "seed": 15
     },
     {
-     "type": "boxtower",
+     "type": "cartontower",
      "pos": [
       -11.851,
       0,
       -4.229
      ],
      "rot": 45,
-     "n": 12
+     "n": 22,
+     "cols": 2,
+     "seed": 16
     },
     {
      "type": "glb",
@@ -19107,27 +19178,32 @@
      "node": "lib_pallets",
      "collide": true,
      "n": 12,
+     "mat": "lp_wood",
      "fallback": "boxtower"
     },
     {
-     "type": "boxtower",
+     "type": "cartontower",
      "pos": [
       -12.336,
       0,
       3.693
      ],
      "rot": 1,
-     "n": 8
+     "n": 14,
+     "cols": 2,
+     "seed": 18
     },
     {
-     "type": "boxtower",
+     "type": "cartontower",
      "pos": [
       -12.188,
       0,
       7.72
      ],
      "rot": 54,
-     "n": 8
+     "n": 14,
+     "cols": 2,
+     "seed": 19
     },
     {
      "type": "glb",
@@ -19140,37 +19216,32 @@
      "node": "lib_pallets",
      "collide": true,
      "n": 6,
+     "mat": "lp_wood",
      "fallback": "boxtower"
     },
     {
-     "type": "boxtower",
+     "type": "cartontower",
      "pos": [
       -11.811,
       0,
       15.54
      ],
      "rot": 84,
-     "n": 4
+     "n": 6,
+     "cols": 2,
+     "seed": 21
     },
     {
-     "type": "boxtower",
+     "type": "cartontower",
      "pos": [
       -12.358,
       0,
       20.32
      ],
      "rot": 38,
-     "n": 5
-    },
-    {
-     "type": "boxtower",
-     "pos": [
-      -8.584,
-      0,
-      -19.683
-     ],
-     "rot": 43,
-     "n": 6
+     "n": 8,
+     "cols": 2,
+     "seed": 22
     },
     {
      "type": "glb",
@@ -19183,27 +19254,32 @@
      "node": "lib_pallets",
      "collide": true,
      "n": 10,
+     "mat": "lp_wood",
      "fallback": "boxtower"
     },
     {
-     "type": "boxtower",
+     "type": "cartontower",
      "pos": [
       -7.923,
       0,
       -12.111
      ],
      "rot": 10,
-     "n": 5
+     "n": 8,
+     "cols": 2,
+     "seed": 24
     },
     {
-     "type": "boxtower",
+     "type": "cartontower",
      "pos": [
       -8.254,
       0,
       -8.486
      ],
      "rot": 10,
-     "n": 5
+     "n": 8,
+     "cols": 2,
+     "seed": 25
     },
     {
      "type": "glb",
@@ -19216,27 +19292,32 @@
      "node": "lib_pallets",
      "collide": true,
      "n": 12,
+     "mat": "lp_wood",
      "fallback": "boxtower"
     },
     {
-     "type": "boxtower",
+     "type": "cartontower",
      "pos": [
       -8.014,
       0,
       -0.422
      ],
      "rot": 77,
-     "n": 5
+     "n": 8,
+     "cols": 2,
+     "seed": 27
     },
     {
-     "type": "boxtower",
+     "type": "cartontower",
      "pos": [
       -8.372,
       0,
       4.495
      ],
      "rot": 43,
-     "n": 10
+     "n": 18,
+     "cols": 2,
+     "seed": 28
     },
     {
      "type": "glb",
@@ -19249,27 +19330,32 @@
      "node": "lib_pallets",
      "collide": true,
      "n": 9,
+     "mat": "lp_wood",
      "fallback": "boxtower"
     },
     {
-     "type": "boxtower",
+     "type": "cartontower",
      "pos": [
       -8.209,
       0,
       11.839
      ],
      "rot": 82,
-     "n": 11
+     "n": 20,
+     "cols": 2,
+     "seed": 30
     },
     {
-     "type": "boxtower",
+     "type": "cartontower",
      "pos": [
       -8.348,
       0,
       16.45
      ],
      "rot": 4,
-     "n": 6
+     "n": 10,
+     "cols": 2,
+     "seed": 31
     },
     {
      "type": "glb",
@@ -19282,72 +19368,8 @@
      "node": "lib_pallets",
      "collide": true,
      "n": 5,
+     "mat": "lp_wood",
      "fallback": "boxtower"
-    },
-    {
-     "type": "glb",
-     "pos": [
-      -4.5,
-      0,
-      -19.874
-     ],
-     "rot": 63,
-     "node": "lib_pallets",
-     "collide": true,
-     "n": 11,
-     "fallback": "boxtower"
-    },
-    {
-     "type": "boxtower",
-     "pos": [
-      -3.652,
-      0,
-      -16.143
-     ],
-     "rot": 13,
-     "n": 11
-    },
-    {
-     "type": "boxtower",
-     "pos": [
-      -3.823,
-      0,
-      -11.737
-     ],
-     "rot": 65,
-     "n": 5
-    },
-    {
-     "type": "boxtower",
-     "pos": [
-      4.259,
-      0,
-      -20.034
-     ],
-     "rot": 50,
-     "n": 9
-    },
-    {
-     "type": "glb",
-     "pos": [
-      3.946,
-      0,
-      -16.539
-     ],
-     "rot": 6,
-     "node": "lib_pallets",
-     "collide": true,
-     "n": 11,
-     "fallback": "boxtower"
-    },
-    {
-     "type": "boxtower",
-     "pos": [
-      3.534,
-      0,
-      -12.347
-     ],
-     "n": 4
     },
     {
      "type": "glb",
@@ -19360,27 +19382,32 @@
      "node": "lib_pallets",
      "collide": true,
      "n": 5,
+     "mat": "lp_wood",
      "fallback": "boxtower"
     },
     {
-     "type": "boxtower",
+     "type": "cartontower",
      "pos": [
       8.574,
       0,
       -15.701
      ],
      "rot": 76,
-     "n": 12
+     "n": 22,
+     "cols": 2,
+     "seed": 34
     },
     {
-     "type": "boxtower",
+     "type": "cartontower",
      "pos": [
       8.383,
       0,
       -11.917
      ],
      "rot": 64,
-     "n": 7
+     "n": 12,
+     "cols": 2,
+     "seed": 35
     },
     {
      "type": "glb",
@@ -19393,27 +19420,32 @@
      "node": "lib_pallets",
      "collide": true,
      "n": 7,
+     "mat": "lp_wood",
      "fallback": "boxtower"
     },
     {
-     "type": "boxtower",
+     "type": "cartontower",
      "pos": [
       7.408,
       0,
       -3.864
      ],
      "rot": 10,
-     "n": 9
+     "n": 16,
+     "cols": 2,
+     "seed": 37
     },
     {
-     "type": "boxtower",
+     "type": "cartontower",
      "pos": [
       8.513,
       0,
       0.578
      ],
      "rot": 28,
-     "n": 8
+     "n": 14,
+     "cols": 2,
+     "seed": 38
     },
     {
      "type": "glb",
@@ -19426,27 +19458,32 @@
      "node": "lib_pallets",
      "collide": true,
      "n": 9,
+     "mat": "lp_wood",
      "fallback": "boxtower"
     },
     {
-     "type": "boxtower",
+     "type": "cartontower",
      "pos": [
       8.02,
       0,
       8.15
      ],
      "rot": 45,
-     "n": 8
+     "n": 14,
+     "cols": 2,
+     "seed": 40
     },
     {
-     "type": "boxtower",
+     "type": "cartontower",
      "pos": [
       8.182,
       0,
       11.531
      ],
      "rot": 62,
-     "n": 9
+     "n": 16,
+     "cols": 2,
+     "seed": 41
     },
     {
      "type": "glb",
@@ -19459,37 +19496,44 @@
      "node": "lib_pallets",
      "collide": true,
      "n": 7,
+     "mat": "lp_wood",
      "fallback": "boxtower"
     },
     {
-     "type": "boxtower",
+     "type": "cartontower",
      "pos": [
       7.749,
       0,
       20.136
      ],
      "rot": 87,
-     "n": 12
+     "n": 22,
+     "cols": 2,
+     "seed": 43
     },
     {
-     "type": "boxtower",
+     "type": "cartontower",
      "pos": [
       12.523,
       0,
       -19.726
      ],
      "rot": 86,
-     "n": 9
+     "n": 16,
+     "cols": 2,
+     "seed": 44
     },
     {
-     "type": "boxtower",
+     "type": "cartontower",
      "pos": [
       12.208,
       0,
       -16.365
      ],
      "rot": 67,
-     "n": 12
+     "n": 22,
+     "cols": 2,
+     "seed": 45
     },
     {
      "type": "glb",
@@ -19502,27 +19546,32 @@
      "node": "lib_pallets",
      "collide": true,
      "n": 11,
+     "mat": "lp_wood",
      "fallback": "boxtower"
     },
     {
-     "type": "boxtower",
+     "type": "cartontower",
      "pos": [
       12.28,
       0,
       -8.275
      ],
      "rot": 53,
-     "n": 5
+     "n": 8,
+     "cols": 2,
+     "seed": 47
     },
     {
-     "type": "boxtower",
+     "type": "cartontower",
      "pos": [
       12.149,
       0,
       -3.61
      ],
      "rot": 37,
-     "n": 8
+     "n": 14,
+     "cols": 2,
+     "seed": 48
     },
     {
      "type": "glb",
@@ -19535,27 +19584,32 @@
      "node": "lib_pallets",
      "collide": true,
      "n": 10,
+     "mat": "lp_wood",
      "fallback": "boxtower"
     },
     {
-     "type": "boxtower",
+     "type": "cartontower",
      "pos": [
       11.693,
       0,
       3.695
      ],
      "rot": 31,
-     "n": 12
+     "n": 22,
+     "cols": 2,
+     "seed": 50
     },
     {
-     "type": "boxtower",
+     "type": "cartontower",
      "pos": [
       12.297,
       0,
       7.7
      ],
      "rot": 76,
-     "n": 12
+     "n": 22,
+     "cols": 2,
+     "seed": 51
     },
     {
      "type": "glb",
@@ -19568,37 +19622,44 @@
      "node": "lib_pallets",
      "collide": true,
      "n": 5,
+     "mat": "lp_wood",
      "fallback": "boxtower"
     },
     {
-     "type": "boxtower",
+     "type": "cartontower",
      "pos": [
       11.866,
       0,
       16.186
      ],
      "rot": 72,
-     "n": 10
+     "n": 18,
+     "cols": 2,
+     "seed": 53
     },
     {
-     "type": "boxtower",
+     "type": "cartontower",
      "pos": [
       12.505,
       0,
       20.343
      ],
      "rot": 17,
-     "n": 4
+     "n": 6,
+     "cols": 2,
+     "seed": 54
     },
     {
-     "type": "boxtower",
+     "type": "cartontower",
      "pos": [
       16.132,
       0,
       -19.778
      ],
      "rot": 11,
-     "n": 5
+     "n": 8,
+     "cols": 2,
+     "seed": 55
     },
     {
      "type": "glb",
@@ -19611,27 +19672,32 @@
      "node": "lib_pallets",
      "collide": true,
      "n": 5,
+     "mat": "lp_wood",
      "fallback": "boxtower"
     },
     {
-     "type": "boxtower",
+     "type": "cartontower",
      "pos": [
       15.552,
       0,
       -12.171
      ],
      "rot": 83,
-     "n": 5
+     "n": 8,
+     "cols": 2,
+     "seed": 57
     },
     {
-     "type": "boxtower",
+     "type": "cartontower",
      "pos": [
       15.784,
       0,
       -8.554
      ],
      "rot": 10,
-     "n": 6
+     "n": 10,
+     "cols": 2,
+     "seed": 58
     },
     {
      "type": "glb",
@@ -19644,27 +19710,32 @@
      "node": "lib_pallets",
      "collide": true,
      "n": 7,
+     "mat": "lp_wood",
      "fallback": "boxtower"
     },
     {
-     "type": "boxtower",
+     "type": "cartontower",
      "pos": [
       16.27,
       0,
       0.12
      ],
      "rot": 40,
-     "n": 7
+     "n": 12,
+     "cols": 2,
+     "seed": 60
     },
     {
-     "type": "boxtower",
+     "type": "cartontower",
      "pos": [
       15.756,
       0,
       3.829
      ],
      "rot": 41,
-     "n": 5
+     "n": 8,
+     "cols": 2,
+     "seed": 61
     },
     {
      "type": "glb",
@@ -19677,27 +19748,32 @@
      "node": "lib_pallets",
      "collide": true,
      "n": 9,
+     "mat": "lp_wood",
      "fallback": "boxtower"
     },
     {
-     "type": "boxtower",
+     "type": "cartontower",
      "pos": [
       15.921,
       0,
       11.589
      ],
      "rot": 49,
-     "n": 6
+     "n": 10,
+     "cols": 2,
+     "seed": 63
     },
     {
-     "type": "boxtower",
+     "type": "cartontower",
      "pos": [
       15.917,
       0,
       16.339
      ],
      "rot": 12,
-     "n": 12
+     "n": 22,
+     "cols": 2,
+     "seed": 64
     },
     {
      "type": "glb",
@@ -19710,62 +19786,76 @@
      "node": "lib_pallets",
      "collide": true,
      "n": 9,
+     "mat": "lp_wood",
      "fallback": "boxtower"
     },
     {
-     "type": "glb",
+     "type": "counter",
      "pos": [
       0,
       0,
       -9.0
      ],
-     "node": "lib_guarddesk",
-     "collide": true,
      "w": 6.0,
-     "d": 1.0,
+     "d": 1.1,
+     "h": 1.1,
      "glass": false,
-     "mat": "lp_dark",
-     "fallback": "counter"
+     "mat": "lp_grey",
+     "name": "counter"
     },
     {
-     "type": "figure",
+     "type": "blurfigure",
      "pos": [
-      0.0,
+      -0.1,
       0,
-      -9.9
+      -9.95
      ],
-     "face": "blur",
      "suit": "lp_blue",
      "name": "clerk"
     },
     {
-     "type": "package",
+     "type": "soggypackage",
      "pos": [
       0.4,
       1.16,
-      -8.9
+      -9.3
      ],
-     "rot": 15,
+     "rot": 12,
      "name": "package"
+    },
+    {
+     "type": "wetring",
+     "pos": [
+      0.4,
+      1.161,
+      -9.3
+     ],
+     "rot": 12,
+     "w": 0.6,
+     "d": 0.46,
+     "name": "ring"
     },
     {
      "type": "glb",
      "pos": [
-      3.2,
+      -4.7,
       0,
-      -8.6
+      -6.3
      ],
      "rot": 20,
-     "node": "lib_mailsacks"
+     "node": "lib_mailsacks",
+     "collide": true,
+     "mat": "lp_beige"
     },
     {
-     "type": "clock",
+     "type": "boxtower",
      "pos": [
-      3.6,
-      4.2,
-      -14.0
+      4.7,
+      0,
+      -9.1
      ],
-     "rot": 20
+     "rot": 17,
+     "n": 2
     },
     {
      "type": "slip",
@@ -19777,119 +19867,344 @@
      "rot": 45
     },
     {
-     "type": "table",
+     "type": "worklamp",
      "pos": [
-      -3.5,
-      0,
-      -3.5
+      0.0,
+      15.6,
+      -24.35
      ],
-     "w": 1.2,
-     "d": 2.0,
-     "name": "sorting"
+     "drop": 12.2,
+     "name": "docklamp_dark"
+    },
+    {
+     "type": "worklamp",
+     "pos": [
+      0.0,
+      15.6,
+      -24.35
+     ],
+     "drop": 12.2,
+     "lit": true,
+     "name": "docklamp_lit",
+     "hidden": true
+    },
+    {
+     "type": "sortingtable",
+     "pos": [
+      -6.3,
+      0,
+      -23.75
+     ],
+     "w": 2.0,
+     "d": 0.9,
+     "name": "sortingtable"
     },
     {
      "type": "boxcutter",
      "pos": [
-      -3.3,
-      0.76,
-      -3.2
+      -5.72,
+      0.903,
+      -23.55
      ],
-     "rot": 30
+     "rot": 30,
+     "name": "boxcutter"
     },
     {
-     "type": "fluoro",
+     "type": "soggypackage",
+     "pos": [
+      -6.35,
+      0.9,
+      -23.72
+     ],
+     "rot": -8,
+     "open": true,
+     "name": "openbox",
+     "hidden": true
+    },
+    {
+     "type": "worklamp",
+     "pos": [
+      -6.3,
+      15.6,
+      -23.75
+     ],
+     "drop": 13.3,
+     "name": "sortlamp_dark"
+    },
+    {
+     "type": "worklamp",
+     "pos": [
+      -6.3,
+      15.6,
+      -23.75
+     ],
+     "drop": 13.3,
+     "lit": true,
+     "name": "sortlamp_lit",
+     "hidden": true
+    },
+    {
+     "type": "pigeonholes",
+     "pos": [
+      -9.4,
+      0,
+      -24.72
+     ],
+     "w": 2.4,
+     "h": 1.9,
+     "d": 0.42
+    },
+    {
+     "type": "boxtower",
+     "pos": [
+      -3.9,
+      0,
+      -24.3
+     ],
+     "rot": 8,
+     "n": 2
+    },
+    {
+     "type": "boxtower",
+     "pos": [
+      -3.4,
+      0,
+      -23.5
+     ],
+     "rot": 31,
+     "n": 1
+    },
+    {
+     "type": "glb",
+     "pos": [
+      -7.9,
+      0,
+      -23.0
+     ],
+     "rot": 20,
+     "node": "lib_crate",
+     "collide": true,
+     "mat": "lp_wood"
+    },
+    {
+     "type": "clock",
+     "pos": [
+      -2.6,
+      3.4,
+      -24.97
+     ]
+    },
+    {
+     "type": "highbay",
      "pos": [
       -12,
-      7.5,
-      -14
+      7.6,
+      -16
      ],
-     "w": 2.4,
-     "d": 0.4
+     "hang": 8.6
     },
     {
-     "type": "fluoro",
+     "type": "lightcone",
      "pos": [
       -12,
-      7.5,
-      0
+      7.42,
+      -16
      ],
-     "w": 2.4,
-     "d": 0.4
+     "h": 7.42,
+     "r0": 0.38,
+     "r1": 3.1,
+     "strength": 0.07
     },
     {
-     "type": "fluoro",
+     "type": "highbay",
      "pos": [
       -12,
-      7.5,
-      14
+      7.6,
+      -6
      ],
-     "w": 2.4,
-     "d": 0.4
+     "hang": 8.6
     },
     {
-     "type": "fluoro",
+     "type": "lightcone",
+     "pos": [
+      -12,
+      7.42,
+      -6
+     ],
+     "h": 7.42,
+     "r0": 0.38,
+     "r1": 3.1,
+     "strength": 0.07
+    },
+    {
+     "type": "highbay",
+     "pos": [
+      -12,
+      7.6,
+      8
+     ],
+     "hang": 8.6
+    },
+    {
+     "type": "lightcone",
+     "pos": [
+      -12,
+      7.42,
+      8
+     ],
+     "h": 7.42,
+     "r0": 0.38,
+     "r1": 3.1,
+     "strength": 0.07
+    },
+    {
+     "type": "highbay",
      "pos": [
       0,
-      7.5,
-      -14
+      7.6,
+      -16
      ],
-     "w": 2.4,
-     "d": 0.4
+     "hang": 8.6
     },
     {
-     "type": "fluoro",
+     "type": "lightcone",
      "pos": [
       0,
-      7.5,
-      0
+      7.42,
+      -16
      ],
-     "w": 2.4,
-     "d": 0.4
+     "h": 7.42,
+     "r0": 0.38,
+     "r1": 3.1,
+     "strength": 0.07
     },
     {
-     "type": "fluoro",
+     "type": "highbay",
      "pos": [
       0,
-      7.5,
-      14
+      7.6,
+      -6
      ],
-     "w": 2.4,
-     "d": 0.4
+     "hang": 8.6
     },
     {
-     "type": "fluoro",
+     "type": "lightcone",
      "pos": [
-      12,
-      7.5,
-      -14
+      0,
+      7.42,
+      -6
      ],
-     "w": 2.4,
-     "d": 0.4
+     "h": 7.42,
+     "r0": 0.38,
+     "r1": 3.1,
+     "strength": 0.07
     },
     {
-     "type": "fluoro",
+     "type": "highbay",
      "pos": [
-      12,
-      7.5,
-      0
+      0,
+      7.6,
+      8
      ],
-     "w": 2.4,
-     "d": 0.4
+     "hang": 8.6
     },
     {
-     "type": "fluoro",
+     "type": "lightcone",
+     "pos": [
+      0,
+      7.42,
+      8
+     ],
+     "h": 7.42,
+     "r0": 0.38,
+     "r1": 3.1,
+     "strength": 0.07
+    },
+    {
+     "type": "highbay",
      "pos": [
       12,
-      7.5,
-      14
+      7.6,
+      -16
      ],
-     "w": 2.4,
-     "d": 0.4
+     "hang": 8.6
+    },
+    {
+     "type": "lightcone",
+     "pos": [
+      12,
+      7.42,
+      -16
+     ],
+     "h": 7.42,
+     "r0": 0.38,
+     "r1": 3.1,
+     "strength": 0.07
+    },
+    {
+     "type": "highbay",
+     "pos": [
+      12,
+      7.6,
+      -6
+     ],
+     "hang": 8.6
+    },
+    {
+     "type": "lightcone",
+     "pos": [
+      12,
+      7.42,
+      -6
+     ],
+     "h": 7.42,
+     "r0": 0.38,
+     "r1": 3.1,
+     "strength": 0.07
+    },
+    {
+     "type": "highbay",
+     "pos": [
+      12,
+      7.6,
+      8
+     ],
+     "hang": 8.6
+    },
+    {
+     "type": "lightcone",
+     "pos": [
+      12,
+      7.42,
+      8
+     ],
+     "h": 7.42,
+     "r0": 0.38,
+     "r1": 3.1,
+     "strength": 0.07
     }
    ],
    "footstep": {
     "filterHz": 700,
     "gain": 0.09
+   },
+   "actors": {
+    "package": {
+     "path": [
+      [
+       0.4,
+       -9.3
+      ],
+      [
+       0.4,
+       -8.82
+      ]
+     ],
+     "face": false,
+     "carry": [
+      "ring"
+     ]
+    }
    },
    "shots": {
     "in": {
@@ -19908,12 +20223,12 @@
      "pos": [
       0,
       1.6,
-      -7.2
+      -7.3
      ],
      "look": [
       0.3,
       1.15,
-      -9.6
+      -9.5
      ]
     },
     "loop": {
@@ -19966,16 +20281,28 @@
       "pos": [
        0,
        1.6,
-       -7.2
+       -7.3
       ],
       "look": [
        0.3,
        1.15,
-       -9.6
+       -9.5
       ]
      },
      "seconds": 8.0,
      "ease": "inout"
+    },
+    "dock": {
+     "pos": [
+      -1.8,
+      1.6,
+      -16.5
+     ],
+     "look": [
+      -3.0,
+      1.2,
+      -25.0
+     ]
     }
    },
    "doors": [
@@ -20011,37 +20338,37 @@
      "ring": 3.0,
      "labelAt": [
       0.4,
-      1.7,
-      -8.9
+      1.75,
+      -8.8
      ]
     },
     {
      "name": "deliver",
      "pos": [
       0.0,
-      -22.6
+      -22.55
      ],
      "r": 0.8,
      "ring": 4.0,
      "labelAt": [
       0.0,
-      3.0,
-      -24.6
+      2.75,
+      -24.4
      ],
      "armAfter": "counter"
     },
     {
      "name": "sorting",
      "pos": [
-      -2.45,
-      -3.5
+      -6.3,
+      -22.6
      ],
      "r": 0.6,
-     "ring": 2.6,
+     "ring": 3.0,
      "labelAt": [
-      -3.5,
-      1.5,
-      -3.5
+      -6.3,
+      1.8,
+      -23.75
      ],
      "armAfter": "counter"
     }
@@ -20051,29 +20378,135 @@
   "SET_DIVE": {
    "name": "THE DIVE",
    "size": [
+    26.0,
     12.0,
-    14.0,
-    12.0
+    26.0
    ],
-   "floor": "grate",
+   "floor": "pool_tile",
    "wall": "pool_tile",
    "ceiling": "water",
+   "noFloor": true,
    "tile": {
-    "floor": 1.0,
+    "floor": 1.5,
     "wall": 1.5,
     "ceiling": 4.0
    },
    "boxes": [
     {
      "min": [
-      -4,
-      -3.0,
-      -4
+      -13.0,
+      -0.2,
+      -13.0
      ],
      "max": [
-      4,
+      13.0,
+      0,
+      0.30000000000000004
+     ],
+     "mat": "pool_tile",
+     "floor": true,
+     "tile": 1.5
+    },
+    {
+     "min": [
+      -13.0,
       -0.2,
-      4
+      2.7
+     ],
+     "max": [
+      13.0,
+      0,
+      13.0
+     ],
+     "mat": "pool_tile",
+     "floor": true,
+     "tile": 1.5
+    },
+    {
+     "min": [
+      -13.0,
+      -0.2,
+      0.30000000000000004
+     ],
+     "max": [
+      -1.2,
+      0,
+      2.7
+     ],
+     "mat": "pool_tile",
+     "floor": true,
+     "tile": 1.5
+    },
+    {
+     "min": [
+      1.2,
+      -0.2,
+      0.30000000000000004
+     ],
+     "max": [
+      13.0,
+      0,
+      2.7
+     ],
+     "mat": "pool_tile",
+     "floor": true,
+     "tile": 1.5
+    },
+    {
+     "min": [
+      -1.2,
+      -2.3,
+      2.6
+     ],
+     "max": [
+      1.2,
+      -0.2,
+      2.7
+     ],
+     "mat": "rust",
+     "collide": false,
+     "tile": 1.5
+    },
+    {
+     "min": [
+      -1.2,
+      -2.3,
+      0.30000000000000004
+     ],
+     "max": [
+      -1.0999999999999999,
+      -0.2,
+      2.7
+     ],
+     "mat": "rust",
+     "collide": false,
+     "tile": 1.5
+    },
+    {
+     "min": [
+      1.0999999999999999,
+      -2.3,
+      0.30000000000000004
+     ],
+     "max": [
+      1.2,
+      -0.2,
+      2.7
+     ],
+     "mat": "rust",
+     "collide": false,
+     "tile": 1.5
+    },
+    {
+     "min": [
+      -1.2,
+      -2.3499999999999996,
+      0.30000000000000004
+     ],
+     "max": [
+      1.2,
+      -2.3,
+      2.7
      ],
      "mat": "glow_water",
      "collide": false,
@@ -20081,140 +20514,354 @@
     },
     {
      "min": [
-      -6.0,
-      -0.25,
-      -6.0
+      -1.3499999999999999,
+      0,
+      0.15000000000000005
      ],
      "max": [
-      6.0,
-      -0.2,
-      6.0
+      1.3499999999999999,
+      0.03,
+      0.30000000000000004
      ],
      "mat": "rust",
      "collide": false,
-     "tile": 2.0
+     "tile": 1.0
     },
     {
      "min": [
-      -4.75,
+      -1.3499999999999999,
       0,
-      -4.75
+      2.7
      ],
      "max": [
-      -3.8499999999999996,
-      14.0,
-      -3.8499999999999996
+      1.3499999999999999,
+      0.03,
+      2.85
      ],
-     "mat": "pool_tile",
-     "collide": true,
-     "tile": 1.5
+     "mat": "rust",
+     "collide": false,
+     "tile": 1.0
     },
     {
      "min": [
-      3.8499999999999996,
-      0,
-      -4.75
+      -10.597,
+      -0.2,
+      -10.839
      ],
      "max": [
-      4.75,
-      14.0,
-      -3.8499999999999996
+      -9.397,
+      12.0,
+      -9.639
      ],
      "mat": "pool_tile",
-     "collide": true,
-     "tile": 1.5
+     "tile": 1.2
     },
     {
      "min": [
-      -4.75,
-      0,
-      3.8499999999999996
+      -10.139,
+      -0.2,
+      -4.449
      ],
      "max": [
-      -3.8499999999999996,
-      14.0,
-      4.75
+      -8.939,
+      12.0,
+      -3.249
      ],
      "mat": "pool_tile",
-     "collide": true,
-     "tile": 1.5
+     "tile": 1.2
     },
     {
      "min": [
-      3.8499999999999996,
-      0,
-      3.8499999999999996
+      -10.3,
+      -0.2,
+      2.462
      ],
      "max": [
-      4.75,
-      14.0,
-      4.75
+      -9.1,
+      12.0,
+      3.662
      ],
      "mat": "pool_tile",
-     "collide": true,
-     "tile": 1.5
+     "tile": 1.2
+    },
+    {
+     "min": [
+      -10.969,
+      -0.2,
+      9.16
+     ],
+     "max": [
+      -9.769,
+      12.0,
+      10.36
+     ],
+     "mat": "pool_tile",
+     "tile": 1.2
+    },
+    {
+     "min": [
+      -4.498,
+      -0.2,
+      -10.443
+     ],
+     "max": [
+      -3.298,
+      12.0,
+      -9.243
+     ],
+     "mat": "pool_tile",
+     "tile": 1.2
+    },
+    {
+     "min": [
+      -3.85,
+      -0.2,
+      -3.85
+     ],
+     "max": [
+      -2.65,
+      12.0,
+      -2.65
+     ],
+     "mat": "pool_tile",
+     "tile": 1.2
+    },
+    {
+     "min": [
+      -3.85,
+      -0.2,
+      2.65
+     ],
+     "max": [
+      -2.65,
+      12.0,
+      3.85
+     ],
+     "mat": "pool_tile",
+     "tile": 1.2
+    },
+    {
+     "min": [
+      -4.452,
+      -0.2,
+      8.577
+     ],
+     "max": [
+      -3.252,
+      12.0,
+      9.777
+     ],
+     "mat": "pool_tile",
+     "tile": 1.2
+    },
+    {
+     "min": [
+      2.544,
+      -0.2,
+      -9.892
+     ],
+     "max": [
+      3.744,
+      12.0,
+      -8.692
+     ],
+     "mat": "pool_tile",
+     "tile": 1.2
+    },
+    {
+     "min": [
+      2.65,
+      -0.2,
+      -3.85
+     ],
+     "max": [
+      3.85,
+      12.0,
+      -2.65
+     ],
+     "mat": "pool_tile",
+     "tile": 1.2
+    },
+    {
+     "min": [
+      2.65,
+      -0.2,
+      2.65
+     ],
+     "max": [
+      3.85,
+      12.0,
+      3.85
+     ],
+     "mat": "pool_tile",
+     "tile": 1.2
+    },
+    {
+     "min": [
+      2.123,
+      -0.2,
+      8.763
+     ],
+     "max": [
+      3.323,
+      12.0,
+      9.963
+     ],
+     "mat": "pool_tile",
+     "tile": 1.2
+    },
+    {
+     "min": [
+      9.328,
+      -0.2,
+      -9.723
+     ],
+     "max": [
+      10.528,
+      12.0,
+      -8.523
+     ],
+     "mat": "pool_tile",
+     "tile": 1.2
+    },
+    {
+     "min": [
+      9.258,
+      -0.2,
+      -3.995
+     ],
+     "max": [
+      10.458,
+      12.0,
+      -2.795
+     ],
+     "mat": "pool_tile",
+     "tile": 1.2
+    },
+    {
+     "min": [
+      9.817,
+      -0.2,
+      2.015
+     ],
+     "max": [
+      11.017,
+      12.0,
+      3.215
+     ],
+     "mat": "pool_tile",
+     "tile": 1.2
+    },
+    {
+     "min": [
+      9.652,
+      -0.2,
+      8.855
+     ],
+     "max": [
+      10.852,
+      12.0,
+      10.055
+     ],
+     "mat": "pool_tile",
+     "tile": 1.2
     }
    ],
    "ambient": {
-    "color": "#3a8aa0",
-    "intensity": 0.35
+    "color": "#2f7f95",
+    "intensity": 0.3
    },
    "hemisphere": {
     "sky": "#2b6a7c",
     "ground": "#061a22",
-    "intensity": 0.6
+    "intensity": 0.55
    },
    "sun": {
     "from": [
-     1.0,
-     13.0,
-     3.0
+     3.0,
+     12.0,
+     10.0
     ],
     "color": "#8fd8ea",
-    "intensity": 0.9
+    "intensity": 0.8
    },
    "lights": [
     {
      "type": "point",
      "pos": [
-      0,
-      0.6,
-      0
+      0.0,
+      -1.3,
+      1.5
      ],
      "color": "#3ab8d0",
+     "intensity": 34,
+     "distance": 16,
+     "flicker": 0.15,
+     "id": "gratelight"
+    },
+    {
+     "type": "point",
+     "pos": [
+      0.0,
+      -0.5,
+      1.5
+     ],
+     "color": "#46c4dc",
      "intensity": 30,
      "distance": 20,
-     "flicker": 0.4
+     "id": "gratelight2",
+     "off": true
     },
     {
      "type": "point",
      "pos": [
-      3,
-      9.0,
-      -3
+      -3.25,
+      7.6,
+      -2.15
      ],
-     "color": "#5fc8dc",
-     "intensity": 18,
-     "distance": 24,
-     "flicker": 0.25
+     "color": "#ffe8b8",
+     "intensity": 10,
+     "distance": 9,
+     "id": "poollight"
     },
     {
      "type": "point",
      "pos": [
-      -3,
-      9.0,
-      3
+      -6,
+      10.5,
+      6
      ],
      "color": "#5fc8dc",
-     "intensity": 18,
-     "distance": 24,
-     "flicker": 0.3
+     "intensity": 14,
+     "distance": 22
+    },
+    {
+     "type": "point",
+     "pos": [
+      6,
+      10.5,
+      -6
+     ],
+     "color": "#5fc8dc",
+     "intensity": 14,
+     "distance": 22
+    },
+    {
+     "type": "point",
+     "pos": [
+      6,
+      10.5,
+      8
+     ],
+     "color": "#5fc8dc",
+     "intensity": 12,
+     "distance": 22
     }
    ],
    "fog": {
     "color": "#0a2a38",
-    "near": 2,
-    "far": 20
+    "near": 3,
+    "far": 24
    },
    "background": "#061c26",
    "exposure": 1.0,
@@ -20222,73 +20869,397 @@
    "grain": 0.04,
    "spawn": [
     0,
-    2.0,
+    4.6,
     0
    ],
    "props": [
     {
+     "type": "poollamp",
+     "pos": [
+      -3.25,
+      7.6,
+      -2.63
+     ],
+     "name": "poollamp"
+    },
+    {
+     "type": "poollamp",
+     "pos": [
+      -3.25,
+      7.6,
+      -2.63
+     ],
+     "lit": false,
+     "name": "poollamp_dead",
+     "hidden": true
+    },
+    {
      "type": "clock",
      "pos": [
-      -5.97,
-      4.0,
-      -2.0
-     ],
-     "rot": 90
+      3.25,
+      7.3,
+      -2.62
+     ]
     },
     {
      "type": "slip",
      "pos": [
-      1.2,
+      1.75,
       0.004,
-      -1.0
+      3.1
      ],
      "rot": 60
+    },
+    {
+     "type": "floorgrate",
+     "pos": [
+      0.0,
+      0.0,
+      1.5
+     ],
+     "w": 2.4,
+     "d": 2.4,
+     "name": "grate"
+    },
+    {
+     "type": "floorgrate",
+     "pos": [
+      0.0,
+      0.0,
+      1.5
+     ],
+     "w": 2.4,
+     "d": 2.4,
+     "open": 104,
+     "name": "grate_open",
+     "hidden": true
+    },
+    {
+     "type": "wallplate",
+     "pos": [
+      0.0,
+      -2.3,
+      0.62
+     ],
+     "w": 2.4,
+     "h": 2.0999999999999996,
+     "mat": "lp_black",
+     "name": "pitplug"
+    },
+    {
+     "type": "motes",
+     "pos": [
+      0,
+      0.6,
+      1.0
+     ],
+     "n": 520,
+     "w": 18,
+     "h": 10.5,
+     "d": 18,
+     "size": 0.03,
+     "color": "#a8d8e0",
+     "opacity": 0.5,
+     "rise": 0.05
+    },
+    {
+     "type": "caustics",
+     "pos": [
+      0,
+      0,
+      0
+     ],
+     "rects": [
+      [
+       -13.0,
+       13.0,
+       -13.0,
+       0.15000000000000005
+      ],
+      [
+       -13.0,
+       13.0,
+       2.85,
+       13.0
+      ],
+      [
+       -13.0,
+       -1.3499999999999999,
+       0.15000000000000005,
+       2.85
+      ],
+      [
+       1.3499999999999999,
+       13.0,
+       0.15000000000000005,
+       2.85
+      ]
+     ],
+     "strength": 0.24,
+     "scale": 2.2
+    },
+    {
+     "type": "caustics",
+     "pos": [
+      0,
+      11.94,
+      0
+     ],
+     "rects": [
+      [
+       -13.0,
+       13.0,
+       -13.0,
+       13.0
+      ]
+     ],
+     "down": true,
+     "strength": 0.28,
+     "scale": 1.8,
+     "color": "#a8eef8"
+    },
+    {
+     "type": "caustics",
+     "pos": [
+      -9.997,
+      0,
+      -10.239
+     ],
+     "w": 1.2,
+     "d": 1.2,
+     "h": 12.0,
+     "u": -9.55,
+     "strength": 0.42
+    },
+    {
+     "type": "caustics",
+     "pos": [
+      -9.539,
+      0,
+      -3.849
+     ],
+     "w": 1.2,
+     "d": 1.2,
+     "h": 12.0,
+     "u": -5.59,
+     "strength": 0.42
+    },
+    {
+     "type": "caustics",
+     "pos": [
+      -9.7,
+      0,
+      3.062
+     ],
+     "w": 1.2,
+     "d": 1.2,
+     "h": 12.0,
+     "u": -1.62,
+     "strength": 0.42
+    },
+    {
+     "type": "caustics",
+     "pos": [
+      -10.369,
+      0,
+      9.76
+     ],
+     "w": 1.2,
+     "d": 1.2,
+     "h": 12.0,
+     "u": 2.34,
+     "strength": 0.42
+    },
+    {
+     "type": "caustics",
+     "pos": [
+      -3.898,
+      0,
+      -9.843
+     ],
+     "w": 1.2,
+     "d": 1.2,
+     "h": 12.0,
+     "u": -7.15,
+     "strength": 0.42
+    },
+    {
+     "type": "caustics",
+     "pos": [
+      -3.25,
+      0,
+      -3.25
+     ],
+     "w": 1.2,
+     "d": 1.2,
+     "h": 12.0,
+     "u": -3.18,
+     "strength": 0.42
+    },
+    {
+     "type": "caustics",
+     "pos": [
+      -3.25,
+      0,
+      3.25
+     ],
+     "w": 1.2,
+     "d": 1.2,
+     "h": 12.0,
+     "u": 0.78,
+     "strength": 0.42
+    },
+    {
+     "type": "caustics",
+     "pos": [
+      -3.852,
+      0,
+      9.177
+     ],
+     "w": 1.2,
+     "d": 1.2,
+     "h": 12.0,
+     "u": 4.75,
+     "strength": 0.42
+    },
+    {
+     "type": "caustics",
+     "pos": [
+      3.144,
+      0,
+      -9.292
+     ],
+     "w": 1.2,
+     "d": 1.2,
+     "h": 12.0,
+     "u": -4.75,
+     "strength": 0.42
+    },
+    {
+     "type": "caustics",
+     "pos": [
+      3.25,
+      0,
+      -3.25
+     ],
+     "w": 1.2,
+     "d": 1.2,
+     "h": 12.0,
+     "u": -0.78,
+     "strength": 0.42
+    },
+    {
+     "type": "caustics",
+     "pos": [
+      3.25,
+      0,
+      3.25
+     ],
+     "w": 1.2,
+     "d": 1.2,
+     "h": 12.0,
+     "u": 3.18,
+     "strength": 0.42
+    },
+    {
+     "type": "caustics",
+     "pos": [
+      2.723,
+      0,
+      9.363
+     ],
+     "w": 1.2,
+     "d": 1.2,
+     "h": 12.0,
+     "u": 7.15,
+     "strength": 0.42
+    },
+    {
+     "type": "caustics",
+     "pos": [
+      9.928,
+      0,
+      -9.123
+     ],
+     "w": 1.2,
+     "d": 1.2,
+     "h": 12.0,
+     "u": -2.34,
+     "strength": 0.42
+    },
+    {
+     "type": "caustics",
+     "pos": [
+      9.858,
+      0,
+      -3.395
+     ],
+     "w": 1.2,
+     "d": 1.2,
+     "h": 12.0,
+     "u": 1.62,
+     "strength": 0.42
+    },
+    {
+     "type": "caustics",
+     "pos": [
+      10.417,
+      0,
+      2.615
+     ],
+     "w": 1.2,
+     "d": 1.2,
+     "h": 12.0,
+     "u": 5.59,
+     "strength": 0.42
+    },
+    {
+     "type": "caustics",
+     "pos": [
+      10.252,
+      0,
+      9.455
+     ],
+     "w": 1.2,
+     "d": 1.2,
+     "h": 12.0,
+     "u": 9.55,
+     "strength": 0.42
     }
    ],
    "footstep": {
-    "filterHz": 300,
-    "gain": 0.03
+    "filterHz": 200,
+    "gain": 0.001
    },
    "shots": {
     "in": {
      "pos": [
       0,
-      9.0,
-      2.0
+      10.6,
+      4.6
      ],
      "look": [
-      0,
-      0,
-      0
+      -0.9,
+      5.4,
+      -0.2
      ]
     },
     "out": {
      "pos": [
-      0,
-      2.2,
-      1.6
+      0.0,
+      2.6,
+      4.2
      ],
      "look": [
-      0,
-      -0.2,
-      0
+      0.0,
+      -0.6,
+      1.5
      ]
     },
     "loop": {
-     "from": "out",
-     "to": {
-      "pos": [
-       0.2,
-       2.0,
-       1.4
-      ],
-      "look": [
-       0,
-       -0.2,
-       0
-      ]
-     },
-     "seconds": 6.0,
+     "from": "in",
+     "to": "out",
+     "seconds": 10.0,
      "pingpong": true,
      "ease": "inout",
      "sway": 0.06
@@ -20297,70 +21268,33 @@
      "from": "out",
      "to": {
       "pos": [
-       0,
-       -1.5,
-       0.2
+       0.0,
+       -1.4,
+       1.6
       ],
       "look": [
-       0,
-       -6,
-       -0.5
+       0.0,
+       -1.7,
+       -1.5
       ]
      },
-     "seconds": 2.8,
-     "ease": "in",
-     "fadeOut": 1.0
+     "seconds": 2.2,
+     "ease": "in"
     },
     "arrive": {
      "from": {
       "pos": [
        0,
-       12.0,
-       3.0
+       11.8,
+       4.5
       ],
       "look": [
        0,
-       0,
-       0
+       6.0,
+       1.0
       ]
      },
      "to": "in",
-     "seconds": 2.4,
-     "ease": "out",
-     "fadeIn": 1.4
-    },
-    "descend": {
-     "from": "in",
-     "to": "out",
-     "seconds": 8.0,
-     "ease": "inout",
-     "sway": 0.06
-    },
-    "sink": {
-     "from": {
-      "pos": [
-       0,
-       13.8,
-       0.0
-      ],
-      "look": [
-       0,
-       6,
-       -2.0
-      ]
-     },
-     "to": {
-      "pos": [
-       0,
-       10.5,
-       0.6
-      ],
-      "look": [
-       0,
-       4,
-       -2.5
-      ]
-     },
      "seconds": 2.2,
      "ease": "out"
     },
@@ -20368,26 +21302,54 @@
      "from": "out",
      "to": {
       "pos": [
+       0.0,
+       -1.4,
+       1.6
+      ],
+      "look": [
+       0.0,
+       -1.7,
+       -1.5
+      ]
+     },
+     "seconds": 2.2,
+     "ease": "in"
+    },
+    "sink": {
+     "from": {
+      "pos": [
        0,
-       0.3,
-       0.1
+       11.8,
+       4.5
       ],
       "look": [
        0,
-       -4,
-       -0.3
+       6.0,
+       1.0
       ]
      },
-     "seconds": 2.0,
-     "ease": "in"
+     "to": {
+      "pos": [
+       0,
+       10.6,
+       4.6
+      ],
+      "look": [
+       -0.9,
+       5.4,
+       -0.2
+      ]
+     },
+     "seconds": 2.2,
+     "ease": "out"
     }
    },
    "anchors": {
     "surface": {
      "pos": [
       0.0,
-      14.0,
-      0.0
+      12.0,
+      4.5
      ],
      "yaw": 0,
      "vertical": true
@@ -20395,8 +21357,8 @@
     "grate": {
      "pos": [
       0.0,
-      -0.3,
-      0.0
+      -1.7,
+      -0.3
      ],
      "yaw": 0,
      "vertical": true
@@ -20405,37 +21367,37 @@
    "entry": "surface",
    "swim": {
     "floorY": 0.9,
-    "ceilingY": 13.3
+    "ceilingY": 10.6
    },
    "zones": [
     {
      "name": "grate",
      "pos": [
       0.0,
-      1.0,
-      0.0
+      1.2,
+      1.5
      ],
-     "r": 1.3,
-     "ring": 4.0,
+     "r": 1.4,
+     "ring": 7.0,
      "labelAt": [
       0.0,
-      2.6,
-      0.0
+      2.7,
+      1.5
      ]
     },
     {
-     "name": "pillars",
+     "name": "pillar",
      "pos": [
-      -3.3,
-      6.0,
-      -3.3
+      -3.25,
+      7.6,
+      -1.75
      ],
      "r": 1.1,
-     "ring": 3.5,
+     "ring": 4.2,
      "labelAt": [
-      -4.3,
-      7.6,
-      -4.3
+      -3.25,
+      9.0,
+      -2.35
      ]
     }
    ],
@@ -20472,14 +21434,45 @@
       8.0
      ],
      "max": [
-      6.3,
-      3.2,
+      2.04,
+      2.36,
       8.06
      ],
      "mat": "glass_dark",
      "collide": true,
-     "shadow": false,
-     "tile": 3.0
+     "invisible": true,
+     "shadow": false
+    },
+    {
+     "min": [
+      3.96,
+      0,
+      8.0
+     ],
+     "max": [
+      6.3,
+      2.36,
+      8.06
+     ],
+     "mat": "glass_dark",
+     "collide": true,
+     "invisible": true,
+     "shadow": false
+    },
+    {
+     "min": [
+      -6.0,
+      2.36,
+      7.96
+     ],
+     "max": [
+      6.0,
+      2.9000000000000004,
+      8.06
+     ],
+     "mat": "plaster",
+     "collide": false,
+     "tile": 2.0
     },
     {
      "min": [
@@ -20497,16 +21490,137 @@
     },
     {
      "min": [
-      -0.06,
+      1.98,
       0,
-      7.98
+      7.97
      ],
      "max": [
-      0.06,
-      3.2,
-      8.1
+      2.06,
+      2.36,
+      8.09
      ],
      "mat": "concrete",
+     "collide": false,
+     "tile": 1.0
+    },
+    {
+     "min": [
+      3.94,
+      0,
+      7.97
+     ],
+     "max": [
+      4.02,
+      2.36,
+      8.09
+     ],
+     "mat": "concrete",
+     "collide": false,
+     "tile": 1.0
+    },
+    {
+     "min": [
+      2.1,
+      0,
+      8.02
+     ],
+     "max": [
+      3.9,
+      2.3,
+      8.1
+     ],
+     "mat": "void",
+     "collide": true,
+     "invisible": true,
+     "shadow": false
+    },
+    {
+     "min": [
+      -12.0,
+      -0.12,
+      8.06
+     ],
+     "max": [
+      12.0,
+      -0.02,
+      11.2
+     ],
+     "mat": "concrete_wet",
+     "collide": false,
+     "tile": 2.0
+    },
+    {
+     "min": [
+      -12.0,
+      -0.24,
+      11.2
+     ],
+     "max": [
+      12.0,
+      -0.05,
+      11.4
+     ],
+     "mat": "concrete",
+     "collide": false,
+     "tile": 1.0
+    },
+    {
+     "min": [
+      -12.0,
+      -0.34,
+      11.4
+     ],
+     "max": [
+      12.0,
+      -0.22,
+      38.0
+     ],
+     "mat": "asphalt",
+     "collide": false,
+     "tile": 3.0
+    },
+    {
+     "min": [
+      -0.62,
+      1.1,
+      -8.0
+     ],
+     "max": [
+      0.62,
+      1.24,
+      -7.94
+     ],
+     "mat": "rust",
+     "collide": false,
+     "tile": 1.0
+    },
+    {
+     "min": [
+      -0.62,
+      0,
+      -8.0
+     ],
+     "max": [
+      -0.5,
+      1.1,
+      -7.94
+     ],
+     "mat": "rust",
+     "collide": false,
+     "tile": 1.0
+    },
+    {
+     "min": [
+      0.5,
+      0,
+      -8.0
+     ],
+     "max": [
+      0.62,
+      1.1,
+      -7.94
+     ],
+     "mat": "rust",
      "collide": false,
      "tile": 1.0
     }
@@ -20522,225 +21636,205 @@
      12.0
     ],
     "color": "#f4f6ff",
-    "intensity": 0.4
+    "intensity": 0.3
    },
    "lights": [
     {
      "type": "point",
      "pos": [
-      -3,
+      -1.6,
       2.8000000000000003,
-      -5
+      -5.5
      ],
      "color": "#f0f4ff",
      "intensity": 8,
-     "distance": 10,
-     "flicker": 0
+     "distance": 10
     },
     {
      "type": "point",
      "pos": [
-      -3,
+      -1.6,
       2.8000000000000003,
-      -1
+      -1.5
      ],
      "color": "#f0f4ff",
      "intensity": 8,
-     "distance": 10,
-     "flicker": 0
+     "distance": 10
     },
     {
      "type": "point",
      "pos": [
-      -3,
+      -1.6,
       2.8000000000000003,
-      3
+      2.5
      ],
      "color": "#f0f4ff",
      "intensity": 8,
-     "distance": 10,
-     "flicker": 0.3
+     "distance": 10
     },
     {
      "type": "point",
      "pos": [
-      -3,
+      -1.6,
       2.8000000000000003,
-      7
+      6.5
      ],
      "color": "#f0f4ff",
      "intensity": 8,
-     "distance": 10,
-     "flicker": 0
+     "distance": 10
     },
     {
      "type": "point",
      "pos": [
-      3,
+      1.6,
       2.8000000000000003,
-      -5
+      -5.5
      ],
      "color": "#f0f4ff",
      "intensity": 8,
-     "distance": 10,
-     "flicker": 0
+     "distance": 10
     },
     {
      "type": "point",
      "pos": [
-      3,
+      1.6,
       2.8000000000000003,
-      -1
+      -1.5
      ],
      "color": "#f0f4ff",
      "intensity": 8,
-     "distance": 10,
-     "flicker": 0
+     "distance": 10
     },
     {
      "type": "point",
      "pos": [
-      3,
+      1.6,
       2.8000000000000003,
-      3
+      2.5
      ],
      "color": "#f0f4ff",
      "intensity": 8,
      "distance": 10,
-     "flicker": 0
+     "flicker": 0.3,
+     "pattern": {
+      "period": 6.3,
+      "duty": 0.93,
+      "low": 0.08
+     }
     },
     {
      "type": "point",
      "pos": [
-      3,
+      1.6,
       2.8000000000000003,
-      7
+      6.5
      ],
      "color": "#f0f4ff",
      "intensity": 8,
-     "distance": 10,
-     "flicker": 0
+     "distance": 10
     }
    ],
    "fog": {
     "color": "#05070a",
-    "near": 14,
-    "far": 30
+    "near": 9,
+    "far": 23
    },
    "exposure": 1.0,
    "vignette": 0.45,
    "background": "#000000",
    "spawn": [
     0,
-    6.0,
-    0
+    -6.4,
+    180
    ],
    "props": [
     {
-     "type": "glb",
+     "type": "gondola",
      "pos": [
-      -3.2,
+      -3.0,
       0,
-      -2.5
+      -3.4
      ],
-     "node": "lib_shelf",
-     "collide": true,
      "w": 2.4,
-     "d": 0.7,
-     "tiers": 4,
-     "h": 1.8,
-     "fallback": "shelf"
+     "d": 0.9,
+     "h": 1.35,
+     "seed": 0
     },
     {
-     "type": "glb",
+     "type": "gondola",
      "pos": [
-      -3.2,
+      3.0,
       0,
-      1.5
+      -3.4
      ],
-     "node": "lib_shelf",
-     "collide": true,
      "w": 2.4,
-     "d": 0.7,
-     "tiers": 4,
-     "h": 1.8,
-     "fallback": "shelf"
+     "d": 0.9,
+     "h": 1.35,
+     "seed": 5
     },
     {
-     "type": "glb",
+     "type": "gondola",
      "pos": [
-      0.0,
+      -3.0,
       0,
-      -2.5
+      0.4
      ],
-     "node": "lib_shelf",
-     "collide": true,
      "w": 2.4,
-     "d": 0.7,
-     "tiers": 4,
-     "h": 1.8,
-     "fallback": "shelf"
+     "d": 0.9,
+     "h": 1.35,
+     "seed": 10
     },
     {
-     "type": "glb",
+     "type": "gondola",
      "pos": [
-      0.0,
+      3.0,
       0,
-      1.5
+      0.4
      ],
-     "node": "lib_shelf",
-     "collide": true,
      "w": 2.4,
-     "d": 0.7,
-     "tiers": 4,
-     "h": 1.8,
-     "fallback": "shelf"
+     "d": 0.9,
+     "h": 1.35,
+     "seed": 15
     },
     {
-     "type": "glb",
+     "type": "gondola",
      "pos": [
-      3.2,
+      -3.1,
       0,
-      -2.5
+      -7.7
      ],
-     "node": "lib_shelf",
-     "collide": true,
-     "w": 2.4,
-     "d": 0.7,
-     "tiers": 4,
-     "h": 1.8,
-     "fallback": "shelf"
-    },
-    {
-     "type": "glb",
-     "pos": [
-      3.2,
-      0,
-      1.5
-     ],
-     "node": "lib_shelf",
-     "collide": true,
-     "w": 2.4,
-     "d": 0.7,
-     "tiers": 4,
-     "h": 1.8,
-     "fallback": "shelf"
+     "w": 4.2,
+     "d": 0.5,
+     "h": 1.9,
+     "tiers": 5,
+     "single": true,
+     "seed": 11
     },
     {
      "type": "cooler",
      "pos": [
-      0,
+      3.3,
       0,
       -7.58
      ],
-     "w": 8.0
+     "w": 4.4
+    },
+    {
+     "type": "chestcooler",
+     "pos": [
+      0.0,
+      0,
+      3.0
+     ],
+     "w": 1.6,
+     "d": 0.8
     },
     {
      "type": "counter",
      "pos": [
       -4.2,
       0,
-      5.2
+      5.4
      ],
      "w": 2.6,
      "d": 0.9,
@@ -20750,10 +21844,11 @@
     {
      "type": "monitor",
      "pos": [
-      -4.6,
+      -4.55,
       1.16,
-      5.2
+      5.4
      ],
+     "rot": 90,
      "on": false
     },
     {
@@ -20761,25 +21856,85 @@
      "pos": [
       5.97,
       2.4,
-      0.0
+      -2.0
      ],
      "rot": -90
     },
     {
      "type": "slip",
      "pos": [
-      1.6,
+      1.3,
       0.004,
-      4.0
+      5.0
      ],
      "rot": 140
     },
     {
+     "type": "sign",
+     "pos": [
+      5.92,
+      2.4,
+      3.0
+     ],
+     "rot": -90,
+     "w": 0.5,
+     "h": 0.18
+    },
+    {
+     "type": "storedoor",
+     "pos": [
+      3.0,
+      0,
+      8.03
+     ],
+     "w": 1.7999999999999998,
+     "h": 2.3,
+     "leaves": [
+      70,
+      66
+     ],
+     "name": "storedoor"
+    },
+    {
+     "type": "polycluster",
+     "pos": [
+      0.0,
+      0,
+      7.97
+     ],
+     "w": 0.55,
+     "h": 1.75,
+     "seed": 99,
+     "name": "reflection"
+    },
+    {
+     "type": "shopglass",
+     "pos": [
+      0.0,
+      0,
+      8.03
+     ],
+     "panes": [
+      [
+       -6.3,
+       2.04,
+       0,
+       2.36
+      ],
+      [
+       3.96,
+       6.3,
+       0,
+       2.36
+      ]
+     ]
+    },
+    {
      "type": "fluoro",
      "pos": [
-      -3,
+      -1.6,
       3.14,
-      -5
+      -5.5
      ],
      "w": 1.2,
      "d": 0.3
@@ -20787,9 +21942,9 @@
     {
      "type": "fluoro",
      "pos": [
-      -3,
+      -1.6,
       3.14,
-      -1
+      -1.5
      ],
      "w": 1.2,
      "d": 0.3
@@ -20797,9 +21952,9 @@
     {
      "type": "fluoro",
      "pos": [
-      -3,
+      -1.6,
       3.14,
-      3
+      2.5
      ],
      "w": 1.2,
      "d": 0.3
@@ -20807,9 +21962,9 @@
     {
      "type": "fluoro",
      "pos": [
-      -3,
+      -1.6,
       3.14,
-      7
+      6.5
      ],
      "w": 1.2,
      "d": 0.3
@@ -20817,9 +21972,9 @@
     {
      "type": "fluoro",
      "pos": [
-      3,
+      1.6,
       3.14,
-      -5
+      -5.5
      ],
      "w": 1.2,
      "d": 0.3
@@ -20827,9 +21982,9 @@
     {
      "type": "fluoro",
      "pos": [
-      3,
+      1.6,
       3.14,
-      -1
+      -1.5
      ],
      "w": 1.2,
      "d": 0.3
@@ -20837,9 +21992,9 @@
     {
      "type": "fluoro",
      "pos": [
-      3,
+      1.6,
       3.14,
-      3
+      2.5
      ],
      "w": 1.2,
      "d": 0.3
@@ -20847,9 +22002,9 @@
     {
      "type": "fluoro",
      "pos": [
-      3,
+      1.6,
       3.14,
-      7
+      6.5
      ],
      "w": 1.2,
      "d": 0.3
@@ -20864,7 +22019,7 @@
      "pos": [
       0,
       1.6,
-      -1.0
+      -6.4
      ],
      "look": [
       0,
@@ -20874,14 +22029,14 @@
     },
     "out": {
      "pos": [
-      0,
+      1.4,
       1.6,
-      1.0
+      5.0
      ],
      "look": [
-      0,
+      3.0,
       1.3,
-      8.0
+      12.0
      ]
     },
     "loop": {
@@ -20896,74 +22051,83 @@
      "from": "out",
      "to": {
       "pos": [
-       0,
+       3.0,
        1.6,
        7.5
       ],
       "look": [
-       0,
-       1.2,
+       3.0,
+       1.25,
        20.0
       ]
      },
      "seconds": 3.0,
-     "ease": "in",
-     "fadeOut": 1.1
+     "ease": "in"
     },
     "arrive": {
      "from": {
       "pos": [
        0,
-       0.6,
-       -2.0
+       0.45,
+       -8.2
       ],
       "look": [
        0,
-       1.3,
-       8.0
+       0.4,
+       0.0
       ]
      },
      "to": "in",
      "seconds": 3.0,
-     "ease": "out",
-     "fadeIn": 1.2
+     "ease": "out"
     },
     "ending": {
-     "from": "out",
-     "to": {
+     "from": {
       "pos": [
-       0,
+       3.0,
        1.6,
-       9.6
+       7.45
       ],
       "look": [
-       0,
-       1.2,
-       20.0
+       3.0,
+       1.35,
+       17.0
+      ],
+      "fov": 52
+     },
+     "to": {
+      "pos": [
+       -0.4,
+       1.62,
+       3.3
+      ],
+      "look": [
+       1.5,
+       1.3,
+       8.0
       ]
      },
-     "seconds": 7.0,
-     "ease": "inout",
-     "fadeOut": 1.4
+     "seconds": 9.0,
+     "ease": "inout"
     },
     "land": {
      "from": {
       "pos": [
-       -5.8,
-       0.5,
-       -4.0
+       0,
+       0.45,
+       -8.2
       ],
       "look": [
        0,
-       0.3,
-       -4.0
+       0.4,
+       0.0
       ]
      },
      "to": {
       "pos": [
-       -4.4,
+       0,
        1.6,
-       -4.0
+       -6.4
       ],
       "look": [
        0,
@@ -20978,8 +22142,8 @@
    "doors": [
     {
      "name": "hatch",
-     "wall": "W",
-     "x": -4.0,
+     "wall": "N",
+     "x": 0.0,
      "w": 1.0,
      "h": 1.1,
      "kind": "open"
@@ -20987,7 +22151,7 @@
     {
      "name": "staff",
      "wall": "E",
-     "x": -5.0,
+     "x": 3.0,
      "w": 1.0,
      "h": 2.1,
      "kind": "door",
@@ -20999,17 +22163,17 @@
    "holdEntry": true,
    "zones": [
     {
-     "name": "storefront",
+     "name": "door",
      "pos": [
-      0.0,
-      6.7
+      3.0,
+      7.3
      ],
-     "r": 0.8,
-     "ring": 3.5,
+     "r": 0.6,
+     "ring": 3.0,
      "labelAt": [
-      0.0,
+      3.0,
       2.6,
-      7.9
+      8.2
      ]
     }
    ],
@@ -21022,19 +22186,19 @@
     3.4,
     18.0
    ],
-   "floor": "carpet",
+   "floor": "marble_light",
    "wall": "plaster_dark",
    "ceiling": "plaster_dark",
    "tile": {
-    "floor": 1.5,
+    "floor": 6.0,
     "wall": 2.0,
     "ceiling": 2.0
    },
    "skirt": {
     "mat": "marble",
-    "h": 0.12,
+    "h": 1.1,
     "t": 0.03,
-    "tile": 2.5
+    "tile": 7.0
    },
    "cornice": {
     "mat": "plaster_dark",
@@ -21043,7 +22207,7 @@
    },
    "ambient": {
     "color": "#ffe9c8",
-    "intensity": 0.12
+    "intensity": 0.16
    },
    "sun": {
     "from": [
@@ -21052,41 +22216,128 @@
      10.0
     ],
     "color": "#ffe9c8",
-    "intensity": 0.5
+    "intensity": 0.55
    },
    "lights": [
     {
-     "type": "point",
+     "type": "spot",
      "pos": [
       0,
-      2.3,
-      -6
+      3.3,
+      -6.5
      ],
-     "color": "#ffe2b8",
-     "intensity": 14,
-     "distance": 12
+     "target": [
+      0,
+      0.79,
+      -6.5
+     ],
+     "angle": 36,
+     "penumbra": 0.65,
+     "intensity": 42,
+     "distance": 10,
+     "decay": 1.2,
+     "color": "#ffe2b8"
+    },
+    {
+     "type": "spot",
+     "pos": [
+      0,
+      3.3,
+      -2.5
+     ],
+     "target": [
+      0,
+      0.79,
+      -2.5
+     ],
+     "angle": 36,
+     "penumbra": 0.65,
+     "intensity": 42,
+     "distance": 10,
+     "decay": 1.2,
+     "color": "#ffe2b8"
+    },
+    {
+     "type": "spot",
+     "pos": [
+      0,
+      3.3,
+      1.5
+     ],
+     "target": [
+      0,
+      0.79,
+      1.5
+     ],
+     "angle": 36,
+     "penumbra": 0.65,
+     "intensity": 42,
+     "distance": 10,
+     "decay": 1.2,
+     "color": "#ffe2b8"
+    },
+    {
+     "type": "spot",
+     "pos": [
+      0.4,
+      3.3,
+      -8.2
+     ],
+     "target": [
+      0.3,
+      0.0,
+      -7.9
+     ],
+     "angle": 32,
+     "penumbra": 0.6,
+     "intensity": 30,
+     "distance": 9,
+     "decay": 1.2,
+     "color": "#ffe2b8"
     },
     {
      "type": "point",
      "pos": [
-      0,
-      2.3,
-      -2
+      -3.2,
+      3.0,
+      -5.0
      ],
      "color": "#ffe2b8",
-     "intensity": 14,
-     "distance": 12
+     "intensity": 8,
+     "distance": 8
     },
     {
      "type": "point",
      "pos": [
-      0,
-      2.3,
-      2
+      -3.2,
+      3.0,
+      3.0
      ],
      "color": "#ffe2b8",
-     "intensity": 14,
-     "distance": 12
+     "intensity": 8,
+     "distance": 8
+    },
+    {
+     "type": "point",
+     "pos": [
+      3.2,
+      3.0,
+      -5.0
+     ],
+     "color": "#ffe2b8",
+     "intensity": 8,
+     "distance": 8
+    },
+    {
+     "type": "point",
+     "pos": [
+      3.2,
+      3.0,
+      3.0
+     ],
+     "color": "#ffe2b8",
+     "intensity": 8,
+     "distance": 8
     }
    ],
    "fog": {
@@ -21094,15 +22345,16 @@
     "near": 6,
     "far": 30
    },
-   "vignette": 0.6,
+   "exposure": 1.15,
+   "vignette": 0.55,
    "spawn": [
     0,
-    7.0,
+    7.4,
     0
    ],
    "props": [
     {
-     "type": "table",
+     "type": "glasstable",
      "pos": [
       0,
       0,
@@ -21115,289 +22367,337 @@
     {
      "type": "glb",
      "pos": [
-      -1.7,
+      -1.8,
       0,
       -6.0
      ],
-     "rot": -90,
+     "rot": 90,
      "node": "lib_chair",
+     "collide": true,
+     "mat": "lp_wood",
+     "paint": "#3b241c",
      "fallback": "chair"
     },
     {
      "type": "figure",
      "pos": [
-      -1.65,
+      -1.74,
       0,
       -6.0
      ],
-     "rot": -90,
+     "rot": 90,
      "seated": true,
-     "face": "blur",
      "suit": "lp_suit",
+     "tie": true,
+     "face": "blur",
      "name": "board0"
     },
     {
      "type": "glb",
      "pos": [
-      1.7,
+      1.8,
       0,
       -6.0
      ],
-     "rot": 90,
+     "rot": -90,
      "node": "lib_chair",
+     "collide": true,
+     "mat": "lp_wood",
+     "paint": "#3b241c",
      "fallback": "chair"
     },
     {
      "type": "figure",
      "pos": [
-      1.65,
+      1.74,
       0,
       -6.0
      ],
-     "rot": 90,
+     "rot": -90,
      "seated": true,
-     "face": "blur",
      "suit": "lp_suit",
+     "tie": true,
+     "face": "blur",
      "name": "board1"
     },
     {
      "type": "glb",
      "pos": [
-      -1.7,
+      -1.8,
       0,
       -4.0
      ],
-     "rot": -90,
+     "rot": 90,
      "node": "lib_chair",
+     "collide": true,
+     "mat": "lp_wood",
+     "paint": "#3b241c",
      "fallback": "chair"
     },
     {
      "type": "figure",
      "pos": [
-      -1.65,
+      -1.74,
       0,
       -4.0
      ],
-     "rot": -90,
+     "rot": 90,
      "seated": true,
-     "face": "blur",
      "suit": "lp_suit",
+     "tie": true,
+     "face": "blur",
      "name": "board2"
     },
     {
      "type": "glb",
      "pos": [
-      1.7,
+      1.8,
       0,
       -4.0
      ],
-     "rot": 90,
+     "rot": -90,
      "node": "lib_chair",
+     "collide": true,
+     "mat": "lp_wood",
+     "paint": "#3b241c",
      "fallback": "chair"
     },
     {
      "type": "figure",
      "pos": [
-      1.65,
+      1.74,
       0,
       -4.0
      ],
-     "rot": 90,
+     "rot": -90,
      "seated": true,
-     "face": "blur",
      "suit": "lp_suit",
+     "tie": true,
+     "face": "blur",
      "name": "board3"
     },
     {
      "type": "glb",
      "pos": [
-      -1.7,
+      -1.8,
       0,
       -2.0
      ],
-     "rot": -90,
+     "rot": 90,
      "node": "lib_chair",
+     "collide": true,
+     "mat": "lp_wood",
+     "paint": "#3b241c",
      "fallback": "chair"
     },
     {
      "type": "figure",
      "pos": [
-      -1.65,
+      -1.74,
       0,
       -2.0
      ],
-     "rot": -90,
+     "rot": 90,
      "seated": true,
-     "face": "blur",
      "suit": "lp_suit",
+     "tie": true,
+     "face": "blur",
      "name": "board4"
     },
     {
      "type": "glb",
      "pos": [
-      1.7,
+      1.8,
       0,
       -2.0
      ],
-     "rot": 90,
+     "rot": -90,
      "node": "lib_chair",
+     "collide": true,
+     "mat": "lp_wood",
+     "paint": "#3b241c",
      "fallback": "chair"
     },
     {
      "type": "figure",
      "pos": [
-      1.65,
+      1.74,
       0,
       -2.0
      ],
-     "rot": 90,
+     "rot": -90,
      "seated": true,
-     "face": "blur",
      "suit": "lp_suit",
+     "tie": true,
+     "face": "blur",
      "name": "board5"
     },
     {
      "type": "glb",
      "pos": [
-      -1.7,
+      -1.8,
       0,
       0.0
      ],
-     "rot": -90,
+     "rot": 90,
      "node": "lib_chair",
+     "collide": true,
+     "mat": "lp_wood",
+     "paint": "#3b241c",
      "fallback": "chair"
     },
     {
      "type": "figure",
      "pos": [
-      -1.65,
+      -1.74,
       0,
       0.0
      ],
-     "rot": -90,
+     "rot": 90,
      "seated": true,
-     "face": "blur",
      "suit": "lp_suit",
+     "tie": true,
+     "face": "blur",
      "name": "board6"
     },
     {
      "type": "glb",
      "pos": [
-      1.7,
+      1.8,
       0,
       0.0
      ],
-     "rot": 90,
+     "rot": -90,
      "node": "lib_chair",
+     "collide": true,
+     "mat": "lp_wood",
+     "paint": "#3b241c",
      "fallback": "chair"
     },
     {
      "type": "figure",
      "pos": [
-      1.65,
+      1.74,
       0,
       0.0
      ],
-     "rot": 90,
+     "rot": -90,
      "seated": true,
-     "face": "blur",
      "suit": "lp_suit",
+     "tie": true,
+     "face": "blur",
      "name": "board7"
     },
     {
      "type": "glb",
      "pos": [
-      -1.7,
+      -1.8,
       0,
       2.0
      ],
-     "rot": -90,
+     "rot": 90,
      "node": "lib_chair",
+     "collide": true,
+     "mat": "lp_wood",
+     "paint": "#3b241c",
      "fallback": "chair"
     },
     {
      "type": "figure",
      "pos": [
-      -1.65,
+      -1.74,
       0,
       2.0
      ],
-     "rot": -90,
+     "rot": 90,
      "seated": true,
-     "face": "blur",
      "suit": "lp_suit",
+     "tie": true,
+     "face": "blur",
      "name": "board8"
     },
     {
      "type": "glb",
      "pos": [
-      1.7,
+      1.8,
       0,
       2.0
      ],
-     "rot": 90,
+     "rot": -90,
      "node": "lib_chair",
+     "collide": true,
+     "mat": "lp_wood",
+     "paint": "#3b241c",
      "fallback": "chair"
     },
     {
      "type": "figure",
      "pos": [
-      1.65,
+      1.74,
       0,
       2.0
      ],
-     "rot": 90,
+     "rot": -90,
      "seated": true,
-     "face": "blur",
      "suit": "lp_suit",
+     "tie": true,
+     "face": "blur",
      "name": "board9"
     },
     {
      "type": "glb",
      "pos": [
-      -1.7,
+      -1.8,
       0,
       4.0
      ],
-     "rot": -90,
+     "rot": 90,
      "node": "lib_chair",
+     "collide": true,
+     "mat": "lp_wood",
+     "paint": "#3b241c",
      "fallback": "chair"
     },
     {
      "type": "figure",
      "pos": [
-      -1.65,
+      -1.74,
       0,
       4.0
      ],
-     "rot": -90,
+     "rot": 90,
      "seated": true,
-     "face": "blur",
      "suit": "lp_suit",
+     "tie": true,
+     "face": "blur",
      "name": "board10"
     },
     {
      "type": "glb",
      "pos": [
-      1.7,
+      1.8,
       0,
       4.0
      ],
-     "rot": 90,
+     "rot": -90,
      "node": "lib_chair",
+     "collide": true,
+     "mat": "lp_wood",
+     "paint": "#3b241c",
      "fallback": "chair"
     },
     {
      "type": "figure",
      "pos": [
-      1.65,
+      1.74,
       0,
       4.0
      ],
-     "rot": 90,
+     "rot": -90,
      "seated": true,
-     "face": "blur",
      "suit": "lp_suit",
+     "tie": true,
+     "face": "blur",
      "name": "board11"
     },
     {
@@ -21405,79 +22705,181 @@
      "pos": [
       0.0,
       0,
-      -8.0
+      -8.15
      ],
      "node": "lib_chair",
-     "name": "emptychair",
+     "name": "mychair",
+     "mat": "lp_wood",
+     "paint": "#3b241c",
      "fallback": "chair"
+    },
+    {
+     "type": "palette",
+     "pos": [
+      0,
+      0,
+      0
+     ]
     },
     {
      "type": "slip",
      "pos": [
-      0.45,
-      0.76,
-      -6.6
+      0.04,
+      0.582,
+      -8.08
      ],
-     "rot": 12,
+     "rot": 14,
      "name": "hundredth"
     },
     {
-     "type": "package",
+     "type": "numslip",
+     "pos": [
+      0.04,
+      0.582,
+      -8.08
+     ],
+     "rot": 14,
+     "n": 100,
+     "bare": true,
+     "name": "hundredth_print"
+    },
+    {
+     "type": "blurfigure",
+     "pos": [
+      0.82,
+      0,
+      -7.6
+     ],
+     "rot": -12,
+     "suit": "lp_suit",
+     "name": "self",
+     "hidden": true
+    },
+    {
+     "type": "soggypackage",
      "pos": [
       0.0,
-      0.76,
+      0.79,
       -1.6
      ],
      "rot": 4,
      "name": "package"
     },
     {
+     "type": "wetring",
+     "pos": [
+      0.0,
+      0.791,
+      -1.6
+     ],
+     "rot": 4,
+     "w": 0.62,
+     "d": 0.48,
+     "spread": 0.9,
+     "fill": 0.9,
+     "mat": "lp_black",
+     "name": "ring"
+    },
+    {
      "type": "clock",
      "pos": [
-      -4.47,
-      2.5,
-      -4.0
+      -2.6,
+      2.6,
+      8.97
      ],
-     "rot": 90
+     "rot": 180
     },
     {
-     "type": "pendant",
+     "type": "fluoro",
      "pos": [
       0,
-      3.4,
-      -6
+      3.37,
+      -6.5
      ],
-     "drop": 0.8
+     "w": 0.5,
+     "d": 0.5
     },
     {
-     "type": "pendant",
+     "type": "fluoro",
      "pos": [
       0,
-      3.4,
-      -2
+      3.37,
+      -2.5
      ],
-     "drop": 0.8
+     "w": 0.5,
+     "d": 0.5
     },
     {
-     "type": "pendant",
+     "type": "fluoro",
      "pos": [
       0,
-      3.4,
-      2
+      3.37,
+      1.5
      ],
-     "drop": 0.8
+     "w": 0.5,
+     "d": 0.5
+    },
+    {
+     "type": "fluoro",
+     "pos": [
+      0.4,
+      3.37,
+      -8.2
+     ],
+     "w": 0.5,
+     "d": 0.5
+    },
+    {
+     "type": "fluoro",
+     "pos": [
+      -3.2,
+      3.37,
+      -5.0
+     ],
+     "w": 0.4,
+     "d": 0.4
+    },
+    {
+     "type": "fluoro",
+     "pos": [
+      -3.2,
+      3.37,
+      3.0
+     ],
+     "w": 0.4,
+     "d": 0.4
+    },
+    {
+     "type": "fluoro",
+     "pos": [
+      3.2,
+      3.37,
+      -5.0
+     ],
+     "w": 0.4,
+     "d": 0.4
+    },
+    {
+     "type": "fluoro",
+     "pos": [
+      3.2,
+      3.37,
+      3.0
+     ],
+     "w": 0.4,
+     "d": 0.4
     }
    ],
    "footstep": {
-    "filterHz": 380,
-    "gain": 0.04
+    "filterHz": 1300,
+    "gain": 0.05
    },
    "shots": {
     "in": {
      "pos": [
-      0,
+      1.2,
       1.6,
-      6.4
+      7.4
      ],
      "look": [
       0,
@@ -21490,7 +22892,7 @@
      "pos": [
       0,
       1.6,
-      4.8
+      6.2
      ],
      "look": [
       0,
@@ -21513,12 +22915,12 @@
       "pos": [
        0.0,
        1.6,
-       -5.0
+       -4.6
       ],
       "look": [
        0.0,
        1.35,
-       -11.0
+       -10.6
       ]
      },
      "seconds": 3.0,
@@ -21530,12 +22932,12 @@
       "pos": [
        0.0,
        1.6,
-       8.8
+       9.2
       ],
       "look": [
        0.0,
        1.35,
-       2.8
+       3.2
       ]
      },
      "to": "in",
@@ -21546,59 +22948,59 @@
     "ending": {
      "from": {
       "pos": [
-       0,
-       1.4,
-       -2.5
+       0.75,
+       1.52,
+       -5.7
       ],
       "look": [
-       0,
-       0.95,
-       -8.0
-      ],
-      "fov": 44
-     },
-     "to": {
-      "pos": [
-       0,
-       1.7,
-       7.4
-      ],
-      "look": [
-       0,
-       0.9,
-       -8.0
-      ],
-      "fov": 56
-     },
-     "seconds": 9.0,
-     "ease": "inout"
-    },
-    "retained": {
-     "from": {
-      "pos": [
-       0,
-       1.3,
-       -0.4
-      ],
-      "look": [
-       0,
-       0.78,
-       -6.6
+       0.8,
+       1.48,
+       -7.6
       ],
       "fov": 40
      },
      "to": {
       "pos": [
        0,
-       1.7,
-       7.4
+       1.95,
+       1.4
       ],
       "look": [
-       0,
-       0.9,
-       -8.0
+       0.35,
+       1.0,
+       -7.8
       ],
-      "fov": 56
+      "fov": 52
+     },
+     "seconds": 10.0,
+     "ease": "inout"
+    },
+    "retained": {
+     "from": {
+      "pos": [
+       0.75,
+       1.52,
+       -5.7
+      ],
+      "look": [
+       0.8,
+       1.48,
+       -7.6
+      ],
+      "fov": 40
+     },
+     "to": {
+      "pos": [
+       0.15,
+       1.6,
+       1.3
+      ],
+      "look": [
+       0.3,
+       0.85,
+       -7.8
+      ],
+      "fov": 46
      },
      "seconds": 7.0,
      "ease": "inout"
@@ -21620,15 +23022,15 @@
     {
      "name": "head",
      "pos": [
-      0.0,
+      0.82,
       -7.6
      ],
-     "r": 0.6,
-     "ring": 3.0,
+     "r": 0.5,
+     "ring": 2.5,
      "labelAt": [
-      0.0,
+      0.4,
       1.9,
-      -8.0
+      -8.1
      ]
     }
    ],
@@ -21984,6 +23386,34 @@
      "opacity": 0.2
     },
     {
+     "type": "glb",
+     "pos": [
+      -0.9,
+      0,
+      1.2
+     ],
+     "rot": 90,
+     "node": "lib_chair",
+     "name": "mychair",
+     "mat": "lp_curtain",
+     "paint": "#45101a",
+     "fallback": "chair"
+    },
+    {
+     "type": "glb",
+     "pos": [
+      0.9,
+      0,
+      1.2
+     ],
+     "rot": -90,
+     "node": "lib_chair",
+     "name": "vacated",
+     "mat": "lp_curtain",
+     "paint": "#45101a",
+     "fallback": "chair"
+    },
+    {
      "type": "palette",
      "pos": [
       0,
@@ -22116,58 +23546,46 @@
      ]
     },
     {
-     "type": "glb",
-     "pos": [
-      -0.9,
-      0,
-      1.2
-     ],
-     "rot": -90,
-     "node": "lib_chair",
-     "fallback": "chair"
-    },
-    {
-     "type": "glb",
-     "pos": [
-      0.9,
-      0,
-      1.2
-     ],
-     "rot": 90,
-     "node": "lib_chair",
-     "name": "vacated",
-     "fallback": "chair"
-    },
-    {
      "type": "hands",
      "pos": [
-      -0.6,
-      0.95,
+      -0.3,
+      0.84,
       1.2
      ],
      "rot": -90,
      "name": "hands",
-     "slip": true,
      "hidden": true
     },
     {
-     "type": "curtain",
+     "type": "numslip",
      "pos": [
-      0,
-      0,
-      -5.95
+      -0.24,
+      0.872,
+      1.2
      ],
+     "rot": -90,
+     "n": 99,
+     "name": "slip99",
+     "hidden": true
+    },
+    {
+     "type": "swaycurtain",
+     "pos": [
+      6.9,
+      0,
+      1.2
+     ],
+     "rot": -90,
      "w": 2.2,
      "h": 3.0,
-     "name": "farcurtain",
-     "swing": true
+     "name": "farcurtain"
     },
     {
      "type": "slip",
      "pos": [
-      0.9,
-      0.45,
-      1.2
+      0.92,
+      0.582,
+      1.18
      ],
      "rot": 10
     }
@@ -22259,8 +23677,8 @@
       1.2
      ],
      "look": [
-      0.9,
-      0.7,
+      -0.2,
+      0.8,
       1.2
      ],
      "fov": 52
@@ -22272,9 +23690,9 @@
       1.2
      ],
      "look": [
-      0.9,
-      0.7,
-      1.2
+      2.4,
+      0.95,
+      1.05
      ],
      "fov": 52
     },
@@ -22331,7 +23749,7 @@
       ],
       "look": [
        -0.2,
-       0.9,
+       0.8,
        1.2
       ],
       "fov": 52
@@ -22343,9 +23761,9 @@
        1.2
       ],
       "look": [
-       1.6,
-       0.8,
-       0.6
+       2.4,
+       0.95,
+       1.05
       ],
       "fov": 52
      },
@@ -22356,14 +23774,14 @@
     "sit": {
      "from": {
       "pos": [
-       -1.6,
+       -0.9,
        1.6,
-       1.2
+       0.5
       ],
       "look": [
-       0.9,
+       -0.9,
        1.0,
-       1.2
+       3.5
       ]
      },
      "to": {
@@ -22374,13 +23792,25 @@
       ],
       "look": [
        -0.2,
-       0.9,
+       0.8,
        1.2
       ],
       "fov": 52
      },
      "seconds": 1.8,
      "ease": "inout"
+    },
+    "entry": {
+     "pos": [
+      5.6,
+      1.6,
+      -4.4
+     ],
+     "look": [
+      -0.6,
+      1.0,
+      1.6
+     ]
     }
    },
    "doors": [
@@ -22421,14 +23851,14 @@
     {
      "name": "seat",
      "pos": [
-      -1.55,
-      1.2
+      -0.9,
+      0.42
      ],
-     "r": 0.55,
+     "r": 0.5,
      "ring": 2.6,
      "labelAt": [
       -0.9,
-      1.3,
+      1.45,
       1.2
      ]
     }
