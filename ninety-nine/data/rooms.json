@@ -20209,6 +20209,26 @@
     {
      "type": "caustics",
      "pos": [
+      0,
+      11.94,
+      0
+     ],
+     "rects": [
+      [
+       -13.0,
+       13.0,
+       -13.0,
+       13.0
+      ]
+     ],
+     "down": true,
+     "strength": 0.28,
+     "scale": 1.8,
+     "color": "#a8eef8"
+    },
+    {
+     "type": "caustics",
+     "pos": [
       -9.997,
       0,
       -10.239

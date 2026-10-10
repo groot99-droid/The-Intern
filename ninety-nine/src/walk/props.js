@@ -3125,7 +3125,7 @@ const BUILDERS = {
         const tex = new THREE.CanvasTexture(c);
         tex.colorSpace = THREE.SRGBColorSpace;
         tex.anisotropy = 4;
-        self._form = new THREE.MeshLambertMaterial({ map: tex });
+        self._form = new THREE.MeshLambertMaterial({ map: tex, polygonOffset: true, polygonOffsetFactor: -2, polygonOffsetUnits: -2 });
       }
       const formMat = self._form || null;
       const sheet = (tilt, x, y, z, ry) => {
@@ -3134,7 +3134,7 @@ const BUILDERS = {
         if (formMat) {
           const face = new THREE.Mesh(new THREE.PlaneGeometry(0.205, 0.292), formMat);
           face.rotation.x = -Math.PI / 2; // lying on the sheet, its top edge toward -z
-          face.position.y = 0.0045;
+          face.position.y = 0.0062; // clear of the sheet's own face: no z-fighting from standing distance
           sh.add(face);
         } else {
           for (let i = 0; i < 7; i++) sh.add(box(mats, 'lp_dark', 0.15 - (i % 3) * 0.03, 0.002, 0.007, -0.02 + (i % 3) * 0.008, 0.004, -0.115 + i * 0.036, { castShadow: false })); // the lines of his hand
@@ -3148,7 +3148,7 @@ const BUILDERS = {
       // and the first page, pulled out and propped against the front of the
       // box, its face up toward whoever opened it
       const lean = 1.065;
-      sheet(lean, -0.03, 0.002 + 0.1485 * Math.sin(lean), d / 2 + 0.012 + 0.1485 * Math.cos(lean), -0.12);
+      sheet(lean, -0.03, 0.002 + 0.1485 * Math.sin(lean), d / 2 + 0.03 + 0.1485 * Math.cos(lean), -0.12); // its top edge clear of the wet front of the box
       body.add(box(mats, wet, w * 0.7, 0.002, d * 0.6, -0.04, 0.013, 0.03, { castShadow: false })); // the wet has gone through to the floor of the box
     }
     // the stain: dark and wet from the base up, creeping higher in tongues
@@ -3668,7 +3668,8 @@ const BUILDERS = {
   // its bright knots come and go, strongest near the surface. The fog takes
   // it to black with depth. Without `rects`: a sleeve round a pillar `w` x
   // `d` x `h` (its origin at the pillar's foot). With `rects`: flat patches
-  // [[x0, x1, z0, z1], ...] just over the floor. One material for all.
+  // [[x0, x1, z0, z1], ...] just over the floor (or, `down`, just under
+  // the surface, seen from below). One material for all.
   caustics(mats, o) {
     const g = new THREE.Group();
     const self = BUILDERS.caustics;
@@ -3746,7 +3747,7 @@ const BUILDERS = {
     if (o.rects) {
       for (const [x0, x1, z0, z1] of o.rects) {
         const geo = new THREE.PlaneGeometry(x1 - x0, z1 - z0, 1, 1);
-        geo.rotateX(-Math.PI / 2);
+        geo.rotateX(o.down ? Math.PI / 2 : -Math.PI / 2); // `down`: seen from below (the surface overhead)
         geo.translate((x0 + x1) / 2, 0, (z0 + z1) / 2);
         shade(geo, () => 1);
         const m = new THREE.Mesh(geo, self._mat);

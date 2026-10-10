@@ -1901,6 +1901,8 @@ def dive():
         # and the caustics on the floor, round the grate's hole (Doc 2 S8_H)
         prop("caustics", [0, 0, 0], rects=[[-W / 2, W / 2, -D / 2, z0 - 0.15], [-W / 2, W / 2, z1 + 0.15, D / 2],
                                             [-W / 2, x0 - 0.15, z0 - 0.15, z1 + 0.15], [x1 + 0.15, W / 2, z0 - 0.15, z1 + 0.15]], strength=0.24, scale=2.2),
+        # and the surface itself, far above: the same web, bright, seen from below
+        prop("caustics", [0, H - 0.06, 0], rects=[[-W / 2, W / 2, -D / 2, D / 2]], down=True, strength=0.28, scale=1.8, color="#a8eef8"),
     ] + sleeves
     rec = {
         "name": "THE DIVE",
