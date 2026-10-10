@@ -23,7 +23,23 @@ export function initBail(director) {
   affordance.textContent = 'EXIT';
   document.body.appendChild(affordance);
 
-  affordance.addEventListener('click', () => director.bail());
+  // A mouse click is deliberate (the pointer had to be released first). A
+  // touch is not: EXIT sits where the walking thumb lands, so on touch the
+  // first tap arms it (EXIT?) and only a second tap within 3 s leaves.
+  let lastPointer = 'mouse';
+  let armedUntil = 0;
+  let disarm = null;
+  affordance.addEventListener('pointerdown', (e) => { lastPointer = e.pointerType || 'mouse'; });
+  affordance.addEventListener('click', () => {
+    if (lastPointer === 'mouse') { director.bail(); return; }
+    const now = performance.now();
+    if (now < armedUntil) { director.bail(); return; }
+    armedUntil = now + 3000;
+    affordance.textContent = 'EXIT?';
+    affordance.classList.add('bail-armed');
+    clearTimeout(disarm);
+    disarm = setTimeout(() => { armedUntil = 0; affordance.textContent = 'EXIT'; affordance.classList.remove('bail-armed'); }, 3000);
+  });
 
   let touchTimer = null;
   const clearTouchTimer = () => {

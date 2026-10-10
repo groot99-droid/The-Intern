@@ -1179,7 +1179,12 @@ def garage(depth=44.0, open_north=False):
             props.append(prop("sodium", [x, H - 0.74, bz]))
             # the last row reaches no further than the lip: past it the pool is
             # pale and blue, and its pillars must not catch the garage's orange
-            lights.append({"type": "point", "pos": [x, H - 1.15, bz], "color": "#ffa040", "intensity": 36, "distance": 12 if last else 20, "flicker": 0.6 if last else 0.08})
+            # (id `run`: S7 H's TURN BACK puts the garage behind him out --
+            # "the garage behind is gone", Doc 1 S7 / Doc 3 MG-06 H)
+            l = {"type": "point", "pos": [x, H - 1.15, bz], "color": "#ffa040", "intensity": 36, "distance": 12 if last else 20, "flicker": 0.6 if last else 0.08}
+            if not last:
+                l["id"] = "run"
+            lights.append(l)
     # the same four cars, at the same offsets, in every bay; the same stain
     for bz in bay_z:
         car("lib_car_suv", -12.6, bz, 181.0, "lp_car2")
@@ -1286,7 +1291,9 @@ def garage(depth=44.0, open_north=False):
     # (the strip runs 1.45 m back from the edge: up against the rail he
     # stands ~0.75 m from it, and a low frame rate can stop him a step short)
     zone(rec, "edge_approach", [0.0, edge + 0.85], r=0.5, ring=0.5, box=[[-W / 2 + 0.3, edge + 0.25], [W / 2 - 0.3, edge + 1.45]], silent=True)
-    zone(rec, "gap", [gx, edge + 0.4], r=0.5, ring=2.6, box=[[gap[0], edge + 0.02], [gap[1], edge + 0.65]], label_at=[gx, 1.45, edge - 0.6])
+    # (the box runs 0.8 m back from the lip: the barrier stops him ~0.15 m
+    # short of it, and the navgrid's cells there must fall inside)
+    zone(rec, "gap", [gx, edge + 0.4], r=0.5, ring=2.6, box=[[gap[0], edge + 0.02], [gap[1], edge + 0.8]], label_at=[gx, 1.45, edge - 0.6])
     zone(rec, "turnback", [0.0, edge + 5.0], r=0.5, ring=2.4, box=[[-W / 2 + 0.3, edge + 4.55], [W / 2 - 0.3, edge + 5.5]], armAfter="edge_approach", label_at=[0.0, 2.3, edge + 5.0])
     anchor(rec, "drop", [gx, -4.3, edge - 6.0], 0, vertical=True)
     return rec

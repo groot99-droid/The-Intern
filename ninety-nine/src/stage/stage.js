@@ -489,6 +489,14 @@ export function createStage(container, { rooms = null, audio = null, sfx = null,
       releaseShot();
     },
     elapsed: () => elapsed,
+    // Stop drawing (the ending card covers the stage for good): no more
+    // frames, no more GPU work under an opaque card.
+    stop() {
+      if (destroyed) return;
+      destroyed = true;
+      cancelAnimationFrame(rafId);
+      releaseShot();
+    },
     destroy() {
       destroyed = true;
       cancelAnimationFrame(rafId);

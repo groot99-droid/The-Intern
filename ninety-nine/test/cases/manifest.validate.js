@@ -79,7 +79,11 @@ export async function run() {
       if (!Array.isArray(list)) { bad.push(`${where}: beats must be a list`); return; }
       list.forEach((bt, i) => {
         for (const k of keysOf(bt)) if (!BEAT.has(k)) bad.push(`${where}[${i}]: unknown beat key ${k}`);
-        if (bt.ride && bt.ride.stops) beats(bt.ride.stops, `${where}[${i}].ride.stops`);
+        if (bt.ride && bt.ride.stops) {
+          // a stop is a beat plus `at`: where along the ride (0..1) it runs
+          bt.ride.stops.forEach((st, k) => { if (!(st.at >= 0 && st.at <= 1)) bad.push(`${where}[${i}].ride.stops[${k}]: at must be 0..1`); });
+          beats(bt.ride.stops.map(({ at, ...rest }) => rest), `${where}[${i}].ride.stops`);
+        }
         if (bt.together) beats(bt.together, `${where}[${i}].together`);
       });
     };
@@ -87,7 +91,7 @@ export async function run() {
       const where = `${sid}.${letter}`;
       for (const k of keysOf(b)) if (!BRANCH.has(k)) bad.push(`${where}: unknown branch key ${k}`);
       beats(b.onEnter, `${where}.onEnter`);
-      if (b.idle) { beats(b.idle.beat, `${where}.idle`); if (!(b.idle.seconds > 0)) bad.push(`${where}: idle.seconds`); if (b.idle.commit && !(b.thresholds || {})[b.idle.commit]) bad.push(`${where}: idle.commit names no threshold`); }
+      if (b.idle) { beats(b.idle.beat, `${where}.idle`); if (!(b.idle.seconds > 0)) bad.push(`${where}: idle.seconds`); if (b.idle.commit && !(b.thresholds || {})[b.idle.commit]) bad.push(`${where}: idle.commit names no threshold`); if (b.idle.after && !zoneNames(b.room).has(b.idle.after)) bad.push(`${where}: idle.after ${b.idle.after} is no zone of ${b.room}`); }
       if (b.stillness) { beats(b.stillness.beat, `${where}.stillness`); if (!(b.stillness.seconds > 0)) bad.push(`${where}: stillness.seconds`); }
       for (const bz of b.beatZones || []) {
         for (const k of keysOf(bz)) if (!BEAT_ZONE.has(k)) bad.push(`${where}.beatZone: unknown key ${k}`);

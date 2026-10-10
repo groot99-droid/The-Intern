@@ -118,7 +118,8 @@ const CUES = {
   'door-thud': (ctx, bus) => { noiseBurst(ctx, bus, { durationMs: 160, filterHz: 180, filterType: 'lowpass', gain: 0.45 }); toneClick(ctx, bus, { freq: 70, durationMs: 120, gain: 0.25, type: 'sine' }); },
   'door-buzz': (ctx, bus) => pitchSweep(ctx, bus, { from: 118, to: 122, durationMs: 700, gain: 0.12, type: 'sawtooth' }),
   'deadbolt': (ctx, bus) => { toneClick(ctx, bus, { freq: 900, durationMs: 25, gain: 0.25, type: 'square' }); noiseBurst(ctx, bus, { durationMs: 90, filterHz: 1400, filterType: 'bandpass', gain: 0.25 }); },
-  'elevator-motor': (ctx, bus) => pitchSweep(ctx, bus, { from: 62, to: 44, durationMs: 4000, gain: 0.22, type: 'triangle' }),
+  // `durationMs`: as long as the ride (rideCab passes its seconds)
+  'elevator-motor': (ctx, bus, o = {}) => pitchSweep(ctx, bus, { from: 62, to: 44, durationMs: o.durationMs || 4000, gain: 0.22, type: 'triangle' }),
   'splash': (ctx, bus) => { noiseBurst(ctx, bus, { durationMs: 900, filterHz: 1300, filterType: 'bandpass', gain: 0.35 }); noiseBurst(ctx, bus, { durationMs: 1800, filterHz: 300, filterType: 'lowpass', gain: 0.2 }); },
   'stamp': (ctx, bus) => toneClick(ctx, bus, { freq: 140, durationMs: 60, gain: 0.18, type: 'square' })
 };

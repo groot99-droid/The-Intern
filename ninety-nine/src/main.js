@@ -89,6 +89,7 @@ async function boot() {
     library,
     onEnding(endingId) {
       renderEndingCard(endingId, state, library);
+      stage.stop(); // the card is opaque and final: stop drawing the building under it
     }
   });
 

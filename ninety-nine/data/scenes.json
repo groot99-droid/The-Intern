@@ -1268,6 +1268,7 @@
           "next": "S8",
           "ambience": "S7_C_AMB.wav",
           "idle": {
+            "after": "cab_inside",
             "seconds": 25,
             "commit": "resist"
           },
@@ -1504,6 +1505,13 @@
                     "door-thud",
                     "concrete-grains"
                   ]
+                },
+                {
+                  "light": {
+                    "id": "run",
+                    "on": false,
+                    "seconds": 1.4
+                  }
                 },
                 {
                   "shake": {

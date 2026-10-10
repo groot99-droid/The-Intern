@@ -297,7 +297,7 @@ export function createDirector({ manifest, endings, state, stage, audio = null, 
   // continuous eased drop and one motor cue.
   function rideCab(inst, { drop = 14, seconds = 12, shake = 0.012, stops = [], motor = true } = {}) {
     return carried(() => new Promise((resolve) => {
-      if (motor) sfxPlay('elevator-motor');
+      if (motor) sfxPlay('elevator-motor', { durationMs: seconds * 1000 });
       const m0 = inst.matrix.clone();
       const y0 = m0.elements[13];
       const camY0 = stage.camera.position.y;
@@ -316,7 +316,14 @@ export function createDirector({ manifest, endings, state, stage, audio = null, 
     world.move(r.inst, m);
     stage.camera.position.y = r.camY0 + dy + Math.sin(stage.elapsed() * 31) * r.shake * (1 - Math.abs(2 * u - 1));
     while (r.stops.length && u >= r.stops[0].at) runBeats([r.stops.shift()], r.inst);
-    if (u >= 1) { ride = null; r.resolve(); }
+    if (u >= 1) {
+      ride = null;
+      // the ride's held pose is from the top of the shaft: hold the camera
+      // where it has arrived, so a carried beat after it (inside a
+      // `together`) does not put him back up there
+      stage.carry(cameraLookPose(lookPoint()), { seconds: 0.01 });
+      r.resolve();
+    }
   }
 
   // ---- links: walking from one room into the next ------------------------------
@@ -881,7 +888,9 @@ export function createDirector({ manifest, endings, state, stage, audio = null, 
   // long (S4 H: a door swings wider).
   function timers(sc, dt, pos) {
     const b = sc.branch;
-    if (b.idle && !sc.idleDone) {
+    // `idle.after`: the clock only runs once he has reached that zone (S7 C:
+    // inside the cab, not in the corridor still walking to it)
+    if (b.idle && !sc.idleDone && (!b.idle.after || sc.reached.has(b.idle.after))) {
       sc.armedT += dt;
       if (sc.armedT >= b.idle.seconds) {
         sc.idleDone = true;

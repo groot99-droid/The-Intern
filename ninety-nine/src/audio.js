@@ -336,9 +336,16 @@ export function createAudio() {
     startDrone({ fadeMs = 2000 } = {}) {
       ensureContext();
       if (!drone.started) {
-        drone.gain.gain.setValueAtTime(0, ctx.currentTime);
+        // from silence: rampGain() cancels what is scheduled at this instant
+        // and restarts from .value, which still reads full gain -- the fade
+        // must be scheduled from 0 explicitly
+        const g = drone.gain.gain;
+        const t = ctx.currentTime;
+        g.cancelScheduledValues(t);
+        g.value = 0;
+        g.setValueAtTime(0, t);
+        g.linearRampToValueAtTime(DRONE_GAIN, t + Math.max(0.03, fadeMs / 1000));
         drone.start();
-        rampGain(drone.gain.gain, ctx, DRONE_GAIN, fadeMs);
       }
     },
 

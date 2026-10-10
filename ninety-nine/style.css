@@ -314,6 +314,7 @@ html, body {
   cursor: pointer;
 }
 #bail-affordance:hover, #bail-affordance:focus-visible { opacity: 0.9; }
+#bail-affordance.bail-armed { opacity: 1; }
 
 #sound-toggle {
   position: fixed;
