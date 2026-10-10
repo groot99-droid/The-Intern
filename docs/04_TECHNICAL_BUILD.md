@@ -266,6 +266,8 @@ If Kling cannot hold a hard four-step jaw (Doc 2, §5, S2), `flipbook.js` takes 
 
 ## 6. MINI-GAME CONTRACT
 
+> **Amendment, 2026-10-03: retired.** There are no mini-games (removed at the author's request; Doc 3 is retired), so this contract governs nothing. Nothing mounts over a scene, and the choice UI is the room itself: threshold zones the candidate walks to (§14's amendment). `state.js` keeps its single-writer rule, so only `commitChoice()` touches conformance. Friction is written by the director from movement (`src/friction.js`). The leak test and the MG-01 → MG-07 handoff went with the modules. The S0 form (`src/application.js`) still fills `state.formAnswers`, and OPEN THE BOX now shows the box's contents as a caption.
+
 ### 6.1 Lifecycle
 
 ```
@@ -368,6 +370,12 @@ Filtering is permitted. Stopping is not.
 
 ### 7.4 Autoplay policy
 
+> **Amendment, 2026-10-03.** There is no SUBMIT click to hang audio on any more: the game starts on foot in the apartment.
+> - The **first trusted gesture** (a click to look, a key, a touch) calls `audio.unlock()`. That starts the `AudioContext` and the music bus, so room tone and footsteps sound from the apartment on. **The drone does not start there.**
+> - `audio.startDrone()` runs once, when the lobby's front glass doors close behind the candidate (`src/director.js`). That is where C7 and §7.1 place it. The oscillator fades in over two seconds and is never stopped or restarted.
+>
+> There is still no "enable audio" prompt.
+
 Browsers block audio until a user gesture. S0's SUBMIT click is that gesture, and it is diegetic. Initialize the `AudioContext` on that click and nowhere else. If the context is suspended at any later point, resume it silently and log it. Never show an "enable audio" prompt. It would be the only non-diegetic UI in the game.
 
 ---
@@ -418,6 +426,8 @@ Stripping audio from every video file is not optional. It is what makes C7 possi
 ---
 
 ## 9. THE BAIL-OUT
+
+> **Amendment, 2026-10-03.** Keyboard `Escape` no longer bails. The candidate is always walking, and under pointer lock Escape is the browser's own "release the mouse" key. Two ways out remain, and both still route to PENDING REVIEW (`director.bail()`): the persistent **EXIT** button, a click away once the pointer is released, and the **3-finger, 1200 ms long-press** on touch (§13).
 
 A persistent, low-contrast `ESC` affordance in a fixed corner, present in every scene and every mini-game. Keyboard `Escape`, or a long-press anywhere on touch.
 
@@ -517,6 +527,8 @@ Mobile Safari is the constraint. Test on a four-year-old iPhone before anything 
 ---
 
 ## 14. WHAT NOT TO BUILD
+
+> **Amendment, 2026-10-03.** The rule against non-diegetic buttons now covers the choices too: there are no choice buttons. Each choice is a **diegetic zone** in the room, marked by its words standing over the place to walk to (`src/labels.js`); walking into it is the choice. The only non-diegetic controls left are EXIT and the sound toggle, plus a one-line walk hint that fades after a few seconds.
 
 Explicitly out of scope. Each of these has been considered and rejected.
 

@@ -23,16 +23,20 @@ Doc 1 names the prologue `S0_C_*`; Doc 2 and these files use `S0_X_*`.
   to -3 dBFS, loudness intentionally unmatched per scene (see MANIFEST) -- the engine trims each
   bed toward -18 LUFS and each one-shot toward -8 dBFS peak at play time (src/audio.js).
   Loop seams measured ≤ 0.023 on ±1 scale.
-- **Transitions**: the black-joins the old clips carried are now the stage's own: a room's
-  `leave` shot fades to black, the next room's `arrive` shot fades up (data/rooms.json `shots`).
-  A render flip (C↔H) is a different `arrive`, never a cut into the wrong room.
-- **Text rule**: no lettering anywhere in a set. ENTER sign = blank green housing; the S0 monitor
-  and every placard are blank quads; the 99 / 100 slips and every card are engine text.
+- **Transitions**: there are none to carry any more. The game is one continuous walk: rooms are
+  joined door to door through `CN_*` connectors (src/world/), and beds crossfade as he walks
+  through. A render flip (C↔H) is decided when the choice is committed: the room joined behind
+  the door is already the right one. The `leave` / `arrive` shots stay in data/rooms.json for the
+  Higgsfield proofs.
+- **Text rule**: no lettering baked into a set. ENTER sign = blank green housing; every placard is
+  a blank quad; what a monitor says (the S0 posting, ACCEPTED, the Harlowe desktop, the
+  requisition) is engine text drawn onto its screen (src/screens.js); the 99 / 100 slips, the
+  threshold labels and every card are engine text.
 - **Music** is generated (`src/music.js`), not a file.
 
 ## Not generated
 
 - `S{n}_{R}_SFX_*` one-shots still missing: stapler thud, CRT degauss, door screech, car alarm,
   package drag, concrete grains, chute scrape (sfx.js synthesises stand-ins).
-- NEVER_SAT variant of the ASSIMILATION boardroom: now a prop (`emptychair` in rooms.json
-  SE_ASSIM) the stage could hide; not wired.
+- NEVER_SAT variant of the ASSIMILATION boardroom: not a file. The boardroom's `mychair` prop and
+  the hundredth slip on it are hidden when NEVER_SAT is set (data/endings.json `flagOverlays`).

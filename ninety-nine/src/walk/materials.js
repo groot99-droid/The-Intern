@@ -22,6 +22,18 @@
 
 import * as THREE from '../../vendor/three/three.module.js';
 
+// three's derivative bump mapping divides by the screen-space tangent frame:
+// on a face seen edge-on (a kerb's side, a lane line's edge, fDet -> 0) the
+// gradient blows up into white sparkles. Fade the bump out at grazing angles
+// instead, for every material that uses one.
+{
+  const OLD = 'vec3 vGrad = sign( fDet ) * ( dHdxy.x * R1 + dHdxy.y * R2 );\n\t\treturn normalize( abs( fDet ) * surf_norm - vGrad );';
+  const NEW = 'vec3 vGrad = sign( fDet ) * ( dHdxy.x * R1 + dHdxy.y * R2 );\n\t\tvec3 vB = abs( fDet ) * surf_norm - vGrad;\n\t\tfloat lB = length( vB );\n\t\tvec3 bumped = lB > 1e-6 ? vB / lB : surf_norm;\n\t\treturn normalize( mix( surf_norm, bumped, smoothstep( 0.02, 0.15, abs( fDet ) ) ) );';
+  const chunk = THREE.ShaderChunk.bumpmap_pars_fragment;
+  if (chunk.includes(OLD)) THREE.ShaderChunk.bumpmap_pars_fragment = chunk.replace(OLD, NEW);
+  else console.warn('materials.js: bumpmap chunk changed; the grazing-angle guard is not applied');
+}
+
 const TEX_SIZE = 512;
 
 // ---- tiny deterministic noise ------------------------------------------
@@ -104,7 +116,10 @@ const RECIPES = {
   void:          { a: '#050505', b: '#0a0a0a', seed: 131, contrast: 0.2, pattern: 'none', rough: 1.0, bump: 0 },
   asphalt:       { a: '#2a2928', b: '#3f3e3c', seed: 141, contrast: 0.8, pattern: 'concrete', rough: 0.9, bump: 0.015, roughVar: 0.4 },
   glass:         { a: '#9fb2b8', b: '#c8d6da', seed: 151, contrast: 0.1, pattern: 'none', rough: 0.05, metal: 0.2, opacity: 0.22, bump: 0 },
-  glass_dark:    { a: '#1a2224', b: '#25302f', seed: 152, contrast: 0.1, pattern: 'none', rough: 0.05, metal: 0.4, opacity: 0.55, bump: 0 }
+  glass_dark:    { a: '#1a2224', b: '#25302f', seed: 152, contrast: 0.1, pattern: 'none', rough: 0.05, metal: 0.4, opacity: 0.55, bump: 0 },
+  // the street's brick and the apartment desk's wood: the building's, photoreal (C1)
+  brick:         { a: '#5a3428', b: '#8a5a44', seed: 161, contrast: 0.75, pattern: 'blocks', rough: 0.9, bump: 0.025, roughVar: 0.4 },
+  wood:          { a: '#3e2a1c', b: '#6a4a32', seed: 171, contrast: 0.7, pattern: 'stains', rough: 0.55, bump: 0.006, roughVar: 0.5 }
 };
 
 // Pattern pass. `c` draws colour, `h` draws height (white = raised,

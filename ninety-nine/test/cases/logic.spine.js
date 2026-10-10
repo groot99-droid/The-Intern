@@ -1,9 +1,10 @@
 // Doc 4 §11.1 acceptance tests, plus Doc 1 §7.2's four worked runs and the
-// full 256-path sweep. Pure state.js logic -- no assets, no DOM needed
-// beyond what the harness provides, buildable in Phase 1.
+// full 256-path sweep. Pure state.js logic, plus spine.js -- what the
+// director (src/director.js) predicts behind each threshold, checked
+// against a simulated run of data/scenes.json. No WebGL, no DOM.
 
 import { createState, commitChoice, resolveEnding, renderFor, peekRenderFor, seedRenderFromIntake, DEBUG_RESUME } from '../../src/state.js';
-import { planTransition, entryRoom, exitRoom } from '../../src/router.js';
+import { outcomesFor, zonesOf, baseOf, cloneState } from '../../src/spine.js';
 import { runCase, assertEqual, assert } from '../harness.js';
 
 function runPath(bits) {
@@ -14,8 +15,8 @@ function runPath(bits) {
 
 // Bit index 7 is S8. renderFor() must be read BEFORE that scene's choice is
 // committed (Doc 1 §2.2: render is resolved at the top of the scene) --
-// mirrors router.js's playScene(), where renderFor(state) runs before
-// choiceUI.present()/commitChoice(). OPENED_BOX (Doc 1 §2.5) is only ever
+// mirrors director.js's enterScene(), where renderFor(state) runs before
+// any threshold can commit(). OPENED_BOX (Doc 1 §2.5) is only ever
 // set by S8-C's resist option ("OPEN THE BOX"); S8-H's resist option ("SWIM
 // FOR THE PILLARS") does not set it.
 function runPathWithRenderTracking(bits) {
@@ -108,55 +109,89 @@ export async function run() {
     }
   });
 
-  await runCase('Transitions: a change of set is leave + arrive; the same set (S1 -> S2) is no transition', () => {
-    const baseOf = (k) => ({ S2_C: 'S1_C', S2_H: 'S1_H', S7_H: 'S6_H' }[k] || k);
-    assertEqual(JSON.stringify(planTransition({ fromRoom: 'S1_C', toRoom: 'S2_C', baseOf })), '[]');
-    assertEqual(JSON.stringify(planTransition({ fromRoom: 'S6_H', toRoom: 'S7_H', baseOf })), '[]');
-    assertEqual(JSON.stringify(planTransition({ fromRoom: 'S2_C', toRoom: 'S3_H', baseOf })), JSON.stringify([{ room: 'S2_C', shot: 'leave' }, { room: 'S3_H', shot: 'arrive' }]));
-    assertEqual(JSON.stringify(planTransition({ fromRoom: 'S2_C', toRoom: 'S3_C', baseOf, override: { leave: 'call', arrive: 'in' } })), JSON.stringify([{ room: 'S2_C', shot: 'call' }, { room: 'S3_C', shot: 'in' }]));
-    assertEqual(JSON.stringify(planTransition({ fromRoom: null, toRoom: 'S1_C' })), '[]');
-  });
+  // ---- spine.js: what the director builds behind each threshold --------------
 
-  await runCase('Transitions: a render flip lands in the destination render by construction', () => {
-    // S R S R R R: conformance 1,0,1,0,-1,-2 -- C holds through S6 (the
-    // tie/near-tie keeps the last render), then S6's resist drops it to -2,
-    // so S7 renders H. The S6 -> S7 edge is the flip: the plan leaves S6_C
-    // and arrives in S7_H, never S7_C.
+  const [manifest, endings] = await Promise.all([
+    fetch('../data/scenes.json').then((r) => r.json()),
+    fetch('../data/endings.json').then((r) => r.json())
+  ]);
+
+  // One run the way the director plays it: the render at the top of each
+  // scene (enterScene -> renderFor), outcomesFor() asked there, then
+  // commitChoice() and the threshold's setFlag (commit()). Every prediction
+  // is kept next to what actually happened at the top of the next scene.
+  function simulate(mask, seed) {
     const state = createState();
-    const bits = [1, -1, 1, -1, -1, -1];
-    const played = [];
-    for (const p of bits) {
-      const from = renderFor(state);
-      commitChoice(state, p);
-      played.push([from, peekRenderFor(state)]);
+    seedRenderFromIntake(state, seed === 'H' ? 2 : 0);
+    const steps = [];
+    let pending = null;
+    for (let i = 0; i < 8; i++) {
+      const sceneId = manifest.spineOrder[i + 1];
+      const letter = renderFor(state);
+      const branch = manifest.scenes[sceneId].branches[letter];
+      if (pending) pending.actual = { render: letter, room: branch.room };
+      const outs = outcomesFor(state, manifest, endings, sceneId, branch);
+      const key = mask & (1 << i) ? 'succumb' : 'resist';
+      const th = branch.thresholds[key];
+      commitChoice(state, key === 'succumb' ? 1 : -1);
+      if (th.setFlag) state.flags.add(th.setFlag);
+      pending = { sceneId, letter, key, predicted: outs[key], all: outs };
+      steps.push(pending);
     }
-    assertEqual(played[4].join('>'), 'C>C', 'S5 -> S6 should not flip (conformance -1, tie-hold)');
-    assertEqual(played[5].join('>'), 'C>H', 'S6 -> S7 should flip');
-    const steps = planTransition({ fromRoom: `S6_${played[5][0]}`, toRoom: `S7_${played[5][1]}` });
-    assertEqual(steps[steps.length - 1].room, 'S7_H');
-    assertEqual(steps[0].room, 'S6_C');
-  });
+    pending.actual = { ending: resolveEnding(state) };
+    return { steps, state };
+  }
 
-  await runCase('Transitions: every room a sequence entry names has leave/arrive shots and every edge resolves', async () => {
-    const [manifest, rooms] = await Promise.all([
-      fetch('../../data/scenes.json').then((r) => r.json()),
-      fetch('../../data/rooms.json').then((r) => r.json())
-    ]);
-    const resolve = (k) => { const r = rooms.rooms[k]; return r && r.alias ? { ...rooms.rooms[r.alias], ...r } : r; };
-    const baseOf = (k) => { const r = rooms.rooms[k]; return r && r.alias ? r.alias : k; };
-    for (const [sceneId, scene] of Object.entries(manifest.scenes)) {
-      for (const [letter, branch] of Object.entries(scene.branches)) {
-        for (const entry of branch.sequence) {
-          const key = entry.room || branch.room;
-          const rec = resolve(key);
-          assert(rec, `${sceneId}.${letter}: no room ${key}`);
-          assert(rec.shots && rec.shots[entry.shot || 'loop'], `${sceneId}.${letter}: ${key} has no shot ${entry.shot || 'loop'}`);
-          for (const name of ['leave', 'arrive', 'in', 'out']) assert(rec.shots[name], `${key}: no ${name} shot`);
+  await runCase('spine.js outcomesFor() agrees with a simulated run on all 256 paths x both S0 seeds', () => {
+    let checked = 0;
+    for (const seed of ['C', 'H']) {
+      for (let mask = 0; mask < 256; mask++) {
+        for (const st of simulate(mask, seed).steps) {
+          const where = `seed ${seed} mask ${mask} ${st.sceneId}.${st.letter} ${st.key}`;
+          assert(st.predicted, `${where}: no outcome for the threshold`);
+          assertEqual(st.predicted.polarity, st.key === 'succumb' ? 1 : -1, `${where}: polarity`);
+          if (st.sceneId === 'S8') {
+            const th = manifest.scenes.S8.branches[st.letter].thresholds[st.key];
+            assertEqual(st.predicted.next, 'E', `${where}: S8 leads to the ending`);
+            assertEqual(st.predicted.ending, st.actual.ending, `${where}: ending`);
+            assertEqual(st.predicted.room, th.to || endings[st.actual.ending].room, `${where}: room behind the threshold`);
+            assertEqual(st.predicted.endingRoom, endings[st.actual.ending].room, `${where}: ending room`);
+          } else {
+            assertEqual(st.predicted.render, st.actual.render, `${where}: next render`);
+            assertEqual(st.predicted.room, st.actual.room, `${where}: room behind the threshold`);
+          }
+          checked++;
         }
       }
     }
+    assertEqual(checked, 2 * 256 * 8, 'every step checked');
+  });
+
+  await runCase('spine.js outcomesFor() leaves the live state alone (cloneState)', () => {
+    const state = createState();
+    commitChoice(state, 1);
+    state.flags.add('NEVER_SAT');
+    const snap = () => JSON.stringify({ ...state, flags: [...state.flags] });
+    const before = snap();
+    outcomesFor(state, manifest, endings, 'S2', manifest.scenes.S2.branches.C);
+    outcomesFor(state, manifest, endings, 'S8', manifest.scenes.S8.branches.C);
+    assertEqual(snap(), before, 'state changed');
+  });
+
+  await runCase('spine.js: the director-faithful sweep (OPENED_BOX from scenes.json setFlag) gives 19 / 27 / 202 / 8 RETAINED', () => {
+    // The render-tracking sweep above sets OPENED_BOX by hand; this one takes
+    // it from data/scenes.json (S8 C's resist threshold), as the director does.
+    const counts = { ASSIMILATION: 0, EXPULSION: 0, PENDING: 0, RETAINED: 0 };
+    for (let mask = 0; mask < 256; mask++) counts[resolveEnding(simulate(mask, 'C').state)]++;
+    assertEqual(counts.ASSIMILATION, 19, 'ASSIMILATION');
+    assertEqual(counts.EXPULSION, 27, 'EXPULSION');
+    assertEqual(counts.PENDING, 202, 'PENDING');
+    assertEqual(counts.RETAINED, 8, 'RETAINED');
+  });
+
+  await runCase('Renders only flip on S0->S1, S2->S3, S4->S5, S6->S7; only there can the two thresholds lead to different rooms', () => {
     // Which spine edges can flip at all, per renderFor()'s +/-2 threshold and
-    // the S0 seed: S0->S1 (H seed), S2->S3, S4->S5, S6->S7. Nothing else.
+    // the S0 seed. S0 is branchless (X): it "lands in" C unless seeded H.
     const edges = new Set();
     for (const seed of ['C', 'H']) {
       for (let mask = 0; mask < 256; mask++) {
@@ -173,16 +208,46 @@ export async function run() {
       }
     }
     assertEqual([...edges].sort().join(','), 'S0->S1,S2->S3,S4->S5,S6->S7');
-    for (const edge of edges) {
-      const [from, to] = edge.split('->');
-      for (const [letter, dest] of from === 'S0' ? [['X', 'C'], ['X', 'H']] : [['C', 'H'], ['H', 'C']]) {
-        const a = manifest.scenes[from].branches[letter], b = manifest.scenes[to].branches[dest];
-        const fromRoom = exitRoom(a), toRoom = entryRoom(b);
-        const steps = planTransition({ fromRoom, toRoom, baseOf });
-        assert(steps.length === 2, `${edge} ${letter}->${dest}: expected leave + arrive, got ${steps.length}`);
-        assertEqual(steps[1].room, toRoom, `${edge} ${letter}->${dest}: must end in the destination render`);
+    const differ = new Set();
+    for (const seed of ['C', 'H']) {
+      for (let mask = 0; mask < 256; mask++) {
+        for (const st of simulate(mask, seed).steps) {
+          if (st.sceneId === 'S8') continue;
+          if (new Set(Object.values(st.all).map((o) => o.room)).size > 1) differ.add(`${st.sceneId}->${st.predicted.next}`);
+        }
       }
     }
+    for (const e of differ) assert(['S2->S3', 'S4->S5', 'S6->S7'].includes(e), `thresholds lead to different rooms on ${e}`);
+  });
+
+  await runCase("Every branch's `next` is single-valued: one string per branch, the same for both renders, never per threshold", () => {
+    for (const [sceneId, scene] of Object.entries(manifest.scenes)) {
+      const nexts = new Set();
+      for (const [letter, branch] of Object.entries(scene.branches)) {
+        assert(typeof branch.next === 'string' && branch.next.length > 0, `${sceneId}.${letter}: next must be one string`);
+        nexts.add(branch.next);
+        for (const [key, th] of Object.entries(branch.thresholds || {})) assert(th.next === undefined, `${sceneId}.${letter}.${key}: a threshold may not name its own next (the spine never forks)`);
+      }
+      assertEqual(nexts.size, 1, `${sceneId}: next differs between renders`);
+    }
+  });
+
+  await runCase('spine.js zonesOf / baseOf / cloneState', () => {
+    assertEqual(JSON.stringify(zonesOf({ zone: 'a' })), '["a"]');
+    assertEqual(JSON.stringify(zonesOf({ zone: ['a', 'b'] })), '["a","b"]');
+    assertEqual(JSON.stringify(zonesOf({})), '[]');
+    assertEqual(JSON.stringify(zonesOf(null)), '[]');
+    const rooms = { rooms: { A: { size: [1, 1, 1] }, B: { alias: 'A' } } };
+    assertEqual(baseOf(rooms, 'B'), 'A');
+    assertEqual(baseOf(rooms, 'A'), 'A');
+    assertEqual(baseOf(rooms, 'Z'), 'Z');
+    const s = createState();
+    s.flags.add('X');
+    const c = cloneState(s);
+    c.flags.add('Y');
+    c.dwell.push(1);
+    c.formAnswers.name = 'SHAUN';
+    assert(!s.flags.has('Y') && s.dwell.length === 0 && s.formAnswers.name === undefined, 'the clone shares state with the original');
   });
 
   await runCase('S0 intake seed: 2+ refusals reach S1_H and hold it through S2', () => {

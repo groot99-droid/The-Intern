@@ -111,7 +111,17 @@ const CUES = {
   'breath': (ctx, bus, opts = {}) => noiseBurst(ctx, bus, { durationMs: opts.durationMs || 300, filterHz: opts.filterHz || 800, filterType: 'lowpass', gain: opts.gain || 0.08 }),
   // Deliberately silent with no real file: see the header comment. Exists
   // so branch.sfxCue entries can reference it without an "unknown cue" log.
-  'receptionist-voice': () => {}
+  'receptionist-voice': () => {},
+  // The continuous building: doors that seal behind the candidate, the
+  // lobby's buzzer, the deadbolt in the apartment, the cab's motor, the
+  // splash into the pool.
+  'door-thud': (ctx, bus) => { noiseBurst(ctx, bus, { durationMs: 160, filterHz: 180, filterType: 'lowpass', gain: 0.45 }); toneClick(ctx, bus, { freq: 70, durationMs: 120, gain: 0.25, type: 'sine' }); },
+  'door-buzz': (ctx, bus) => pitchSweep(ctx, bus, { from: 118, to: 122, durationMs: 700, gain: 0.12, type: 'sawtooth' }),
+  'deadbolt': (ctx, bus) => { toneClick(ctx, bus, { freq: 900, durationMs: 25, gain: 0.25, type: 'square' }); noiseBurst(ctx, bus, { durationMs: 90, filterHz: 1400, filterType: 'bandpass', gain: 0.25 }); },
+  // `durationMs`: as long as the ride (rideCab passes its seconds)
+  'elevator-motor': (ctx, bus, o = {}) => pitchSweep(ctx, bus, { from: 62, to: 44, durationMs: o.durationMs || 4000, gain: 0.22, type: 'triangle' }),
+  'splash': (ctx, bus) => { noiseBurst(ctx, bus, { durationMs: 900, filterHz: 1300, filterType: 'bandpass', gain: 0.35 }); noiseBurst(ctx, bus, { durationMs: 1800, filterHz: 300, filterType: 'lowpass', gain: 0.2 }); },
+  'stamp': (ctx, bus) => toneClick(ctx, bus, { freq: 140, durationMs: 60, gain: 0.18, type: 'square' })
 };
 
 // Real recordings that replace a synthesized CUES entry above, keyed by the
@@ -139,19 +149,33 @@ export function createSfx(audio) {
     play(name, opts) {
       const ctx = audio && audio.getContext ? audio.getContext() : null;
       const bus = audio && audio.getSfxBus ? audio.getSfxBus() : null;
-      if (!ctx || !bus) return; // silent no-op before S0's SUBMIT gesture (Doc 4 §7.4)
+      // silent no-op before the first activating gesture (Doc 4 §7.4), and
+      // while the context is suspended: cues scheduled on a frozen clock all
+      // fire at once when it resumes
+      if (!ctx || !bus || ctx.state !== 'running') return;
 
       const realFile = REAL_FILES[name];
       if (realFile && audio.playOneShot) {
         // opts (e.g. MG-02 H's per-push `gain`) used to be dropped on this
         // path, so "each push fractionally quieter" never happened.
-        audio.playOneShot(realFile, opts || {});
+        const o = opts || {};
+        audio.playOneShot(realFile, typeof o.volume === 'number' ? { ...o, gain: (typeof o.gain === 'number' ? o.gain : 1) * o.volume } : o);
         return;
       }
 
       const cue = CUES[name];
       if (!cue) {
         console.debug(`sfx.js: unknown cue "${name}"`);
+        return;
+      }
+      // `volume` scales any synthesized cue (a door closing 20 m off is a
+      // click); a cue's own `gain` option, where it has one, is its level
+      if (opts && typeof opts.volume === 'number' && opts.volume !== 1) {
+        const g = ctx.createGain();
+        g.gain.value = Math.max(0, opts.volume);
+        g.connect(bus);
+        cue(ctx, g, opts);
+        setTimeout(() => { try { g.disconnect(); } catch (e) { /* already gone */ } }, 6000);
         return;
       }
       cue(ctx, bus, opts);

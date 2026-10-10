@@ -10,3 +10,5 @@ __pycache__/
 Thumbs.db
 desktop.ini
 .DS_Store
+# Dev-only Node runners write screenshots and logs here (tools/walkthrough.cjs)
+ninety-nine/tools/out/
