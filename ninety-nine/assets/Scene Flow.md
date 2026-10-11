@@ -180,13 +180,13 @@ Nine silent bands across the corridor (`band_0`…`band_8`, beat zones) keep him
 
 ## Endings
 
-After S8, `resolveEnding()` picks the ending (Doc 1 §2.4). Its room is joined behind S8's way on: on the C side, the deliveries corridor; on the H side, the store itself or, for PENDING, its `staff` door. On arrival, `flagOverlays` hide props. Walking into the ending's zone takes the camera; so does 90 s passing. Then the ending's `preShot` and `beats` play, `show` puts props in place and the pull-back runs. A 4 s dead-still hold follows, then the blackout and the card, and the stage stops drawing.
+After S8, `resolveEnding()` picks the ending (Doc 1 §2.4). Its room is joined behind S8's way on: on the C side, the deliveries corridor; on the H side, the store itself or, for PENDING, its `staff` door. On arrival, `flagOverlays` hide props. Walking into the ending's zone takes the camera; so does 90 s passing. Then the ending's `preShot` plays, `show` puts props in place, its `beats` play and the pull-back runs. A 4 s hold follows on a frozen frame, nothing moving in it, then the blackout and the card, and the stage stops drawing.
 
 | Ending | Room | Zone | What plays |
 |---|---|---|---|
 | ASSIMILATION | `SE_ASSIM`, the boardroom: a glass table on marble, twelve faceless seated figures, his chair pulled out at the head with the hundredth slip on it · amb [[S8_C_AMB_BOARDROOM.wav]] | `head`, at the head of the table | **`ending`**: the camera leaves him standing beside the chair (`self`, his face the blurred map) and pulls back down the table. With `DELIVERED` the package and its wet ring are hidden on arrival and stand at the table's centre once the camera leaves him. With `NEVER_SAT` there is no chair for him: `mychair` and its slip are hidden |
 | RETAINED | the same boardroom (`SE_RETAINED`) | `head` | **`retained`**, a shorter pull-back. The package is already on the glass, resealed (the one he opened is on the sorting table). The same `NEVER_SAT` rule |
 | EXPULSION | `SE_EXPUL`, the store · [[S8_H_AMB_STORE.wav]] | `door`, the open storefront door (an invisible threshold stops him in the doorway) | **`ending`**: the camera withdraws into the store without him |
-| PENDING REVIEW | `SE_PEND`, the waiting room, entered by its `inner` door (from the store: the `staff` door → `CN_CORRIDOR_SERVICE`). Two chairs face each other mid-room, one just vacated; a red curtain on the east wall still sways | `seat` (TAKE A SEAT again) | he sits (`sit`); the speaker clicks: "One hundred."; the hands appear holding a slip printed 99 (`slip99`); then **`ending`** |
+| PENDING REVIEW | `SE_PEND`, the waiting room, entered by its `inner` door (from the store: the `staff` door → `CN_CORRIDOR_SERVICE`). Two chairs face each other mid-room, one just vacated; a red curtain on the east wall still sways | `seat` (TAKE A SEAT again) | he sits (`sit`) with his hands in his lap holding a slip printed 99 (`slip99`); the speaker clicks: "One hundred."; then **`ending`** |
 
 EXIT (the bail-out) skips the walk and goes straight to the PENDING REVIEW card. On touch it takes two taps (EXIT?, then EXIT within 3 s).

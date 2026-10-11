@@ -12,7 +12,7 @@ A note to rebuild the scene-builder projects later, with what is needed to make 
 
 **Stale until rebuilt.** Every project in `projects.json` (the 18 rooms; the library project is fine) was built from `data/rooms.json` as it stood at `c1d415e`, before the continuous building and before the polish. None has a doorway or any of the polish's props, and `S6_C` is still its own room. The proofs in each `<ROOM>/` folder show those older sets.
 
-**The polish has landed**, so the rooms have stopped moving for now. The rebuild can start once `higgsfield_scene.py` has the ports below. The game reads nothing from these projects, so nothing breaks while they are stale.
+**The polish has landed**, so the rooms have stopped moving for now. Since `58f762e` the integration review changed a few things the tables below do not show: the builder renames `crtdust` (S0_X), `lobbydust` (S1, S3_H, SE_PEND) and `cabbulb` (S7_C); SE_PEND's `swaycurtain` hung in the S3 velvet; the boardroom's `ring` photoreal; the connectors' collars; caustics' `web`; S5_C's desk-top things at 0.77; the chest cooler's open well; the gondola's inset kick. The rebuild can start once `higgsfield_scene.py` has the ports below. The game reads nothing from these projects, so nothing breaks while they are stale.
 
 When the time comes, redo the tables below against the commit the rebuild starts from. They came from throwaway scripts, not committed: load the older `ninety-nine/data/rooms.json` with `git show <commit>:…` and the current file, and for each room key compare props by type (catalog props by `node`), `doors`, `zones`, `anchors`, `entry`, `size`, `floorY`, `boxes` and `lights` (as multisets of their JSON), and the `shots` names. Run `python ninety-nine/tools/higgsfield_scene.py <KEY> build` for every key and collect its `# WARNING` lines for the prop types still missing.
 
@@ -318,7 +318,7 @@ Every type the port lacks at `58f762e`, by the block it comes from, with the roo
 |---|---|---|
 | `blurfigure` | S8_C, SE_ASSIM | a figure with a blurred portrait over its face: the clerk, his `self` |
 | `cartontower` | S8_C ×43 | a hand-stacked tower of cartons into the fog (`n`, `cols`), one instanced mesh |
-| `caustics` | SET_DIVE ×18 | moving caustics on the pillars, the floor and the surface (light) |
+| `caustics` | SET_DIVE ×18 | moving caustics on the pillars, the floor and the surface (light); `web` is the web's tile in metres |
 | `chestcooler` | S8_H | a chest cooler, a lit well of product under sliding glass lids |
 | `floorgrate` | SET_DIVE ×2 | the rusted grate in its frame, hinged on its −z edge (`open` degrees) |
 | `glasstable` | SE_ASSIM | the vast photoreal glass table on chrome trestles, top at 0.79 |
@@ -341,7 +341,7 @@ Every type the port lacks at `58f762e`, by the block it comes from, with the roo
 
 ### Connectors
 
-Every connector has an entry doorway on its S wall and a bare opening on its N wall. The next room's own entry leaf closes that opening. They come from `build_rooms.py`'s `cn_*` builders.
+Every connector has an entry doorway on its S wall and a bare opening on its N wall. The next room's own entry leaf closes that opening. Its end wall also runs on past its sides and over its ceiling, to 4.6 × 3.2 m above the exit sill: a collar of boxes (`shadow: false`) in the wall's slab, behind the next room's wall, so a wider or taller doorway there (S6 H's 4 m shutter, S8 C's 3 m door) shows wall. Build those boxes with the rest; `mouth` (what the collar covers) is runtime-only. They come from `build_rooms.py`'s `cn_*` builders.
 
 | Key | Name | Floor / wall / ceiling | W × H × D | floorY | Entry (S) | Exit (N) | Inside |
 |---|---|---|---|---|---|---|---|
