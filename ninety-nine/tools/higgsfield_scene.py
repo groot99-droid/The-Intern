@@ -43,7 +43,7 @@ ROOMS = os.path.join(HERE, "..", "data", "rooms.json")
 
 # Record keys only the running game reads (src/director.js, src/world/):
 # never geometry, so never embedded in the bpy code.
-RUNTIME_ONLY = ("_note", "zones", "anchors", "entry", "holdEntry", "swim", "connector", "drop")
+RUNTIME_ONLY = ("_note", "zones", "anchors", "entry", "holdEntry", "swim", "connector", "drop", "mouth")
 
 # ---------------------------------------------------------------------------
 # The bpy template. Everything between the markers runs inside Blender; the

@@ -284,6 +284,19 @@ export function createWorld({ scene, mats, library, rooms, lightPool = {} }) {
       }
     }
     specs.sort((a, b) => a.rank - b.rank);
+    // keep point slots for the room being joined: a current room that could
+    // fill the whole pool by itself (S6 H lights 16) gives up its farthest
+    // lamps to a linked room's (they rank after the link, before the rest),
+    // or the next room would stay dark until this one is dropped
+    const NP = rig.pointCount || 16;
+    let n1 = 0, n0 = 0;
+    for (const s of specs) if (s.type !== 'spot') { if (s.rank < 10000) n0++; else if (s.rank < 20000) n1++; }
+    const cap = NP - Math.min(n1, 6);
+    if (n0 > cap) {
+      let k = 0;
+      for (const s of specs) if (s.type !== 'spot' && s.rank < 10000 && ++k > cap) s.rank += 15000;
+      specs.sort((a, b) => a.rank - b.rank);
+    }
     const ext = env.shadowExtent || 14;
     const center = current && current.box ? (Math.max(current.rec.size[0], current.rec.size[2]) * 0.75 <= 26 ? current.center : playerPos || current.center) : (playerPos || [0, 0, 0]);
     rig.update({ env: { ...env, shadowExtent: ext }, specs, center, dt, t });

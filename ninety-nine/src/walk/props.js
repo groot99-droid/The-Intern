@@ -1810,7 +1810,7 @@ const BUILDERS = {
           } else ctx.fillStyle = '#3a5747'; // dead: the letters still faintly there
           ctx.fillText(word, cw / 2, ch * 0.54);
         });
-        const faceMat = owned(new THREE.MeshBasicMaterial({ map: tex }));
+        const faceMat = owned(new THREE.MeshBasicMaterial({ map: tex, polygonOffset: true, polygonOffsetFactor: -3, polygonOffsetUnits: -3 })); // over the snapped housing (C1), never through it
         const face = new THREE.Mesh(new THREE.PlaneGeometry(w, h), faceMat);
         face.position.set(0, 0.05 + h / 2, 0.062);
         g.add(face);
@@ -1915,11 +1915,17 @@ const BUILDERS = {
         m.rotation.z = THREE.MathUtils.degToRad(o.tilt || 0);
         m.renderOrder = 2;
         g.add(m);
-        let last = -1e9, start = 0;
-        m.onBeforeRender = () => {
+        // never culled, so only a real hide (the group made invisible) stops
+        // it being drawn; a frame skipped means it was hidden, and a beat's
+        // `show` fades it in again (not every turn back to the glass, nor a
+        // slow frame while a room is joined)
+        m.frustumCulled = false;
+        let lastFrame = -10, start = 0;
+        m.onBeforeRender = (renderer) => {
+          const f = renderer.info.render.frame;
           const now = performance.now();
-          if (now - last > 400) start = now; // was hidden: fade in again
-          last = now;
+          if (f - lastFrame > 2) start = now;
+          lastFrame = f;
           mat.opacity = base * Math.min(1, (now - start) / 500);
         };
         return g;
@@ -3428,11 +3434,16 @@ const BUILDERS = {
       const tex = new THREE.CanvasTexture(c);
       tex.colorSpace = THREE.SRGBColorSpace;
       tex.magFilter = THREE.LinearFilter;
-      self._mat = new THREE.MeshLambertMaterial({ map: tex });
+      // pulled forward in depth: the head box under it is vertex-snapped on
+      // screen (C1) and the plane is not, so a bare 1.5 mm gap flickers
+      // off-axis
+      self._mat = new THREE.MeshLambertMaterial({ map: tex, polygonOffset: true, polygonOffsetFactor: -3, polygonOffsetUnits: -3 });
     }
     if (self._mat) {
-      const face = new THREE.Mesh(new THREE.PlaneGeometry(0.21, 0.23), self._mat);
-      face.position.set(0, 1.68 - (o.seated ? 0.45 : 0), 0.1115);
+      // its top stays under the hair box's (1.78), which stands proud of the
+      // face: the offset would otherwise draw the smear over the fringe
+      const face = new THREE.Mesh(new THREE.PlaneGeometry(0.21, 0.2), self._mat);
+      face.position.set(0, 1.665 - (o.seated ? 0.45 : 0), 0.1115);
       g.add(face);
     }
     return g;
@@ -3587,7 +3598,7 @@ const BUILDERS = {
     const w = o.w || 2.4, d = o.d || 0.9, h = o.h || 1.5, tiers = o.tiers || 4;
     const single = !!o.single;
     g.add(box(mats, 'lp_grey', w, h, 0.04, 0, 0, single ? -d / 2 + 0.02 : 0));
-    g.add(box(mats, 'lp_dark', w, 0.12, d, 0, 0, 0));
+    g.add(box(mats, 'lp_dark', w - 0.06, 0.12, d, 0, 0, 0)); // the kick, between the end panels (no shared face)
     for (const s of [-1, 1]) g.add(box(mats, 'lp_grey', 0.03, h, d, s * (w / 2 - 0.015), 0, 0)); // end panels
     const colours = ['lp_red', 'lp_beige', 'lp_blue', 'lp_white', 'lp_car6', 'lp_paper', 'lp_car2', 'lp_red', 'lp_car3', 'lp_beige'];
     let k = o.seed || 0;
@@ -3615,15 +3626,20 @@ const BUILDERS = {
     g.add(body);
     return g;
   },
-  // A chest cooler (Doc 2 S8_H_IMG_OUT): a white tub, a grey rim, a lit
-  // well of boxed product under two sliding glass lids.
+  // A chest cooler (Doc 2 S8_H_IMG_OUT): a white tub, a grey rim round an
+  // open well, the well's light panel on the tub and the boxed product on
+  // it, all under two sliding glass lids.
   chestcooler(mats, o) {
     const g = new THREE.Group();
     const w = o.w || 1.8, d = o.d || 0.85, h = o.h || 0.85;
+    const rim = 0.07;
     g.add(box(mats, 'lp_white', w, h - 0.06, d, 0, 0, 0, { collide: true }));
-    g.add(box(mats, 'lp_grey', w + 0.02, 0.06, d + 0.02, 0, h - 0.06, 0));
-    g.add(box(mats, 'lp_fluoro', w - 0.14, 0.01, d - 0.14, 0, h - 0.07, 0, { castShadow: false }));
-    for (let i = 0; i < 6; i++) g.add(box(mats, ['lp_blue', 'lp_red', 'lp_white'][i % 3], 0.22, 0.05, 0.3, -w / 2 + 0.24 + i * ((w - 0.48) / 5), h - 0.06, (i % 2 ? 0.12 : -0.12), { castShadow: false }));
+    for (const s of [-1, 1]) {
+      g.add(box(mats, 'lp_grey', w + 0.02, 0.06, rim, 0, h - 0.06, s * (d / 2 + 0.01 - rim / 2)));
+      g.add(box(mats, 'lp_grey', rim, 0.06, d + 0.02 - 2 * rim, s * (w / 2 + 0.01 - rim / 2), h - 0.06, 0));
+    }
+    g.add(box(mats, 'lp_fluoro', w - 0.12, 0.01, d - 0.12, 0, h - 0.06, 0, { castShadow: false }));
+    for (let i = 0; i < 6; i++) g.add(box(mats, ['lp_blue', 'lp_red', 'lp_white'][i % 3], 0.22, 0.04, 0.3, -w / 2 + 0.24 + i * ((w - 0.48) / 5), h - 0.05, (i % 2 ? 0.12 : -0.12), { castShadow: false }));
     for (const s of [-1, 1]) g.add(box(mats, 'lp_glass', w / 2 - 0.05, 0.012, d - 0.06, s * w / 4, h, 0, { castShadow: false }));
     return g;
   },
@@ -3879,7 +3895,8 @@ const BUILDERS = {
   // it to black with depth. Without `rects`: a sleeve round a pillar `w` x
   // `d` x `h` (its origin at the pillar's foot). With `rects`: flat patches
   // [[x0, x1, z0, z1], ...] just over the floor (or, `down`, just under
-  // the surface, seen from below). One material for all.
+  // the surface, seen from below). `web` is the web's tile in metres. One
+  // material for all.
   caustics(mats, o) {
     const g = new THREE.Group();
     const self = BUILDERS.caustics;
@@ -3937,7 +3954,9 @@ const BUILDERS = {
     if (!self._mat) return g;
     const tint = new THREE.Color(o.color || '#8fe6f2');
     const k = o.strength === undefined ? 0.6 : o.strength;
-    const scale = o.scale || 1.8; // metres per tile of the web
+    // metres per tile of the web: `web`, never `scale` (buildProp scales the
+    // whole group by spec.scale, which would move the patches' edges too)
+    const scale = o.web || 1.8;
     const tick = () => { self._uT.value = performance.now() / 1000; };
     const shade = (geo, fade) => {
       const pos = geo.attributes.position, nrm = geo.attributes.normal, uv = geo.attributes.uv;

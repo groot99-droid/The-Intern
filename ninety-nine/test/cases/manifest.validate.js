@@ -130,9 +130,9 @@ export async function run() {
     assert(missing.length === 0, missing.join(' | '));
   });
 
-  await runCase('Assertion 2b: a threshold that leaves its room has an exit door/anchor and a CN_* connector (or falls, or names `to`)', () => {
-    // Which rooms can actually lie behind each threshold: every path x both
-    // S0 seeds, played the way the director plays them.
+  // Which rooms can actually lie behind each threshold: every path x both
+  // S0 seeds, played the way the director plays them.
+  function behindMap() {
     const behind = new Map(); // "S2.C.resist" -> Set(room)
     for (const seed of ['C', 'H']) {
       for (let mask = 0; mask < 256; mask++) {
@@ -155,6 +155,11 @@ export async function run() {
         behind.get(prev).add(th.to || endings[resolveEnding(state)].room);
       }
     }
+    return behind;
+  }
+
+  await runCase('Assertion 2b: a threshold that leaves its room has an exit door/anchor and a CN_* connector (or falls, or names `to`)', () => {
+    const behind = behindMap();
     const bad = [];
     let leaving = 0;
     for (const [id, set] of behind) {
@@ -184,6 +189,43 @@ export async function run() {
         if (!isDoorOrAnchor(from, route.exit) || !isConnector(route.via)) bad.push(`${id} route from ${from}: ${route.exit} / ${route.via}`);
       }
     }
+    assert(bad.length === 0, bad.join(' | '));
+  });
+
+  await runCase('Assertion 2b2: every connector join fits -- the doorway it leaves by fits its entry wall, and the doorway it arrives through fits inside its mouth (no slot onto nothing beside or over a passage)', () => {
+    const WALL_T = 0.3; // room.js
+    const door = (k, n) => ((resolve(k) || {}).doors || []).find((d) => d.name === n);
+    const bad = [];
+    let joins = 0;
+    const check = (id, from, exit, via, to) => {
+      const conn = rooms.rooms[via];
+      if (!conn || !conn.connector) return;
+      joins++;
+      const out = door(from, exit);
+      if (out && (out.w > conn.size[0] + 2 * WALL_T + 1e-6 || out.h > conn.size[1] + 1e-6)) bad.push(`${id}: ${from}.${exit} ${out.w} x ${out.h} is bigger than ${via}'s entry wall ${conn.size[0] + 2 * WALL_T} x ${conn.size[1]}`);
+      for (const r of to) {
+        const rec = resolve(r);
+        const inn = rec && door(r, rec.entry);
+        if (!inn) continue; // an anchor (the chute's top), not a doorway
+        const [mw, mh] = conn.mouth || [conn.size[0] + 2 * WALL_T, conn.size[1] - (conn.floorY || 0)];
+        if (inn.w > mw + 1e-6 || inn.h > mh + 1e-6) bad.push(`${id}: ${r}.${rec.entry} ${inn.w} x ${inn.h} is bigger than ${via}'s mouth ${mw} x ${mh}`);
+      }
+    };
+    for (const [id, set] of behindMap()) {
+      const [sid, letter, key] = id.split('.');
+      const b = manifest.scenes[sid].branches[letter];
+      const th = b.thresholds[key];
+      if (th.to || !th.via || th.via === 'fall') continue;
+      check(id, b.room, th.exit, th.via, [...set].filter((r) => baseOf(r) !== baseOf(b.room)));
+    }
+    const x = manifest.scenes.S0.branches.X;
+    check('S0 out', x.room, x.out.exit, x.out.via, [x.out.to]);
+    check('S0 report', x.out.to, x.report.exit, x.report.via, Object.values(manifest.scenes.S1.branches).map((b) => b.room));
+    for (const [id, e] of Object.entries(endings)) {
+      if (id.startsWith('_')) continue;
+      for (const [from, route] of Object.entries(e.routes || {})) check(`${id} route`, from, route.exit, route.via, [e.room]);
+    }
+    assert(joins >= 12, `only ${joins} joins checked`);
     assert(bad.length === 0, bad.join(' | '));
   });
 

@@ -116,6 +116,7 @@ export function createLightRig(scene, { points = 16, spots = 4, shadowMap = 2048
 
   return {
     sun,
+    pointCount: points,
     // env: the blended atmosphere (env.js); specs: world-space light specs
     // already sorted best-first; center: where the shadow map should sit.
     update({ env, specs, center, dt, t }) {

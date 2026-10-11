@@ -156,6 +156,7 @@ def shots_for(rec, eye=EYE, out_dist=2.5, leave_dist=None, arrive_dist=1.8, loop
 # ---------------------------------------------------------------------------
 
 WALL_T = 0.3  # room.js
+MOUTH = (4.6, 3.2)  # the widest and tallest doorway a connector's far end may meet (w, h above its sill)
 
 
 def door(rec, name, wall, x=0.0, w=1.2, h=2.2, kind="door", y=None, **kw):
@@ -227,7 +228,25 @@ def _connector(name, style, size, floor_y=0.0, entry_kind="door", entry_w=1.2, e
     # through, then shuts behind him (world.js); the far end is a bare
     # opening -- the next room's own entry leaf closes it
     door(rec, "entry", "S", 0.0, w=entry_w, h=entry_h, kind=entry_kind, y=0.0, open=True, hinge="L", sill=st["floor"])
-    door(rec, "exit", "N", 0.0, w=exit_w, h=exit_h, kind="open", y=floor_y if exit_y is None else exit_y, sill=st["floor"])
+    ey = floor_y if exit_y is None else exit_y
+    door(rec, "exit", "N", 0.0, w=exit_w, h=exit_h, kind="open", y=ey, sill=st["floor"])
+    # the collar: the far end meets doorways wider or taller than this
+    # passage (S6 H's 4 m shutter, S8 C's 3 m door), so its end wall runs on
+    # past its sides and over its ceiling to MOUTH, in the wall's own slab
+    # behind the next room's wall -- seen only through that room's doorway,
+    # where there would be nothing. Solid, so he cannot step round the end.
+    cx, ctop = MOUTH[0] / 2, round(ey + MOUTH[1], 3)
+    side = W / 2 + WALL_T
+    slab = [round(-D / 2 - WALL_T, 3), round(-D / 2, 3)]
+    collar = {"mat": st["wall"], "tile": 1.6, "shadow": False}
+    if cx > side:
+        for sx in (-1, 1):
+            x0, x1 = sorted((sx * side, sx * cx))
+            rec["boxes"].append({**collar, "min": [x0, ey, slab[0]], "max": [x1, ctop, slab[1]]})
+    if ctop > H:
+        rec["boxes"].append({**collar, "min": [-max(cx, side), H, slab[0]], "max": [max(cx, side), ctop, slab[1]]})
+    # what its far end can back without a gap: w x h above the exit sill
+    rec["mouth"] = [round(max(2 * cx, 2 * side), 3), round((ctop if cx > side else max(ctop, H)) - ey, 3)]
     rec["shots"] = {"in": pose([0, EYE, D / 2 - 0.8], [0, EYE - 0.2, -D / 2])}
     return rec
 
@@ -929,16 +948,20 @@ def desk_void(monitor_on=False):
     rejections, then the service door behind it unlatches).
     The compliant things stand west of the desk, the resisting ones east."""
     W, H, D = 24.0, 3.0, 24.0
+    # the `desk` builder's top (a 0.05 slab on 0.72 legs): what sits on the
+    # desks sits on this. The monitors stay at 0.75, their stands rising out
+    # of the slab with the foot plate sunk (at 0.77 it would share the top's face).
+    TOP = 0.77
     props = [
         prop("desk", [0, 0, 0], w=1.7, d=0.85),
         # The terminal: its screen quad is what S6 C's requisition is drawn on
         # (screens.js draws into the prop named `terminal`).
         prop("monitor", [0.32, 0.75, -0.17], on=monitor_on, name="terminal"),
-        prop("keyboard", [0.3, 0.75, 0.14]),
+        prop("keyboard", [0.3, TOP, 0.14]),
         glb("lib_chair_wood", [0, 0, 0.85], rot=180, fallback="chair"),
-        prop("staplerheavy", [-0.46, 0.75, 0.06], rot=18, name="stapler"),
-        prop("papers", [-0.12, 0.75, 0.08], h=0.07),
-        prop("papers", [-0.6, 0.75, -0.22], rot=9, h=0.025),
+        prop("staplerheavy", [-0.46, TOP, 0.06], rot=18, name="stapler"),
+        prop("papers", [-0.12, TOP, 0.08], h=0.07),
+        prop("papers", [-0.6, TOP, -0.22], rot=9, h=0.025),
         prop("slip", [0.55, 0.004, 1.4], rot=70),
         # the troffer and the dust standing in its light
         prop("fluoro", [0, H - 0.05, 0.1], w=1.2, d=0.6, name="troffer"),
@@ -954,9 +977,9 @@ def desk_void(monitor_on=False):
         prop("desk", [3.7, 0, -2.25], w=1.2, d=0.7, mat="lp_grey"),
         prop("monitor", [3.75, 0.75, -2.4], on=False, name="harlowe"),
         prop("lampdot", [3.89, 0.87, -2.21], mat="lp_sodium", r=0.008, name="harlowe_led"),  # standby
-        prop("keyboard", [3.7, 0.75, -2.02], rot=-6),
-        prop("papers", [3.32, 0.75, -2.15], rot=-14, h=0.012),
-        prop("mug", [4.16, 0.75, -2.08]),
+        prop("keyboard", [3.7, TOP, -2.02], rot=-6),
+        prop("papers", [3.32, TOP, -2.15], rot=-14, h=0.012),
+        prop("mug", [4.16, TOP, -2.08]),
         glb("lib_chair_wood", [4.55, 0, -1.35], rot=220, fallback="chair"),
         # S6: where a requisition goes (ORDER) and where it is objected to (FLAG).
         # Both stand dark through S5; their lamps (lampdot) come on with S6.
@@ -2032,9 +2055,9 @@ def dive():
         prop("motes", [0, 0.6, 1.0], n=520, w=18, h=10.5, d=18, size=0.03, color="#a8d8e0", opacity=0.5, rise=0.05),
         # and the caustics on the floor, round the grate's hole (Doc 2 S8_H)
         prop("caustics", [0, 0, 0], rects=[[-W / 2, W / 2, -D / 2, z0 - 0.15], [-W / 2, W / 2, z1 + 0.15, D / 2],
-                                            [-W / 2, x0 - 0.15, z0 - 0.15, z1 + 0.15], [x1 + 0.15, W / 2, z0 - 0.15, z1 + 0.15]], strength=0.24, scale=2.2),
+                                            [-W / 2, x0 - 0.15, z0 - 0.15, z1 + 0.15], [x1 + 0.15, W / 2, z0 - 0.15, z1 + 0.15]], strength=0.24, web=2.2),
         # and the surface itself, far above: the same web, bright, seen from below
-        prop("caustics", [0, H - 0.06, 0], rects=[[-W / 2, W / 2, -D / 2, D / 2]], down=True, strength=0.28, scale=1.8, color="#a8eef8"),
+        prop("caustics", [0, H - 0.06, 0], rects=[[-W / 2, W / 2, -D / 2, D / 2]], down=True, strength=0.28, web=1.8, color="#a8eef8"),
     ] + sleeves
     rec = {
         "name": "THE DIVE",

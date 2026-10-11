@@ -132,6 +132,7 @@ export function createStage(container, { rooms = null, audio = null, sfx = null,
   let fadeSpeed = 0;        // per second
   let playerActive = false;
   let blackingOut = false;
+  let frozen = false;       // the ending's hold: 'redraw' re-renders the held frame once (after a resize)
   // His shadow (Doc 1 S0: "every shadow, his included, points at the
   // tower"): a body nobody sees that only casts, at his feet while he walks.
   const shadowBody = new THREE.Mesh(new THREE.CylinderGeometry(0.2, 0.17, 1.72, 10), new THREE.MeshBasicMaterial({ colorWrite: false, depthWrite: false }));
@@ -154,6 +155,7 @@ export function createStage(container, { rooms = null, audio = null, sfx = null,
     camera.aspect = w / h;
     camera.updateProjectionMatrix();
     setSnapResolution(w / 2.5);
+    if (frozen) frozen = 'redraw'; // the resized target has lost the held frame
   }
   window.addEventListener('resize', resize);
   resize();
@@ -364,6 +366,15 @@ export function createStage(container, { rooms = null, audio = null, sfx = null,
     if (fadeSpeed > 0 && fade !== fadeTarget) {
       fade = fade < fadeTarget ? Math.min(fadeTarget, fade + fadeSpeed * dt) : Math.max(fadeTarget, fade - fadeSpeed * dt);
     }
+    if (frozen) {
+      // the ending's hold (Doc 2: "no motion whatsoever"): the last frame
+      // stays in the target and only the fade and the post pass run -- no
+      // prop animator, no flicker, no grain
+      if (frozen === 'redraw') { renderer.setRenderTarget(target); renderer.render(scene, camera); renderer.setRenderTarget(null); frozen = true; }
+      postMat.uniforms.uFade.value = fade;
+      renderer.render(postScene, postCamera);
+      return;
+    }
     if (shot) stepShot(dt);
     else if (playerActive) player.update(dt);
     shadowBody.visible = playerActive && !shot && !player.controls.isSwimming();
@@ -489,6 +500,9 @@ export function createStage(container, { rooms = null, audio = null, sfx = null,
       releaseShot();
     },
     elapsed: () => elapsed,
+    // Hold the last frame dead still until the card (the ending's hold);
+    // the fade to black still runs. Nothing unfreezes it: the card follows.
+    freeze() { frozen = true; },
     // Stop drawing (the ending card covers the stage for good): no more
     // frames, no more GPU work under an opaque card.
     stop() {

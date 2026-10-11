@@ -525,6 +525,9 @@ export function createDirector({ manifest, endings, state, stage, audio = null, 
     const dive = world.attach(edge, th.exit || 'drop', nb.room);
     dive.lightLevel = 0;
     dive.lightTarget = 1;
+    // linked to the edge for the fall, so its lamps take light slots (and
+    // fade in) while the edge is still the current room
+    dive.link = { from: edge, to: null };
     player.disable();
     stage.setPlayerActive(false);
     await shotFromHere(edge, th.fallShot || 'fall', 1.4);
@@ -648,6 +651,9 @@ export function createDirector({ manifest, endings, state, stage, audio = null, 
     if (gone()) return;
     await shotFromHere(inst, ending.shot, ending.carrySeconds || 2.0);
     if (gone()) return;
+    // dead still: the package's throb, the stain, the curtain, the store's
+    // tube and the grain all stop where the pull-back left them
+    stage.freeze();
     await wait((ending.holdSeconds || 4) * 1000);
     jumpToEnding(w.endingId);
   }
