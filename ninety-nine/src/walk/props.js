@@ -2664,7 +2664,12 @@ const BUILDERS = {
           const m = mats.get(skin);
           g.traverse((x) => {
             const c = x.isMesh && x.visible && !Array.isArray(x.material) && !x.material.map ? x.material.color : null;
-            if (c && 0.2126 * c.r + 0.7152 * c.g + 0.0722 * c.b > 0.45) x.material = m;
+            if (!c || 0.2126 * c.r + 0.7152 * c.g + 0.0722 * c.b <= 0.45) return;
+            x.material = m;
+            // a model shipped without UVs gets box-projected ones (1 m a
+            // repeat), once: the geometry is the library's, shared by every
+            // clone, and an untextured material never reads them
+            if (!x.geometry.attributes.uv) applyWorldUV(x.geometry, 1.0);
           });
         }
         return g;
