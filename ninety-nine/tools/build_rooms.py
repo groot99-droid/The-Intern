@@ -1327,12 +1327,14 @@ def freight_elevator():
     3.0 x 3.4 m, entered through its front doors (S), which stay open
     behind him until he chooses (holdEntry).
 
-    The building's, photoreal (C1): the rust shell, the diamond-plate floor
-    and kick band, the quilted steel padding (one pad peeling), the dented
-    bumper rails, the caged bulb (its rust guard and its light). The
-    company's, low-poly: the panel of 66 buttons with one lit (cabpanel),
-    the scissor gate, the segmented floor indicator over the doors, the
-    door leaves.
+    The building's, photoreal (C1): the rust shell, the corroded diamond
+    plate floor and kick band (`diamond_plate`), the quilted steel padding
+    (`quilted_steel`, one pad peeling), the dented bumper rails, the caged
+    bulb (its rust guard and its light; it swings when the doors hit and
+    when the cab lands: scenes.json `swing`). The company's, low-poly: the
+    panel of 66 buttons with one lit (cabpanel), the scissor gate, the
+    segmented floor indicator over the doors (one placement, stepped by
+    scenes.json `display`), the door leaves.
 
     DESCEND is the one lit button, on the right-hand wall in the rear third
     (ahead and to the right on the way in, its green spilling on the rust).
@@ -1342,7 +1344,22 @@ def freight_elevator():
     gate, close the doors (DESCEND before the ride; REFUSE rides with them
     open until they drag shut near the bottom), and make one eased ride
     whose stops step the indicator B1, B2, B7, B12 and the glyph at uneven
-    intervals; the same doors open below."""
+    intervals; the same doors open below.
+
+    The shaft is `fixed` (room.js): it stays where it was placed while the
+    cab goes down it, so what passes the doorway is real. Only the face the
+    doorway looks onto is built -- the cab's own walls hide the rest -- and
+    it stands inside the door wall's own slab, so it never meets the
+    corridor joined at the top or the one joined at the bottom: a slab of
+    block from the top landing's sill down to the bottom landing's head,
+    with a landing's closed doors and its number painted over them where
+    the indicator reads B2, B7 and B12 (LANDINGS: the ride's stops are timed
+    to them, and manifest.validate checks it), B1 painted under the top
+    sill. The top and bottom landings' doors are the cab's own, handed
+    over: on DESCEND the cab's shut doors give way to `landing_top` as the
+    ride starts (they stay above, and the shaft shows through the gate);
+    at the bottom `landing_low` stands shut before the doorway until the
+    cab's doors take its place again, and the way on opens through them."""
     W, H, D = 3.0, 2.6, 3.4
     hx, hz = W / 2, D / 2
     rnd = random.Random(77)
@@ -1360,7 +1377,7 @@ def freight_elevator():
                 t = PAD + rnd.uniform(-0.008, 0.01)
                 zz = sorted([z_face, z_face + inward * t])
                 b = {"min": [round(a, 3), y0, round(zz[0], 3)], "max": [round(a + w, 3), y1, round(zz[1], 3)],
-                     "mat": "grate", "tile": 0.5, "collide": False}
+                     "mat": "quilted_steel", "tile": 0.5, "collide": False}
                 if peel == (i, j):
                     b["pitch"] = 5.0  # its top has come away from the wall
                 boxes.append(b)
@@ -1378,7 +1395,7 @@ def freight_elevator():
                 t = PAD + rnd.uniform(-0.008, 0.01)
                 xx = sorted([x_face, x_face + inward * t])
                 boxes.append({"min": [round(xx[0], 3), y0, round(a, 3)], "max": [round(xx[1], 3), y1, round(a + w, 3)],
-                              "mat": "grate", "tile": 0.5, "collide": False})
+                              "mat": "quilted_steel", "tile": 0.5, "collide": False})
         return centres
 
     # the quilt: the rear wall (one pad peeling), both side walls, the two
@@ -1392,7 +1409,7 @@ def freight_elevator():
     for sx in (-1, 1):
         a, b = sorted([sx * (hx - PAD - GAP), sx * 0.94])
         for (y0, y1) in rows:
-            boxes.append({"min": [round(a, 3), y0, hz - PAD], "max": [round(b, 3), y1, hz], "mat": "grate", "tile": 0.5, "collide": False})
+            boxes.append({"min": [round(a, 3), y0, hz - PAD], "max": [round(b, 3), y1, hz], "mat": "quilted_steel", "tile": 0.5, "collide": False})
     # dented bumper rails over the quilt (low enough to stay out of the
     # collision rays' way: none of this collides; the shell does)
     R0, R1 = 0.95, 1.07
@@ -1403,7 +1420,7 @@ def freight_elevator():
     boxes.append({"min": [hx - PAD - 0.06, R0, pz + 0.3], "max": [hx - PAD, R1, hz - 0.05], "mat": "rust", "tile": 1.0, "collide": False})
     # the panel's steel surround, the sill plate inside the doors (REFUSE's
     # line), two ceiling ribs (a solid lid: no hatch, no way up -- C3)
-    boxes.append({"min": [hx - 0.02, 0.6, pz - 0.29], "max": [hx, 2.0, pz + 0.29], "mat": "grate", "tile": 0.9, "collide": False})
+    boxes.append({"min": [hx - 0.02, 0.6, pz - 0.29], "max": [hx, 2.0, pz + 0.29], "mat": "quilted_steel", "tile": 0.9, "collide": False})
     boxes.append({"min": [-0.86, 0, hz - 0.16], "max": [0.86, 0.012, hz], "mat": "rust", "tile": 0.8, "collide": False, "shadow": False})
     for z in (-0.85, 0.85):
         boxes.append({"min": [-hx, H - 0.09, z - 0.07], "max": [hx, H, z + 0.07], "mat": "rust", "tile": 1.2, "collide": False, "shadow": False})
@@ -1415,9 +1432,9 @@ def freight_elevator():
     rec = {
         "name": "THE DESCENT",
         "size": [W, H, D],
-        "floor": "grate", "wall": "rust", "ceiling": "rust",
+        "floor": "diamond_plate", "wall": "rust", "ceiling": "rust",
         "tile": {"floor": 0.9, "wall": 2.0, "ceiling": 2.0},
-        "skirt": {"mat": "grate", "h": 0.3, "t": 0.02, "tile": 0.9},  # diamond-plate kick band
+        "skirt": {"mat": "diamond_plate", "h": 0.3, "t": 0.02, "tile": 0.9},  # diamond-plate kick band
         "ambient": {"color": "#ffd9a8", "intensity": 0.16},
         # C2: from the doors' side, aimed at the core
         "sun": {"from": [0.4, 3.0, 3.6], "color": "#ffd9a8", "intensity": 0.45},
@@ -1440,16 +1457,10 @@ def freight_elevator():
             prop("slip", [-0.55, 0.004, 0.75], rot=200),
             # the caged bulb (photoreal in Doc 2's list, so not the catalog's
             # white lamp): plate, stem, bare bulb, a rust wire guard
-            prop("cabbulb", [0, H - 0.42, 0.0], h=0.42),
-            # the floor indicator: a housing with its dark segments, and one
-            # lit layer per reading; the beats show one and hide the last
-            prop("floorind", ind, rot=180, scale=1.2, ghost=True, name="ind_face"),
-            prop("floorind", ind, rot=180, scale=1.2, text=" --", name="ind_dash"),
-            prop("floorind", ind, rot=180, scale=1.2, text=" b1", name="ind_b1", hidden=True),
-            prop("floorind", ind, rot=180, scale=1.2, text=" b2", name="ind_b2", hidden=True),
-            prop("floorind", ind, rot=180, scale=1.2, text=" b7", name="ind_b7", hidden=True),
-            prop("floorind", ind, rot=180, scale=1.2, text="b12", name="ind_b12", hidden=True),
-            prop("floorind", ind, rot=180, scale=1.2, text=" = ", name="ind_glyph", hidden=True),
+            prop("cabbulb", [0, H - 0.42, 0.0], h=0.42, name="bulb"),
+            # the floor indicator: a housing with its dark segments and the lit
+            # reading, which the ride's `display` beats step
+            prop("floorind", ind, rot=180, scale=1.2, ghost=True, text=" --", name="ind"),
             # the scissor gate just inside the doors, folded against the
             # jamb on arrival; three frames of its close
             prop("scissorgate", [0.0, 0, hz - 0.01], rot=180, w=1.6, h=2.1, ext=0.1, link="lp_brass", name="gate_0"),
@@ -1459,6 +1470,27 @@ def freight_elevator():
         "boxes": boxes,
         "footstep": {"filterHz": 1800, "gain": 0.12},
     }
+    # the shaft (see the docstring): fixed, so it stays as the cab descends
+    DROP = 20.0  # scenes.json S7 C ride.drop
+    LANDINGS = [("B1", 0.0), ("B2", 4.2), ("B7", 9.0), ("B12", 13.4), ("=", DROP)]  # what the indicator reads, how far down
+    face = hz + 0.2  # the shaft wall's face, inside the door wall's slab (hz .. hz + WALL_T)
+    handed = round(face - (hz + 0.05), 3)  # a landing's leaves where the cab's own shut leaves stand (doors.js slide)
+    # 1 cm under the top: the cab's sill keeps its face to itself before the ride
+    rec["boxes"].append({"min": [-1.2, round(-DROP + 2.28, 3), face], "max": [1.2, -0.01, hz + WALL_T], "mat": "shaft_block", "tile": 0.8,
+                         "collide": False, "fixed": True})
+    rec["props"] += [
+        prop("landingdoors", [0, 0, face], rot=180, w=1.6, h=2.2, inset=handed, sill=True, label="B1", name="landing_top", hidden=True, fixed=True),
+        prop("shaftstencil", [0, -0.44, face], rot=180, text="B1", h=0.32, fixed=True),
+    ]
+    for label, down in LANDINGS[1:-1]:
+        rec["props"] += [
+            prop("landingdoors", [0, -down, face], rot=180, w=1.5, h=2.1, inset=0.03, frame=0.07, sill=True, label=label, fixed=True),
+            prop("shaftstencil", [0, -down + 2.32, face], rot=180, text=label, h=0.32, fixed=True),
+        ]
+    rec["props"] += [
+        prop("landingdoors", [0, -DROP, face], rot=180, w=1.6, h=2.2, inset=handed, label="=", name="landing_low", fixed=True),
+        prop("shaftstencil", [0, -DROP + 2.42, face], rot=180, text="=", h=0.32, fixed=True),
+    ]
     s = shots_for(rec, out_dist=0.6, leave_dist=1.0, loop_seconds=10.0)
     # IMG_IN: from the back of the cab, the doors open onto the dark;
     # IMG_OUT: at the panel, the gate and the doors shut, the indicator.
@@ -2278,6 +2310,9 @@ def check_room(k, r):
         assert r["entry"] in names or r["entry"] in r.get("anchors", {}), "%s: entry %s is no door" % (k, r["entry"])
     else:
         assert k == "S0_X", "%s: no entry doorway" % k
+    for b in r.get("boxes", []):
+        # a fixed box stays put while its room moves (room.js): scenery only
+        assert not b.get("fixed") or (b.get("collide") is False and not b.get("floor")), "%s: a fixed box must not collide or be floor" % k
     collide_boxes = [b for b in r.get("boxes", []) if b.get("collide", True) and not b.get("floor")]
     for z in r.get("zones", []):
         x, zz = (z["pos"][0], z["pos"][-1])

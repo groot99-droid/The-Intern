@@ -8,6 +8,9 @@
 
 import { runCase, assert, assertEqual } from '../harness.js';
 import { doorAnchor } from '../../src/world/anchors.js';
+import * as THREE from '../../vendor/three/three.module.js';
+import { createWorld } from '../../src/world/world.js';
+import { createMaterialLibrary } from '../../src/walk/materials.js';
 
 export async function run() {
   const [rooms, scenes, props] = await Promise.all([
@@ -203,6 +206,92 @@ export async function run() {
       const clocks = (rec.props || []).filter((p) => p.type === 'clock').length;
       if (rec.connector) assertEqual(clocks, 0, `${key}: a clock in a connector`);
       else assert(clocks === 1, `${key}: ${clocks} clocks`);
+    }
+  });
+
+  await runCase('rooms.json: fixed parts (they stay put while their room moves) never collide and are never floor', () => {
+    let n = 0;
+    for (const [key, rec] of built) {
+      for (const b of rec.boxes || []) if (b.fixed) { n++; assert(b.collide === false && !b.floor, `${key}: a fixed box that collides or is floor`); }
+      for (const p of rec.props || []) if (p.fixed) { n++; assert(!p.collide, `${key}: a fixed ${p.type} that collides`); }
+    }
+    assert(n > 0, 'no fixed parts found (S7 C\'s shaft)');
+  });
+
+  await runCase('world: a room\'s fixed parts stay where it was placed when world.move() moves it (S7 C: the shaft stays, the cab goes down it), its landings meet the cab\'s own doors at both ends, and remove() takes them out and frees them', async () => {
+    const scene = new THREE.Scene();
+    const mats = createMaterialLibrary();
+    const world = createWorld({ scene, mats, library: null, rooms });
+    try {
+      await world.prebuild('S7_C');
+      const inst = world.spawn('S7_C', new THREE.Matrix4().makeRotationY(0.7).setPosition(5, -3, 2));
+      const fixed = inst.room.fixed;
+      assert(fixed && fixed.parent === scene, 'the fixed parts are not in the scene');
+      const wp = (o) => { o.updateWorldMatrix(true, true); return new THREE.Vector3().setFromMatrixPosition(o.matrixWorld); };
+      const low = inst.room.named.get('landing_low'), top = inst.room.named.get('landing_top'), bulb = inst.room.named.get('bulb');
+      assert(low && top && bulb, 'landing_low / landing_top / bulb missing');
+      assert(fixed.getObjectById(low.id) && fixed.getObjectById(top.id) && !fixed.getObjectById(bulb.id), 'the landings are fixed, the bulb is the cab\'s');
+      // nothing fixed is a wall or a floor
+      for (const m of [...inst.room.walls, ...inst.room.floors]) assert(!fixed.getObjectById(m.id), `a fixed mesh collides (${m.name || m.type})`);
+      // a landing's leaves where the cab's own shut leaves are
+      const door = inst.room.doors.get('cab');
+      door.close(0.01);
+      inst.room.update(1, 0);
+      const leaves = (g) => g.children.filter((c) => c.isGroup).map((c) => { c.updateWorldMatrix(true, true); return new THREE.Box3().setFromObject(c); });
+      const same = (a, b) => a.length === b.length && a.every((x) => b.some((y) => x.min.distanceTo(y.min) < 1e-4 && x.max.distanceTo(y.max) < 1e-4));
+      top.visible = true;
+      assert(same(leaves(door.group), leaves(top)), 'landing_top\'s leaves are not where the cab\'s shut leaves are');
+      const low0 = wp(low), bulb0 = wp(bulb);
+      const m = inst.matrix.clone();
+      m.elements[13] -= 20; // the ride's drop
+      world.move(inst, m);
+      const low1 = wp(low), bulb1 = wp(bulb);
+      assert(low1.distanceTo(low0) < 1e-6, `a fixed part moved with the room (${low1.distanceTo(low0).toFixed(4)} m)`);
+      assert(Math.abs(bulb1.y - (bulb0.y - 20)) < 1e-5 && Math.hypot(bulb1.x - bulb0.x, bulb1.z - bulb0.z) < 1e-5, 'the cab did not move');
+      assert(same(leaves(door.group), leaves(low)), 'at the bottom, landing_low\'s leaves are not where the cab\'s shut leaves are');
+      const geos = [];
+      fixed.traverse((o) => { if (o.geometry) geos.push(o.geometry); });
+      let freed = 0;
+      for (const g of geos) g.addEventListener('dispose', () => freed++);
+      world.remove(inst);
+      assert(fixed.parent === null && fixed.children.length === 0, 'the fixed parts outlived their room');
+      assertEqual(freed, geos.length, 'fixed geometries freed on remove');
+    } finally {
+      world.clear();
+      mats.dispose();
+    }
+  });
+
+  await runCase('props.js floorind: display(text) redraws the lit reading on one placement (the `display` beat: B1, B2, B7, B12, the glyph) and frees the last', () => {
+    const mats = createMaterialLibrary();
+    try {
+      const g = props.buildProp(mats, { type: 'floorind', pos: [0, 0, 0], ghost: true, text: ' --' });
+      assert(g && typeof g.userData.display === 'function', 'no display() on a floorind');
+      const before = new Set();
+      g.traverse((o) => { if (o.isMesh) before.add(o); });
+      const lit = () => { let m = null; g.traverse((o) => { if (o.isMesh && !before.has(o)) m = o; }); return m; };
+      // the lit layer is the one sodium mesh: 36 vertices a segment
+      const sodium = () => { let m = null; g.traverse((o) => { if (o.isMesh && o.material === mats.get('lp_sodium')) m = o; }); return m; };
+      const segs = (m) => m.geometry.attributes.position.count / 36;
+      assertEqual(segs(sodium()), 2, "' --' lights two segments");
+      const m0 = sodium(), geo0 = m0.geometry;
+      let freed = false;
+      geo0.addEventListener('dispose', () => { freed = true; });
+      g.userData.display(' b2');
+      assertEqual(sodium(), m0, 'the same mesh, redrawn');
+      assert(freed, 'the old reading was not freed');
+      assertEqual(segs(m0), 5 + 5, "' b2' lights b (5) and 2 (5)");
+      g.userData.display('b12');
+      assertEqual(segs(m0), 5 + 2 + 5, "'b12' lights 12 segments");
+      g.userData.display(' = ');
+      assertEqual(segs(m0), 3, "the glyph is three bars");
+      g.userData.display('');
+      assert(!m0.visible, 'a blank reading hides the lit layer');
+      g.userData.display(' b7');
+      assert(m0.visible && segs(m0) === 5 + 3, "' b7' lights it again");
+      assert(lit() === null, 'no extra mesh was added');
+    } finally {
+      mats.dispose();
     }
   });
 
