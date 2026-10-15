@@ -3040,16 +3040,15 @@ const BUILDERS = {
   // segmented display"): three 7-segment cells in a dark housing, facing
   // +z, origin at the bottom centre of its back. `ghost` draws the housing
   // and every unlit segment; `text` (three characters, one per cell, ' ' for
-  // a dark cell) draws only the lit segments, so the beats step the display
-  // by showing one lit layer and hiding the last (B1, B2, B7, B12 and '='
-  // -- three bars, the glyph that is not a number). Each layer is one merged
-  // mesh per material, not a mesh per segment.
+  // a dark cell) draws the lit segments (b, the digits, '-' and '=' -- three
+  // bars, the glyph that is not a number). The lit layer is one merged mesh,
+  // and `userData.display(text)` redraws it: the director's `display` beat
+  // steps the reading (B1, B2, B7, B12, the glyph) on this one placement.
   floorind(mats, o) {
     const g = new THREE.Group();
     const SEG = { 0: 'abcdef', 1: 'bc', 2: 'abged', 3: 'abgcd', 4: 'fgbc', 5: 'afgcd', 6: 'afgedc', 7: 'abc', 8: 'abcdefg', 9: 'abcdfg', b: 'cdefg', '-': 'g', '=': 'adg', ' ': '' };
     const W = 0.48, H = 0.2, pitch = 0.12, dw = 0.064, dh = 0.112, st = 0.014, cy = H / 2;
-    const merge = (parts, slot, opts = {}) => {
-      if (!parts.length) return;
+    const mergeGeo = (parts) => {
       const pos = [], nor = [];
       for (const p of parts) {
         const q = p.index ? p.toNonIndexed() : p;
@@ -3059,10 +3058,15 @@ const BUILDERS = {
       const geo = new THREE.BufferGeometry();
       geo.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3));
       geo.setAttribute('normal', new THREE.Float32BufferAttribute(nor, 3));
-      const m = new THREE.Mesh(geo, mats.get(slot));
+      return geo;
+    };
+    const merge = (parts, slot, opts = {}) => {
+      if (!parts.length) return null;
+      const m = new THREE.Mesh(mergeGeo(parts), mats.get(slot));
       m.castShadow = !!opts.shadow;
       m.receiveShadow = true;
       g.add(m);
+      return m;
     };
     const part = (w, h, d, x, y, z) => new THREE.BoxGeometry(w, h, d).translate(x, y, z);
     const segs = (cx, letters, z, d) => {
@@ -3081,12 +3085,23 @@ const BUILDERS = {
       for (let i = 0; i < 3; i++) ghost = ghost.concat(segs((i - 1) * pitch, 'abcdefg', 0.056, 0.003));
       merge(ghost, 'lp_dark');
     }
-    if (o.text) {
+    const litParts = (text) => {
       let lit = [];
-      const t = String(o.text).padStart(3, ' ').slice(-3);
+      const t = String(text).padStart(3, ' ').slice(-3);
       for (let i = 0; i < 3; i++) lit = lit.concat(segs((i - 1) * pitch, SEG[t[i]] || '', 0.059, 0.005));
-      merge(lit, o.mat || 'lp_sodium');
-    }
+      return lit;
+    };
+    let lit = o.text ? merge(litParts(o.text), o.mat || 'lp_sodium') : null;
+    // a beat's new reading: the lit layer's geometry is rebuilt (five times
+    // in a ride, never per frame) and the old one freed
+    g.userData.display = (text) => {
+      const parts = litParts(text || '');
+      if (!parts.length) { if (lit) lit.visible = false; return; }
+      if (!lit) { lit = merge(parts, o.mat || 'lp_sodium'); return; }
+      lit.geometry.dispose();
+      lit.geometry = mergeGeo(parts);
+      lit.visible = true;
+    };
     return g;
   },
   // The cab's scissor gate (Doc 2 S7_C: low-poly, "scissor gate closed"):
@@ -3229,6 +3244,104 @@ const BUILDERS = {
     const halo = new THREE.Mesh(new THREE.PlaneGeometry(0.11, 0.11), mats.get('glow_green'));
     halo.position.set(lx, ly + 0.02, 0.046);
     g.add(halo);
+    return g;
+  },
+  // A landing's closed doors in the cab's shaft (S7 C; placed `fixed`, so
+  // they stay where the cab leaves them): the company's, low-poly (C1) --
+  // two leaves made like doors.js's `slide` panels (the same size, ribs and
+  // slot at the same `w` x `h`, so a landing's doors can stand in for the
+  // cab's own shut doors with no visible change), a frame bridging from the
+  // leaves back to the shaft wall, a steel sill (`sill`), and an unseen plug
+  // that keeps the sun out while shut (doors.js does the same). Origin: the
+  // opening's bottom centre on the shaft wall's face, facing +z (toward the
+  // cab); the leaves stand `inset` in front of that face. `label` is the
+  // floor this landing is, as the cab's indicator reads it (data, for the
+  // validator; the number on the wall is a `shaftstencil`).
+  landingdoors(mats, o) {
+    const g = new THREE.Group();
+    const w = o.w || 1.6, h = o.h || 2.2, inset = o.inset === undefined ? 0.03 : o.inset;
+    const slot = o.mat || 'lp_dark';
+    const dbox = (s, bw, bh, bd, x, y, z) => {
+      const m = new THREE.Mesh(new THREE.BoxGeometry(bw, bh, bd), mats.get(s));
+      m.position.set(x, y, z);
+      m.castShadow = !mats.isGlow(s);
+      m.receiveShadow = true;
+      return m;
+    };
+    for (const s of [-1, 1]) {
+      const p = new THREE.Group();
+      p.add(dbox(slot, w / 2, h, 0.05, 0, h / 2, 0));
+      for (let i = 0; i < 4; i++) p.add(dbox('lp_dark', w / 2 - 0.04, 0.03, 0.06, 0, 0.3 + i * (h - 0.6) / 3, 0));
+      p.position.set(s * w / 4, 0, inset);
+      g.add(p);
+    }
+    // the frame: from 2 cm into the wall (or from behind leaves set back
+    // into it) out to `frame` in front of its face -- by default to just
+    // behind the leaves, so leaves that stand in for the cab's hide it; 5 mm
+    // clear of the leaves' edges
+    const z0 = Math.min(-0.02, inset - 0.03);
+    const z1 = o.frame !== undefined ? o.frame : Math.max(inset - 0.03, z0 + 0.04);
+    const fd = z1 - z0, fz = (z0 + z1) / 2, jw = 0.08, jx = w / 2 + 0.005 + jw / 2;
+    const frameMat = o.frameMat || 'lp_dark';
+    g.add(dbox(frameMat, jw, h + jw, fd, -jx, (h + jw) / 2, fz));
+    g.add(dbox(frameMat, jw, h + jw, fd, jx, (h + jw) / 2, fz));
+    g.add(dbox(frameMat, w + 0.01 + 2 * jw, jw, fd, 0, h + jw / 2, fz));
+    if (o.sill) {
+      // under the leaves, out to their face; its top 1 cm down so it never
+      // shares a face with a floor it meets
+      const sz0 = Math.min(z0, inset - 0.03), sz1 = Math.max(z1, inset + 0.03);
+      g.add(dbox(o.sill === true ? 'rust' : o.sill, w + 0.01 + 2 * jw, 0.05, sz1 - sz0, 0, -0.035, (sz0 + sz1) / 2));
+    }
+    const plug = new THREE.Mesh(new THREE.BoxGeometry(w + 0.04, h + 0.02, 0.02), new THREE.MeshBasicMaterial({ colorWrite: false, depthWrite: false }));
+    plug.material.userData.owned = true;
+    plug.position.set(0, (h + 0.02) / 2, inset);
+    plug.castShadow = true;
+    plug.receiveShadow = false;
+    g.add(plug);
+    return g;
+  },
+  // A floor's number painted on the shaft wall (S7 C), stencil block
+  // letters on a 3 x 5 grid, each stroke a sliver of paint 4 mm proud of the
+  // wall: the building's marking, photoreal paint like `paintline` (C1).
+  // `text`: B, 0-9, '-' and '=' (three bars: the glyph the indicator shows
+  // at the bottom). `h` is the letter height. Origin at the bottom centre,
+  // facing +z. One merged mesh.
+  shaftstencil(mats, o) {
+    const g = new THREE.Group();
+    const FONT = {
+      B: ['xx.', 'x.x', 'xx.', 'x.x', 'xx.'], '-': ['...', '...', 'xxx', '...', '...'], '=': ['xxx', '...', 'xxx', '...', 'xxx'],
+      0: ['xxx', 'x.x', 'x.x', 'x.x', 'xxx'], 1: ['.x.', 'xx.', '.x.', '.x.', 'xxx'], 2: ['xx.', '..x', '.x.', 'x..', 'xxx'],
+      3: ['xx.', '..x', '.x.', '..x', 'xx.'], 4: ['x.x', 'x.x', 'xxx', '..x', '..x'], 5: ['xxx', 'x..', 'xx.', '..x', 'xx.'],
+      6: ['.xx', 'x..', 'xxx', 'x.x', 'xxx'], 7: ['xxx', '..x', '.x.', '.x.', '.x.'], 8: ['xxx', 'x.x', 'xxx', 'x.x', 'xxx'], 9: ['xxx', 'x.x', 'xxx', '..x', 'xx.']
+    };
+    const text = String(o.text || '').toUpperCase();
+    const cell = (o.h || 0.32) / 5, gap = cell * 0.14, adv = cell * 4;
+    const x0 = -(text.length * adv - cell) / 2;
+    const parts = [];
+    [...text].forEach((ch, k) => {
+      const rows = FONT[ch];
+      if (!rows) return;
+      rows.forEach((row, r) => [...row].forEach((on, c) => {
+        if (on !== 'x') return;
+        parts.push(new THREE.BoxGeometry(cell - gap, cell - gap, 0.004).translate(x0 + k * adv + c * cell + cell / 2, (4 - r) * cell + cell / 2, 0.002));
+      }));
+    });
+    if (!parts.length) return g;
+    const pos = [], nor = [], uv = [];
+    for (const p of parts) {
+      const q = p.toNonIndexed();
+      pos.push(...q.attributes.position.array);
+      nor.push(...q.attributes.normal.array);
+      uv.push(...q.attributes.uv.array);
+    }
+    const geo = new THREE.BufferGeometry();
+    geo.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3));
+    geo.setAttribute('normal', new THREE.Float32BufferAttribute(nor, 3));
+    geo.setAttribute('uv', new THREE.Float32BufferAttribute(uv, 2));
+    const m = new THREE.Mesh(geo, mats.get(o.mat || 'plaster_blown'));
+    m.castShadow = false;
+    m.receiveShadow = true;
+    g.add(m);
     return g;
   },
   // ---- polish: S7 descent -- end ----

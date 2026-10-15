@@ -122,6 +122,79 @@ const RECIPES = {
   wood:          { a: '#3e2a1c', b: '#6a4a32', seed: 171, contrast: 0.7, pattern: 'stains', rough: 0.55, bump: 0.006, roughVar: 0.5 }
 };
 
+// ---- followup: s7 -- begin ----
+// S7 C's cab (Doc 2 S7_C: "quilted steel wall padding, corroded diamond
+// plate floor"), the building's, photoreal (C1). Their patterns are drawn by
+// S7_PATTERNS below, dispatched from drawPattern's switch.
+RECIPES.diamond_plate = { a: '#36332e', b: '#5f5a52', seed: 181, contrast: 0.85, pattern: 'diamond_plate', rough: 0.5, metal: 0.55, bump: 0.035, roughVar: 0.9 };
+RECIPES.quilted_steel = { a: '#45443f', b: '#76746c', seed: 191, contrast: 0.55, pattern: 'quilted_steel', rough: 0.42, metal: 0.65, bump: 0.03, roughVar: 0.7 };
+// the shaft the cab goes down: block gone dark with a century of grease
+RECIPES.shaft_block = { a: '#2e2c29', b: '#47443e', seed: 201, contrast: 0.8, pattern: 'blocks', rough: 0.9, bump: 0.03, roughVar: 0.5 };
+const S7_PATTERNS = {
+  // tread lugs in alternating diagonals, their tops worn bright and glossy,
+  // grime and rust bloom in the field between them, pitting everywhere
+  diamond_plate(c, h, r, size, rnd) {
+    const n = 24, cell = size / n;
+    const blob = (ctx, x, y, rx, ry, color) => {
+      const g = ctx.createRadialGradient(x, y, 0, x, y, Math.max(rx, ry));
+      g.addColorStop(0, color); g.addColorStop(1, 'rgba(0,0,0,0)');
+      ctx.fillStyle = g; ctx.beginPath(); ctx.ellipse(x, y, rx, ry, 0, 0, Math.PI * 2); ctx.fill();
+    };
+    for (let i = 0; i < 7; i++) blob(c, rnd() * size, rnd() * size, 50 + rnd() * 110, 40 + rnd() * 90, `rgba(${80 + rnd() * 30},${42 + rnd() * 14},20,${0.16 + rnd() * 0.16})`); // rust bloom
+    for (let i = 0; i < 6; i++) blob(c, rnd() * size, rnd() * size, 40 + rnd() * 80, 30 + rnd() * 70, 'rgba(0,0,0,0.35)'); // grease
+    for (let j = 0; j < n; j++) for (let i = 0; i < n; i++) {
+      const x = (i + 0.5) * cell, y = (j + 0.5) * cell, a = (i + j) % 2 ? Math.PI / 4 : -Math.PI / 4;
+      const worn = rnd();
+      for (const [ctx, fill] of [[h, 'rgba(255,255,255,0.95)'], [c, `rgba(${150 + worn * 60},${140 + worn * 55},${125 + worn * 50},${0.25 + worn * 0.3})`], [r, `rgba(0,0,0,${0.35 + worn * 0.35})`]]) {
+        ctx.save(); ctx.translate(x, y); ctx.rotate(a); ctx.fillStyle = fill;
+        ctx.beginPath(); ctx.ellipse(0, 0, cell * 0.36, cell * 0.11, 0, 0, Math.PI * 2); ctx.fill(); ctx.restore();
+      }
+      // the lug's shadowed flank
+      c.save(); c.translate(x, y + 1.5); c.rotate(a); c.fillStyle = 'rgba(0,0,0,0.22)';
+      c.beginPath(); c.ellipse(0, 0, cell * 0.36, cell * 0.08, 0, 0, Math.PI); c.fill(); c.restore();
+    }
+    for (let i = 0; i < 1400; i++) { const x = rnd() * size, y = rnd() * size; c.fillStyle = 'rgba(30,14,6,0.4)'; c.fillRect(x, y, 1.5, 1.5); h.fillStyle = 'rgba(0,0,0,0.4)'; h.fillRect(x, y, 1.5, 1.5); } // pitting
+  },
+  // brushed sheet steel embossed in a diamond quilt: each cell pillowed up,
+  // the stitched seams pressed in and dark with grime, a dent or two
+  quilted_steel(c, h, r, size, rnd) {
+    for (let y = 0; y < size; y += 2) { c.fillStyle = `rgba(255,255,255,${0.015 + rnd() * 0.03})`; c.fillRect(0, y, size, 1); } // brushing
+    const n = 4, cell = size / n;
+    const hi = h.getImageData(0, 0, size, size), ci = c.getImageData(0, 0, size, size);
+    for (let y = 0; y < size; y++) for (let x = 0; x < size; x++) {
+      const u = ((x + y) / cell) % 1, v = (((x - y) / cell) % 1 + 1) % 1;
+      const d = Math.min(u, 1 - u, v, 1 - v) * 2; // 0 on a seam, 1 at a cell's centre
+      const pillow = Math.sqrt(Math.min(1, d * 1.6));
+      const k = (y * size + x) * 4;
+      const hv = hi.data[k] * 0.35 + 255 * 0.65 * pillow;
+      hi.data[k] = hi.data[k + 1] = hi.data[k + 2] = hv;
+      const shade = 0.72 + 0.28 * pillow;
+      ci.data[k] *= shade; ci.data[k + 1] *= shade; ci.data[k + 2] *= shade;
+    }
+    h.putImageData(hi, 0, 0); c.putImageData(ci, 0, 0);
+    // stitch dots along the seams
+    c.fillStyle = 'rgba(0,0,0,0.45)'; h.fillStyle = 'rgba(0,0,0,0.8)';
+    for (let s = -size; s < 2 * size; s += cell) {
+      for (let t = 0; t < size; t += 9) {
+        c.fillRect(s + t - 1, t - 1, 2, 2); h.fillRect(s + t - 1, t - 1, 2, 2);
+        c.fillRect(s - t - 1 + size, t - 1, 2, 2); h.fillRect(s - t - 1 + size, t - 1, 2, 2);
+      }
+    }
+    for (let i = 0; i < 5; i++) { // grime run down from the seams, glossy where wet
+      const x = rnd() * size, y = rnd() * size;
+      c.fillStyle = 'rgba(20,12,6,0.25)'; c.fillRect(x, y, 2 + rnd() * 3, 30 + rnd() * 90);
+      r.fillStyle = 'rgba(0,0,0,0.4)'; r.fillRect(x - 2, y, 6, 40 + rnd() * 90);
+    }
+    for (let i = 0; i < 2; i++) { // a dent
+      const x = rnd() * size, y = rnd() * size, rr = 14 + rnd() * 18;
+      const g = h.createRadialGradient(x, y, 0, x, y, rr);
+      g.addColorStop(0, 'rgba(0,0,0,0.6)'); g.addColorStop(1, 'rgba(0,0,0,0)');
+      h.fillStyle = g; h.beginPath(); h.arc(x, y, rr, 0, Math.PI * 2); h.fill();
+    }
+  }
+};
+// ---- followup: s7 -- end ----
+
 // Pattern pass. `c` draws colour, `h` draws height (white = raised,
 // black = recessed; grout, seams, cracks go dark), `r` draws roughness
 // (white = rough, black = glossy; wet and worn spots go dark).
@@ -287,6 +360,9 @@ function drawPattern(c, h, r, size, pattern, rnd) {
       c.fillStyle = 'rgba(0,0,0,0.25)'; c.fillRect(0, size / 2 - 2, size, 4); h.fillStyle = 'rgba(0,0,0,0.6)'; h.fillRect(0, size / 2 - 2, size, 4);
       break;
     }
+    // ---- followup: s7 -- begin ----
+    case 'diamond_plate': case 'quilted_steel': S7_PATTERNS[pattern](c, h, r, size, rnd); break;
+    // ---- followup: s7 -- end ----
     default: break;
   }
 }
