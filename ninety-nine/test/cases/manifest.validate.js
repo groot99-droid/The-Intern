@@ -67,11 +67,11 @@ export async function run() {
   });
 
   await runCase('Assertion 1b: the schema -- branch, threshold, beat zone and beat keys are ones the director reads (a typo is a silent no-op in the game)', () => {
-    const BRANCH = new Set(['room', 'next', 'ambience', 'ambienceSequence', 'music', 'captions', 'onEnter', 'thresholds', 'beatZones', 'sfxCue', 'friction', 'keepHeld', 'bumpCount', 'idle', 'stillness', 'start', 'out', 'report']);
+    const BRANCH = new Set(['room', 'next', 'ambience', 'ambienceSequence', 'music', 'captions', 'onEnter', 'thresholds', 'beatZones', 'sfxCue', 'friction', 'keepHeld', 'bumpCount', 'idle', 'stillness', 'start', 'out', 'report', 'drive', 'unseen']);
     const THRESHOLD = new Set(['label', 'zone', 'exit', 'via', 'viaDark', 'to', 'setFlag', 'sfxCue', 'beat', 'approach', 'fallShot']);
     const BEAT_ZONE = new Set(['zone', 'label', 'beat', 'once']);
     // director.js runBeats(), in its order
-    const BEAT = new Set(['sfxCue', 'sfxOpts', 'oneShot', 'music', 'musicRender', 'caption', 'holdMs', 'className', 'rattle', 'show', 'hide', 'light', 'screen', 'setFlag', 'hold', 'drop', 'actor', 'seal', 'open', 'close', 'seconds', 'await', 'lookAt', 'lookY', 'sit', 'moveTo', 'shot', 'ride', 'shake', 'together', 'waitMs']);
+    const BEAT = new Set(['sfxCue', 'sfxOpts', 'oneShot', 'music', 'musicRender', 'caption', 'holdMs', 'className', 'rattle', 'show', 'hide', 'light', 'screen', 'setFlag', 'hold', 'drop', 'actor', 'seal', 'open', 'amount', 'close', 'seconds', 'await', 'lookAt', 'lookY', 'sit', 'moveTo', 'shot', 'ride', 'shake', 'together', 'waitMs']);
     const bad = [];
     const keysOf = (o) => Object.keys(o || {}).filter((k) => !k.startsWith('_'));
     const beats = (list, where) => {
@@ -93,6 +93,23 @@ export async function run() {
       beats(b.onEnter, `${where}.onEnter`);
       if (b.idle) { beats(b.idle.beat, `${where}.idle`); if (!(b.idle.seconds > 0)) bad.push(`${where}: idle.seconds`); if (b.idle.commit && !(b.thresholds || {})[b.idle.commit]) bad.push(`${where}: idle.commit names no threshold`); if (b.idle.after && !zoneNames(b.room).has(b.idle.after)) bad.push(`${where}: idle.after ${b.idle.after} is no zone of ${b.room}`); }
       if (b.stillness) { beats(b.stillness.beat, `${where}.stillness`); if (!(b.stillness.seconds > 0)) bad.push(`${where}: stillness.seconds`); }
+      if (b.drive) {
+        // the beats of an actor driven by his progress (rooms.json actors.NAME.drive)
+        for (const k of keysOf(b.drive)) if (!['actor', 'footstep', 'end'].includes(k)) bad.push(`${where}: unknown drive key ${k}`);
+        const a = ((resolve(b.room) || {}).actors || {})[b.drive.actor];
+        if (!a || !a.drive) bad.push(`${where}: drive.actor ${b.drive.actor} is no driven actor of ${b.room}`);
+        beats(b.drive.footstep, `${where}.drive.footstep`);
+        beats(b.drive.end, `${where}.drive.end`);
+      }
+      for (const u of [].concat(b.unseen || [])) {
+        // changes made out of his view (director.js outOfView)
+        for (const k of keysOf(u)) if (!['after', 'point', 'r', 'beat'].includes(k)) bad.push(`${where}: unknown unseen key ${k}`);
+        if (u.after && !zoneNames(b.room).has(u.after)) bad.push(`${where}: unseen.after ${u.after} is no zone of ${b.room}`);
+        if (u.point !== undefined && !(Array.isArray(u.point) && u.point.length === 2 && u.point.every(Number.isFinite))) bad.push(`${where}: unseen.point must be [x, z]`);
+        if (u.r !== undefined && !(u.r > 0)) bad.push(`${where}: unseen.r must be > 0`);
+        if (!(u.beat || []).length) bad.push(`${where}: unseen without beats`);
+        beats(u.beat, `${where}.unseen`);
+      }
       for (const bz of b.beatZones || []) {
         for (const k of keysOf(bz)) if (!BEAT_ZONE.has(k)) bad.push(`${where}.beatZone: unknown key ${k}`);
         beats(bz.beat, `${where}.beatZone.${bz.zone}`);
@@ -265,6 +282,8 @@ export async function run() {
       checkBeats(`${sid}.${letter}.onEnter`, b.room, b.onEnter);
       if (b.idle) checkBeats(`${sid}.${letter}.idle`, b.room, b.idle.beat);
       if (b.stillness) checkBeats(`${sid}.${letter}.stillness`, b.room, b.stillness.beat);
+      if (b.drive) { checkBeats(`${sid}.${letter}.drive.footstep`, b.room, b.drive.footstep); checkBeats(`${sid}.${letter}.drive.end`, b.room, b.drive.end); }
+      for (const u of [].concat(b.unseen || [])) checkBeats(`${sid}.${letter}.unseen`, b.room, u.beat);
       for (const bz of b.beatZones || []) checkBeats(`${sid}.${letter}.beatZone.${bz.zone}`, b.room, bz.beat);
       for (const [key, th] of Object.entries(b.thresholds || {})) {
         for (const c of [].concat(th.sfxCue || [])) if (!cues.has(c)) bad.push(`${sid}.${letter}.${key}: unknown sfxCue ${c}`);
@@ -288,6 +307,56 @@ export async function run() {
     assert(bad.length === 0, bad.join(' | '));
   });
 
+  await runCase('Assertion 2c2: an `unseen` change stays in its own area -- every prop it shows or hides lies within r of its point, and the area keeps clear of every threshold zone, exit door and actor path of the scene (nothing appears in the way of a choice)', () => {
+    const bad = [];
+    let n = 0;
+    const segDist = (p, a, b) => {
+      const dx = b[0] - a[0], dz = b[1] - a[1], l2 = dx * dx + dz * dz || 1;
+      const t = Math.max(0, Math.min(1, ((p[0] - a[0]) * dx + (p[1] - a[1]) * dz) / l2));
+      return Math.hypot(p[0] - a[0] - t * dx, p[1] - a[1] - t * dz);
+    };
+    for (const { sid, letter, b } of branches()) {
+      const rec = resolve(b.room);
+      for (const u of [].concat(b.unseen || [])) {
+        const where = `${sid}.${letter}.unseen`;
+        const [W, , D] = rec.size;
+        const entry = (rec.doors || []).find((d) => d.name === rec.entry);
+        const doorAt = (d) => (d.wall === 'N' ? [d.x, -D / 2] : d.wall === 'S' ? [d.x, D / 2] : d.wall === 'E' ? [W / 2, d.x] : [-W / 2, d.x]);
+        const c = u.point || (entry ? doorAt(entry) : null);
+        if (!c) { bad.push(`${where}: no point and no entry doorway`); continue; }
+        const r = u.r === undefined ? 1.5 : u.r;
+        for (const bt of u.beat || []) {
+          for (const name of [bt.show, bt.hide].filter(Boolean)) {
+            const p = (rec.props || []).find((q) => q.name === name);
+            if (!p) continue; // Assertion 2c names it
+            n++;
+            // a propgroup's parts in its frame (yawed by its rot); each part's
+            // origin within r - 0.15 (the director keeps him r + 0.6 away)
+            const th = ((p.rot || 0) * Math.PI) / 180, cs = Math.cos(th), sn = Math.sin(th);
+            const parts = p.parts ? p.parts.map((q) => [p.pos[0] + q.pos[0] * cs + q.pos[2] * sn, p.pos[2] - q.pos[0] * sn + q.pos[2] * cs]) : [[p.pos[0], p.pos[2]]];
+            for (const q of parts) if (Math.hypot(q[0] - c[0], q[1] - c[1]) > r - 0.15) bad.push(`${where}: ${name} reaches [${q.map((v) => v.toFixed(2))}], outside ${r} m of [${c}]`);
+          }
+        }
+        for (const [key, th] of Object.entries(b.thresholds || {})) {
+          for (const zn of zonesOf(th)) {
+            const z = (rec.zones || []).find((q) => q.name === zn);
+            if (!z || z.actor) continue; // an actor's zone walks his path, checked below
+            const zp = [z.pos[0], z.pos[z.pos.length - 1]];
+            const d = z.box ? Math.hypot(Math.max(z.box[0][0] - c[0], 0, c[0] - z.box[1][0]), Math.max(z.box[0][1] - c[1], 0, c[1] - z.box[1][1])) : Math.hypot(zp[0] - c[0], zp[1] - c[1]) - z.r;
+            if (d < r) bad.push(`${where}: threshold ${key} zone ${zn} within its area`);
+          }
+          const door = th.exit && (rec.doors || []).find((d) => d.name === th.exit);
+          if (door) { const dp = doorAt(door); if (Math.hypot(dp[0] - c[0], dp[1] - c[1]) < r + 1.0) bad.push(`${where}: threshold ${key}'s exit ${th.exit} within its area`); }
+        }
+        for (const [an, a] of Object.entries(rec.actors || {})) {
+          for (let i = 0; i + 1 < a.path.length; i++) if (segDist(c, a.path[i], a.path[i + 1]) < r + 0.6) bad.push(`${where}: actor ${an}'s path crosses its area`);
+        }
+      }
+    }
+    assert(bad.length === 0, bad.join(' | '));
+    assert(n >= 1, 'no unseen change found (S4 C closes the aisle behind him)');
+  });
+
   await runCase('Assertion 2d: every audio file referenced (beds, the street bed, ending beds, oneShot beats) exists in /assets/aud', async () => {
     const files = new Map();
     const add = (f, where) => { if (f) files.set(f, where); };
@@ -298,6 +367,9 @@ export async function run() {
       for (const f of b.ambienceSequence || []) add(f, where);
       if (b.out) add(b.out.ambience, `${where}.out`);
       beatFiles(b.onEnter, where);
+      if (b.drive) { beatFiles(b.drive.footstep, `${where}.drive`); beatFiles(b.drive.end, `${where}.drive`); }
+      if (b.stillness) beatFiles(b.stillness.beat, `${where}.stillness`);
+      for (const u of [].concat(b.unseen || [])) beatFiles(u.beat, `${where}.unseen`);
       for (const bz of b.beatZones || []) beatFiles(bz.beat, where);
       for (const th of Object.values(b.thresholds || {})) { beatFiles(th.beat, where); beatFiles(th.approach, where); }
     }
@@ -322,6 +394,8 @@ export async function run() {
       for (const th of Object.values(b.thresholds || {})) { beatKeys(th.beat, where); beatKeys(th.approach, where); }
       if (b.idle) beatKeys(b.idle.beat, `${where}.idle`);
       if (b.stillness) beatKeys(b.stillness.beat, `${where}.stillness`);
+      if (b.drive) { beatKeys(b.drive.footstep, `${where}.drive`); beatKeys(b.drive.end, `${where}.drive`); }
+      for (const u of [].concat(b.unseen || [])) beatKeys(u.beat, `${where}.unseen`);
     }
     for (const [id, e] of Object.entries(endings)) if (!id.startsWith('_')) beatKeys(e.beats, `ending.${id}`);
     assert(keys.length >= 8, `only ${keys.length} caption keys found`);

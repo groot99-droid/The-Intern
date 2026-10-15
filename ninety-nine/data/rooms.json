@@ -6808,33 +6808,35 @@
     {
      "type": "partition",
      "pos": [
-      -2.1,
-      0,
-      -16.9
-     ],
-     "len": 2.0
-    },
-    {
-     "type": "partition",
-     "pos": [
       -1.1,
       0,
       -15.7
      ],
      "rot": 90,
-     "len": 2.4
+     "len": 2.4,
+     "mat": "lp_cubicle"
     },
     {
-     "type": "glb",
+     "type": "partition",
+     "pos": [
+      -2.1,
+      0,
+      -16.9
+     ],
+     "len": 2.0,
+     "mat": "lp_cubicle"
+    },
+    {
+     "type": "skinned_glb",
      "pos": [
       -2.1,
       0,
       -16.35
      ],
      "node": "lib_desk",
+     "fallback": "desk",
      "collide": true,
-     "mat": "lp_beige",
-     "fallback": "desk"
+     "skin": "lp_cubicle"
     },
     {
      "type": "glb",
@@ -6858,15 +6860,6 @@
      "node": "lib_chair_wood",
      "mat": "lp_suit",
      "fallback": "chair"
-    },
-    {
-     "type": "partition",
-     "pos": [
-      -6.65,
-      0,
-      -16.9
-     ],
-     "len": 2.0
     },
     {
      "type": "partition",
@@ -6876,19 +6869,30 @@
       -15.7
      ],
      "rot": 90,
-     "len": 2.4
+     "len": 2.4,
+     "mat": "lp_cubicle"
     },
     {
-     "type": "glb",
+     "type": "partition",
+     "pos": [
+      -6.65,
+      0,
+      -16.9
+     ],
+     "len": 2.0,
+     "mat": "lp_cubicle"
+    },
+    {
+     "type": "skinned_glb",
      "pos": [
       -6.65,
       0,
       -16.35
      ],
      "node": "lib_desk",
+     "fallback": "desk",
      "collide": true,
-     "mat": "lp_beige",
-     "fallback": "desk"
+     "skin": "lp_cubicle"
     },
     {
      "type": "glb",
@@ -6920,19 +6924,20 @@
       0,
       -16.9
      ],
-     "len": 2.0
+     "len": 2.0,
+     "mat": "lp_cubicle"
     },
     {
-     "type": "glb",
+     "type": "skinned_glb",
      "pos": [
       -11.3,
       0,
       -16.35
      ],
      "node": "lib_desk",
+     "fallback": "desk",
      "collide": true,
-     "mat": "lp_beige",
-     "fallback": "desk"
+     "skin": "lp_cubicle"
     },
     {
      "type": "glb",
@@ -6956,15 +6961,6 @@
      "node": "lib_chair_wood",
      "mat": "lp_suit",
      "fallback": "chair"
-    },
-    {
-     "type": "partition",
-     "pos": [
-      2.1,
-      0,
-      -16.9
-     ],
-     "len": 2.0
     },
     {
      "type": "partition",
@@ -6974,19 +6970,30 @@
       -15.7
      ],
      "rot": 90,
-     "len": 2.4
+     "len": 2.4,
+     "mat": "lp_cubicle"
     },
     {
-     "type": "glb",
+     "type": "partition",
+     "pos": [
+      2.1,
+      0,
+      -16.9
+     ],
+     "len": 2.0,
+     "mat": "lp_cubicle"
+    },
+    {
+     "type": "skinned_glb",
      "pos": [
       2.1,
       0,
       -16.35
      ],
      "node": "lib_desk",
+     "fallback": "desk",
      "collide": true,
-     "mat": "lp_beige",
-     "fallback": "desk"
+     "skin": "lp_cubicle"
     },
     {
      "type": "glb",
@@ -7010,15 +7017,6 @@
      "node": "lib_chair_wood",
      "mat": "lp_suit",
      "fallback": "chair"
-    },
-    {
-     "type": "partition",
-     "pos": [
-      6.65,
-      0,
-      -16.9
-     ],
-     "len": 2.0
     },
     {
      "type": "partition",
@@ -7028,19 +7026,30 @@
       -15.7
      ],
      "rot": 90,
-     "len": 2.4
+     "len": 2.4,
+     "mat": "lp_cubicle"
     },
     {
-     "type": "glb",
+     "type": "partition",
+     "pos": [
+      6.65,
+      0,
+      -16.9
+     ],
+     "len": 2.0,
+     "mat": "lp_cubicle"
+    },
+    {
+     "type": "skinned_glb",
      "pos": [
       6.65,
       0,
       -16.35
      ],
      "node": "lib_desk",
+     "fallback": "desk",
      "collide": true,
-     "mat": "lp_beige",
-     "fallback": "desk"
+     "skin": "lp_cubicle"
     },
     {
      "type": "glb",
@@ -7072,19 +7081,20 @@
       0,
       -16.9
      ],
-     "len": 2.0
+     "len": 2.0,
+     "mat": "lp_cubicle"
     },
     {
-     "type": "glb",
+     "type": "skinned_glb",
      "pos": [
       11.3,
       0,
       -16.35
      ],
      "node": "lib_desk",
+     "fallback": "desk",
      "collide": true,
-     "mat": "lp_beige",
-     "fallback": "desk"
+     "skin": "lp_cubicle"
     },
     {
      "type": "glb",
@@ -7112,33 +7122,35 @@
     {
      "type": "partition",
      "pos": [
-      -2.1,
-      0,
-      -14.5
-     ],
-     "len": 2.0
-    },
-    {
-     "type": "partition",
-     "pos": [
       -1.1,
       0,
       -13.3
      ],
      "rot": 90,
-     "len": 2.4
+     "len": 2.4,
+     "mat": "lp_cubicle"
     },
     {
-     "type": "glb",
+     "type": "partition",
+     "pos": [
+      -2.1,
+      0,
+      -14.5
+     ],
+     "len": 2.0,
+     "mat": "lp_cubicle"
+    },
+    {
+     "type": "skinned_glb",
      "pos": [
       -2.1,
       0,
       -13.95
      ],
      "node": "lib_desk",
+     "fallback": "desk",
      "collide": true,
-     "mat": "lp_beige",
-     "fallback": "desk"
+     "skin": "lp_cubicle"
     },
     {
      "type": "glb",
@@ -7162,15 +7174,6 @@
      "node": "lib_chair_wood",
      "mat": "lp_suit",
      "fallback": "chair"
-    },
-    {
-     "type": "partition",
-     "pos": [
-      -6.65,
-      0,
-      -14.5
-     ],
-     "len": 2.0
     },
     {
      "type": "partition",
@@ -7180,19 +7183,30 @@
       -13.3
      ],
      "rot": 90,
-     "len": 2.4
+     "len": 2.4,
+     "mat": "lp_cubicle"
     },
     {
-     "type": "glb",
+     "type": "partition",
+     "pos": [
+      -6.65,
+      0,
+      -14.5
+     ],
+     "len": 2.0,
+     "mat": "lp_cubicle"
+    },
+    {
+     "type": "skinned_glb",
      "pos": [
       -6.65,
       0,
       -13.95
      ],
      "node": "lib_desk",
+     "fallback": "desk",
      "collide": true,
-     "mat": "lp_beige",
-     "fallback": "desk"
+     "skin": "lp_cubicle"
     },
     {
      "type": "glb",
@@ -7224,19 +7238,20 @@
       0,
       -14.5
      ],
-     "len": 2.0
+     "len": 2.0,
+     "mat": "lp_cubicle"
     },
     {
-     "type": "glb",
+     "type": "skinned_glb",
      "pos": [
       -11.3,
       0,
       -13.95
      ],
      "node": "lib_desk",
+     "fallback": "desk",
      "collide": true,
-     "mat": "lp_beige",
-     "fallback": "desk"
+     "skin": "lp_cubicle"
     },
     {
      "type": "glb",
@@ -7260,15 +7275,6 @@
      "node": "lib_chair_wood",
      "mat": "lp_suit",
      "fallback": "chair"
-    },
-    {
-     "type": "partition",
-     "pos": [
-      2.1,
-      0,
-      -14.5
-     ],
-     "len": 2.0
     },
     {
      "type": "partition",
@@ -7278,19 +7284,30 @@
       -13.3
      ],
      "rot": 90,
-     "len": 2.4
+     "len": 2.4,
+     "mat": "lp_cubicle"
     },
     {
-     "type": "glb",
+     "type": "partition",
+     "pos": [
+      2.1,
+      0,
+      -14.5
+     ],
+     "len": 2.0,
+     "mat": "lp_cubicle"
+    },
+    {
+     "type": "skinned_glb",
      "pos": [
       2.1,
       0,
       -13.95
      ],
      "node": "lib_desk",
+     "fallback": "desk",
      "collide": true,
-     "mat": "lp_beige",
-     "fallback": "desk"
+     "skin": "lp_cubicle"
     },
     {
      "type": "glb",
@@ -7314,15 +7331,6 @@
      "node": "lib_chair_wood",
      "mat": "lp_suit",
      "fallback": "chair"
-    },
-    {
-     "type": "partition",
-     "pos": [
-      6.65,
-      0,
-      -14.5
-     ],
-     "len": 2.0
     },
     {
      "type": "partition",
@@ -7332,19 +7340,30 @@
       -13.3
      ],
      "rot": 90,
-     "len": 2.4
+     "len": 2.4,
+     "mat": "lp_cubicle"
     },
     {
-     "type": "glb",
+     "type": "partition",
+     "pos": [
+      6.65,
+      0,
+      -14.5
+     ],
+     "len": 2.0,
+     "mat": "lp_cubicle"
+    },
+    {
+     "type": "skinned_glb",
      "pos": [
       6.65,
       0,
       -13.95
      ],
      "node": "lib_desk",
+     "fallback": "desk",
      "collide": true,
-     "mat": "lp_beige",
-     "fallback": "desk"
+     "skin": "lp_cubicle"
     },
     {
      "type": "glb",
@@ -7376,19 +7395,20 @@
       0,
       -14.5
      ],
-     "len": 2.0
+     "len": 2.0,
+     "mat": "lp_cubicle"
     },
     {
-     "type": "glb",
+     "type": "skinned_glb",
      "pos": [
       11.3,
       0,
       -13.95
      ],
      "node": "lib_desk",
+     "fallback": "desk",
      "collide": true,
-     "mat": "lp_beige",
-     "fallback": "desk"
+     "skin": "lp_cubicle"
     },
     {
      "type": "glb",
@@ -7416,33 +7436,35 @@
     {
      "type": "partition",
      "pos": [
-      -2.1,
-      0,
-      -12.1
-     ],
-     "len": 2.0
-    },
-    {
-     "type": "partition",
-     "pos": [
       -1.1,
       0,
       -10.9
      ],
      "rot": 90,
-     "len": 2.4
+     "len": 2.4,
+     "mat": "lp_cubicle"
     },
     {
-     "type": "glb",
+     "type": "partition",
+     "pos": [
+      -2.1,
+      0,
+      -12.1
+     ],
+     "len": 2.0,
+     "mat": "lp_cubicle"
+    },
+    {
+     "type": "skinned_glb",
      "pos": [
       -2.1,
       0,
       -11.55
      ],
      "node": "lib_desk",
+     "fallback": "desk",
      "collide": true,
-     "mat": "lp_beige",
-     "fallback": "desk"
+     "skin": "lp_cubicle"
     },
     {
      "type": "glb",
@@ -7466,15 +7488,6 @@
      "node": "lib_chair_wood",
      "mat": "lp_suit",
      "fallback": "chair"
-    },
-    {
-     "type": "partition",
-     "pos": [
-      -6.65,
-      0,
-      -12.1
-     ],
-     "len": 2.0
     },
     {
      "type": "partition",
@@ -7484,19 +7497,30 @@
       -10.9
      ],
      "rot": 90,
-     "len": 2.4
+     "len": 2.4,
+     "mat": "lp_cubicle"
     },
     {
-     "type": "glb",
+     "type": "partition",
+     "pos": [
+      -6.65,
+      0,
+      -12.1
+     ],
+     "len": 2.0,
+     "mat": "lp_cubicle"
+    },
+    {
+     "type": "skinned_glb",
      "pos": [
       -6.65,
       0,
       -11.55
      ],
      "node": "lib_desk",
+     "fallback": "desk",
      "collide": true,
-     "mat": "lp_beige",
-     "fallback": "desk"
+     "skin": "lp_cubicle"
     },
     {
      "type": "glb",
@@ -7528,19 +7552,20 @@
       0,
       -12.1
      ],
-     "len": 2.0
+     "len": 2.0,
+     "mat": "lp_cubicle"
     },
     {
-     "type": "glb",
+     "type": "skinned_glb",
      "pos": [
       -11.3,
       0,
       -11.55
      ],
      "node": "lib_desk",
+     "fallback": "desk",
      "collide": true,
-     "mat": "lp_beige",
-     "fallback": "desk"
+     "skin": "lp_cubicle"
     },
     {
      "type": "glb",
@@ -7564,15 +7589,6 @@
      "node": "lib_chair_wood",
      "mat": "lp_suit",
      "fallback": "chair"
-    },
-    {
-     "type": "partition",
-     "pos": [
-      2.1,
-      0,
-      -12.1
-     ],
-     "len": 2.0
     },
     {
      "type": "partition",
@@ -7582,19 +7598,30 @@
       -10.9
      ],
      "rot": 90,
-     "len": 2.4
+     "len": 2.4,
+     "mat": "lp_cubicle"
     },
     {
-     "type": "glb",
+     "type": "partition",
+     "pos": [
+      2.1,
+      0,
+      -12.1
+     ],
+     "len": 2.0,
+     "mat": "lp_cubicle"
+    },
+    {
+     "type": "skinned_glb",
      "pos": [
       2.1,
       0,
       -11.55
      ],
      "node": "lib_desk",
+     "fallback": "desk",
      "collide": true,
-     "mat": "lp_beige",
-     "fallback": "desk"
+     "skin": "lp_cubicle"
     },
     {
      "type": "glb",
@@ -7618,15 +7645,6 @@
      "node": "lib_chair_wood",
      "mat": "lp_suit",
      "fallback": "chair"
-    },
-    {
-     "type": "partition",
-     "pos": [
-      6.65,
-      0,
-      -12.1
-     ],
-     "len": 2.0
     },
     {
      "type": "partition",
@@ -7636,19 +7654,30 @@
       -10.9
      ],
      "rot": 90,
-     "len": 2.4
+     "len": 2.4,
+     "mat": "lp_cubicle"
     },
     {
-     "type": "glb",
+     "type": "partition",
+     "pos": [
+      6.65,
+      0,
+      -12.1
+     ],
+     "len": 2.0,
+     "mat": "lp_cubicle"
+    },
+    {
+     "type": "skinned_glb",
      "pos": [
       6.65,
       0,
       -11.55
      ],
      "node": "lib_desk",
+     "fallback": "desk",
      "collide": true,
-     "mat": "lp_beige",
-     "fallback": "desk"
+     "skin": "lp_cubicle"
     },
     {
      "type": "glb",
@@ -7680,19 +7709,20 @@
       0,
       -12.1
      ],
-     "len": 2.0
+     "len": 2.0,
+     "mat": "lp_cubicle"
     },
     {
-     "type": "glb",
+     "type": "skinned_glb",
      "pos": [
       11.3,
       0,
       -11.55
      ],
      "node": "lib_desk",
+     "fallback": "desk",
      "collide": true,
-     "mat": "lp_beige",
-     "fallback": "desk"
+     "skin": "lp_cubicle"
     },
     {
      "type": "glb",
@@ -7720,33 +7750,35 @@
     {
      "type": "partition",
      "pos": [
-      -2.1,
-      0,
-      -9.7
-     ],
-     "len": 2.0
-    },
-    {
-     "type": "partition",
-     "pos": [
       -1.1,
       0,
       -8.5
      ],
      "rot": 90,
-     "len": 2.4
+     "len": 2.4,
+     "mat": "lp_cubicle"
     },
     {
-     "type": "glb",
+     "type": "partition",
+     "pos": [
+      -2.1,
+      0,
+      -9.7
+     ],
+     "len": 2.0,
+     "mat": "lp_cubicle"
+    },
+    {
+     "type": "skinned_glb",
      "pos": [
       -2.1,
       0,
       -9.15
      ],
      "node": "lib_desk",
+     "fallback": "desk",
      "collide": true,
-     "mat": "lp_beige",
-     "fallback": "desk"
+     "skin": "lp_cubicle"
     },
     {
      "type": "glb",
@@ -7770,15 +7802,6 @@
      "node": "lib_chair_wood",
      "mat": "lp_suit",
      "fallback": "chair"
-    },
-    {
-     "type": "partition",
-     "pos": [
-      -6.65,
-      0,
-      -9.7
-     ],
-     "len": 2.0
     },
     {
      "type": "partition",
@@ -7788,19 +7811,30 @@
       -8.5
      ],
      "rot": 90,
-     "len": 2.4
+     "len": 2.4,
+     "mat": "lp_cubicle"
     },
     {
-     "type": "glb",
+     "type": "partition",
+     "pos": [
+      -6.65,
+      0,
+      -9.7
+     ],
+     "len": 2.0,
+     "mat": "lp_cubicle"
+    },
+    {
+     "type": "skinned_glb",
      "pos": [
       -6.65,
       0,
       -9.15
      ],
      "node": "lib_desk",
+     "fallback": "desk",
      "collide": true,
-     "mat": "lp_beige",
-     "fallback": "desk"
+     "skin": "lp_cubicle"
     },
     {
      "type": "glb",
@@ -7832,19 +7866,20 @@
       0,
       -9.7
      ],
-     "len": 2.0
+     "len": 2.0,
+     "mat": "lp_cubicle"
     },
     {
-     "type": "glb",
+     "type": "skinned_glb",
      "pos": [
       -11.3,
       0,
       -9.15
      ],
      "node": "lib_desk",
+     "fallback": "desk",
      "collide": true,
-     "mat": "lp_beige",
-     "fallback": "desk"
+     "skin": "lp_cubicle"
     },
     {
      "type": "glb",
@@ -7868,15 +7903,6 @@
      "node": "lib_chair_wood",
      "mat": "lp_suit",
      "fallback": "chair"
-    },
-    {
-     "type": "partition",
-     "pos": [
-      2.1,
-      0,
-      -9.7
-     ],
-     "len": 2.0
     },
     {
      "type": "partition",
@@ -7886,19 +7912,30 @@
       -8.5
      ],
      "rot": 90,
-     "len": 2.4
+     "len": 2.4,
+     "mat": "lp_cubicle"
     },
     {
-     "type": "glb",
+     "type": "partition",
+     "pos": [
+      2.1,
+      0,
+      -9.7
+     ],
+     "len": 2.0,
+     "mat": "lp_cubicle"
+    },
+    {
+     "type": "skinned_glb",
      "pos": [
       2.1,
       0,
       -9.15
      ],
      "node": "lib_desk",
+     "fallback": "desk",
      "collide": true,
-     "mat": "lp_beige",
-     "fallback": "desk"
+     "skin": "lp_cubicle"
     },
     {
      "type": "glb",
@@ -7922,15 +7959,6 @@
      "node": "lib_chair_wood",
      "mat": "lp_suit",
      "fallback": "chair"
-    },
-    {
-     "type": "partition",
-     "pos": [
-      6.65,
-      0,
-      -9.7
-     ],
-     "len": 2.0
     },
     {
      "type": "partition",
@@ -7940,19 +7968,30 @@
       -8.5
      ],
      "rot": 90,
-     "len": 2.4
+     "len": 2.4,
+     "mat": "lp_cubicle"
     },
     {
-     "type": "glb",
+     "type": "partition",
+     "pos": [
+      6.65,
+      0,
+      -9.7
+     ],
+     "len": 2.0,
+     "mat": "lp_cubicle"
+    },
+    {
+     "type": "skinned_glb",
      "pos": [
       6.65,
       0,
       -9.15
      ],
      "node": "lib_desk",
+     "fallback": "desk",
      "collide": true,
-     "mat": "lp_beige",
-     "fallback": "desk"
+     "skin": "lp_cubicle"
     },
     {
      "type": "glb",
@@ -7984,19 +8023,20 @@
       0,
       -9.7
      ],
-     "len": 2.0
+     "len": 2.0,
+     "mat": "lp_cubicle"
     },
     {
-     "type": "glb",
+     "type": "skinned_glb",
      "pos": [
       11.3,
       0,
       -9.15
      ],
      "node": "lib_desk",
+     "fallback": "desk",
      "collide": true,
-     "mat": "lp_beige",
-     "fallback": "desk"
+     "skin": "lp_cubicle"
     },
     {
      "type": "glb",
@@ -8024,33 +8064,35 @@
     {
      "type": "partition",
      "pos": [
-      -2.1,
-      0,
-      -7.3
-     ],
-     "len": 2.0
-    },
-    {
-     "type": "partition",
-     "pos": [
       -1.1,
       0,
       -6.1
      ],
      "rot": 90,
-     "len": 2.4
+     "len": 2.4,
+     "mat": "lp_cubicle"
     },
     {
-     "type": "glb",
+     "type": "partition",
+     "pos": [
+      -2.1,
+      0,
+      -7.3
+     ],
+     "len": 2.0,
+     "mat": "lp_cubicle"
+    },
+    {
+     "type": "skinned_glb",
      "pos": [
       -2.1,
       0,
       -6.75
      ],
      "node": "lib_desk",
+     "fallback": "desk",
      "collide": true,
-     "mat": "lp_beige",
-     "fallback": "desk"
+     "skin": "lp_cubicle"
     },
     {
      "type": "glb",
@@ -8074,15 +8116,6 @@
      "node": "lib_chair_wood",
      "mat": "lp_suit",
      "fallback": "chair"
-    },
-    {
-     "type": "partition",
-     "pos": [
-      -6.65,
-      0,
-      -7.3
-     ],
-     "len": 2.0
     },
     {
      "type": "partition",
@@ -8092,19 +8125,30 @@
       -6.1
      ],
      "rot": 90,
-     "len": 2.4
+     "len": 2.4,
+     "mat": "lp_cubicle"
     },
     {
-     "type": "glb",
+     "type": "partition",
+     "pos": [
+      -6.65,
+      0,
+      -7.3
+     ],
+     "len": 2.0,
+     "mat": "lp_cubicle"
+    },
+    {
+     "type": "skinned_glb",
      "pos": [
       -6.65,
       0,
       -6.75
      ],
      "node": "lib_desk",
+     "fallback": "desk",
      "collide": true,
-     "mat": "lp_beige",
-     "fallback": "desk"
+     "skin": "lp_cubicle"
     },
     {
      "type": "glb",
@@ -8136,19 +8180,20 @@
       0,
       -7.3
      ],
-     "len": 2.0
+     "len": 2.0,
+     "mat": "lp_cubicle"
     },
     {
-     "type": "glb",
+     "type": "skinned_glb",
      "pos": [
       -11.3,
       0,
       -6.75
      ],
      "node": "lib_desk",
+     "fallback": "desk",
      "collide": true,
-     "mat": "lp_beige",
-     "fallback": "desk"
+     "skin": "lp_cubicle"
     },
     {
      "type": "glb",
@@ -8172,15 +8217,6 @@
      "node": "lib_chair_wood",
      "mat": "lp_suit",
      "fallback": "chair"
-    },
-    {
-     "type": "partition",
-     "pos": [
-      2.1,
-      0,
-      -7.3
-     ],
-     "len": 2.0
     },
     {
      "type": "partition",
@@ -8190,19 +8226,30 @@
       -6.1
      ],
      "rot": 90,
-     "len": 2.4
+     "len": 2.4,
+     "mat": "lp_cubicle"
     },
     {
-     "type": "glb",
+     "type": "partition",
+     "pos": [
+      2.1,
+      0,
+      -7.3
+     ],
+     "len": 2.0,
+     "mat": "lp_cubicle"
+    },
+    {
+     "type": "skinned_glb",
      "pos": [
       2.1,
       0,
       -6.75
      ],
      "node": "lib_desk",
+     "fallback": "desk",
      "collide": true,
-     "mat": "lp_beige",
-     "fallback": "desk"
+     "skin": "lp_cubicle"
     },
     {
      "type": "glb",
@@ -8226,15 +8273,6 @@
      "node": "lib_chair_wood",
      "mat": "lp_suit",
      "fallback": "chair"
-    },
-    {
-     "type": "partition",
-     "pos": [
-      6.65,
-      0,
-      -7.3
-     ],
-     "len": 2.0
     },
     {
      "type": "partition",
@@ -8244,19 +8282,30 @@
       -6.1
      ],
      "rot": 90,
-     "len": 2.4
+     "len": 2.4,
+     "mat": "lp_cubicle"
     },
     {
-     "type": "glb",
+     "type": "partition",
+     "pos": [
+      6.65,
+      0,
+      -7.3
+     ],
+     "len": 2.0,
+     "mat": "lp_cubicle"
+    },
+    {
+     "type": "skinned_glb",
      "pos": [
       6.65,
       0,
       -6.75
      ],
      "node": "lib_desk",
+     "fallback": "desk",
      "collide": true,
-     "mat": "lp_beige",
-     "fallback": "desk"
+     "skin": "lp_cubicle"
     },
     {
      "type": "glb",
@@ -8288,19 +8337,20 @@
       0,
       -7.3
      ],
-     "len": 2.0
+     "len": 2.0,
+     "mat": "lp_cubicle"
     },
     {
-     "type": "glb",
+     "type": "skinned_glb",
      "pos": [
       11.3,
       0,
       -6.75
      ],
      "node": "lib_desk",
+     "fallback": "desk",
      "collide": true,
-     "mat": "lp_beige",
-     "fallback": "desk"
+     "skin": "lp_cubicle"
     },
     {
      "type": "glb",
@@ -8324,15 +8374,6 @@
      "node": "lib_chair_wood",
      "mat": "lp_suit",
      "fallback": "chair"
-    },
-    {
-     "type": "partition",
-     "pos": [
-      -2.1,
-      0,
-      -4.9
-     ],
-     "len": 2.0
     },
     {
      "type": "partition",
@@ -8342,19 +8383,30 @@
       -3.7
      ],
      "rot": 90,
-     "len": 2.4
+     "len": 2.4,
+     "mat": "lp_cubicle"
     },
     {
-     "type": "glb",
+     "type": "partition",
+     "pos": [
+      -2.1,
+      0,
+      -4.9
+     ],
+     "len": 2.0,
+     "mat": "lp_cubicle"
+    },
+    {
+     "type": "skinned_glb",
      "pos": [
       -2.1,
       0,
       -4.35
      ],
      "node": "lib_desk",
+     "fallback": "desk",
      "collide": true,
-     "mat": "lp_beige",
-     "fallback": "desk"
+     "skin": "lp_cubicle"
     },
     {
      "type": "glb",
@@ -8378,15 +8430,6 @@
      "node": "lib_chair_wood",
      "mat": "lp_suit",
      "fallback": "chair"
-    },
-    {
-     "type": "partition",
-     "pos": [
-      -6.65,
-      0,
-      -4.9
-     ],
-     "len": 2.0
     },
     {
      "type": "partition",
@@ -8396,19 +8439,30 @@
       -3.7
      ],
      "rot": 90,
-     "len": 2.4
+     "len": 2.4,
+     "mat": "lp_cubicle"
     },
     {
-     "type": "glb",
+     "type": "partition",
+     "pos": [
+      -6.65,
+      0,
+      -4.9
+     ],
+     "len": 2.0,
+     "mat": "lp_cubicle"
+    },
+    {
+     "type": "skinned_glb",
      "pos": [
       -6.65,
       0,
       -4.35
      ],
      "node": "lib_desk",
+     "fallback": "desk",
      "collide": true,
-     "mat": "lp_beige",
-     "fallback": "desk"
+     "skin": "lp_cubicle"
     },
     {
      "type": "glb",
@@ -8440,19 +8494,20 @@
       0,
       -4.9
      ],
-     "len": 2.0
+     "len": 2.0,
+     "mat": "lp_cubicle"
     },
     {
-     "type": "glb",
+     "type": "skinned_glb",
      "pos": [
       -11.3,
       0,
       -4.35
      ],
      "node": "lib_desk",
+     "fallback": "desk",
      "collide": true,
-     "mat": "lp_beige",
-     "fallback": "desk"
+     "skin": "lp_cubicle"
     },
     {
      "type": "glb",
@@ -8476,15 +8531,6 @@
      "node": "lib_chair_wood",
      "mat": "lp_suit",
      "fallback": "chair"
-    },
-    {
-     "type": "partition",
-     "pos": [
-      2.1,
-      0,
-      -4.9
-     ],
-     "len": 2.0
     },
     {
      "type": "partition",
@@ -8494,19 +8540,30 @@
       -3.7
      ],
      "rot": 90,
-     "len": 2.4
+     "len": 2.4,
+     "mat": "lp_cubicle"
     },
     {
-     "type": "glb",
+     "type": "partition",
+     "pos": [
+      2.1,
+      0,
+      -4.9
+     ],
+     "len": 2.0,
+     "mat": "lp_cubicle"
+    },
+    {
+     "type": "skinned_glb",
      "pos": [
       2.1,
       0,
       -4.35
      ],
      "node": "lib_desk",
+     "fallback": "desk",
      "collide": true,
-     "mat": "lp_beige",
-     "fallback": "desk"
+     "skin": "lp_cubicle"
     },
     {
      "type": "glb",
@@ -8530,15 +8587,6 @@
      "node": "lib_chair_wood",
      "mat": "lp_suit",
      "fallback": "chair"
-    },
-    {
-     "type": "partition",
-     "pos": [
-      6.65,
-      0,
-      -4.9
-     ],
-     "len": 2.0
     },
     {
      "type": "partition",
@@ -8548,19 +8596,30 @@
       -3.7
      ],
      "rot": 90,
-     "len": 2.4
+     "len": 2.4,
+     "mat": "lp_cubicle"
     },
     {
-     "type": "glb",
+     "type": "partition",
+     "pos": [
+      6.65,
+      0,
+      -4.9
+     ],
+     "len": 2.0,
+     "mat": "lp_cubicle"
+    },
+    {
+     "type": "skinned_glb",
      "pos": [
       6.65,
       0,
       -4.35
      ],
      "node": "lib_desk",
+     "fallback": "desk",
      "collide": true,
-     "mat": "lp_beige",
-     "fallback": "desk"
+     "skin": "lp_cubicle"
     },
     {
      "type": "glb",
@@ -8592,19 +8651,20 @@
       0,
       -4.9
      ],
-     "len": 2.0
+     "len": 2.0,
+     "mat": "lp_cubicle"
     },
     {
-     "type": "glb",
+     "type": "skinned_glb",
      "pos": [
       11.3,
       0,
       -4.35
      ],
      "node": "lib_desk",
+     "fallback": "desk",
      "collide": true,
-     "mat": "lp_beige",
-     "fallback": "desk"
+     "skin": "lp_cubicle"
     },
     {
      "type": "glb",
@@ -8628,15 +8688,6 @@
      "node": "lib_chair_wood",
      "mat": "lp_suit",
      "fallback": "chair"
-    },
-    {
-     "type": "partition",
-     "pos": [
-      -2.1,
-      0,
-      -2.5
-     ],
-     "len": 2.0
     },
     {
      "type": "partition",
@@ -8646,19 +8697,30 @@
       -1.5
      ],
      "rot": 90,
-     "len": 2.0
+     "len": 2.0,
+     "mat": "lp_cubicle"
     },
     {
-     "type": "glb",
+     "type": "partition",
+     "pos": [
+      -2.1,
+      0,
+      -2.5
+     ],
+     "len": 2.0,
+     "mat": "lp_cubicle"
+    },
+    {
+     "type": "skinned_glb",
      "pos": [
       -2.1,
       0,
       -1.95
      ],
      "node": "lib_desk",
+     "fallback": "desk",
      "collide": true,
-     "mat": "lp_beige",
-     "fallback": "desk"
+     "skin": "lp_cubicle"
     },
     {
      "type": "glb",
@@ -8686,33 +8748,35 @@
     {
      "type": "partition",
      "pos": [
-      -6.65,
-      0,
-      -2.5
-     ],
-     "len": 2.0
-    },
-    {
-     "type": "partition",
-     "pos": [
       -7.65,
       0,
       -1.5
      ],
      "rot": 90,
-     "len": 2.0
+     "len": 2.0,
+     "mat": "lp_cubicle"
     },
     {
-     "type": "glb",
+     "type": "partition",
+     "pos": [
+      -6.65,
+      0,
+      -2.5
+     ],
+     "len": 2.0,
+     "mat": "lp_cubicle"
+    },
+    {
+     "type": "skinned_glb",
      "pos": [
       -6.65,
       0,
       -1.95
      ],
      "node": "lib_desk",
+     "fallback": "desk",
      "collide": true,
-     "mat": "lp_beige",
-     "fallback": "desk"
+     "skin": "lp_cubicle"
     },
     {
      "type": "glb",
@@ -8744,19 +8808,20 @@
       0,
       -2.5
      ],
-     "len": 2.0
+     "len": 2.0,
+     "mat": "lp_cubicle"
     },
     {
-     "type": "glb",
+     "type": "skinned_glb",
      "pos": [
       -11.3,
       0,
       -1.95
      ],
      "node": "lib_desk",
+     "fallback": "desk",
      "collide": true,
-     "mat": "lp_beige",
-     "fallback": "desk"
+     "skin": "lp_cubicle"
     },
     {
      "type": "glb",
@@ -8780,15 +8845,6 @@
      "node": "lib_chair_wood",
      "mat": "lp_suit",
      "fallback": "chair"
-    },
-    {
-     "type": "partition",
-     "pos": [
-      2.1,
-      0,
-      -2.5
-     ],
-     "len": 2.0
     },
     {
      "type": "partition",
@@ -8798,19 +8854,30 @@
       -1.5
      ],
      "rot": 90,
-     "len": 2.0
+     "len": 2.0,
+     "mat": "lp_cubicle"
     },
     {
-     "type": "glb",
+     "type": "partition",
+     "pos": [
+      2.1,
+      0,
+      -2.5
+     ],
+     "len": 2.0,
+     "mat": "lp_cubicle"
+    },
+    {
+     "type": "skinned_glb",
      "pos": [
       2.1,
       0,
       -1.95
      ],
      "node": "lib_desk",
+     "fallback": "desk",
      "collide": true,
-     "mat": "lp_beige",
-     "fallback": "desk"
+     "skin": "lp_cubicle"
     },
     {
      "type": "glb",
@@ -8838,33 +8905,35 @@
     {
      "type": "partition",
      "pos": [
-      6.65,
-      0,
-      -2.5
-     ],
-     "len": 2.0
-    },
-    {
-     "type": "partition",
-     "pos": [
       7.65,
       0,
       -1.5
      ],
      "rot": 90,
-     "len": 2.0
+     "len": 2.0,
+     "mat": "lp_cubicle"
     },
     {
-     "type": "glb",
+     "type": "partition",
+     "pos": [
+      6.65,
+      0,
+      -2.5
+     ],
+     "len": 2.0,
+     "mat": "lp_cubicle"
+    },
+    {
+     "type": "skinned_glb",
      "pos": [
       6.65,
       0,
       -1.95
      ],
      "node": "lib_desk",
+     "fallback": "desk",
      "collide": true,
-     "mat": "lp_beige",
-     "fallback": "desk"
+     "skin": "lp_cubicle"
     },
     {
      "type": "glb",
@@ -8896,19 +8965,20 @@
       0,
       -2.5
      ],
-     "len": 2.0
+     "len": 2.0,
+     "mat": "lp_cubicle"
     },
     {
-     "type": "glb",
+     "type": "skinned_glb",
      "pos": [
       11.3,
       0,
       -1.95
      ],
      "node": "lib_desk",
+     "fallback": "desk",
      "collide": true,
-     "mat": "lp_beige",
-     "fallback": "desk"
+     "skin": "lp_cubicle"
     },
     {
      "type": "glb",
@@ -8936,33 +9006,35 @@
     {
      "type": "partition",
      "pos": [
-      -2.1,
-      0,
-      2.3
-     ],
-     "len": 2.0
-    },
-    {
-     "type": "partition",
-     "pos": [
       -1.1,
       0,
       3.5
      ],
      "rot": 90,
-     "len": 2.4
+     "len": 2.4,
+     "mat": "lp_cubicle"
     },
     {
-     "type": "glb",
+     "type": "partition",
+     "pos": [
+      -2.1,
+      0,
+      2.3
+     ],
+     "len": 2.0,
+     "mat": "lp_cubicle"
+    },
+    {
+     "type": "skinned_glb",
      "pos": [
       -2.1,
       0,
       2.85
      ],
      "node": "lib_desk",
+     "fallback": "desk",
      "collide": true,
-     "mat": "lp_beige",
-     "fallback": "desk"
+     "skin": "lp_cubicle"
     },
     {
      "type": "glb",
@@ -8986,15 +9058,6 @@
      "node": "lib_chair_wood",
      "mat": "lp_suit",
      "fallback": "chair"
-    },
-    {
-     "type": "partition",
-     "pos": [
-      -6.65,
-      0,
-      2.3
-     ],
-     "len": 2.0
     },
     {
      "type": "partition",
@@ -9004,19 +9067,30 @@
       3.5
      ],
      "rot": 90,
-     "len": 2.4
+     "len": 2.4,
+     "mat": "lp_cubicle"
     },
     {
-     "type": "glb",
+     "type": "partition",
+     "pos": [
+      -6.65,
+      0,
+      2.3
+     ],
+     "len": 2.0,
+     "mat": "lp_cubicle"
+    },
+    {
+     "type": "skinned_glb",
      "pos": [
       -6.65,
       0,
       2.85
      ],
      "node": "lib_desk",
+     "fallback": "desk",
      "collide": true,
-     "mat": "lp_beige",
-     "fallback": "desk"
+     "skin": "lp_cubicle"
     },
     {
      "type": "glb",
@@ -9048,19 +9122,20 @@
       0,
       2.3
      ],
-     "len": 2.0
+     "len": 2.0,
+     "mat": "lp_cubicle"
     },
     {
-     "type": "glb",
+     "type": "skinned_glb",
      "pos": [
       -11.3,
       0,
       2.85
      ],
      "node": "lib_desk",
+     "fallback": "desk",
      "collide": true,
-     "mat": "lp_beige",
-     "fallback": "desk"
+     "skin": "lp_cubicle"
     },
     {
      "type": "glb",
@@ -9084,15 +9159,6 @@
      "node": "lib_chair_wood",
      "mat": "lp_suit",
      "fallback": "chair"
-    },
-    {
-     "type": "partition",
-     "pos": [
-      2.1,
-      0,
-      2.3
-     ],
-     "len": 2.0
     },
     {
      "type": "partition",
@@ -9102,19 +9168,30 @@
       3.5
      ],
      "rot": 90,
-     "len": 2.4
+     "len": 2.4,
+     "mat": "lp_cubicle"
     },
     {
-     "type": "glb",
+     "type": "partition",
+     "pos": [
+      2.1,
+      0,
+      2.3
+     ],
+     "len": 2.0,
+     "mat": "lp_cubicle"
+    },
+    {
+     "type": "skinned_glb",
      "pos": [
       2.1,
       0,
       2.85
      ],
      "node": "lib_desk",
+     "fallback": "desk",
      "collide": true,
-     "mat": "lp_beige",
-     "fallback": "desk"
+     "skin": "lp_cubicle"
     },
     {
      "type": "glb",
@@ -9138,15 +9215,6 @@
      "node": "lib_chair_wood",
      "mat": "lp_suit",
      "fallback": "chair"
-    },
-    {
-     "type": "partition",
-     "pos": [
-      6.65,
-      0,
-      2.3
-     ],
-     "len": 2.0
     },
     {
      "type": "partition",
@@ -9156,19 +9224,30 @@
       3.5
      ],
      "rot": 90,
-     "len": 2.4
+     "len": 2.4,
+     "mat": "lp_cubicle"
     },
     {
-     "type": "glb",
+     "type": "partition",
+     "pos": [
+      6.65,
+      0,
+      2.3
+     ],
+     "len": 2.0,
+     "mat": "lp_cubicle"
+    },
+    {
+     "type": "skinned_glb",
      "pos": [
       6.65,
       0,
       2.85
      ],
      "node": "lib_desk",
+     "fallback": "desk",
      "collide": true,
-     "mat": "lp_beige",
-     "fallback": "desk"
+     "skin": "lp_cubicle"
     },
     {
      "type": "glb",
@@ -9200,19 +9279,20 @@
       0,
       2.3
      ],
-     "len": 2.0
+     "len": 2.0,
+     "mat": "lp_cubicle"
     },
     {
-     "type": "glb",
+     "type": "skinned_glb",
      "pos": [
       11.3,
       0,
       2.85
      ],
      "node": "lib_desk",
+     "fallback": "desk",
      "collide": true,
-     "mat": "lp_beige",
-     "fallback": "desk"
+     "skin": "lp_cubicle"
     },
     {
      "type": "glb",
@@ -9240,33 +9320,35 @@
     {
      "type": "partition",
      "pos": [
-      -2.1,
-      0,
-      4.7
-     ],
-     "len": 2.0
-    },
-    {
-     "type": "partition",
-     "pos": [
       -1.1,
       0,
       5.9
      ],
      "rot": 90,
-     "len": 2.4
+     "len": 2.4,
+     "mat": "lp_cubicle"
     },
     {
-     "type": "glb",
+     "type": "partition",
+     "pos": [
+      -2.1,
+      0,
+      4.7
+     ],
+     "len": 2.0,
+     "mat": "lp_cubicle"
+    },
+    {
+     "type": "skinned_glb",
      "pos": [
       -2.1,
       0,
       5.25
      ],
      "node": "lib_desk",
+     "fallback": "desk",
      "collide": true,
-     "mat": "lp_beige",
-     "fallback": "desk"
+     "skin": "lp_cubicle"
     },
     {
      "type": "glb",
@@ -9290,15 +9372,6 @@
      "node": "lib_chair_wood",
      "mat": "lp_suit",
      "fallback": "chair"
-    },
-    {
-     "type": "partition",
-     "pos": [
-      -6.65,
-      0,
-      4.7
-     ],
-     "len": 2.0
     },
     {
      "type": "partition",
@@ -9308,19 +9381,30 @@
       5.9
      ],
      "rot": 90,
-     "len": 2.4
+     "len": 2.4,
+     "mat": "lp_cubicle"
     },
     {
-     "type": "glb",
+     "type": "partition",
+     "pos": [
+      -6.65,
+      0,
+      4.7
+     ],
+     "len": 2.0,
+     "mat": "lp_cubicle"
+    },
+    {
+     "type": "skinned_glb",
      "pos": [
       -6.65,
       0,
       5.25
      ],
      "node": "lib_desk",
+     "fallback": "desk",
      "collide": true,
-     "mat": "lp_beige",
-     "fallback": "desk"
+     "skin": "lp_cubicle"
     },
     {
      "type": "glb",
@@ -9352,19 +9436,20 @@
       0,
       4.7
      ],
-     "len": 2.0
+     "len": 2.0,
+     "mat": "lp_cubicle"
     },
     {
-     "type": "glb",
+     "type": "skinned_glb",
      "pos": [
       -11.3,
       0,
       5.25
      ],
      "node": "lib_desk",
+     "fallback": "desk",
      "collide": true,
-     "mat": "lp_beige",
-     "fallback": "desk"
+     "skin": "lp_cubicle"
     },
     {
      "type": "glb",
@@ -9388,15 +9473,6 @@
      "node": "lib_chair_wood",
      "mat": "lp_suit",
      "fallback": "chair"
-    },
-    {
-     "type": "partition",
-     "pos": [
-      2.1,
-      0,
-      4.7
-     ],
-     "len": 2.0
     },
     {
      "type": "partition",
@@ -9406,19 +9482,30 @@
       5.9
      ],
      "rot": 90,
-     "len": 2.4
+     "len": 2.4,
+     "mat": "lp_cubicle"
     },
     {
-     "type": "glb",
+     "type": "partition",
+     "pos": [
+      2.1,
+      0,
+      4.7
+     ],
+     "len": 2.0,
+     "mat": "lp_cubicle"
+    },
+    {
+     "type": "skinned_glb",
      "pos": [
       2.1,
       0,
       5.25
      ],
      "node": "lib_desk",
+     "fallback": "desk",
      "collide": true,
-     "mat": "lp_beige",
-     "fallback": "desk"
+     "skin": "lp_cubicle"
     },
     {
      "type": "glb",
@@ -9442,15 +9529,6 @@
      "node": "lib_chair_wood",
      "mat": "lp_suit",
      "fallback": "chair"
-    },
-    {
-     "type": "partition",
-     "pos": [
-      6.65,
-      0,
-      4.7
-     ],
-     "len": 2.0
     },
     {
      "type": "partition",
@@ -9460,19 +9538,30 @@
       5.9
      ],
      "rot": 90,
-     "len": 2.4
+     "len": 2.4,
+     "mat": "lp_cubicle"
     },
     {
-     "type": "glb",
+     "type": "partition",
+     "pos": [
+      6.65,
+      0,
+      4.7
+     ],
+     "len": 2.0,
+     "mat": "lp_cubicle"
+    },
+    {
+     "type": "skinned_glb",
      "pos": [
       6.65,
       0,
       5.25
      ],
      "node": "lib_desk",
+     "fallback": "desk",
      "collide": true,
-     "mat": "lp_beige",
-     "fallback": "desk"
+     "skin": "lp_cubicle"
     },
     {
      "type": "glb",
@@ -9504,19 +9593,20 @@
       0,
       4.7
      ],
-     "len": 2.0
+     "len": 2.0,
+     "mat": "lp_cubicle"
     },
     {
-     "type": "glb",
+     "type": "skinned_glb",
      "pos": [
       11.3,
       0,
       5.25
      ],
      "node": "lib_desk",
+     "fallback": "desk",
      "collide": true,
-     "mat": "lp_beige",
-     "fallback": "desk"
+     "skin": "lp_cubicle"
     },
     {
      "type": "glb",
@@ -9544,33 +9634,35 @@
     {
      "type": "partition",
      "pos": [
-      -2.1,
-      0,
-      7.1
-     ],
-     "len": 2.0
-    },
-    {
-     "type": "partition",
-     "pos": [
       -1.1,
       0,
       8.3
      ],
      "rot": 90,
-     "len": 2.4
+     "len": 2.4,
+     "mat": "lp_cubicle"
     },
     {
-     "type": "glb",
+     "type": "partition",
+     "pos": [
+      -2.1,
+      0,
+      7.1
+     ],
+     "len": 2.0,
+     "mat": "lp_cubicle"
+    },
+    {
+     "type": "skinned_glb",
      "pos": [
       -2.1,
       0,
       7.65
      ],
      "node": "lib_desk",
+     "fallback": "desk",
      "collide": true,
-     "mat": "lp_beige",
-     "fallback": "desk"
+     "skin": "lp_cubicle"
     },
     {
      "type": "glb",
@@ -9594,15 +9686,6 @@
      "node": "lib_chair_wood",
      "mat": "lp_suit",
      "fallback": "chair"
-    },
-    {
-     "type": "partition",
-     "pos": [
-      -6.65,
-      0,
-      7.1
-     ],
-     "len": 2.0
     },
     {
      "type": "partition",
@@ -9612,19 +9695,30 @@
       8.3
      ],
      "rot": 90,
-     "len": 2.4
+     "len": 2.4,
+     "mat": "lp_cubicle"
     },
     {
-     "type": "glb",
+     "type": "partition",
+     "pos": [
+      -6.65,
+      0,
+      7.1
+     ],
+     "len": 2.0,
+     "mat": "lp_cubicle"
+    },
+    {
+     "type": "skinned_glb",
      "pos": [
       -6.65,
       0,
       7.65
      ],
      "node": "lib_desk",
+     "fallback": "desk",
      "collide": true,
-     "mat": "lp_beige",
-     "fallback": "desk"
+     "skin": "lp_cubicle"
     },
     {
      "type": "glb",
@@ -9656,19 +9750,20 @@
       0,
       7.1
      ],
-     "len": 2.0
+     "len": 2.0,
+     "mat": "lp_cubicle"
     },
     {
-     "type": "glb",
+     "type": "skinned_glb",
      "pos": [
       -11.3,
       0,
       7.65
      ],
      "node": "lib_desk",
+     "fallback": "desk",
      "collide": true,
-     "mat": "lp_beige",
-     "fallback": "desk"
+     "skin": "lp_cubicle"
     },
     {
      "type": "glb",
@@ -9692,15 +9787,6 @@
      "node": "lib_chair_wood",
      "mat": "lp_suit",
      "fallback": "chair"
-    },
-    {
-     "type": "partition",
-     "pos": [
-      2.1,
-      0,
-      7.1
-     ],
-     "len": 2.0
     },
     {
      "type": "partition",
@@ -9710,19 +9796,30 @@
       8.3
      ],
      "rot": 90,
-     "len": 2.4
+     "len": 2.4,
+     "mat": "lp_cubicle"
     },
     {
-     "type": "glb",
+     "type": "partition",
+     "pos": [
+      2.1,
+      0,
+      7.1
+     ],
+     "len": 2.0,
+     "mat": "lp_cubicle"
+    },
+    {
+     "type": "skinned_glb",
      "pos": [
       2.1,
       0,
       7.65
      ],
      "node": "lib_desk",
+     "fallback": "desk",
      "collide": true,
-     "mat": "lp_beige",
-     "fallback": "desk"
+     "skin": "lp_cubicle"
     },
     {
      "type": "glb",
@@ -9746,15 +9843,6 @@
      "node": "lib_chair_wood",
      "mat": "lp_suit",
      "fallback": "chair"
-    },
-    {
-     "type": "partition",
-     "pos": [
-      6.65,
-      0,
-      7.1
-     ],
-     "len": 2.0
     },
     {
      "type": "partition",
@@ -9764,19 +9852,30 @@
       8.3
      ],
      "rot": 90,
-     "len": 2.4
+     "len": 2.4,
+     "mat": "lp_cubicle"
     },
     {
-     "type": "glb",
+     "type": "partition",
+     "pos": [
+      6.65,
+      0,
+      7.1
+     ],
+     "len": 2.0,
+     "mat": "lp_cubicle"
+    },
+    {
+     "type": "skinned_glb",
      "pos": [
       6.65,
       0,
       7.65
      ],
      "node": "lib_desk",
+     "fallback": "desk",
      "collide": true,
-     "mat": "lp_beige",
-     "fallback": "desk"
+     "skin": "lp_cubicle"
     },
     {
      "type": "glb",
@@ -9808,19 +9907,20 @@
       0,
       7.1
      ],
-     "len": 2.0
+     "len": 2.0,
+     "mat": "lp_cubicle"
     },
     {
-     "type": "glb",
+     "type": "skinned_glb",
      "pos": [
       11.3,
       0,
       7.65
      ],
      "node": "lib_desk",
+     "fallback": "desk",
      "collide": true,
-     "mat": "lp_beige",
-     "fallback": "desk"
+     "skin": "lp_cubicle"
     },
     {
      "type": "glb",
@@ -9848,33 +9948,35 @@
     {
      "type": "partition",
      "pos": [
-      -2.1,
-      0,
-      9.5
-     ],
-     "len": 2.0
-    },
-    {
-     "type": "partition",
-     "pos": [
       -1.1,
       0,
       10.7
      ],
      "rot": 90,
-     "len": 2.4
+     "len": 2.4,
+     "mat": "lp_cubicle"
     },
     {
-     "type": "glb",
+     "type": "partition",
+     "pos": [
+      -2.1,
+      0,
+      9.5
+     ],
+     "len": 2.0,
+     "mat": "lp_cubicle"
+    },
+    {
+     "type": "skinned_glb",
      "pos": [
       -2.1,
       0,
       10.05
      ],
      "node": "lib_desk",
+     "fallback": "desk",
      "collide": true,
-     "mat": "lp_beige",
-     "fallback": "desk"
+     "skin": "lp_cubicle"
     },
     {
      "type": "glb",
@@ -9898,15 +10000,6 @@
      "node": "lib_chair_wood",
      "mat": "lp_suit",
      "fallback": "chair"
-    },
-    {
-     "type": "partition",
-     "pos": [
-      -6.65,
-      0,
-      9.5
-     ],
-     "len": 2.0
     },
     {
      "type": "partition",
@@ -9916,19 +10009,30 @@
       10.7
      ],
      "rot": 90,
-     "len": 2.4
+     "len": 2.4,
+     "mat": "lp_cubicle"
     },
     {
-     "type": "glb",
+     "type": "partition",
+     "pos": [
+      -6.65,
+      0,
+      9.5
+     ],
+     "len": 2.0,
+     "mat": "lp_cubicle"
+    },
+    {
+     "type": "skinned_glb",
      "pos": [
       -6.65,
       0,
       10.05
      ],
      "node": "lib_desk",
+     "fallback": "desk",
      "collide": true,
-     "mat": "lp_beige",
-     "fallback": "desk"
+     "skin": "lp_cubicle"
     },
     {
      "type": "glb",
@@ -9960,19 +10064,20 @@
       0,
       9.5
      ],
-     "len": 2.0
+     "len": 2.0,
+     "mat": "lp_cubicle"
     },
     {
-     "type": "glb",
+     "type": "skinned_glb",
      "pos": [
       -11.3,
       0,
       10.05
      ],
      "node": "lib_desk",
+     "fallback": "desk",
      "collide": true,
-     "mat": "lp_beige",
-     "fallback": "desk"
+     "skin": "lp_cubicle"
     },
     {
      "type": "glb",
@@ -9996,15 +10101,6 @@
      "node": "lib_chair_wood",
      "mat": "lp_suit",
      "fallback": "chair"
-    },
-    {
-     "type": "partition",
-     "pos": [
-      2.1,
-      0,
-      9.5
-     ],
-     "len": 2.0
     },
     {
      "type": "partition",
@@ -10014,19 +10110,30 @@
       10.7
      ],
      "rot": 90,
-     "len": 2.4
+     "len": 2.4,
+     "mat": "lp_cubicle"
     },
     {
-     "type": "glb",
+     "type": "partition",
+     "pos": [
+      2.1,
+      0,
+      9.5
+     ],
+     "len": 2.0,
+     "mat": "lp_cubicle"
+    },
+    {
+     "type": "skinned_glb",
      "pos": [
       2.1,
       0,
       10.05
      ],
      "node": "lib_desk",
+     "fallback": "desk",
      "collide": true,
-     "mat": "lp_beige",
-     "fallback": "desk"
+     "skin": "lp_cubicle"
     },
     {
      "type": "glb",
@@ -10050,15 +10157,6 @@
      "node": "lib_chair_wood",
      "mat": "lp_suit",
      "fallback": "chair"
-    },
-    {
-     "type": "partition",
-     "pos": [
-      6.65,
-      0,
-      9.5
-     ],
-     "len": 2.0
     },
     {
      "type": "partition",
@@ -10068,19 +10166,30 @@
       10.7
      ],
      "rot": 90,
-     "len": 2.4
+     "len": 2.4,
+     "mat": "lp_cubicle"
     },
     {
-     "type": "glb",
+     "type": "partition",
+     "pos": [
+      6.65,
+      0,
+      9.5
+     ],
+     "len": 2.0,
+     "mat": "lp_cubicle"
+    },
+    {
+     "type": "skinned_glb",
      "pos": [
       6.65,
       0,
       10.05
      ],
      "node": "lib_desk",
+     "fallback": "desk",
      "collide": true,
-     "mat": "lp_beige",
-     "fallback": "desk"
+     "skin": "lp_cubicle"
     },
     {
      "type": "glb",
@@ -10112,19 +10221,20 @@
       0,
       9.5
      ],
-     "len": 2.0
+     "len": 2.0,
+     "mat": "lp_cubicle"
     },
     {
-     "type": "glb",
+     "type": "skinned_glb",
      "pos": [
       11.3,
       0,
       10.05
      ],
      "node": "lib_desk",
+     "fallback": "desk",
      "collide": true,
-     "mat": "lp_beige",
-     "fallback": "desk"
+     "skin": "lp_cubicle"
     },
     {
      "type": "glb",
@@ -10152,33 +10262,35 @@
     {
      "type": "partition",
      "pos": [
-      -2.1,
-      0,
-      11.9
-     ],
-     "len": 2.0
-    },
-    {
-     "type": "partition",
-     "pos": [
       -1.1,
       0,
       13.1
      ],
      "rot": 90,
-     "len": 2.4
+     "len": 2.4,
+     "mat": "lp_cubicle"
     },
     {
-     "type": "glb",
+     "type": "partition",
+     "pos": [
+      -2.1,
+      0,
+      11.9
+     ],
+     "len": 2.0,
+     "mat": "lp_cubicle"
+    },
+    {
+     "type": "skinned_glb",
      "pos": [
       -2.1,
       0,
       12.45
      ],
      "node": "lib_desk",
+     "fallback": "desk",
      "collide": true,
-     "mat": "lp_beige",
-     "fallback": "desk"
+     "skin": "lp_cubicle"
     },
     {
      "type": "glb",
@@ -10202,15 +10314,6 @@
      "node": "lib_chair_wood",
      "mat": "lp_suit",
      "fallback": "chair"
-    },
-    {
-     "type": "partition",
-     "pos": [
-      -6.65,
-      0,
-      11.9
-     ],
-     "len": 2.0
     },
     {
      "type": "partition",
@@ -10220,19 +10323,30 @@
       13.1
      ],
      "rot": 90,
-     "len": 2.4
+     "len": 2.4,
+     "mat": "lp_cubicle"
     },
     {
-     "type": "glb",
+     "type": "partition",
+     "pos": [
+      -6.65,
+      0,
+      11.9
+     ],
+     "len": 2.0,
+     "mat": "lp_cubicle"
+    },
+    {
+     "type": "skinned_glb",
      "pos": [
       -6.65,
       0,
       12.45
      ],
      "node": "lib_desk",
+     "fallback": "desk",
      "collide": true,
-     "mat": "lp_beige",
-     "fallback": "desk"
+     "skin": "lp_cubicle"
     },
     {
      "type": "glb",
@@ -10264,19 +10378,20 @@
       0,
       11.9
      ],
-     "len": 2.0
+     "len": 2.0,
+     "mat": "lp_cubicle"
     },
     {
-     "type": "glb",
+     "type": "skinned_glb",
      "pos": [
       -11.3,
       0,
       12.45
      ],
      "node": "lib_desk",
+     "fallback": "desk",
      "collide": true,
-     "mat": "lp_beige",
-     "fallback": "desk"
+     "skin": "lp_cubicle"
     },
     {
      "type": "glb",
@@ -10300,15 +10415,6 @@
      "node": "lib_chair_wood",
      "mat": "lp_suit",
      "fallback": "chair"
-    },
-    {
-     "type": "partition",
-     "pos": [
-      2.1,
-      0,
-      11.9
-     ],
-     "len": 2.0
     },
     {
      "type": "partition",
@@ -10318,19 +10424,30 @@
       13.1
      ],
      "rot": 90,
-     "len": 2.4
+     "len": 2.4,
+     "mat": "lp_cubicle"
     },
     {
-     "type": "glb",
+     "type": "partition",
+     "pos": [
+      2.1,
+      0,
+      11.9
+     ],
+     "len": 2.0,
+     "mat": "lp_cubicle"
+    },
+    {
+     "type": "skinned_glb",
      "pos": [
       2.1,
       0,
       12.45
      ],
      "node": "lib_desk",
+     "fallback": "desk",
      "collide": true,
-     "mat": "lp_beige",
-     "fallback": "desk"
+     "skin": "lp_cubicle"
     },
     {
      "type": "glb",
@@ -10354,15 +10471,6 @@
      "node": "lib_chair_wood",
      "mat": "lp_suit",
      "fallback": "chair"
-    },
-    {
-     "type": "partition",
-     "pos": [
-      6.65,
-      0,
-      11.9
-     ],
-     "len": 2.0
     },
     {
      "type": "partition",
@@ -10372,19 +10480,30 @@
       13.1
      ],
      "rot": 90,
-     "len": 2.4
+     "len": 2.4,
+     "mat": "lp_cubicle"
     },
     {
-     "type": "glb",
+     "type": "partition",
+     "pos": [
+      6.65,
+      0,
+      11.9
+     ],
+     "len": 2.0,
+     "mat": "lp_cubicle"
+    },
+    {
+     "type": "skinned_glb",
      "pos": [
       6.65,
       0,
       12.45
      ],
      "node": "lib_desk",
+     "fallback": "desk",
      "collide": true,
-     "mat": "lp_beige",
-     "fallback": "desk"
+     "skin": "lp_cubicle"
     },
     {
      "type": "glb",
@@ -10416,19 +10535,20 @@
       0,
       11.9
      ],
-     "len": 2.0
+     "len": 2.0,
+     "mat": "lp_cubicle"
     },
     {
-     "type": "glb",
+     "type": "skinned_glb",
      "pos": [
       11.3,
       0,
       12.45
      ],
      "node": "lib_desk",
+     "fallback": "desk",
      "collide": true,
-     "mat": "lp_beige",
-     "fallback": "desk"
+     "skin": "lp_cubicle"
     },
     {
      "type": "glb",
@@ -10452,15 +10572,6 @@
      "node": "lib_chair_wood",
      "mat": "lp_suit",
      "fallback": "chair"
-    },
-    {
-     "type": "partition",
-     "pos": [
-      -2.1,
-      0,
-      14.3
-     ],
-     "len": 2.0
     },
     {
      "type": "partition",
@@ -10470,19 +10581,30 @@
       15.3
      ],
      "rot": 90,
-     "len": 2.0
+     "len": 2.0,
+     "mat": "lp_cubicle"
     },
     {
-     "type": "glb",
+     "type": "partition",
+     "pos": [
+      -2.1,
+      0,
+      14.3
+     ],
+     "len": 2.0,
+     "mat": "lp_cubicle"
+    },
+    {
+     "type": "skinned_glb",
      "pos": [
       -2.1,
       0,
       14.85
      ],
      "node": "lib_desk",
+     "fallback": "desk",
      "collide": true,
-     "mat": "lp_beige",
-     "fallback": "desk"
+     "skin": "lp_cubicle"
     },
     {
      "type": "glb",
@@ -10506,15 +10628,6 @@
      "node": "lib_chair_wood",
      "mat": "lp_suit",
      "fallback": "chair"
-    },
-    {
-     "type": "partition",
-     "pos": [
-      -6.65,
-      0,
-      14.3
-     ],
-     "len": 2.0
     },
     {
      "type": "partition",
@@ -10524,19 +10637,30 @@
       15.3
      ],
      "rot": 90,
-     "len": 2.0
+     "len": 2.0,
+     "mat": "lp_cubicle"
     },
     {
-     "type": "glb",
+     "type": "partition",
+     "pos": [
+      -6.65,
+      0,
+      14.3
+     ],
+     "len": 2.0,
+     "mat": "lp_cubicle"
+    },
+    {
+     "type": "skinned_glb",
      "pos": [
       -6.65,
       0,
       14.85
      ],
      "node": "lib_desk",
+     "fallback": "desk",
      "collide": true,
-     "mat": "lp_beige",
-     "fallback": "desk"
+     "skin": "lp_cubicle"
     },
     {
      "type": "glb",
@@ -10568,19 +10692,20 @@
       0,
       14.3
      ],
-     "len": 2.0
+     "len": 2.0,
+     "mat": "lp_cubicle"
     },
     {
-     "type": "glb",
+     "type": "skinned_glb",
      "pos": [
       -11.3,
       0,
       14.85
      ],
      "node": "lib_desk",
+     "fallback": "desk",
      "collide": true,
-     "mat": "lp_beige",
-     "fallback": "desk"
+     "skin": "lp_cubicle"
     },
     {
      "type": "glb",
@@ -10604,15 +10729,6 @@
      "node": "lib_chair_wood",
      "mat": "lp_suit",
      "fallback": "chair"
-    },
-    {
-     "type": "partition",
-     "pos": [
-      2.1,
-      0,
-      14.3
-     ],
-     "len": 2.0
     },
     {
      "type": "partition",
@@ -10622,19 +10738,30 @@
       15.3
      ],
      "rot": 90,
-     "len": 2.0
+     "len": 2.0,
+     "mat": "lp_cubicle"
     },
     {
-     "type": "glb",
+     "type": "partition",
+     "pos": [
+      2.1,
+      0,
+      14.3
+     ],
+     "len": 2.0,
+     "mat": "lp_cubicle"
+    },
+    {
+     "type": "skinned_glb",
      "pos": [
       2.1,
       0,
       14.85
      ],
      "node": "lib_desk",
+     "fallback": "desk",
      "collide": true,
-     "mat": "lp_beige",
-     "fallback": "desk"
+     "skin": "lp_cubicle"
     },
     {
      "type": "glb",
@@ -10658,15 +10785,6 @@
      "node": "lib_chair_wood",
      "mat": "lp_suit",
      "fallback": "chair"
-    },
-    {
-     "type": "partition",
-     "pos": [
-      6.65,
-      0,
-      14.3
-     ],
-     "len": 2.0
     },
     {
      "type": "partition",
@@ -10676,19 +10794,30 @@
       15.3
      ],
      "rot": 90,
-     "len": 2.0
+     "len": 2.0,
+     "mat": "lp_cubicle"
     },
     {
-     "type": "glb",
+     "type": "partition",
+     "pos": [
+      6.65,
+      0,
+      14.3
+     ],
+     "len": 2.0,
+     "mat": "lp_cubicle"
+    },
+    {
+     "type": "skinned_glb",
      "pos": [
       6.65,
       0,
       14.85
      ],
      "node": "lib_desk",
+     "fallback": "desk",
      "collide": true,
-     "mat": "lp_beige",
-     "fallback": "desk"
+     "skin": "lp_cubicle"
     },
     {
      "type": "glb",
@@ -10720,19 +10849,20 @@
       0,
       14.3
      ],
-     "len": 2.0
+     "len": 2.0,
+     "mat": "lp_cubicle"
     },
     {
-     "type": "glb",
+     "type": "skinned_glb",
      "pos": [
       11.3,
       0,
       14.85
      ],
      "node": "lib_desk",
+     "fallback": "desk",
      "collide": true,
-     "mat": "lp_beige",
-     "fallback": "desk"
+     "skin": "lp_cubicle"
     },
     {
      "type": "glb",
@@ -10758,7 +10888,7 @@
      "fallback": "chair"
     },
     {
-     "type": "fluoro",
+     "type": "troffer_green",
      "pos": [
       0.0,
       2.94,
@@ -10768,7 +10898,7 @@
      "d": 0.6
     },
     {
-     "type": "fluoro",
+     "type": "troffer_green",
      "pos": [
       0.0,
       2.94,
@@ -10778,7 +10908,7 @@
      "d": 0.6
     },
     {
-     "type": "fluoro",
+     "type": "troffer_green",
      "pos": [
       0.0,
       2.94,
@@ -10788,7 +10918,7 @@
      "d": 0.6
     },
     {
-     "type": "fluoro",
+     "type": "troffer_green",
      "pos": [
       0.0,
       2.94,
@@ -10799,7 +10929,7 @@
      "name": "hold_troffer"
     },
     {
-     "type": "fluoro",
+     "type": "troffer_green",
      "pos": [
       0.0,
       2.94,
@@ -10809,7 +10939,7 @@
      "d": 0.6
     },
     {
-     "type": "fluoro",
+     "type": "troffer_green",
      "pos": [
       0.0,
       2.94,
@@ -10819,7 +10949,7 @@
      "d": 0.6
     },
     {
-     "type": "fluoro",
+     "type": "troffer_green",
      "pos": [
       0.0,
       2.94,
@@ -10829,7 +10959,7 @@
      "d": 0.6
     },
     {
-     "type": "fluoro",
+     "type": "troffer_green",
      "pos": [
       0.0,
       2.94,
@@ -10839,7 +10969,7 @@
      "d": 0.6
     },
     {
-     "type": "fluoro",
+     "type": "troffer_green",
      "pos": [
       0.0,
       2.94,
@@ -10849,7 +10979,7 @@
      "d": 0.6
     },
     {
-     "type": "fluoro",
+     "type": "troffer_green",
      "pos": [
       -4.4,
       2.94,
@@ -10859,7 +10989,7 @@
      "d": 0.6
     },
     {
-     "type": "fluoro",
+     "type": "troffer_green",
      "pos": [
       -4.4,
       2.94,
@@ -10869,7 +10999,7 @@
      "d": 0.6
     },
     {
-     "type": "fluoro",
+     "type": "troffer_green",
      "pos": [
       -4.4,
       2.94,
@@ -10879,7 +11009,7 @@
      "d": 0.6
     },
     {
-     "type": "fluoro",
+     "type": "troffer_green",
      "pos": [
       -4.4,
       2.94,
@@ -10889,7 +11019,7 @@
      "d": 0.6
     },
     {
-     "type": "fluoro",
+     "type": "troffer_green",
      "pos": [
       -4.4,
       2.94,
@@ -10899,7 +11029,7 @@
      "d": 0.6
     },
     {
-     "type": "fluoro",
+     "type": "troffer_green",
      "pos": [
       -4.4,
       2.94,
@@ -10909,7 +11039,7 @@
      "d": 0.6
     },
     {
-     "type": "fluoro",
+     "type": "troffer_green",
      "pos": [
       -4.4,
       2.94,
@@ -10919,7 +11049,7 @@
      "d": 0.6
     },
     {
-     "type": "fluoro",
+     "type": "troffer_green",
      "pos": [
       -4.4,
       2.94,
@@ -10929,7 +11059,7 @@
      "d": 0.6
     },
     {
-     "type": "fluoro",
+     "type": "troffer_green",
      "pos": [
       -4.4,
       2.94,
@@ -10939,7 +11069,7 @@
      "d": 0.6
     },
     {
-     "type": "fluoro",
+     "type": "troffer_green",
      "pos": [
       4.4,
       2.94,
@@ -10949,7 +11079,7 @@
      "d": 0.6
     },
     {
-     "type": "fluoro",
+     "type": "troffer_green",
      "pos": [
       4.4,
       2.94,
@@ -10959,7 +11089,7 @@
      "d": 0.6
     },
     {
-     "type": "fluoro",
+     "type": "troffer_green",
      "pos": [
       4.4,
       2.94,
@@ -10969,7 +11099,7 @@
      "d": 0.6
     },
     {
-     "type": "fluoro",
+     "type": "troffer_green",
      "pos": [
       4.4,
       2.94,
@@ -10979,7 +11109,7 @@
      "d": 0.6
     },
     {
-     "type": "fluoro",
+     "type": "troffer_green",
      "pos": [
       4.4,
       2.94,
@@ -10989,7 +11119,7 @@
      "d": 0.6
     },
     {
-     "type": "fluoro",
+     "type": "troffer_green",
      "pos": [
       4.4,
       2.94,
@@ -10999,7 +11129,7 @@
      "d": 0.6
     },
     {
-     "type": "fluoro",
+     "type": "troffer_green",
      "pos": [
       4.4,
       2.94,
@@ -11009,7 +11139,7 @@
      "d": 0.6
     },
     {
-     "type": "fluoro",
+     "type": "troffer_green",
      "pos": [
       4.4,
       2.94,
@@ -11019,7 +11149,7 @@
      "d": 0.6
     },
     {
-     "type": "fluoro",
+     "type": "troffer_green",
      "pos": [
       4.4,
       2.94,
@@ -11029,7 +11159,7 @@
      "d": 0.6
     },
     {
-     "type": "fluoro",
+     "type": "troffer_green",
      "pos": [
       -9.0,
       2.94,
@@ -11039,7 +11169,7 @@
      "d": 0.6
     },
     {
-     "type": "fluoro",
+     "type": "troffer_green",
      "pos": [
       -9.0,
       2.94,
@@ -11049,7 +11179,7 @@
      "d": 0.6
     },
     {
-     "type": "fluoro",
+     "type": "troffer_green",
      "pos": [
       -9.0,
       2.94,
@@ -11059,7 +11189,7 @@
      "d": 0.6
     },
     {
-     "type": "fluoro",
+     "type": "troffer_green",
      "pos": [
       -9.0,
       2.94,
@@ -11069,7 +11199,7 @@
      "d": 0.6
     },
     {
-     "type": "fluoro",
+     "type": "troffer_green",
      "pos": [
       -9.0,
       2.94,
@@ -11079,7 +11209,7 @@
      "d": 0.6
     },
     {
-     "type": "fluoro",
+     "type": "troffer_green",
      "pos": [
       -9.0,
       2.94,
@@ -11089,7 +11219,7 @@
      "d": 0.6
     },
     {
-     "type": "fluoro",
+     "type": "troffer_green",
      "pos": [
       -9.0,
       2.94,
@@ -11099,7 +11229,7 @@
      "d": 0.6
     },
     {
-     "type": "fluoro",
+     "type": "troffer_green",
      "pos": [
       -9.0,
       2.94,
@@ -11109,7 +11239,7 @@
      "d": 0.6
     },
     {
-     "type": "fluoro",
+     "type": "troffer_green",
      "pos": [
       -9.0,
       2.94,
@@ -11119,7 +11249,7 @@
      "d": 0.6
     },
     {
-     "type": "fluoro",
+     "type": "troffer_green",
      "pos": [
       9.0,
       2.94,
@@ -11129,7 +11259,7 @@
      "d": 0.6
     },
     {
-     "type": "fluoro",
+     "type": "troffer_green",
      "pos": [
       9.0,
       2.94,
@@ -11139,7 +11269,7 @@
      "d": 0.6
     },
     {
-     "type": "fluoro",
+     "type": "troffer_green",
      "pos": [
       9.0,
       2.94,
@@ -11149,7 +11279,7 @@
      "d": 0.6
     },
     {
-     "type": "fluoro",
+     "type": "troffer_green",
      "pos": [
       9.0,
       2.94,
@@ -11159,7 +11289,7 @@
      "d": 0.6
     },
     {
-     "type": "fluoro",
+     "type": "troffer_green",
      "pos": [
       9.0,
       2.94,
@@ -11169,7 +11299,7 @@
      "d": 0.6
     },
     {
-     "type": "fluoro",
+     "type": "troffer_green",
      "pos": [
       9.0,
       2.94,
@@ -11179,7 +11309,7 @@
      "d": 0.6
     },
     {
-     "type": "fluoro",
+     "type": "troffer_green",
      "pos": [
       9.0,
       2.94,
@@ -11189,7 +11319,7 @@
      "d": 0.6
     },
     {
-     "type": "fluoro",
+     "type": "troffer_green",
      "pos": [
       9.0,
       2.94,
@@ -11199,7 +11329,7 @@
      "d": 0.6
     },
     {
-     "type": "fluoro",
+     "type": "troffer_green",
      "pos": [
       9.0,
       2.94,
@@ -11318,6 +11448,289 @@
       0.9
      ],
      "rot": 90
+    },
+    {
+     "type": "propgroup",
+     "pos": [
+      0,
+      0,
+      0
+     ],
+     "parts": [
+      {
+       "type": "partition",
+       "pos": [
+        0.0,
+        0,
+        2.3
+       ],
+       "len": 2.2,
+       "mat": "lp_cubicle"
+      },
+      {
+       "type": "skinned_glb",
+       "pos": [
+        0.0,
+        0,
+        2.85
+       ],
+       "node": "lib_desk",
+       "fallback": "desk",
+       "collide": true,
+       "skin": "lp_cubicle"
+      },
+      {
+       "type": "glb",
+       "pos": [
+        0.0,
+        0.75,
+        2.8
+       ],
+       "node": "lib_crt",
+       "mat": "lp_beige",
+       "fallback": "monitor"
+      },
+      {
+       "type": "glb",
+       "pos": [
+        0.0,
+        0,
+        3.65
+       ],
+       "rot": 180,
+       "node": "lib_chair_wood",
+       "mat": "lp_suit",
+       "fallback": "chair"
+      },
+      {
+       "type": "partition",
+       "pos": [
+        0.0,
+        0,
+        4.7
+       ],
+       "len": 2.2,
+       "mat": "lp_cubicle"
+      },
+      {
+       "type": "skinned_glb",
+       "pos": [
+        0.0,
+        0,
+        5.25
+       ],
+       "node": "lib_desk",
+       "fallback": "desk",
+       "collide": true,
+       "skin": "lp_cubicle"
+      },
+      {
+       "type": "glb",
+       "pos": [
+        0.0,
+        0.75,
+        5.2
+       ],
+       "node": "lib_crt",
+       "mat": "lp_beige",
+       "fallback": "monitor"
+      },
+      {
+       "type": "glb",
+       "pos": [
+        0.0,
+        0,
+        6.05
+       ],
+       "rot": 180,
+       "node": "lib_chair_wood",
+       "mat": "lp_suit",
+       "fallback": "chair"
+      },
+      {
+       "type": "partition",
+       "pos": [
+        0.0,
+        0,
+        7.1
+       ],
+       "len": 2.2,
+       "mat": "lp_cubicle"
+      },
+      {
+       "type": "skinned_glb",
+       "pos": [
+        0.0,
+        0,
+        7.65
+       ],
+       "node": "lib_desk",
+       "fallback": "desk",
+       "collide": true,
+       "skin": "lp_cubicle"
+      },
+      {
+       "type": "glb",
+       "pos": [
+        0.0,
+        0.75,
+        7.6
+       ],
+       "node": "lib_crt",
+       "mat": "lp_beige",
+       "fallback": "monitor"
+      },
+      {
+       "type": "glb",
+       "pos": [
+        0.0,
+        0,
+        8.45
+       ],
+       "rot": 180,
+       "node": "lib_chair_wood",
+       "mat": "lp_suit",
+       "fallback": "chair"
+      },
+      {
+       "type": "partition",
+       "pos": [
+        0.0,
+        0,
+        9.5
+       ],
+       "len": 2.2,
+       "mat": "lp_cubicle"
+      },
+      {
+       "type": "skinned_glb",
+       "pos": [
+        0.0,
+        0,
+        10.05
+       ],
+       "node": "lib_desk",
+       "fallback": "desk",
+       "collide": true,
+       "skin": "lp_cubicle"
+      },
+      {
+       "type": "glb",
+       "pos": [
+        0.0,
+        0.75,
+        10.0
+       ],
+       "node": "lib_crt",
+       "mat": "lp_beige",
+       "fallback": "monitor"
+      },
+      {
+       "type": "glb",
+       "pos": [
+        0.0,
+        0,
+        10.85
+       ],
+       "rot": 180,
+       "node": "lib_chair_wood",
+       "mat": "lp_suit",
+       "fallback": "chair"
+      },
+      {
+       "type": "partition",
+       "pos": [
+        0.0,
+        0,
+        11.9
+       ],
+       "len": 2.2,
+       "mat": "lp_cubicle"
+      },
+      {
+       "type": "skinned_glb",
+       "pos": [
+        0.0,
+        0,
+        12.45
+       ],
+       "node": "lib_desk",
+       "fallback": "desk",
+       "collide": true,
+       "skin": "lp_cubicle"
+      },
+      {
+       "type": "glb",
+       "pos": [
+        0.0,
+        0.75,
+        12.4
+       ],
+       "node": "lib_crt",
+       "mat": "lp_beige",
+       "fallback": "monitor"
+      },
+      {
+       "type": "glb",
+       "pos": [
+        0.0,
+        0,
+        13.25
+       ],
+       "rot": 180,
+       "node": "lib_chair_wood",
+       "mat": "lp_suit",
+       "fallback": "chair"
+      },
+      {
+       "type": "partition",
+       "pos": [
+        0.0,
+        0,
+        14.3
+       ],
+       "len": 2.2,
+       "mat": "lp_cubicle"
+      },
+      {
+       "type": "skinned_glb",
+       "pos": [
+        0.0,
+        0,
+        14.85
+       ],
+       "node": "lib_desk",
+       "fallback": "desk",
+       "collide": true,
+       "skin": "lp_cubicle"
+      },
+      {
+       "type": "glb",
+       "pos": [
+        0.0,
+        0.75,
+        14.8
+       ],
+       "node": "lib_crt",
+       "mat": "lp_beige",
+       "fallback": "monitor"
+      },
+      {
+       "type": "glb",
+       "pos": [
+        0.0,
+        0,
+        15.65
+       ],
+       "rot": 180,
+       "node": "lib_chair_wood",
+       "mat": "lp_suit",
+       "fallback": "chair"
+      }
+     ],
+     "shadow": false,
+     "name": "aisle_fill",
+     "hidden": true
     }
    ],
    "footstep": {
@@ -11474,6 +11887,26 @@
       2.62,
       0.9
      ]
+    },
+    {
+     "name": "past_cross",
+     "pos": [
+      0.0,
+      -1.6
+     ],
+     "r": 0.5,
+     "ring": 0.5,
+     "box": [
+      [
+       -1.1,
+       -2.6
+      ],
+      [
+       1.1,
+       -0.6
+      ]
+     ],
+     "silent": true
     }
    ],
    "id": "S4_C"
@@ -11486,7 +11919,7 @@
     36.0
    ],
    "floor": "concrete_wet",
-   "wall": "cinderblock",
+   "wall": "cinderblock_beige",
    "ceiling": "concrete",
    "tile": {
     "floor": 2.0,
@@ -11614,6 +12047,19 @@
      "intensity": 4.2,
      "distance": 3.6,
      "id": "ajar_spill"
+    },
+    {
+     "type": "point",
+     "pos": [
+      -1.25,
+      0.9,
+      -5.85
+     ],
+     "color": "#bccbda",
+     "intensity": 5.5,
+     "distance": 5.0,
+     "id": "ajar_wide",
+     "off": true
     }
    ],
    "fog": {
@@ -11908,7 +12354,7 @@
      "pos": [
       0.0,
       0,
-      -5.5
+      -2.5
      ],
      "rot": 180,
      "face": "blur",
@@ -12190,6 +12636,22 @@
      "len": 1.5,
      "color": "#c4d2e0",
      "strength": 0.4
+    },
+    {
+     "type": "lightspill",
+     "pos": [
+      -1.58,
+      0,
+      -5.88
+     ],
+     "rot": 90,
+     "w": 0.7,
+     "w2": 2.0,
+     "len": 2.3,
+     "color": "#c4d2e0",
+     "strength": 0.3,
+     "name": "ajar_spill_wide",
+     "hidden": true
     }
    ],
    "boxes": [
@@ -12218,7 +12680,7 @@
       3.0,
       -6.58
      ],
-     "mat": "cinderblock",
+     "mat": "cinderblock_beige",
      "tile": 1.6
     },
     {
@@ -12246,7 +12708,7 @@
       3.0,
       -4.85
      ],
-     "mat": "cinderblock",
+     "mat": "cinderblock_beige",
      "tile": 1.6
     }
    ],
@@ -12259,14 +12721,21 @@
      "path": [
       [
        0.0,
-       -5.5
+       -2.5
       ],
       [
        0.0,
        -19.0
       ]
      ],
-     "face": false
+     "face": false,
+     "drive": {
+      "by": "z",
+      "lead": 20.0,
+      "ratchet": true,
+      "footsteps": 8.0,
+      "to": 0.9091
+     }
     }
    },
    "shots": {
@@ -12377,186 +12846,6 @@
    "entry": "front",
    "zones": [
     {
-     "name": "band_0",
-     "pos": [
-      0.0,
-      14.5
-     ],
-     "r": -0.8,
-     "ring": -0.1,
-     "box": [
-      [
-       -1.6,
-       -18.0
-      ],
-      [
-       1.6,
-       14.8
-      ]
-     ],
-     "silent": true
-    },
-    {
-     "name": "band_1",
-     "pos": [
-      0.0,
-      13.0
-     ],
-     "r": -0.8,
-     "ring": -0.1,
-     "box": [
-      [
-       -1.6,
-       -18.0
-      ],
-      [
-       1.6,
-       13.3
-      ]
-     ],
-     "silent": true
-    },
-    {
-     "name": "band_2",
-     "pos": [
-      0.0,
-      11.5
-     ],
-     "r": -0.8,
-     "ring": -0.1,
-     "box": [
-      [
-       -1.6,
-       -18.0
-      ],
-      [
-       1.6,
-       11.8
-      ]
-     ],
-     "silent": true
-    },
-    {
-     "name": "band_3",
-     "pos": [
-      0.0,
-      10.0
-     ],
-     "r": -0.8,
-     "ring": -0.1,
-     "box": [
-      [
-       -1.6,
-       -18.0
-      ],
-      [
-       1.6,
-       10.3
-      ]
-     ],
-     "silent": true
-    },
-    {
-     "name": "band_4",
-     "pos": [
-      0.0,
-      8.5
-     ],
-     "r": -0.8,
-     "ring": -0.1,
-     "box": [
-      [
-       -1.6,
-       -18.0
-      ],
-      [
-       1.6,
-       8.8
-      ]
-     ],
-     "silent": true
-    },
-    {
-     "name": "band_5",
-     "pos": [
-      0.0,
-      7.0
-     ],
-     "r": -0.8,
-     "ring": -0.1,
-     "box": [
-      [
-       -1.6,
-       -18.0
-      ],
-      [
-       1.6,
-       7.3
-      ]
-     ],
-     "silent": true
-    },
-    {
-     "name": "band_6",
-     "pos": [
-      0.0,
-      5.5
-     ],
-     "r": -0.8,
-     "ring": -0.1,
-     "box": [
-      [
-       -1.6,
-       -18.0
-      ],
-      [
-       1.6,
-       5.8
-      ]
-     ],
-     "silent": true
-    },
-    {
-     "name": "band_7",
-     "pos": [
-      0.0,
-      4.0
-     ],
-     "r": -0.8,
-     "ring": -0.1,
-     "box": [
-      [
-       -1.6,
-       -18.0
-      ],
-      [
-       1.6,
-       4.3
-      ]
-     ],
-     "silent": true
-    },
-    {
-     "name": "band_8",
-     "pos": [
-      0.0,
-      2.5
-     ],
-     "r": -0.8,
-     "ring": -0.1,
-     "box": [
-      [
-       -1.6,
-       -18.0
-      ],
-      [
-       1.6,
-       2.8
-      ]
-     ],
-     "silent": true
-    },
-    {
      "name": "far_end",
      "pos": [
       0.0,
@@ -12569,7 +12858,7 @@
       1.35,
       -16.8
      ],
-     "armAfter": "band_8"
+     "armAfter": "manager"
     },
     {
      "name": "ajar",
