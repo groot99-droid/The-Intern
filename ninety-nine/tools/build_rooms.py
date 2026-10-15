@@ -858,15 +858,17 @@ def utility_corridor():
     # S4_H_IMG_OUT, Doc 3 MG-03 H). He is DRIVEN by the candidate's progress
     # (actors.manager.drive; director.js startDrives): every frame his place
     # on H_PATH is the candidate's z, LEAD metres further on, and it never
-    # comes back toward him (ratchet). He starts LEAD m in from the entry
-    # doorway, so he recedes from the first step through it. At DRIVE_END,
+    # comes back toward him (ratchet). The drive starts with the scene,
+    # halfway down the 6 m corridor that leads in (CN_CORRIDOR_*: 3 m
+    # behind the entry door's outer face), so he starts LEAD m ahead of
+    # there and recedes from the scene's first step. At DRIVE_END,
     # in front of the far door, the drive hands him to scenes.json S4 H's
     # drive.end (the evidence at the door's foot, the door, through it, the
     # bulb), and TAKE THE PAPERS (far_end, armAfter: manager) arms once that
     # has played. Every 8 m he moves, drive.footstep: footsteps that are not
     # the candidate's (Doc 3 MG-03 H).
     LEAD, DRIVE_END = 20.0, -17.5
-    H_PATH = [[0.0, D / 2 - 0.5 - LEAD], [0.0, -19.0]]
+    H_PATH = [[0.0, round(D / 2 + WALL_T + 3.0 - LEAD, 3)], [0.0, -19.0]]
     DRIVE = {"by": "z", "lead": LEAD, "ratchet": True, "footsteps": 8.0,
              "to": round((H_PATH[0][1] - DRIVE_END) / (H_PATH[0][1] - H_PATH[1][1]), 4)}
     props = []
