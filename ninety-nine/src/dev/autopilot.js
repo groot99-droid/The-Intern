@@ -230,6 +230,8 @@ export function startAutopilot({ director, stage, plan = '', seed = 'C', bailAt 
       if (later) {
         const pre = (world.current().zonesWorld || []).find((z) => z.name === later.armAfter);
         if (pre) return { kind: 'arm', point: pre.world, inst: world.current() };
+        // armed by a driven actor's end (S4 H's manager): walking toward it drives him there
+        return { kind: 'arm', point: later.world, inst: world.current() };
       }
     }
     return null;

@@ -215,6 +215,10 @@ export function buildRoom(mats, rec, ctx = null) {
     g.traverse((o) => { if (o.userData && o.userData.collide) walls.push(o); });
     if (p.name) named.set(p.name, g);
     if (p.hidden) g.visible = false;
+    // a named prop's colliders block only while it is shown (blocking()):
+    // a beat shows it or hides it, and it is there exactly when it is seen
+    // (S4 C's aisle closing up behind him is no invisible wall before)
+    if (p.name) g.traverse((o) => { if (o.userData && o.userData.collide) o.userData.shownWith = g; });
     if (p.swing) animated.push({ group: g, spec: p, base: g.position.clone(), baseRot: g.rotation.clone() });
   }
   // Actors: named props with a path the director drives (S4 C's manager
@@ -231,6 +235,10 @@ export function buildRoom(mats, rec, ctx = null) {
     actors[name] = {
       length: total,
       group: g,
+      // `drive` {by, lead, ratchet, to, footsteps}: the director walks him
+      // by the candidate's progress along `path` (director.js startDrives)
+      path: a.path,
+      drive: a.drive || null,
       set(t) {
         const u = Math.min(1, Math.max(0, t)) * (a.path.length - 1);
         const i = Math.min(a.path.length - 2, Math.floor(u));
@@ -311,9 +319,9 @@ export function buildRoom(mats, rec, ctx = null) {
       for (const d of doors.values()) d.update(dt);
     },
     // Colliders that currently block: every wall, minus any door body that
-    // stands open.
+    // stands open and any named prop that is hidden.
     blocking() {
-      return walls.filter((m) => !(m.userData.doorBody && !doors.get(m.userData.doorBody).blocks()));
+      return walls.filter((m) => !(m.userData.doorBody && !doors.get(m.userData.doorBody).blocks()) && !(m.userData.shownWith && !m.userData.shownWith.visible));
     },
     dispose() {
       group.traverse((o) => {

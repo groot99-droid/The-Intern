@@ -38,6 +38,22 @@ const dist2 = (a, b) => Math.hypot(a[0] - b[0], a[2] - b[2]);
 const ENTRY_SEAL_M = 1.2;   // past the door plane before the door behind shuts
 const ARRIVE_SEAL_M = 1.6;  // into the next room before its entry shuts
 const ZONE_Y_TOLERANCE = 2.6;
+const UNSEEN_MARGIN = 0.18; // `unseen`: extra radius per metre of distance (~10 degrees round the view)
+const UNSEEN_CLEAR_M = 0.6; // `unseen`: he stands at least this far outside the area it changes
+
+// The path t (room.js actors: t runs uniformly per segment, 0 at the first
+// point, 1 at the last) where the path's room-local coordinate `k` (0 = x,
+// 1 = z) first reaches `c`, clamped to the path. A driven path runs one way
+// along its axis (tools/build_rooms.py check_room asserts it).
+function pathTAt(path, k, c) {
+  const n = path.length - 1;
+  const s = Math.sign(path[n][k] - path[0][k]) || 1;
+  for (let i = 0; i < n; i++) {
+    const a = path[i][k], b = path[i + 1][k];
+    if ((c - b) * s <= 0) return (i + (b === a ? 1 : Math.min(1, Math.max(0, (c - a) / (b - a))))) / n;
+  }
+  return 1;
+}
 
 export function createDirector({ manifest, endings, state, stage, audio = null, sfx = null, library = null, mount, onEnding = () => {} }) {
   const world = stage.world;
@@ -55,6 +71,7 @@ export function createDirector({ manifest, endings, state, stage, audio = null, 
   let endedWith = null;    // the ending the card shows, once it does
   let held = null;         // a prop in the candidate's hands (the package)
   let actorRuns = [];      // actors walking their paths
+  let drives = [];         // actors walked by his progress (rooms.json actors.NAME.drive)
   let ride = null;         // the cab, descending
   let hint = null;
   const gone = () => bailedOut || ended;
@@ -200,7 +217,8 @@ export function createDirector({ manifest, endings, state, stage, audio = null, 
       if (b.drop) dropHeld();
       if (b.actor) startActor(inst, b.actor);
       if (b.seal) sealHeldEntry(inst);
-      if (b.open) { const d = inst.room.doors.get(b.open); if (d) { const p = d.open(b.seconds || 1.2); if (b.await) await p; } }
+      // `amount` (0..1): swing only that far -- a door left wider, still locked (S4 H's ajar door)
+      if (b.open) { const d = inst.room.doors.get(b.open); if (d) { const p = d.open(b.seconds || 1.2, b.amount === undefined ? 1 : b.amount); if (b.await) await p; } }
       if (b.close) { const d = inst.room.doors.get(b.close); if (d) { const p = d.close(b.seconds || 1.0); if (b.await) await p; } }
       if (b.lookAt) {
         const g = inst.room.named.get(b.lookAt);
@@ -290,6 +308,58 @@ export function createDirector({ manifest, endings, state, stage, audio = null, 
     a.t = from;
   }
 
+  // An actor DRIVEN by the candidate's progress (rooms.json
+  // actors.NAME.drive {by, lead, ratchet, to, footsteps}; room.js passes it
+  // through): while his room is the scene's room, the director sets his
+  // place on his path every frame from the candidate's room-local `by`
+  // coordinate ('x' or 'z'), `lead` metres further along the path's way
+  // (S4 H: the manager, always 20 m ahead). `ratchet`: he never comes back
+  // toward the candidate. `to` (path t, default 1): where the drive leaves
+  // him; the rest of the path is a beat's (`actor` from 'here'). On the
+  // way, every `footsteps` metres he moves, the branch's `drive.footstep`
+  // beats run. When he reaches `to`, its `drive.end` beats run, and once
+  // they have played, a zone whose `armAfter` names him arms.
+  function startDrives(inst, branch) {
+    drives = [];
+    for (const [name, a] of Object.entries(inst.room.actors)) {
+      if (!a.drive) continue;
+      actorRuns = actorRuns.filter((r) => r.actor !== a);
+      const bd = branch.drive && branch.drive.actor === name ? branch.drive : null;
+      const every = a.drive.footsteps || 0;
+      // the first footstep comes with his first move
+      drives.push({ inst, name, actor: a, spec: a.drive, beats: bd, walked: every, ended: false, scene });
+    }
+  }
+  function stepDrive(D, pos) {
+    const a = D.actor, spec = D.spec, path = a.path;
+    const k = spec.by === 'x' ? 0 : 1;
+    _v.set(pos[0], pos[1], pos[2]).applyMatrix4(D.inst.inv);
+    const n = path.length - 1;
+    const s = Math.sign(path[n][k] - path[0][k]) || 1;
+    const to = spec.to === undefined ? 1 : spec.to;
+    const cur = a.t === undefined ? 0 : a.t;
+    let t = Math.min(to, pathTAt(path, k, (k === 0 ? _v.x : _v.z) + s * (spec.lead || 0)));
+    if (spec.ratchet && t < cur) t = cur;
+    if (t !== cur || a.t === undefined) {
+      const x0 = a.group.position.x, z0 = a.group.position.z;
+      a.set(t);
+      a.t = t;
+      const moved = Math.hypot(a.group.position.x - x0, a.group.position.z - z0);
+      if (spec.footsteps > 0 && moved > 0) {
+        D.walked += moved;
+        if (D.walked >= spec.footsteps) {
+          D.walked = 0;
+          if (D.beats && D.beats.footstep) runBeats(D.beats.footstep, D.inst);
+        }
+      }
+    }
+    if (t >= to - 1e-6) {
+      D.ended = true;
+      const sc = D.scene;
+      runBeats(D.beats && D.beats.end, D.inst).then(() => { if (scene === sc && !gone()) sc.reached.add(D.name); });
+    }
+  }
+
   // The freight cab: it really goes down. The cab (and the candidate in it)
   // moves; the connector it was entered from is gone above.
   // `stops`: [{at: 0..1, show, hide, sfxCue, light, caption}] -- beats run
@@ -354,6 +424,7 @@ export function createDirector({ manifest, endings, state, stage, audio = null, 
   function dropRoom(inst) {
     beatZones = beatZones.filter((b) => b.inst !== inst);
     actorRuns = actorRuns.filter((r) => r.inst !== inst);
+    drives = drives.filter((D) => D.inst !== inst);
     for (const L of links.slice()) {
       if (L.from === inst && L.seal1) continue;
       if (L.from === inst) { world.remove(L.conn); world.remove(L.dest); links.splice(links.indexOf(L), 1); }
@@ -483,6 +554,9 @@ export function createDirector({ manifest, endings, state, stage, audio = null, 
     for (const T of thresholds) for (const z of T.zones) if (zoneState(inst, z, pos, feet).inside) startInside.add(z.name);
     scene = { id: sceneId, letter, branch, inst, meter: createFrictionMeter(branch.friction || {}), reached: new Set(), armed: false, committing: false, thresholds, startInside, armedT: 0, idleDone: false, stillT: 0, stillDone: false, lastPos: null };
     for (const bz of branch.beatZones || []) beatZones.push({ inst, zone: bz.zone, label: bz.label || null, beats: bz.beat, once: bz.once !== false, done: false, scene: sceneId });
+    // `unseen` {after, point, r, beat} (one or a list): changes made out of his view (timers)
+    scene.unseen = [].concat(branch.unseen || []).map((u) => ({ spec: u, done: false }));
+    startDrives(inst, branch);
     const outs = prefetchOutcomes(sceneId, branch);
     scene.outcomes = outs;
     const mine = scene;
@@ -832,6 +906,7 @@ export function createDirector({ manifest, endings, state, stage, audio = null, 
       r.actor.t = done ? r.to : r.t;
       if (done) actorRuns.splice(actorRuns.indexOf(r), 1);
     }
+    for (const D of drives) if (!D.ended && D.scene === scene && !scene.committing) stepDrive(D, pos);
     for (const L of links.slice()) stepLink(L, pos);
 
     // beat zones (APPLY, the street door, the package)
@@ -915,6 +990,42 @@ export function createDirector({ manifest, endings, state, stage, audio = null, 
       sc.stillT = moved > 0.02 ? 0 : sc.stillT + dt;
       if (sc.stillT >= b.stillness.seconds) { sc.stillDone = true; runBeats(b.stillness.beat, sc.inst); }
     }
+    for (const U of sc.unseen || []) {
+      if (!U.done && (!U.spec.after || sc.reached.has(U.spec.after)) && outOfView(sc.inst, U.spec, pos)) {
+        U.done = true;
+        runBeats(U.spec.beat, sc.inst);
+      }
+    }
+  }
+
+  // `unseen`: {after, point, r, beat} -- once he has stood in zone `after`,
+  // the beats run (once) on the first frame the area within `r` metres
+  // (default 1.5) of `point` (room-local [x, z]; default the room's entry
+  // doorway), floor to head height, is wholly outside the camera's view and
+  // he stands clear of it: props shown or hidden there change behind his
+  // back, never in sight (S4 C: the aisle he walked down closes up into
+  // more cubicles). The test is this frame's camera, before this frame is
+  // drawn, with a margin for the turn he may make next.
+  const _frustum = new THREE.Frustum();
+  const _pv = new THREE.Matrix4();
+  const _sphere = new THREE.Sphere();
+  function outOfView(inst, u, pos) {
+    const r = u.r === undefined ? 1.5 : u.r;
+    const y0 = (inst.rec.floorY || 0) + 1.0;
+    if (u.point) _sphere.center.set(u.point[0], y0, u.point[1]).applyMatrix4(inst.matrix);
+    else {
+      const e = inst.anchorsWorld[inst.entryName];
+      if (!e) return false;
+      _sphere.center.set(e.pos[0], e.pos[1] + 1.0, e.pos[2]);
+    }
+    const d = Math.hypot(pos[0] - _sphere.center.x, pos[2] - _sphere.center.z);
+    if (d < r + UNSEEN_CLEAR_M) return false;
+    const cam = stage.camera;
+    cam.updateMatrixWorld();
+    _pv.multiplyMatrices(cam.projectionMatrix, cam.matrixWorldInverse);
+    _frustum.setFromProjectionMatrix(_pv);
+    _sphere.radius = Math.max(r, 1.0) + d * UNSEEN_MARGIN;
+    return !_frustum.intersectsSphere(_sphere);
   }
 
   stage.onFrame(tick);
@@ -1041,6 +1152,8 @@ export function createDirector({ manifest, endings, state, stage, audio = null, 
         armed: scene ? scene.armed : false,
         committing: scene ? scene.committing : false,
         reached: scene ? [...scene.reached] : [],
+        drives: drives.map((D) => ({ actor: D.name, t: D.actor.t === undefined ? 0 : D.actor.t, ended: D.ended })),
+        unseen: scene && scene.unseen ? scene.unseen.map((U) => U.done) : [],
         links: links.map((L) => {
           const a = (inst, name) => (inst && name && inst.anchorsWorld[name] ? { pos: inst.anchorsWorld[name].pos, yaw: inst.anchorsWorld[name].yaw } : null);
           return { from: L.from ? L.from.key : null, conn: L.conn.key, dest: L.dest.key, seal1: L.seal1, seal2: L.seal2, boundary: L.boundary, held: !!L.held, exit: a(L.from, L.exitName), connExit: a(L.conn, 'exit'), destEntry: a(L.dest, L.dest.entryName) };
