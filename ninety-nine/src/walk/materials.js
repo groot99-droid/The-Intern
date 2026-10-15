@@ -420,6 +420,64 @@ const GLOWS = {
   glow_green:  { color: '#33ff77', opacity: 0.3 }
 };
 
+// ---- followup: s4 -- begin ----
+// S4 THE FLOOR's own slots (Doc 2 S4_C / S4_H).
+//   cinderblock_beige  the corridor's walls: "cinderblock walls in
+//                      institutional beige" -- the building's, photoreal
+//   lp_fluoro_green,   the cubicle floor's troffers: "the real quality of
+//   glow_fluoro_green  fluorescent light including its slight green cast"
+//                      (glow_fluoro leans blue)
+//   lp_cubicle         "every cubicle partition, desk, chair and monitor,
+//                      identical, blocky, one repeated warped texture":
+//                      company property, so low-poly (C1) -- flat-shaded and
+//                      vertex-snapped like every lp_ slot, with one tiny
+//                      skewed fabric texture, nearest-filtered, that each
+//                      face stretches once across itself (box UVs run 0..1
+//                      per face), so a 2 m panel and a 6 cm rail warp the
+//                      same weave differently
+Object.assign(RECIPES, {
+  cinderblock_beige: { a: '#857d6d', b: '#a69d88', seed: 52, contrast: 0.5, pattern: 'blocks', rough: 0.9, bump: 0.03, roughVar: 0.3 }
+});
+Object.assign(LOWPOLY, {
+  lp_fluoro_green: { color: '#e2eadb', emissive: '#eef6e0', emissiveIntensity: 1.6 },
+  lp_cubicle: { color: '#ffffff', map: cubicleTexture }
+});
+Object.assign(GLOWS, {
+  glow_fluoro_green: { color: '#e6f4d6', opacity: 0.22 }
+});
+function cubicleTexture() {
+  const S = 32;
+  const cv = document.createElement('canvas');
+  cv.width = cv.height = S;
+  const c = cv.getContext('2d');
+  const rnd = mulberry32(1999);
+  c.fillStyle = '#8e8f86';
+  c.fillRect(0, 0, S, S);
+  // the weave, drawn sheared and wrapped round the tile: a coarse fleck of
+  // lighter and darker threads leaning the same way on every panel
+  c.setTransform(1, 0.22, -0.3, 1, 0, 0);
+  for (let i = 0; i < 140; i++) {
+    const x = Math.floor(rnd() * S), y = Math.floor(rnd() * S);
+    c.fillStyle = rnd() > 0.5 ? 'rgba(255,255,240,0.09)' : 'rgba(20,22,16,0.11)';
+    for (const [ox, oy] of [[0, 0], [S, 0], [-S, 0], [0, S], [0, -S]]) c.fillRect(x + ox, y + oy, 2, 1);
+  }
+  c.setTransform(1, 0, 0, 1, 0, 0);
+  // a darker seam a third of the way across, and grime toward one edge
+  c.fillStyle = 'rgba(30,32,26,0.16)';
+  c.fillRect(11, 0, 1, S);
+  c.fillStyle = 'rgba(40,36,24,0.1)';
+  c.fillRect(0, S - 6, S, 6);
+  const t = new THREE.CanvasTexture(cv);
+  t.colorSpace = THREE.SRGBColorSpace;
+  t.wrapS = t.wrapT = THREE.RepeatWrapping;
+  // blocky up close and from mip to mip, never smoothed (PS1); the mips
+  // keep a far panel from crawling
+  t.magFilter = THREE.NearestFilter;
+  t.minFilter = THREE.NearestMipmapNearestFilter;
+  return t;
+}
+// ---- followup: s4 -- end ----
+
 export function createMaterialLibrary({ anisotropy = 1 } = {}) {
   const cache = new Map();
   const textureSets = new Map();
@@ -449,6 +507,7 @@ export function createMaterialLibrary({ anisotropy = 1 } = {}) {
         transparent: lp.opacity !== undefined,
         opacity: lp.opacity !== undefined ? lp.opacity : 1
       });
+      if (lp.map) { mat.map = lp.map(); mat.userData.ownMap = true; } // a slot's own tiny texture (lp_cubicle)
       withVertexSnap(mat);
     } else if (GLOWS[slot]) {
       const g = GLOWS[slot];
@@ -496,7 +555,7 @@ export function createMaterialLibrary({ anisotropy = 1 } = {}) {
       }
     },
     dispose() {
-      for (const m of cache.values()) m.dispose();
+      for (const m of cache.values()) { if (m.userData.ownMap) m.map.dispose(); m.dispose(); }
       for (const set of textureSets.values()) { set.map.dispose(); set.bumpMap.dispose(); set.roughnessMap.dispose(); }
       cache.clear();
       textureSets.clear();

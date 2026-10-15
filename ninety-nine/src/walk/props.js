@@ -2637,6 +2637,47 @@ const BUILDERS = {
           g.add(p);
         }
         return g;
+      },
+      // A drop-ceiling troffer (S4 C): the fluoro fixture with the floor's
+      // green cast in its tube and glow (materials.js lp_fluoro_green,
+      // glow_fluoro_green; Doc 2 S4_C).
+      troffer_green(mats, o) {
+        const g = new THREE.Group();
+        const w = o.w || 1.2, d = o.d || 0.6;
+        g.add(box(mats, 'lp_grey', w + 0.08, 0.05, d + 0.08, 0, 0.02, 0, { castShadow: false }));
+        g.add(box(mats, 'lp_fluoro_green', w, 0.04, d, 0, 0, 0, { castShadow: false }));
+        const glow = new THREE.Mesh(new THREE.PlaneGeometry(w * 1.6, d * 2.6), mats.get('glow_fluoro_green'));
+        glow.rotation.x = Math.PI / 2; glow.position.y = -0.06;
+        g.add(glow);
+        return g;
+      },
+      // A catalog model whose light surfaces wear one lp_ slot outright --
+      // its texture too, not only its colour (`skin`, default lp_cubicle:
+      // S4 C's desks in the floor's one repeated warped texture). The light
+      // surfaces are the ones library.js would tint (luminance over 0.45);
+      // the box fallback wears the slot all over.
+      skinned_glb(mats, o, ctx) {
+        const skin = o.skin || 'lp_cubicle';
+        const fromLib = !!(ctx && ctx.library && ctx.library.has && ctx.library.has(o.node));
+        const g = BUILDERS.glb(mats, { ...o, type: 'glb', mat: fromLib ? null : skin }, ctx);
+        if (fromLib) {
+          const m = mats.get(skin);
+          g.traverse((x) => {
+            const c = x.isMesh && x.visible && !Array.isArray(x.material) && !x.material.map ? x.material.color : null;
+            if (c && 0.2126 * c.r + 0.7152 * c.g + 0.0722 * c.b > 0.45) x.material = m;
+          });
+        }
+        return g;
+      },
+      // Several props shown and hidden as one (a beat shows one name):
+      // `parts` are prop specs in the group's frame; `shadow: false` keeps
+      // them from casting (S4 C: the workstations that close the aisle
+      // behind him must not throw a new shadow down it into his view).
+      propgroup(mats, o, ctx) {
+        const g = new THREE.Group();
+        for (const p of o.parts || []) { const c = buildProp(mats, p, ctx); if (c) g.add(c); }
+        if (o.shadow === false) g.traverse((x) => { if (x.isMesh) x.castShadow = false; });
+        return g;
       }
     };
   })(),
