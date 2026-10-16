@@ -67,7 +67,7 @@ export async function run() {
     for (const [sid, scene] of Object.entries(scenes.scenes)) {
       for (const [letter, b] of Object.entries(scene.branches)) {
         for (const [key, th] of Object.entries(b.thresholds || {})) labels.push([`${sid}.${letter}.${key}`, th.label]);
-        // a beat zone may be silent (no label: the S4 H corridor bands, the run's breathing)
+        // a beat zone may be silent (no label: the run's breathing)
         for (const bz of b.beatZones || []) if (bz.label !== undefined && bz.label !== null) labels.push([`${sid}.${letter}.beatZone.${bz.zone}`, bz.label]);
         if (b.start) labels.push([`${sid}.${letter}.start`, b.start.label]);
         if (b.report) labels.push([`${sid}.${letter}.report`, b.report.label]);
