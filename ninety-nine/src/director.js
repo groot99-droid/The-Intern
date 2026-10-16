@@ -144,8 +144,9 @@ export function createDirector({ manifest, endings, state, stage, audio = null, 
 
   function stepHum() {
     const cur = world.current();
-    // left: dropped, or he is in a passage the room opened behind him
-    if (!world.instances().includes(humAt) || (cur && cur !== humAt && cur.link && cur.link.from === humAt)) {
+    // left: dropped (its group is out of the scene), or he is in a passage
+    // the room opened behind him
+    if (!humAt.group.parent || (cur && cur !== humAt && cur.link && cur.link.from === humAt)) {
       humAt = null;
       if (audio) audio.setHum(null, { ms: 2500 });
     }
