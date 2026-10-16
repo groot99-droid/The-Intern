@@ -40,6 +40,7 @@ const ARRIVE_SEAL_M = 1.6;  // into the next room before its entry shuts
 const ZONE_Y_TOLERANCE = 2.6;
 const UNSEEN_MARGIN = 0.18; // `unseen`: extra radius per metre of distance (~10 degrees round the view)
 const UNSEEN_CLEAR_M = 0.6; // `unseen`: he stands at least this far outside the area it changes
+const STILL_M = 0.05;       // `stillness`: he has not stepped this far from where he stopped
 
 // The path t (room.js actors: t runs uniformly per segment, 0 at the first
 // point, 1 at the last) where the path's room-local coordinate `k` (0 = x,
@@ -985,9 +986,11 @@ export function createDirector({ manifest, endings, state, stage, audio = null, 
       }
     }
     if (b.stillness && !sc.stillDone) {
-      const moved = sc.lastPos ? Math.hypot(pos[0] - sc.lastPos[0], pos[2] - sc.lastPos[2]) : 0;
-      sc.lastPos = pos;
-      sc.stillT = moved > 0.02 ? 0 : sc.stillT + dt;
+      // still: within STILL_M of where he stopped, however the frames fall
+      // (a per-frame step threshold counted a slow walk on a fast display,
+      // a few cm a frame, as standing still)
+      if (!sc.lastPos || Math.hypot(pos[0] - sc.lastPos[0], pos[2] - sc.lastPos[2]) > STILL_M) { sc.lastPos = pos; sc.stillT = 0; }
+      else sc.stillT += dt;
       if (sc.stillT >= b.stillness.seconds) { sc.stillDone = true; runBeats(b.stillness.beat, sc.inst); }
     }
     for (const U of sc.unseen || []) {

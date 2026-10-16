@@ -103,9 +103,21 @@ export async function run() {
       assert(!d.targets.find((t) => t.zone === 'far_end').armed, 'TAKE THE PAPERS armed before the manager reached the far door');
       assert(steps.includes('S4_H_SFX_FOOTSTEPS.wav'), `no footsteps as he receded (${steps.join(', ') || 'no one-shots'})`);
     }],
-    ['director.s4: S4 H -- stood still for 8 s, the ajar door swings wider, still locked and blocking, and its cold light comes up', async ({ inst, waitFor }) => {
+    ['director.s4: S4 H -- creeping 1 cm a frame for 9 s (game time) is not standing still; stood still for 8 s, the ajar door swings wider, still locked and blocking, and its cold light comes up', async ({ G, inst, waitFor, put }) => {
       const door = inst.room.doors.get('ajar');
       const u0 = door.progress();
+      // to and fro over half a metre near the entry, a centimetre every frame
+      // (a slow walk on a fast display; the ratchet keeps the manager put)
+      await new Promise((resolve) => {
+        let gameT = 0, k = 0;
+        const off = G.stage.onPreFrame((dt) => {
+          gameT += dt;
+          const w = (k++ % 100) / 100;
+          put(0, 14 + 0.5 * (w < 0.5 ? 2 * w : 2 - 2 * w), 0);
+          if (gameT >= 9) { off(); resolve(); }
+        });
+      });
+      assert(door.progress() < u0 + 0.01 && !inst.room.named.get('ajar_spill_wide').visible, 'the door opened for a slow walk');
       await waitFor(() => door.progress() > u0 + 0.1, 'the ajar door to swing wider (8 s of stillness, in game time)');
       await waitFor(() => door.progress() >= 0.45 && inst.room.named.get('ajar_spill_wide').visible, 'the swing to finish and the wider spill to show');
       assert(door.progress() < 0.85 && door.locked && door.blocks(), `the door at ${door.progress().toFixed(2)} must stay locked and blocking (stepped into, not through)`);
