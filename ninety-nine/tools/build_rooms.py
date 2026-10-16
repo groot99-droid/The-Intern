@@ -461,6 +461,9 @@ def waiting_room(hostile, dark_front=None):
         "lights": lights,
         "fog": {"color": "#efe9dc" if hostile else "#121518", "near": 5 if hostile else 10, "far": 28 if hostile else 36},
         "exposure": 1.5 if hostile else 1.0,
+        # H: the threshold words dark on a pale halo (src/labels.js), or the
+        # blown-out walls take them
+        **({"labelInk": "dark"} if hostile else {}),
         "vignette": 0.2 if hostile else 0.55,
         "spawn": [0, 4.6, 0],
         "props": props,
@@ -519,9 +522,9 @@ def threshold_corridor():
     N = -D / 2  # the curtain wall's inner face
     props = [
         # the curtain wall: velvet either side of the curtain doorway and a
-        # pelmet over it (the doorway's own curtain is dressed to match),
+        # pelmet over it (the doorway's own curtain is the same velvet),
         # the sign above, the reader beside
-        prop("velvetdrape", [0, 0, N], w=W, h=2.75, gap=1.75, pelmet=0.5, off=0.05, dress="curtain", name="velvet"),
+        prop("velvetdrape", [0, 0, N], w=W, h=2.75, gap=1.75, pelmet=0.5, off=0.05, name="velvet"),
         prop("entersign", [0, 2.8, N + 0.07], w=1.0, h=0.24, text="ENTER", name="entersign"),
         prop("badgescanner", [W / 2 - 0.02, 1.12, -6.05], rot=-90, name="badgereader"),
         prop("dustmotes", [0, 0.2, N + 1.1], size=[3.8, 2.9, 1.8], count=150, name="dustmotes"),  # dust in the green (Doc 2)
@@ -565,14 +568,15 @@ def threshold_corridor():
     }
     rec["shots"] = shots_for(rec, out_dist=7.5, leave_dist=11.2)
     rec["shots"]["leave"]["seconds"] = 3.4  # through the curtain
-    # Doorways. The curtain is a curtain doorway that parts (doors.js),
-    # dressed in the drape's velvet; its rod hides behind the pelmet. The
-    # glass is the lobby's, smoked. The service door is in the wall's own
-    # plaster beside the glass, hinged away from it so it opens toward him.
-    door(rec, "curtain", "N", 0.0, w=1.8, h=2.4, kind="curtain", locked=True)
+    # Doorways. The curtain is a curtain doorway that parts (doors.js), in
+    # the drape's velvet; its rod hides behind the pelmet. The glass is the
+    # lobby's, smoked. The service door is a jib door flush in the wall's own
+    # plaster beside the glass, the wainscot carried across it, hinged away
+    # from the glass so it opens toward him.
+    door(rec, "curtain", "N", 0.0, w=1.8, h=2.4, kind="curtain", locked=True, mat="velvet")
     door(rec, "glass", "S", 0.0, w=2.4, h=2.8, kind="glass", locked=True, glass="glass_dark")
     door(rec, "side", "E", 1.2, w=1.2, h=2.3, kind="door", mat="lp_beige", hinge="R")
-    door(rec, "service", "W", 5.4, w=1.2, h=2.2, kind="door", locked=True, mat="plaster_dark", frame="plaster_dark", hinge="R")
+    door(rec, "service", "W", 5.4, w=1.2, h=2.2, kind="door", locked=True, jib=True, hinge="R")
     rec["entry"] = "side"
     # PART THE CURTAIN: at the curtain, under the sign, the reader beside.
     # TRY THE DOOR: the whole width of the glass, so it is the glass he walks
@@ -612,11 +616,12 @@ def lobby_doors():
         inherited.remove(front)
         front = {k: v for k, v in front.items() if k not in ("open", "ajar")}
         front["locked"] = True
+        front["glass"] = "glass_clear"  # the dead street is seen through it
         rec.setdefault("doors", []).append(front)
     else:
-        front = door(rec, "front", "S", 0.0, w=2.6, h=2.9, kind="glass", locked=True)
+        front = door(rec, "front", "S", 0.0, w=2.6, h=2.9, kind="glass", locked=True, glass="glass_clear")
     fx, fw, fh = front["x"], front["w"], front["h"]
-    door(rec, "curtain", "N", -5.4, w=1.8, h=2.6, kind="curtain", locked=True)
+    door(rec, "curtain", "N", -5.4, w=1.8, h=2.6, kind="curtain", locked=True, mat="velvet")
     door(rec, "side", "E", 3.0, w=1.2, h=2.3, kind="door", mat="lp_beige", hinge="R")
     door(rec, "service", "W", 3.8, w=1.2, h=2.2, kind="door", locked=True, mat="lp_grey", hinge="R")
     mine = list(rec["doors"])
@@ -657,7 +662,7 @@ def lobby_doors():
             p["pos"] = [-2.9, 2.9, -D / 2 + 0.02]
             p.pop("rot", None)
     # the curtain in the far corner, dressed as S3 C's, its sign dead
-    rec["props"].append(prop("velvetdrape", [-5.4, 0, -D / 2], w=3.0, h=3.25, gap=1.75, pelmet=0.6, off=0.05, dress="curtain", name="velvet"))
+    rec["props"].append(prop("velvetdrape", [-5.4, 0, -D / 2], w=3.0, h=3.25, gap=1.75, pelmet=0.6, off=0.05, name="velvet"))
     rec["props"].append(prop("entersign", [-5.4, 3.36, -D / 2 + 0.07], w=0.9, h=0.22, text="ENTER", on=False, name="entersign"))
     rec["props"].append(prop("curtainvoid", [-5.4, 0, -D / 2 - 0.1], w=3.0, h=3.2, name="curtain_void"))
     # the doors' plate, the one 99 at their foot, the payphone in the corner
@@ -675,7 +680,7 @@ def lobby_doors():
     # the street through the glass: no sun, no shadow, nothing moving
     # (drawn only while the eye is in this lobby or its entry corridor, so
     # the lobby before, whose glass faces this way once joined, never sees it)
-    rec["props"].append(prop("deadstreet", [fx, 0, D / 2 + WALL_T], level=0.62, grey="#54575a", dressGlass="front", showFrom=[-W / 2 - WALL_T, -D / 2 - WALL_T, W / 2 + 6.3, D / 2], name="street"))
+    rec["props"].append(prop("deadstreet", [fx, 0, D / 2 + WALL_T], level=0.62, grey="#54575a", showFrom=[-W / 2 - WALL_T, -D / 2 - WALL_T, W / 2 + 6.3, D / 2], name="street"))
     rec["spawn"] = [0, 1.5, 180]
     rec["ambient"]["intensity"] = 0.3
     rec["fog"] = {"color": "#0b0a09", "near": 8, "far": 30}
@@ -2062,6 +2067,9 @@ def street():
     # behind (Doc 1: "He pushes through the glass doors")
     door(rec, "tower", "N", 0.0, w=2.6, h=2.9, kind="glass", y=0.3, locked=True, swing="out", frame="marble")
     rec["entry"] = "stoop"
+    # the address on a translucent dark plate (src/labels.js): light words
+    # alone went faint on the lit stone under the canopy
+    rec["labelInk"] = "backed"
     # the address fades in from the crossing (ring 8), over the doors
     zone(rec, "report", [0.0, -D / 2 + 1.6], r=1.2, ring=8.0, label_at=[0.0, 3.6, -D / 2 - 0.1])
     s = shots_for(rec, out_dist=6.0, leave_dist=D - 4.5, loop_seconds=16.0)

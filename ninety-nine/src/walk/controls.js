@@ -8,6 +8,17 @@
 // swim mode for the dive. Raycasts run in world space, so rooms placed
 // anywhere in the joined building collide as they are. Touch: left half
 // joystick, right half drag-to-look.
+//
+// A blocked axis is not cancelled but clamped: the step is cut to the hit
+// distance less the body's radius, so a long step (a slow frame on a slow
+// machine) still brings him right up to a wall or a door's face rather than
+// stopping him short of it by up to a whole step.
+//
+// Swimming has no ascent (C3: nothing climbs after the lobby doors): the
+// vertical part of a stroke -- keys or the touch joystick, both steer along
+// the look direction -- only ever goes down, and the record's `swim.sink`
+// (metres a second, optional) lets the water take him down slowly while he
+// floats. The swim floor still stops him.
 
 import * as THREE from '../../vendor/three/three.module.js';
 
@@ -16,6 +27,7 @@ const MOVE_SPEED = 2.6; // m/s -- slower than the museum's 4.2: this is an inter
 const SPRINT_SPEED = 4.0;
 const SWIM_SPEED = 1.2;
 const COLLIDE_RADIUS = 0.35;
+const SKIN = 0.002; // left between his radius and a wall when a step is clamped
 const STEP_UP = 0.45;
 const STEP_DOWN = 1.0;
 const GRAVITY = 9.8;
@@ -39,7 +51,7 @@ export function createControls(camera, domElement, getCollidables, { onBump = nu
   let eyeOffset = 0; // head-bob, added on top of EYE_HEIGHT wherever the floor sets y
   let enabled = true;
   let lockable = true;
-  let swim = null;      // { floorY, ceilingY } while swimming
+  let swim = null;      // { floorY, ceilingY, sink } while swimming
   let footY = null;     // smoothed floor height under the player
   let fallV = 0;
   let lastFloor = null;
@@ -119,19 +131,30 @@ export function createControls(camera, domElement, getCollidables, { onBump = nu
     return hits.length > 0 && hits[0].distance < dist ? hits[0] : null;
   }
 
-  // Blocked along one axis? Two heights: chest (the old ray) and knee.
+  // Blocked along one axis? The nearest hit of the rays at each height
+  // (its distance clamps the step), or null.
+  const SWIM_HEIGHTS = [0];
+  const WALK_HEIGHTS = [1.0, 0.45, 1.5];
   function blockedAxis(x, z, feetY, dir, dist, walls) {
     // knee, chest and head height: a lintel lower than the eye (the store's
     // 1.1 m hatch) must stop him, not let the camera through the wall
-    for (const h of swim ? [0] : [1.0, 0.45, 1.5]) {
+    let best = null;
+    for (const h of swim ? SWIM_HEIGHTS : WALK_HEIGHTS) {
       rayOrigin.set(x, swim ? camera.position.y : feetY + h, z);
-      const hit = firstHit(rayOrigin, dir, dist, walls);
-      if (hit) return hit;
+      const hit = firstHit(rayOrigin, dir, best ? best.distance : dist, walls);
+      if (hit) best = hit;
     }
-    return null;
+    return best;
+  }
+  // How far along one axis he may go: the whole step, or up to the wall.
+  function clampStep(step, hit) {
+    if (!hit) return step;
+    if (onBump) onBump(hit.object);
+    return Math.sign(step) * Math.max(0, Math.min(Math.abs(step), hit.distance - COLLIDE_RADIUS - SKIN));
   }
 
   function tryMove(delta) {
+    if (swim && moveVec.y > 0) moveVec.y = 0; // no ascent (C3)
     const len = moveVec.length();
     if (len === 0) return;
     if (len > 1) moveVec.divideScalar(len);
@@ -142,13 +165,11 @@ export function createControls(camera, domElement, getCollidables, { onBump = nu
     let dx = 0, dz = 0;
     if (Math.abs(moveVec.x) > 0) {
       axisDir.set(Math.sign(moveVec.x), 0, 0);
-      const hit = blockedAxis(camera.position.x, camera.position.z, feetY, axisDir, Math.abs(moveVec.x) + COLLIDE_RADIUS, walls);
-      if (!hit) dx = moveVec.x; else if (onBump) onBump(hit.object);
+      dx = clampStep(moveVec.x, blockedAxis(camera.position.x, camera.position.z, feetY, axisDir, Math.abs(moveVec.x) + COLLIDE_RADIUS, walls));
     }
     if (Math.abs(moveVec.z) > 0) {
       axisDir.set(0, 0, Math.sign(moveVec.z));
-      const hit = blockedAxis(camera.position.x + dx, camera.position.z, feetY, axisDir, Math.abs(moveVec.z) + COLLIDE_RADIUS, walls);
-      if (!hit) dz = moveVec.z; else if (onBump) onBump(hit.object);
+      dz = clampStep(moveVec.z, blockedAxis(camera.position.x + dx, camera.position.z, feetY, axisDir, Math.abs(moveVec.z) + COLLIDE_RADIUS, walls));
     }
     camera.position.x += dx;
     camera.position.z += dz;
@@ -217,6 +238,7 @@ export function createControls(camera, domElement, getCollidables, { onBump = nu
       moveVec.addScaledVector(rightVec, axis.x);
     }
     tryMove(delta);
+    if (swim && swim.sink > 0) camera.position.y = Math.max(swim.floorY, camera.position.y - swim.sink * delta);
     followFloor(delta);
   }
 
@@ -269,7 +291,8 @@ export function createControls(camera, domElement, getCollidables, { onBump = nu
     update, setLook, setMoveAxis, teleport, release, dispose, rotateRadians, setEyeOffset, syncFromCamera, requestLock,
     setEnabled(v) { enabled = !!v; if (!enabled) { dragLooking = false; onBlur(); setMoveAxis(0, 0); } },
     setLockable(v) { lockable = !!v; if (!lockable) release(); },
-    setSwim(v) { swim = v ? { floorY: v.floorY, ceilingY: v.ceilingY } : null; if (!swim) footY = camera.position.y - EYE_HEIGHT; },
+    // v: { floorY, ceilingY, sink } in world metres (sink in m/s, optional), or null
+    setSwim(v) { swim = v ? { floorY: v.floorY, ceilingY: v.ceilingY, sink: Math.max(0, v.sink || 0) } : null; if (!swim) footY = camera.position.y - EYE_HEIGHT; },
     setSpeedScale(v) { speedScale = v; },
     isEnabled: () => enabled,
     isSprinting: () => keys.sprint,

@@ -119,7 +119,7 @@ const RECIPES = {
   glass_dark:    { a: '#1a2224', b: '#25302f', seed: 152, contrast: 0.1, pattern: 'none', rough: 0.05, metal: 0.4, opacity: 0.55, bump: 0 },
   // the street's brick and the apartment desk's wood: the building's, photoreal (C1)
   brick:         { a: '#5a3428', b: '#8a5a44', seed: 161, contrast: 0.75, pattern: 'blocks', rough: 0.9, bump: 0.025, roughVar: 0.4 },
-  wood:          { a: '#3e2a1c', b: '#6a4a32', seed: 171, contrast: 0.7, pattern: 'stains', rough: 0.55, bump: 0.006, roughVar: 0.5 }
+  wood:          { a: '#3e2a1c', b: '#6a4a32', seed: 171, contrast: 0.35, pattern: 'grain', rough: 0.55, bump: 0.004, roughVar: 0.35 }
 };
 
 // ---- followup: s7 -- begin ----
@@ -194,6 +194,107 @@ const S7_PATTERNS = {
   }
 };
 // ---- followup: s7 -- end ----
+
+// ---- followup: look -- begin ----
+// Slots the polish passes asked for (all the building's, photoreal, C1):
+//   glass_clear    a pane you see through (S3 H's front doors onto the dead
+//                  street): 7 % tint, glossy, but with no specular lobe -- a
+//                  ceiling lamp's highlight on it read as a lamp lit in the
+//                  street beyond (the S3 review). door(..., glass='glass_clear').
+//   velvet         the S3 curtain's deep red velvet, a MeshPhysicalMaterial
+//                  with sheen and a vertical pile (`physical` below), hung
+//                  both sides (`double`). doors.js gives a kind 'curtain'
+//                  doorway in it smooth pleated halves.
+//   cardboard_wet  the soaked-cardboard blotch S8 C's package used to borrow
+//                  from 'wood' (dark, glossy where wet), now that 'wood' has
+//                  a grain.
+// Extra recipe keys read by createMaterialLibrary().get(): `physical`
+// {sheen, sheenRoughness, sheenColor, specularIntensity} builds a
+// MeshPhysicalMaterial with those set, and `double` renders both faces.
+Object.assign(RECIPES, {
+  glass_clear:   { a: '#c4d2d6', b: '#cfdbde', seed: 153, contrast: 0.05, pattern: 'none', rough: 0.04, opacity: 0.07, bump: 0,
+                   physical: { specularIntensity: 0 } },
+  velvet:        { a: '#560a15', b: '#6c1221', seed: 181, contrast: 0.45, pattern: 'pile', rough: 0.88, bump: 0, roughVar: 0.1, double: true,
+                   physical: { sheen: 0.75, sheenRoughness: 0.5, sheenColor: '#b8344c' } },
+  cardboard_wet: { a: '#3e2a1c', b: '#6a4a32', seed: 171, contrast: 0.7, pattern: 'stains', rough: 0.55, bump: 0.006, roughVar: 0.5 }
+});
+
+// Pattern passes for these slots (drawPattern hands over anything it does
+// not draw itself).
+function drawPatternLook(c, h, r, size, pattern, rnd) {
+  switch (pattern) {
+    case 'grain': {
+      // flat-sawn wood: long sinuous grain lines along u (world x on a desk
+      // top, horizontal on its sides), darker late-wood bands, fine pores,
+      // one knot the lines bend round. Every wave is a whole number of
+      // periods across the tile, so it repeats without a seam.
+      const TAU = Math.PI * 2;
+      const knot = { x: size * (0.25 + rnd() * 0.5), y: size * (0.3 + rnd() * 0.4), r: size * 0.035 };
+      const lines = 46;
+      for (let k = 0; k < lines; k++) {
+        const y0 = (k + rnd() * 0.6) * size / lines;
+        const a1 = 2 + rnd() * 5, f1 = 1 + Math.floor(rnd() * 2), p1 = rnd() * TAU;
+        const a2 = 0.6 + rnd() * 1.6, f2 = 3 + Math.floor(rnd() * 4), p2 = rnd() * TAU;
+        const late = rnd() < 0.35;
+        const alpha = late ? 0.22 + rnd() * 0.18 : 0.06 + rnd() * 0.1;
+        const width = late ? 1.6 + rnd() * 2.4 : 0.6 + rnd() * 1.0;
+        for (const wrap of [-size, 0, size]) {
+          c.beginPath(); h.beginPath();
+          for (let x = 0; x <= size; x += 4) {
+            let y = y0 + wrap + a1 * Math.sin(x / size * TAU * f1 + p1) + a2 * Math.sin(x / size * TAU * f2 + p2);
+            const dx = x - knot.x, dy = y - knot.y, d = Math.hypot(dx, dy * 2.2);
+            if (d < knot.r * 6) y += Math.sign(dy || 1) * knot.r * 2.2 * Math.pow(1 - d / (knot.r * 6), 2); // round the knot
+            if (x === 0) { c.moveTo(x, y); h.moveTo(x, y); } else { c.lineTo(x, y); h.lineTo(x, y); }
+          }
+          c.strokeStyle = `rgba(28,14,6,${alpha})`; c.lineWidth = width; c.stroke();
+          h.strokeStyle = `rgba(0,0,0,${alpha * 0.8})`; h.lineWidth = width; h.stroke();
+        }
+      }
+      // the knot itself: dark rings, a little raised and glossier
+      for (let i = 5; i >= 1; i--) {
+        c.strokeStyle = `rgba(30,14,5,${0.12 + 0.06 * (5 - i)})`; c.lineWidth = 1.5;
+        c.beginPath(); c.ellipse(knot.x, knot.y, knot.r * i * 0.5, knot.r * i * 0.22, 0, 0, TAU); c.stroke();
+      }
+      c.fillStyle = 'rgba(25,12,4,0.55)'; c.beginPath(); c.ellipse(knot.x, knot.y, knot.r * 0.45, knot.r * 0.2, 0, 0, TAU); c.fill();
+      r.fillStyle = 'rgba(0,0,0,0.25)'; r.beginPath(); r.ellipse(knot.x, knot.y, knot.r * 1.6, knot.r * 0.8, 0, 0, TAU); r.fill();
+      // pores: short dark dashes along the grain
+      for (let i = 0; i < 1400; i++) {
+        c.fillStyle = `rgba(20,10,4,${0.08 + rnd() * 0.12})`;
+        c.fillRect(rnd() * size, rnd() * size, 2 + rnd() * 6, 1);
+      }
+      // a few broad colour streaks along the grain (heartwood / sapwood)
+      for (let i = 0; i < 5; i++) {
+        const y = rnd() * size, hh = 8 + rnd() * 30;
+        c.fillStyle = rnd() > 0.5 ? `rgba(255,220,170,${0.03 + rnd() * 0.04})` : `rgba(20,8,2,${0.05 + rnd() * 0.06})`;
+        c.fillRect(0, y, size, hh);
+        if (y + hh > size) c.fillRect(0, y - size, size, hh);
+      }
+      // wear where hands rest: a faint glossier band
+      for (let i = 0; i < 3; i++) blobLook(r, rnd() * size, rnd() * size, 60 + rnd() * 90, 20 + rnd() * 30, 0, 'rgba(0,0,0,0.18)');
+      break;
+    }
+    case 'pile': {
+      // velvet pile: every column of the nap catches the light a little
+      // differently (dark and pale streaks running the length of the drop)
+      for (let x = 0; x < size; x++) {
+        const v = rnd();
+        c.fillStyle = v < 0.5 ? `rgba(20,0,6,${(0.5 - v) * 0.26})` : `rgba(255,140,150,${(v - 0.5) * 0.06})`;
+        c.fillRect(x, 0, 1, size);
+        r.fillStyle = `rgba(${v > 0.5 ? 255 : 0},${v > 0.5 ? 255 : 0},${v > 0.5 ? 255 : 0},0.06)`;
+        r.fillRect(x, 0, 1, size);
+      }
+      break;
+    }
+    default: break;
+  }
+}
+function blobLook(ctx, x, y, rx, ry, rot, color) {
+  const g = ctx.createRadialGradient(0, 0, 0, 0, 0, 1);
+  g.addColorStop(0, color); g.addColorStop(1, 'rgba(0,0,0,0)');
+  ctx.save(); ctx.translate(x, y); ctx.rotate(rot); ctx.scale(rx, ry);
+  ctx.fillStyle = g; ctx.beginPath(); ctx.arc(0, 0, 1, 0, Math.PI * 2); ctx.fill(); ctx.restore();
+}
+// ---- followup: look -- end ----
 
 // Pattern pass. `c` draws colour, `h` draws height (white = raised,
 // black = recessed; grout, seams, cracks go dark), `r` draws roughness
@@ -363,7 +464,7 @@ function drawPattern(c, h, r, size, pattern, rnd) {
     // ---- followup: s7 -- begin ----
     case 'diamond_plate': case 'quilted_steel': S7_PATTERNS[pattern](c, h, r, size, rnd); break;
     // ---- followup: s7 -- end ----
-    default: break;
+    default: drawPatternLook(c, h, r, size, pattern, rnd); break;
   }
 }
 
@@ -599,7 +700,8 @@ export function createMaterialLibrary({ anisotropy = 1 } = {}) {
     } else {
       const r = RECIPES[slot] || RECIPES.plaster;
       const set = textures(slot);
-      mat = new THREE.MeshStandardMaterial({
+      const Mat = r.physical ? THREE.MeshPhysicalMaterial : THREE.MeshStandardMaterial;
+      mat = new Mat({
         map: set.map,
         bumpMap: r.bump ? set.bumpMap : null,
         bumpScale: r.bump || 0,
@@ -608,8 +710,17 @@ export function createMaterialLibrary({ anisotropy = 1 } = {}) {
         metalness: r.metal || 0,
         transparent: r.opacity !== undefined,
         opacity: r.opacity !== undefined ? r.opacity : 1,
-        side: slot === 'water' ? THREE.DoubleSide : THREE.FrontSide
+        side: slot === 'water' || r.double ? THREE.DoubleSide : THREE.FrontSide
       });
+      if (r.physical) {
+        // velvet: a sheen lobe at grazing angles (the nap lit from behind);
+        // clear glass: no specular lobe at all
+        const ph = r.physical;
+        mat.sheen = ph.sheen || 0;
+        mat.sheenRoughness = ph.sheenRoughness === undefined ? 1 : ph.sheenRoughness;
+        if (ph.sheenColor) mat.sheenColor = new THREE.Color(ph.sheenColor);
+        if (ph.specularIntensity !== undefined) mat.specularIntensity = ph.specularIntensity;
+      }
       if (r.opacity !== undefined) mat.depthWrite = slot === 'water';
     }
     cache.set(slot, mat);

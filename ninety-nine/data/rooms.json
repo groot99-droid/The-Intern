@@ -2960,6 +2960,7 @@
     }
    ],
    "entry": "stoop",
+   "labelInk": "backed",
    "zones": [
     {
      "name": "report",
@@ -4318,6 +4319,7 @@
     "far": 28
    },
    "exposure": 1.5,
+   "labelInk": "dark",
    "vignette": 0.2,
    "spawn": [
     0,
@@ -5323,7 +5325,6 @@
      "gap": 1.75,
      "pelmet": 0.5,
      "off": 0.05,
-     "dress": "curtain",
      "name": "velvet"
     },
     {
@@ -5528,7 +5529,8 @@
      "w": 1.8,
      "h": 2.4,
      "kind": "curtain",
-     "locked": true
+     "locked": true,
+     "mat": "velvet"
     },
     {
      "name": "glass",
@@ -5558,8 +5560,7 @@
      "h": 2.2,
      "kind": "door",
      "locked": true,
-     "mat": "plaster_dark",
-     "frame": "plaster_dark",
+     "jib": true,
      "hinge": "R"
     }
    ],
@@ -6197,7 +6198,6 @@
      "gap": 1.75,
      "pelmet": 0.6,
      "off": 0.05,
-     "dress": "curtain",
      "name": "velvet"
     },
     {
@@ -6341,7 +6341,6 @@
      ],
      "level": 0.62,
      "grey": "#54575a",
-     "dressGlass": "front",
      "showFrom": [
       -7.3,
       -6.3,
@@ -6549,7 +6548,8 @@
      "w": 2.6,
      "h": 2.9,
      "kind": "glass",
-     "locked": true
+     "locked": true,
+     "glass": "glass_clear"
     },
     {
      "name": "curtain",
@@ -6558,7 +6558,8 @@
      "w": 1.8,
      "h": 2.6,
      "kind": "curtain",
-     "locked": true
+     "locked": true,
+     "mat": "velvet"
     },
     {
      "name": "side",

@@ -322,6 +322,132 @@ export async function run() {
     }
   });
 
+  // ---- the look follow-ups: material slots, doors, catalog tints, controls, labels ----
+
+  await runCase('rooms.json: the look keys name real things -- glass, curtain cloth, leaf and frame slots exist; `jib` only on a hinged door; `labelInk` is an ink labels.js draws; `swim.sink` a rate >= 0; `tintMapped` a flag; no runtime dressing (dress / dressGlass) left', async () => {
+    const [{ createMaterialLibrary }, { LABEL_INKS }] = await Promise.all([import('../../src/walk/materials.js'), import('../../src/labels.js')]);
+    const slots = new Set(createMaterialLibrary().slots());
+    const bad = [];
+    for (const [key, rec] of built) {
+      for (const d of rec.doors || []) {
+        for (const k of ['glass', 'mat', 'frame', 'panel', 'sill']) if (d[k] !== undefined && !slots.has(d[k])) bad.push(`${key}: door ${d.name} ${k} "${d[k]}" is no material slot`);
+        if (d.jib !== undefined) {
+          if (d.jib !== true && d.jib !== false) bad.push(`${key}: door ${d.name} jib must be true or false`);
+          if (d.jib && (d.kind || 'door') !== 'door') bad.push(`${key}: door ${d.name} is a jib ${d.kind} (only a hinged door can be flush)`);
+          if (d.jib && d.frame) bad.push(`${key}: door ${d.name} is a jib door with a frame`);
+        }
+        if (d.sway !== undefined && !(d.sway >= 0)) bad.push(`${key}: door ${d.name} sway`);
+      }
+      if (rec.labelInk !== undefined && !LABEL_INKS.includes(rec.labelInk)) bad.push(`${key}: labelInk "${rec.labelInk}" (labels.js draws ${LABEL_INKS.join(', ')})`);
+      if (rec.swim && rec.swim.sink !== undefined && !(typeof rec.swim.sink === 'number' && rec.swim.sink >= 0)) bad.push(`${key}: swim.sink must be a rate >= 0`);
+      for (const p of rec.props || []) {
+        if (p.dress !== undefined || p.dressGlass !== undefined) bad.push(`${key}: ${p.type} still dresses a doorway at runtime (use the door's own mat / glass)`);
+        if (p.tintMapped !== undefined && typeof p.tintMapped !== 'boolean') bad.push(`${key}: ${p.type} tintMapped must be a flag`);
+      }
+    }
+    assert(bad.length === 0, bad.join(' | '));
+    const door = (k, n) => (rooms.rooms[k].doors || []).find((d) => d.name === n) || {};
+    assertEqual(door('S3_C', 'curtain').mat, 'velvet', 'S3 C: the curtain doorway hangs the velvet');
+    assertEqual(door('S3_H', 'curtain').mat, 'velvet', 'S3 H: the curtain doorway hangs the velvet');
+    assertEqual(door('S3_H', 'front').glass, 'glass_clear', 'S3 H: the dead street is seen through clear glass');
+    assertEqual(door('S3_C', 'service').jib, true, 'S3 C: the service door is flush in the plaster (Scene Flow)');
+    assertEqual(rooms.rooms.S1_H.labelInk, 'dark', 'S1 H: the threshold words dark over the blown-out walls');
+  });
+
+  await runCase('materials.js: glass_clear is a pane seen through (about 7 % tint, glossy, no specular lobe to read as a lamp beyond it), velvet a sheened physical cloth hung both sides, wood a grain that runs along u, and cardboard_wet the soaked-cardboard stain', async () => {
+    const THREE = await import('../../vendor/three/three.module.js');
+    const { createMaterialLibrary } = await import('../../src/walk/materials.js');
+    const mats = createMaterialLibrary();
+    const g = mats.get('glass_clear');
+    assert(g.transparent && g.opacity >= 0.04 && g.opacity <= 0.1, `glass_clear opacity ${g.opacity}`);
+    assert(g.roughness <= 0.06, `glass_clear roughness ${g.roughness}`);
+    assert(g.isMeshPhysicalMaterial && g.specularIntensity === 0, 'glass_clear: no specular lobe');
+    assert(g.depthWrite === false, 'glass_clear: a transparent pane writes no depth');
+    const v = mats.get('velvet');
+    assert(v.isMeshPhysicalMaterial && v.sheen > 0 && v.sheenColor.r > v.sheenColor.b, 'velvet: a red sheen');
+    assertEqual(v.side, THREE.DoubleSide, 'velvet: both faces');
+    assert(!mats.isLowPoly('velvet') && !mats.isLowPoly('glass_clear') && !mats.isLowPoly('cardboard_wet'), 'the building\'s slots are photoreal (C1)');
+    // the grain runs along u: neighbours along a row differ less than neighbours down a column
+    const cv = mats.get('wood').map.image;
+    const px = cv.getContext('2d').getImageData(0, 0, cv.width, cv.height).data;
+    let du = 0, dv = 0;
+    for (let y = 0; y < cv.height - 1; y += 3) for (let x = 0; x < cv.width - 1; x += 3) {
+      const i = (y * cv.width + x) * 4;
+      du += Math.abs(px[i] - px[i + 4]);
+      dv += Math.abs(px[i] - px[i + cv.width * 4]);
+    }
+    assert(du * 1.3 < dv, `wood: no grain along u (row change ${du}, column change ${dv})`);
+    assert(mats.get('cardboard_wet').map !== mats.get('wood').map, 'cardboard_wet is its own slot');
+    mats.dispose();
+  });
+
+  await runCase('library.js: a catalog model keeps its vertex colours (windows, tyres, rust) and its palette slot multiplies into them; palette and cardoor can find what the library made', async () => {
+    const THREE = await import('../../vendor/three/three.module.js');
+    const { createLibrary, catalogPaint } = await import('../../src/stage/library.js');
+    const lib = createLibrary();
+    if (!(await lib.ready)) { assert(lib.failed(), 'library neither loaded nor failed'); return; }
+    const tint = new THREE.Color('#5a3f2e');
+    const mats = (g) => { const out = []; g.traverse((o) => { if (o.isMesh) out.push(o); }); return out; };
+    const plain = mats(lib.instance('lib_car_sedan'));
+    const tinted = mats(lib.instance('lib_car_sedan', tint));
+    assert(plain.length && tinted.length, 'lib_car_sedan: no meshes');
+    for (const m of tinted) {
+      assert(m.geometry.attributes.color, 'the catalog car is vertex-painted');
+      assert(m.material.vertexColors === true, 'vertex colours kept');
+      assert(m.material.flatShading && m.material.customProgramCacheKey && m.material.customProgramCacheKey() === 'snap', 'C1: flat-shaded and vertex-snapped');
+      assert(m.material.userData.catalog === true, 'marked for props.js palette');
+      const base = plain[0].material.color;
+      assert(Math.abs(m.material.color.r - base.r * tint.r) < 1e-6 && Math.abs(m.material.color.g - base.g * tint.g) < 1e-6, 'the slot multiplies the model\'s colour (no 80 % lerp)');
+    }
+    const cp = catalogPaint(tint);
+    assert(cp.r < tint.r && cp.r > tint.r * 0.3, 'catalogPaint: the slot multiplied into the catalog\'s light grey');
+  });
+
+  await runCase('controls.js: a blocked step is clamped to the wall (a slow frame still reaches its face); swimming never rises (C3) and `sink` takes him down to the swim floor', async () => {
+    const THREE = await import('../../vendor/three/three.module.js');
+    const { createControls } = await import('../../src/walk/controls.js');
+    const cam = new THREE.PerspectiveCamera(60, 16 / 9, 0.05, 100);
+    const dom = document.createElement('div');
+    const m = new THREE.MeshBasicMaterial();
+    const wall = new THREE.Mesh(new THREE.BoxGeometry(4, 3, 0.2), m);
+    wall.position.set(0, 1.5, -1.1); // its face at z = -1.0
+    const floor = new THREE.Mesh(new THREE.BoxGeometry(20, 0.2, 20), m);
+    floor.position.set(0, -0.1, 0);
+    wall.updateMatrixWorld(true); floor.updateMatrixWorld(true);
+    let bumps = 0;
+    const c = createControls(cam, dom, () => ({ walls: [wall], floors: [floor] }), { onBump: () => { bumps++; } });
+    try {
+      c.teleport(0, 0, 0, 0); // facing -z, the wall a metre ahead
+      c.setMoveAxis(0, 1);
+      c.update(0.5); // a 1.3 m step at walking pace: the old code cancelled it 0.65 m short of the wall
+      assert(Math.abs(cam.position.z - (-1.0 + 0.35)) < 0.01, `stopped at z ${cam.position.z.toFixed(3)}, not at the wall's face less his radius`);
+      assert(bumps > 0, 'the push into the wall is reported (bumpCount)');
+      c.update(0.5);
+      assert(cam.position.z > -0.66, 'he never passes into the wall');
+      // swimming, clear of the wall
+      c.setSwim({ floorY: -5, ceilingY: 5 });
+      cam.position.set(3, 2, 0);
+      c.setLook(0, 0.6); // looking up and swimming forward
+      c.update(0.25);
+      assert(Math.abs(cam.position.y - 2) < 1e-9, `rose to ${cam.position.y} (C3: no ascent)`);
+      assert(cam.position.z < -0.1, 'still swims forward');
+      c.setLook(0, -0.6);
+      c.update(0.25);
+      assert(cam.position.y < 1.9, 'swims down');
+      c.setMoveAxis(0, 0);
+      c.setSwim({ floorY: -5, ceilingY: 5, sink: 0.5 });
+      const y0 = cam.position.y;
+      c.update(1);
+      assert(Math.abs(cam.position.y - (y0 - 0.5)) < 1e-6, 'sink: half a metre in a second');
+      cam.position.y = -4.8;
+      c.update(1);
+      assert(Math.abs(cam.position.y + 5) < 1e-9, 'the swim floor stops the sink');
+    } finally {
+      c.setSwim(null);
+      c.dispose();
+    }
+  });
+
   await runCase('Track C motif 2: at most one 99 slip per set after S1', () => {
     for (const [key, rec] of sets) {
       if (key.startsWith('S1_') || key === 'S0_X' || key === 'SE_PEND') continue;

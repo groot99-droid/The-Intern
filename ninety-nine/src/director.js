@@ -759,7 +759,7 @@ export function createDirector({ manifest, endings, state, stage, audio = null, 
   function startSwim(inst) {
     const sw = inst.rec.swim;
     const y0 = inst.matrix.elements[13];
-    if (sw) player.setSwim({ floorY: y0 + sw.floorY, ceilingY: y0 + sw.ceilingY });
+    if (sw) player.setSwim({ floorY: y0 + sw.floorY, ceilingY: y0 + sw.ceilingY, sink: sw.sink || 0 }); // controls.js: no ascent, `sink` m/s
     stage.releaseShot();
     player.enable();
     stage.setPlayerActive(true);
@@ -1064,7 +1064,7 @@ export function createDirector({ manifest, endings, state, stage, audio = null, 
       if (!z) continue;
       if (z.armAfter && !(scene && scene.reached.has(z.armAfter))) continue;
       const st = zoneState(B.inst, z, pos, feet);
-      if (B.label) labels.set(`beat:${B.zone}`, B.label, st.label, 1 - smoothstep(z.r + 0.3, z.ring, st.dist));
+      if (B.label) labels.set(`beat:${B.zone}`, B.label, st.label, 1 - smoothstep(z.r + 0.3, z.ring, st.dist), B.inst.rec.labelInk);
       if (st.inside && player.isEnabled()) {
         if (scene) scene.reached.add(B.zone);
         if (B.once) B.done = true;
@@ -1094,7 +1094,7 @@ export function createDirector({ manifest, endings, state, stage, audio = null, 
             if (!best || st.dist < best.dist) best = { ...st, z };
           }
           if (!best) { labels.set(T.id, T.th.label, [0, -999, 0], 0); continue; }
-          labels.set(T.id, T.th.label, best.label, best.z.silent ? 0 : 1 - smoothstep(best.z.r + 0.3, best.z.ring, best.dist));
+          labels.set(T.id, T.th.label, best.label, best.z.silent ? 0 : 1 - smoothstep(best.z.r + 0.3, best.z.ring, best.dist), inst.rec.labelInk);
           if (best.inRing) {
             ringKey = T.key;
             if (!T.approached) { T.approached = true; if (T.th.approach) runBeats(T.th.approach, inst); }
@@ -1112,7 +1112,7 @@ export function createDirector({ manifest, endings, state, stage, audio = null, 
       const w = endingWatch;
       w.t += dt;
       const st = w.zone ? zoneState(w.inst, w.zone, pos, feet) : { inside: false, dist: Infinity };
-      if (w.zone && w.ending.label) labels.set('ending', w.ending.label, st.label, 1 - smoothstep(w.zone.r + 0.3, w.zone.ring, st.dist));
+      if (w.zone && w.ending.label) labels.set('ending', w.ending.label, st.label, 1 - smoothstep(w.zone.r + 0.3, w.zone.ring, st.dist), w.inst.rec.labelInk);
       if ((st.inside && player.isEnabled()) || w.t > (w.ending.autoSeconds || 90)) playEnding(w);
     }
   }
@@ -1272,8 +1272,8 @@ export function createDirector({ manifest, endings, state, stage, audio = null, 
     const e = inst.anchorsWorld[inst.entryName];
     if (inst.rec.swim) {
       const y0 = inst.matrix.elements[13];
+      startSwim(inst); // swimming first: a teleport on foot snaps to the pool floor, and he cannot rise from it (C3)
       player.teleport(0, y0 + inst.rec.size[1] - 3, 0, 0);
-      startSwim(inst);
     } else if (e && !inst.room.anchors[inst.entryName].vertical) {
       const y = (e.yaw + 180) * Math.PI / 180;
       player.teleport(e.pos[0] - Math.sin(y) * 1.8, e.pos[1], e.pos[2] - Math.cos(y) * 1.8, e.yaw + 180);
