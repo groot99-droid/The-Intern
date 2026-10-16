@@ -1172,6 +1172,23 @@
           "next": "S7",
           "ambience": "S6_H_AMB.wav",
           "music": "water",
+          "env": {
+            "fog": {
+              "color": "#1d1209",
+              "near": 5,
+              "far": 44
+            },
+            "ambient": {
+              "color": "#ffb060",
+              "intensity": 0.15
+            },
+            "sun": {
+              "color": "#ffb86a",
+              "intensity": 0.35
+            },
+            "exposure": 1.05,
+            "seconds": 1.5
+          },
           "onEnter": [
             {
               "light": {
@@ -1179,6 +1196,70 @@
                 "on": false
               },
               "hide": "poolkit"
+            }
+          ],
+          "beatZones": [
+            {
+              "zone": "run_breath",
+              "beat": [
+                {
+                  "breath": {
+                    "every": 2.8,
+                    "gain": 0.05,
+                    "filterHz": 950,
+                    "durationMs": 420
+                  }
+                }
+              ]
+            },
+            {
+              "zone": "run_deeper",
+              "beat": [
+                {
+                  "breath": {
+                    "every": 3.3,
+                    "gain": 0.075,
+                    "filterHz": 720,
+                    "durationMs": 640,
+                    "inhale": true
+                  },
+                  "footfall": {
+                    "gain": 0.15,
+                    "filterHz": 600,
+                    "durationMs": 95
+                  }
+                }
+              ]
+            },
+            {
+              "zone": "run_haze",
+              "beat": [
+                {
+                  "env": {
+                    "base": true,
+                    "seconds": 7
+                  }
+                }
+              ]
+            },
+            {
+              "zone": "run_heavy",
+              "beat": [
+                {
+                  "breath": {
+                    "every": 3.9,
+                    "gain": 0.1,
+                    "filterHz": 520,
+                    "durationMs": 880,
+                    "inhale": true
+                  },
+                  "footfall": {
+                    "gain": 0.19,
+                    "filterHz": 460,
+                    "durationMs": 125
+                  }
+                }
+              ]
             }
           ],
           "thresholds": {
@@ -1189,6 +1270,8 @@
               "via": "CN_CORRIDOR_DOWN",
               "beat": [
                 {
+                  "breath": false,
+                  "footfall": false,
                   "shake": {
                     "seconds": 0.35,
                     "amount": 0.02
@@ -1222,6 +1305,8 @@
               "via": "CN_CORRIDOR_DOWN",
               "beat": [
                 {
+                  "breath": false,
+                  "footfall": false,
                   "moveTo": {
                     "pos": [
                       -8.0,
@@ -1633,6 +1718,12 @@
           "next": "E",
           "ambience": "S8_H_AMB.wav",
           "music": "water",
+          "hum": {
+            "room": "S8_H",
+            "hz": 48,
+            "gain": 0.018,
+            "followDrone": true
+          },
           "thresholds": {
             "succumb": {
               "label": "DIVE",

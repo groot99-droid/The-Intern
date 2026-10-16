@@ -57,6 +57,8 @@ export function createDirector({ manifest, endings, state, stage, audio = null, 
   let actorRuns = [];      // actors walking their paths
   let ride = null;         // the cab, descending
   let hint = null;
+  let breathing = null;    // the breath layer (`breath` beat): {every, opts, t}
+  let humAt = null;        // the room the hum belongs to (`hum`): it fades once he has left it
   const gone = () => bailedOut || ended;
 
   // ---- zones -------------------------------------------------------------
@@ -100,6 +102,53 @@ export function createDirector({ manifest, endings, state, stage, audio = null, 
   }
   function setLight(inst, id, on, seconds = 0) {
     for (const s of inst.lights) if (s.id === id) { s.off = !on; s.fadeS = seconds || 0; }
+  }
+
+  // The breath layer (S6 H's run, Doc 2: "breathing over concrete reverb,
+  // footfalls, both getting heavier and slower, then stopping"). A `breath`
+  // beat {every, gain, filterHz, durationMs, inhale} starts it, or changes
+  // it where it stands (a deeper breath, further apart); `breath: false`
+  // stops it. Its partner `footfall` {gain, filterHz, durationMs} is the
+  // voice of his footsteps from then on (player.setFootstep), `false` gives
+  // the floors theirs back. Both end with the scene, the game, or a beat.
+  function setBreath(spec) {
+    if (!spec) { breathing = null; return; }
+    const { every = 3, ...opts } = spec;
+    breathing = { every, opts, t: breathing ? Math.min(breathing.t, every) : every * 0.6 };
+  }
+  function stopLayers() {
+    breathing = null;
+    player.setFootstep(null);
+  }
+
+  // The store's fluorescent hum (scenes.json branch / endings.json `hum`:
+  // {hz, gain, lowpassHz, followDrone, room}; Doc 1 §6.4: "48 Hz, detuned
+  // exactly as far as the building's drone"). It plays while he is in
+  // `room` (default: the room it is set in) and fades once he has walked
+  // out of it, or at the card. audio.js carries the drone's detune onto it;
+  // the drone itself is never touched (C7).
+  function humFor(spec, inst) {
+    if (!audio || !spec || !inst) return;
+    if (spec.room && world.baseOf(spec.room) !== inst.base) return;
+    audio.setHum(spec);
+    humAt = inst;
+  }
+  // A branch's `env` (the env beat's pieces, scenes.json): its room's own
+  // atmosphere for that scene. Set at once the moment the room is joined,
+  // so the passage he walks down already blends into it (S6 H's sodium
+  // haze, not the edge's teal it was built with), and lerped to over its
+  // `seconds` when the scene starts in a room already standing.
+  function joinEnv(inst, branch) {
+    if (inst && branch && branch.env) world.setEnv(inst, { ...branch.env, seconds: 0 });
+  }
+
+  function stepHum() {
+    const cur = world.current();
+    // left: dropped, or he is in a passage the room opened behind him
+    if (!world.instances().includes(humAt) || (cur && cur !== humAt && cur.link && cur.link.from === humAt)) {
+      humAt = null;
+      if (audio) audio.setHum(null, { ms: 2500 });
+    }
   }
 
   function holdProp(type, from = null) {
@@ -191,6 +240,11 @@ export function createDirector({ manifest, endings, state, stage, audio = null, 
       if (b.show) setVisible(inst, b.show, true);
       if (b.hide) setVisible(inst, b.hide, false);
       if (b.light) setLight(inst, b.light.id, b.light.on !== false, b.light.seconds);
+      // `env`: {fog, background, exposure, ambient, sun, grain, vignette,
+      // base, seconds} -- this room's own atmosphere, lerped (world.setEnv)
+      if (b.env) world.setEnv(inst, b.env);
+      if (b.breath !== undefined) setBreath(b.breath);
+      if (b.footfall !== undefined) player.setFootstep(b.footfall || null);
       if (b.screen) {
         if (b.screen.page) drawScreen(inst, b.screen.prop, PAGES[b.screen.page]());
         else screenPower(inst, b.screen.prop, b.screen.on !== false, stage.mats);
@@ -461,6 +515,7 @@ export function createDirector({ manifest, endings, state, stage, audio = null, 
     captions.clear();
     labels.clear();
     if (!branch.keepHeld) dropHeld();
+    stopLayers();
     if (audio) {
       audio.resumeIfSuspended();
       audio.advanceScene(state.sceneIndex);
@@ -468,6 +523,8 @@ export function createDirector({ manifest, endings, state, stage, audio = null, 
       const music = branch.music !== undefined ? branch.music : sc.music;
       audio.setMusic(music === undefined ? null : music, letter);
     }
+    humFor(branch.hum, inst);
+    if (branch.env) world.setEnv(inst, branch.env); // already set if he walked in: a lerp to where it is
     sfxPlay(branch.sfxCue);
     captions.schedule(branch.captions);
     fractureOverlay.apply(fracture(state), oppositeRecord(sceneId, letter));
@@ -510,11 +567,12 @@ export function createDirector({ manifest, endings, state, stage, audio = null, 
     if (th.via === 'fall') { fallInto(sc, th, nb, next); return; }
     if (world.baseOf(nb.room) === sc.inst.base) { enterScene(next, sc.inst); return; }
     sealHeldEntry(sc.inst);
-    openWay(sc.inst, th.exit, th.via, nb.room, {
+    const way = openWay(sc.inst, th.exit, th.via, nb.room, {
       viaDark: !!th.viaDark,
       onEnterConn: () => { captions.clear(); if (audio) audio.stopOneShots({ ms: 400 }); },
       onBoundary: (dest) => enterScene(next, dest)
     });
+    joinEnv(way.dest, nb);
   }
 
   // S7 H -> S8 H: off the lip, into the water; the dive is joined under the
@@ -523,6 +581,7 @@ export function createDirector({ manifest, endings, state, stage, audio = null, 
   async function fallInto(sc, th, nb, next) {
     const edge = sc.inst;
     const dive = world.attach(edge, th.exit || 'drop', nb.room);
+    joinEnv(dive, nb);
     dive.lightLevel = 0;
     dive.lightTarget = 1;
     // linked to the edge for the fall, so its lamps take light slots (and
@@ -552,7 +611,7 @@ export function createDirector({ manifest, endings, state, stage, audio = null, 
   }
 
   // S8 H: through the grate, down the chute, out onto the store's linoleum.
-  async function chuteTo(dive, storeKey) {
+  async function chuteTo(dive, storeKey, branch = null) {
     player.disable();
     stage.setPlayerActive(false);
     player.setSwim(null);
@@ -579,6 +638,7 @@ export function createDirector({ manifest, endings, state, stage, audio = null, 
     if (gone()) return store;
     if (audio) audio.playAmbience('S8_H_AMB_STORE.wav', { crossfadeMs: 900 });
     world.setCurrent(store);
+    humFor(branch && branch.hum, store); // the store's hum (scenes.json S8 H `hum`)
     await stage.playShot(store, 'land');
     if (gone()) return store;
     world.remove(chute);
@@ -594,7 +654,7 @@ export function createDirector({ manifest, endings, state, stage, audio = null, 
     const endingId = resolveEnding(state);
     const ending = endings[endingId];
     if (th.to && world.baseOf(th.to) !== sc.inst.base) {
-      const store = await chuteTo(sc.inst, th.to);
+      const store = await chuteTo(sc.inst, th.to, sc.branch);
       if (store && !gone()) arriveForEnding(store, endingId, ending);
       return;
     }
@@ -622,6 +682,7 @@ export function createDirector({ manifest, endings, state, stage, audio = null, 
       audio.setMusic(null);
       if (ending.ambience) audio.playAmbience(ending.ambience, { crossfadeMs: 2000 });
     }
+    humFor(ending.hum, inst); // already humming (S8 H's store): carried on, never restarted
     for (const o of ending.flagOverlays || []) {
       if (o.flag && state.flags.has(o.flag)) for (const n of o.hide || []) setVisible(inst, n, false);
     }
@@ -667,6 +728,8 @@ export function createDirector({ manifest, endings, state, stage, audio = null, 
     captions.stop();
     labels.clear();
     if (hint) hint.remove();
+    breathing = null;
+    humAt = null; // fadeOutForEnding fades the hum with the beds
     if (audio) audio.fadeOutForEnding();
     fractureOverlay.destroy && fractureOverlay.destroy();
     await stage.blackout(1.2);
@@ -800,7 +863,7 @@ export function createDirector({ manifest, endings, state, stage, audio = null, 
     await world.prebuild(s1);
     if (gone()) return;
     sfxPlay('door-buzz');
-    openWay(street, branch.report.exit, branch.report.via, s1, {
+    const way = openWay(street, branch.report.exit, branch.report.via, s1, {
       openSeconds: 1.0,
       boundaryAt: 'seal2',
       // C7: the drone begins when the lobby doors close behind him, and
@@ -808,6 +871,7 @@ export function createDirector({ manifest, endings, state, stage, audio = null, 
       onSeal2: () => { if (audio) audio.startDrone(); },
       onBoundary: (lobby) => enterScene('S1', lobby)
     });
+    joinEnv(way.dest, manifest.scenes.S1.branches[letter]);
   }
 
   // ---- per frame ---------------------------------------------------------------
@@ -833,6 +897,8 @@ export function createDirector({ manifest, endings, state, stage, audio = null, 
       if (done) actorRuns.splice(actorRuns.indexOf(r), 1);
     }
     for (const L of links.slice()) stepLink(L, pos);
+    if (breathing && (breathing.t += dt) >= breathing.every) { breathing.t -= breathing.every; sfxPlay('breath', breathing.opts); }
+    if (humAt) stepHum();
 
     // beat zones (APPLY, the street door, the package)
     for (const B of beatZones) {
@@ -972,17 +1038,39 @@ export function createDirector({ manifest, endings, state, stage, audio = null, 
   // Dev only (?start=S5&render=H): put the candidate straight into a scene,
   // standing just inside its room's entry, with a score that gives that
   // render. The rest of the game plays on from there as normal.
-  async function startAt(sceneId, letter = 'C') {
+  //
+  // `&conf=N` / `&diss=N` (dev only, read from the page URL unless `score`
+  // is passed) set the score itself instead -- conformance -8..8,
+  // dissonance 0..7 -- so the endings can be tried by starting late:
+  // ?start=S8&conf=3 then DELIVER is ASSIMILATION, ?start=S8&conf=5 then
+  // OPEN THE BOX is RETAINED, ?start=S8&render=H&conf=-3 then either way
+  // down is EXPULSION, &diss=4 is PENDING REVIEW whatever he does. The render then
+  // comes from that score (renderFor; `render` only breaks a tie inside
+  // +/-2), and resolveEnding() reads the same state. A score no real game
+  // could have by that scene is allowed, with a console warning.
+  async function startAt(sceneId, letter = 'C', score = devScore()) {
     const sc = manifest.scenes[sceneId];
     if (!sc || sceneId === 'S0') return startS0();
-    const L = sc.branches[letter] ? letter : 'C';
+    let L = sc.branches[letter] ? letter : 'C';
     const n = manifest.spineOrder.indexOf(sceneId);
     state.lastRender = L;
     state.conformance = (n - 1) % 2 === 1 ? (L === 'C' ? 1 : -1) : 0;
     state.lastPolarity = state.conformance === 0 ? null : (L === 'C' ? 1 : -1);
+    if (score.conf !== null) {
+      state.conformance = Math.max(-8, Math.min(8, score.conf));
+      state.lastPolarity = Math.sign(state.conformance) || null;
+      L = peekRenderFor(state);
+      if (L !== letter) console.warn(`[director] dev start: conf=${state.conformance} gives ${sceneId} ${L}, not ${letter}`);
+    }
+    if (score.diss !== null) state.dissonance = Math.max(0, Math.min(7, score.diss));
+    const made = n - 1; // choices made before this scene
+    if (Math.abs(state.conformance) > made || Math.abs(state.conformance) % 2 !== made % 2 || state.dissonance > Math.max(0, made - 1)) {
+      console.warn(`[director] dev start: conf=${state.conformance} diss=${state.dissonance} is no score a real game has at ${sceneId}`);
+    }
     const branch = sc.branches[L];
     await world.prebuild(branch.room);
     const inst = world.spawn(branch.room);
+    joinEnv(inst, branch);
     inst.entryName = inst.entryName || inst.rec.entry;
     world.setCurrent(inst);
     if (inst.rec.holdEntry) devArrival(sceneId, L, inst);
@@ -1005,9 +1093,16 @@ export function createDirector({ manifest, endings, state, stage, audio = null, 
     enterScene(sceneId, inst);
   }
 
+  // ?conf=N&diss=N on the page URL (startAt): integers, or null if absent
+  function devScore() {
+    const q = typeof location !== 'undefined' ? new URLSearchParams(location.search) : null;
+    const num = (k) => { const v = q && q.get(k); return v !== null && v !== '' && Number.isFinite(Number(v)) ? Math.round(Number(v)) : null; };
+    return { conf: num('conf'), diss: num('diss') };
+  }
+
   return {
-    start(sceneId = 'S0', letter = 'C') {
-      if (sceneId !== 'S0') return startAt(sceneId, letter);
+    start(sceneId = 'S0', letter = 'C', score) {
+      if (sceneId !== 'S0') return startAt(sceneId, letter, score || devScore());
       return startS0();
     },
     bail() {
@@ -1048,6 +1143,8 @@ export function createDirector({ manifest, endings, state, stage, audio = null, 
         targets,
         ending: endedWith || (endingWatch ? endingWatch.endingId : null),
         ended,
+        breath: breathing ? { every: breathing.every, ...breathing.opts } : null,
+        hum: humAt ? humAt.key : null,
         playerEnabled: player.isEnabled(),
         position: pos,
         state: { conformance: state.conformance, dissonance: state.dissonance, friction: +state.friction.toFixed(3), flags: [...state.flags], lastRender: state.lastRender, sceneIndex: state.sceneIndex },

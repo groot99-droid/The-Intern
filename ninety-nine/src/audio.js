@@ -10,6 +10,7 @@
 // Bus layout (post-mix-pass):
 //
 //   drone ─────────────────────────┐
+//   hum (the store's, setHum) ─────┤  (reads the drone's detune, never writes it)
 //   ambience (2-el pool, trimmed) ─┤
 //   music (music.js pad/muzak) ────┼──> master ──> limiter ──> destination
 //   sfx (one-shots + synth cues) ──┤
@@ -150,6 +151,8 @@ class Drone {
     const t = this.ctx.currentTime;
     this.osc.detune.cancelScheduledValues(t);
     this.osc.detune.linearRampToValueAtTime(sceneIndex * DETUNE_PER_SCENE, t + 8);
+    // what was just scheduled, for whatever follows the drone (the hum)
+    this.detuneTo = { cents: sceneIndex * DETUNE_PER_SCENE, at: t + 8 };
 
     if (sceneIndex >= 5) {
       const refTarget = 0.02 * Math.min(1, (sceneIndex - 5) / 3); // ramps in across S5..S8
@@ -246,6 +249,7 @@ export function createAudio() {
   let musicBus = null;
   let ambience = null;
   let music = null;
+  let hum = null; // the store's hum (setHum): { osc, filter, gain, follow, detuneTo }
   // Mute gates the single master bus everything else connects to (drone,
   // ambience, sfx one-shots and synth cues alike), so one flag silences the
   // whole game. Read at context creation and whenever toggled thereafter --
@@ -319,6 +323,20 @@ export function createAudio() {
     setTimeout(() => { rec.el.pause(); releaseOneShot(file, rec); }, ms + 30);
   }
 
+  // The hum carries the drone's detune: where the drone is now, and the
+  // ramp advanceScene() last scheduled for it, if that is still running.
+  // Read only: nothing here writes to the drone (C7).
+  function followDrone() {
+    if (!hum) return;
+    const d = hum.osc.detune, t = ctx.currentTime;
+    d.cancelScheduledValues(t);
+    const r = drone && drone.started && hum.follow ? drone.detuneTo : null;
+    const now = hum.follow && drone && drone.started ? drone.osc.detune.value : 0;
+    d.setValueAtTime(now, t);
+    if (r && r.at > t) d.linearRampToValueAtTime(r.cents, r.at);
+    hum.detuneTo = r ? r.cents : now;
+  }
+
   return {
     // The first trusted gesture (a click to look, a key, a touch) unlocks
     // the AudioContext: room tone, footsteps and the music bus can sound
@@ -364,6 +382,47 @@ export function createAudio() {
 
     advanceScene(sceneIndex) {
       if (drone) drone.advanceScene(sceneIndex);
+      followDrone();
+    },
+
+    // The store's fluorescent hum (Doc 1 §6.4: "48 Hz, detuned exactly as
+    // far as the building's drone. He never left."). An ambience setting
+    // (scenes.json / endings.json `hum`: {hz = 48, gain = 0.018, lowpassHz =
+    // 320, followDrone = true}): its own oscillator -- a buzzing saw through
+    // a low-pass, on the master bus beside the drone -- that carries the
+    // drone's current detune and every advanceScene() ramp after it while
+    // `followDrone`. Setting it again while it plays retunes and re-levels
+    // it, never restarts it; `null` fades it out over `ms` and frees it.
+    // The drone is never started, stopped or retuned from here (C7).
+    setHum(spec, { ms = 1500 } = {}) {
+      if (!ctx) return;
+      if (!spec) {
+        if (!hum) return;
+        const h = hum;
+        hum = null;
+        rampGain(h.gain.gain, ctx, 0, ms);
+        h.osc.stop(ctx.currentTime + Math.max(0.03, ms / 1000) + 0.05);
+        h.osc.onended = () => { try { h.osc.disconnect(); h.filter.disconnect(); h.gain.disconnect(); } catch (e) { /* already gone */ } };
+        return;
+      }
+      if (!hum) {
+        const osc = ctx.createOscillator();
+        osc.type = 'sawtooth';
+        const filter = ctx.createBiquadFilter();
+        filter.type = 'lowpass';
+        filter.Q.value = 0.7;
+        const gain = ctx.createGain();
+        gain.gain.value = 0;
+        osc.connect(filter).connect(gain).connect(master);
+        osc.frequency.value = spec.hz || DRONE_HZ;
+        osc.start();
+        hum = { osc, filter, gain, follow: true, detuneTo: 0 };
+      }
+      rampGain(hum.osc.frequency, ctx, spec.hz || DRONE_HZ, ms);
+      rampGain(hum.filter.frequency, ctx, spec.lowpassHz || 320, ms);
+      rampGain(hum.gain.gain, ctx, spec.gain === undefined ? 0.018 : spec.gain, ms);
+      hum.follow = spec.followDrone !== false;
+      followDrone();
     },
 
     playAmbience(file, opts) {
@@ -453,6 +512,7 @@ export function createAudio() {
       if (!ctx) return;
       if (ambience) ambience.fadeOut(bedsMs);
       if (music) music.stop(bedsMs);
+      this.setHum(null, { ms: bedsMs });
       this.stopOneShots({ ms: Math.min(bedsMs, 600) });
       rampGain(drone.gain.gain, ctx, 0, droneMs);
       rampGain(drone.refGain.gain, ctx, 0, droneMs);
@@ -482,6 +542,8 @@ export function createAudio() {
     // Test-only introspection (test/cases/audio.drone.js, audio.mix.js).
     _debugDroneStartCount() { return drone && drone.started ? 1 : 0; },
     _debugDetuneValue() { return drone ? drone.osc.detune.value : null; },
+    _debugDroneDetuneTo() { return drone && drone.detuneTo ? drone.detuneTo.cents : null; },
+    _debugHum() { return hum ? { hz: hum.osc.frequency.value, follow: hum.follow, detuneTo: hum.detuneTo } : null; },
     _debugBusGains() {
       return ctx ? { ambience: ambienceBus.gain.value, sfx: sfxBus.gain.value, music: musicBus.gain.value, voice: voiceBus.gain.value, limiterThreshold: limiter.threshold.value } : null;
     },

@@ -12,14 +12,16 @@
 //   - the colliders of everything live, for controls.js;
 //   - which instance the player is standing in;
 //   - the atmosphere (env.js): one room's, or two blended across a
-//     connector by how far along it the player is;
-//   - the light pool (lights.js), fed with every live instance's lights.
+//     connector by how far along it the player is; an env beat (setEnv)
+//     moves one live room's own, and the blend reads it live;
+//   - the light pool (lights.js), fed with every live instance's lights,
+//     and the props whose glow follows one of them (a light's `sync`).
 
 import * as THREE from '../../vendor/three/three.module.js';
 import { buildRoom } from '../walk/room.js';
 import { attachMatrix, anchorToWorld, interiorBox, poseToWorld } from './anchors.js';
-import { blendEnv, BLACK_ENV } from './env.js';
-import { createLightRig } from './lights.js';
+import { blendEnv, BLACK_ENV, envPieces, envAim, envLerpInto } from './env.js';
+import { createLightRig, liveLevel } from './lights.js';
 
 const LIBRARY_WAIT_MS = 6000; // a room builds with box fallbacks if the library is slower than this
 
@@ -131,9 +133,92 @@ export function createWorld({ scene, mats, library, rooms, lightPool = {} }) {
       const d = new THREE.Vector3(e.sun.core[0] - e.sun.from[0], e.sun.core[1] - e.sun.from[1], e.sun.core[2] - e.sun.from[2]).normalize().applyMatrix4(rot);
       sunDir = [d.x, d.y, d.z];
     }
-    inst.env = { ...e, sunDir };
+    // the same object for the instance's life (a link's `fromEnv` holds it),
+    // with an env beat's pieces laid back over it after a move (the cab
+    // moves every frame of its ride)
+    inst.env = Object.assign(inst.env || {}, e, { sunDir });
+    if (inst.envLive) applyEnvLive(inst);
     const c = new THREE.Vector3().applyMatrix4(m);
     inst.center = [c.x, c.y, c.z];
+  }
+
+  // ---- env beat: one live room's own atmosphere ------------------------------
+  //
+  // director.js `env` beat -> setEnv(inst, {fog, background, exposure,
+  // ambient, sun, grain, vignette, base, seconds}) (env.js ENV_BEAT_KEYS).
+  // The lerp is the instance's: it runs whether or not he is in the room,
+  // a move keeps it, and the connector blend reads inst.env, so a room
+  // joined or left mid-lerp blends from or into its live atmosphere.
+  function applyEnvLive(inst) {
+    const L = inst.envLive, env = inst.env;
+    env.fog = L.fog;
+    env.background = L.background;
+    env.exposure = L.exposure;
+    env.ambient = L.ambient;
+    if (L.sun && env.sun) env.sun = L.sun;
+    env.grain = L.grain;
+    env.vignette = L.vignette;
+  }
+  function stepEnv(inst, dt) {
+    const fx = inst.envFx;
+    fx.t = fx.seconds > 0 ? Math.min(1, fx.t + dt / fx.seconds) : 1;
+    envLerpInto(inst.envLive, fx.from, fx.to, smooth(fx.t));
+    applyEnvLive(inst);
+    if (fx.t >= 1) inst.envFx = null;
+  }
+  function setEnv(inst, beat) {
+    if (!inst || !beat) return;
+    const from = envPieces(inst.env);
+    if (!inst.envLive) inst.envLive = envPieces(inst.env); // its own objects, never the record's
+    inst.envFx = { from, to: envAim(from, beat, inst.room.env), t: 0, seconds: beat.seconds || 0 };
+    stepEnv(inst, 0);
+  }
+
+  // ---- light sync: a prop's glow follows a light ------------------------------
+  //
+  // A light spec's `sync` (rooms.json: a prop name, or a list of them) ties
+  // that named prop's glow to the light's live level -- its flicker, its
+  // pattern, a light beat switching or ramping it, the room's light level
+  // (lights.js liveLevel) -- every frame, so the two can never drift apart.
+  // A builder that knows how its glow is made sets `userData.lightSync(k)`
+  // on the prop's group (props.js entersign, dustmotes); for any other prop
+  // the glowing materials (emissive, or an additive glow plate) are cloned
+  // for it here, scaled, and freed with the instance.
+  function glowFollower(g, clones) {
+    const seen = new Map();
+    const parts = [];
+    g.traverse((o) => {
+      if (!o.isMesh || Array.isArray(o.material)) return;
+      const m = o.material;
+      const emissive = m.emissive && m.emissiveIntensity > 0 && (m.emissive.r + m.emissive.g + m.emissive.b) > 0;
+      const additive = m.blending === THREE.AdditiveBlending;
+      if (!emissive && !additive) return;
+      if (!seen.has(m)) {
+        const c = m.clone();
+        // three's clone() drops the per-material shader hook (the PS1 snap)
+        c.onBeforeCompile = m.onBeforeCompile;
+        c.customProgramCacheKey = m.customProgramCacheKey;
+        clones.push(c);
+        seen.set(m, c);
+        parts.push({ mat: c, key: emissive ? 'emissiveIntensity' : 'opacity', base: emissive ? m.emissiveIntensity : m.opacity });
+      }
+      o.material = seen.get(m);
+    });
+    if (!parts.length) return null;
+    return (k) => { for (const p of parts) p.mat[p.key] = p.base * k; };
+  }
+  function bindSyncs(inst) {
+    const out = [];
+    for (const s of inst.lights) {
+      if (!s.sync) continue;
+      for (const name of [].concat(s.sync)) {
+        const g = inst.room.named.get(name);
+        const fn = g && (g.userData.lightSync || glowFollower(g, inst.syncClones));
+        if (fn) out.push({ spec: s, fn });
+        else console.warn(`world: ${inst.key}: light sync names ${name}, no glowing prop of that name`);
+      }
+    }
+    return out;
   }
 
   function spawn(key, matrix = new THREE.Matrix4(), { role = 'room' } = {}) {
@@ -155,8 +240,13 @@ export function createWorld({ scene, mats, library, rooms, lightPool = {} }) {
       lights: room.lightSpecs.map((s) => ({ ...s })),
       lightLevel: 1,
       lightTarget: 1,
-      link: null
+      link: null,
+      envLive: null,   // an env beat's pieces (setEnv)
+      envFx: null,     // its lerp, while it runs
+      syncs: null,     // [{spec, fn}]: props following a light (bindSyncs)
+      syncClones: []   // materials cloned for them, freed in remove()
     };
+    inst.syncs = bindSyncs(inst);
     derive(inst);
     scene.add(group);
     instances.push(inst);
@@ -200,6 +290,7 @@ export function createWorld({ scene, mats, library, rooms, lightPool = {} }) {
     if (i === -1) return;
     instances.splice(i, 1);
     scene.remove(inst.group);
+    for (const m of inst.syncClones) m.dispose();
     inst.room.dispose();
     if (current === inst) current = null;
     for (const o of instances) if (o.link && (o.link.from === inst || o.link.to === inst)) {
@@ -249,7 +340,10 @@ export function createWorld({ scene, mats, library, rooms, lightPool = {} }) {
   function emit(type, payload) { for (const fn of listeners) fn(type, payload); }
 
   function update(dt, t, playerPos) {
-    for (const inst of instances) inst.room.update(dt, t);
+    for (const inst of instances) {
+      inst.room.update(dt, t);
+      if (inst.envFx) stepEnv(inst, dt);
+    }
     // where the player is
     const here = playerPos ? locate(playerPos) : current;
     if (here && here !== current) {
@@ -300,6 +394,11 @@ export function createWorld({ scene, mats, library, rooms, lightPool = {} }) {
     const ext = env.shadowExtent || 14;
     const center = current && current.box ? (Math.max(current.rec.size[0], current.rec.size[2]) * 0.75 <= 26 ? current.center : playerPos || current.center) : (playerPos || [0, 0, 0]);
     rig.update({ env: { ...env, shadowExtent: ext }, specs, center, dt, t });
+    // after the rig: a synced prop shows the level its light was just given
+    for (const inst of instances) {
+      if (!inst.syncs.length || !inst.group.visible) continue;
+      for (const y of inst.syncs) y.fn(liveLevel(y.spec, t, inst.lightLevel));
+    }
     return env;
   }
 
@@ -316,6 +415,7 @@ export function createWorld({ scene, mats, library, rooms, lightPool = {} }) {
     progress,
     collidables,
     update,
+    setEnv,
     poseToWorld: (inst, pose) => poseToWorld(inst.matrix, pose),
     current: () => current,
     setCurrent(inst) { current = inst; env = inst.env; envTarget = inst.env; },

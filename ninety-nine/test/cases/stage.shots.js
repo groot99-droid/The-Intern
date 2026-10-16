@@ -167,6 +167,48 @@ export async function run() {
       assert(Math.hypot(p1[0] - last[0], p1[1] - last[1]) < 1e-6, 'actor at t=1 is on the last point');
       assert(await until(() => stage._debug().world.current === 'S4_C', 500), 'still current');
     });
+
+    await runCase('stage: an env beat (world.setEnv) moves one live room\'s own atmosphere -- at once or over its seconds, kept through a move (the env object a link holds stays the same), handed back by `base`, the record untouched', async () => {
+      const W = stage.world;
+      const inst = await stage.preview('S6_H');
+      const rec = rooms.rooms.S6_H.fog;
+      const envObj = inst.env;
+      W.setEnv(inst, { fog: { color: '#1d1209', near: 5, far: 44 }, exposure: 1.05, seconds: 0 });
+      assertEqual(inst.env.fog.color, '#1d1209', 'seconds 0: at once');
+      assertEqual(inst.env.background, '#1d1209', 'the background follows the fog colour');
+      assertEqual(inst.room.env.fog.color, rec.color, 'the room record\'s own fog is untouched');
+      assert(await until(() => W.env().fog.near < 5.5, 4000), `the stage's atmosphere follows the live room (near ${W.env().fog.near})`);
+      W.setEnv(inst, { base: true, seconds: 0.8 });
+      assert(await until(() => inst.env.fog.near > 5.2 && inst.env.fog.near < rec.near - 0.2, 3000, 5), `mid-lerp (near ${inst.env.fog.near})`);
+      assert(await until(() => inst.env.fog.near === rec.near && inst.env.fog.color === rec.color, 4000), `base: back to the record's own (${inst.env.fog.color} ${inst.env.fog.near})`);
+      W.setEnv(inst, { fog: { near: 3 }, seconds: 0 });
+      W.move(inst, inst.matrix.clone());
+      assertEqual(inst.env.fog.near, 3, 'a move keeps the beat');
+      assert(inst.env === envObj, 'the instance keeps one env object (a link\'s fromEnv reads it live)');
+    });
+
+    await runCase('stage: a light\'s `sync` drives its prop -- S3 C\'s ENTER sign and dust go dark with the green light; S8 H\'s flickering tube with its own (cloned glow, the shared fluoro materials untouched)', async () => {
+      const additive = (g) => { const out = []; g.traverse((o) => { if ((o.isMesh || o.isPoints) && o.material.blending === 2) out.push(o.material); }); return out; };
+      const s3 = await stage.preview('S3_C');
+      assertEqual(s3.syncs.length, 2, 'the green light drives the sign and the dust');
+      const green = s3.lights.find((l) => [].concat(l.sync || []).includes('entersign'));
+      const halo = additive(s3.room.named.get('entersign'))[0];
+      const dust = additive(s3.room.named.get('dustmotes'))[0];
+      assert(halo && dust, 'the sign\'s halo and the dust');
+      assert(await until(() => halo.opacity > 0.02 && dust.opacity > 0.02, 3000), 'lit with the light');
+      green.off = true; green.fadeS = 0;
+      assert(await until(() => halo.opacity === 0 && dust.opacity === 0, 3000), `dark with the light (halo ${halo.opacity}, dust ${dust.opacity})`);
+      const s8 = await stage.preview('S8_H');
+      assertEqual(s8.syncs.length, 1, 'the flickering tube follows its light');
+      assertEqual(s8.syncClones.length, 2, 'its diffuser and glow plate cloned for it');
+      const shared = stage.mats.get('glow_fluoro');
+      const tube = s8.lights.find((l) => l.sync === 'tube_flicker');
+      tube.off = true; tube.fadeS = 0;
+      const plate = additive(s8.room.named.get('tube_flicker'))[0];
+      assert(plate !== shared, 'the synced tube has its own glow plate');
+      assert(await until(() => plate.opacity === 0, 3000), `the tube's glow goes out with its light (${plate.opacity})`);
+      assertEqual(shared.opacity, 0.22, 'every other tube keeps the shared glow');
+    });
   } finally {
     stage.destroy();
     container.remove();

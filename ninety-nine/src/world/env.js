@@ -1,5 +1,6 @@
 // A room's atmosphere (room.js `env`, carried into world space by
-// world.js) and the blend between two of them. Pure: test-friendly.
+// world.js), the blend between two of them, and the env beat's lerp of one
+// room's own atmosphere. Pure: test-friendly.
 //
 // Inside a room the stage uses that room's env. Inside a connector it
 // blends the room behind into the room ahead by how far along the
@@ -33,6 +34,68 @@ export const BLACK_ENV = {
 
 function fogOf(env) {
   return env.fog || { color: env.background || '#000000', near: 400, far: 1200 };
+}
+
+// ---- the env beat (director.js `env`, world.js setEnv) ------------------------
+//
+// A beat may move ONE live room's own atmosphere: `env: {fog: {color, near,
+// far}, background, exposure, ambient: {color, intensity}, sun: {color,
+// intensity}, grain, vignette, base, seconds}`. Every piece is optional and
+// a piece left out stays where it is; `base: true` aims at the room
+// record's own atmosphere first (then the given pieces on top), so a beat
+// can hand a room back to what build_rooms.py made it. The sun's colour and
+// strength may change, never its direction (C2) or whether there is one.
+// `seconds` is the lerp (0: at once).
+export const ENV_BEAT_KEYS = ['fog', 'background', 'exposure', 'ambient', 'sun', 'grain', 'vignette', 'base', 'seconds'];
+
+// The pieces an env beat moves, copied out of an env (its own objects, so
+// a lerp written into them never touches the room record's).
+export function envPieces(env) {
+  const f = fogOf(env);
+  return {
+    fog: { color: f.color, near: f.near, far: f.far },
+    background: env.background || '#000000',
+    exposure: env.exposure === undefined ? 1 : env.exposure,
+    ambient: { color: env.ambient ? env.ambient.color : '#000000', intensity: env.ambient ? env.ambient.intensity : 0 },
+    sun: env.sun ? { color: env.sun.color, intensity: env.sun.intensity } : null,
+    grain: env.grain === undefined ? 0.03 : env.grain,
+    vignette: env.vignette === undefined ? 0.55 : env.vignette
+  };
+}
+
+// Where a beat aims: `from` (the live pieces) or the room's own (`base`),
+// with the beat's pieces laid over it.
+export function envAim(from, beat, baseEnv) {
+  const to = envPieces(beat.base && baseEnv ? baseEnv : from);
+  if (beat.fog) Object.assign(to.fog, beat.fog);
+  if (beat.background) to.background = beat.background;
+  if (beat.exposure !== undefined) to.exposure = beat.exposure;
+  if (beat.ambient) Object.assign(to.ambient, beat.ambient);
+  if (beat.sun && to.sun) Object.assign(to.sun, beat.sun);
+  if (beat.grain !== undefined) to.grain = beat.grain;
+  if (beat.vignette !== undefined) to.vignette = beat.vignette;
+  // a fog's colour is the background's unless the beat says otherwise
+  if (beat.fog && beat.fog.color && !beat.background) to.background = beat.fog.color;
+  return to;
+}
+
+// Writes a..b at t into `out` (pieces from envPieces) without allocating
+// objects: the lerp runs every frame while it lasts.
+export function envLerpInto(out, a, b, t) {
+  out.fog.color = mixColor(a.fog.color, b.fog.color, t);
+  out.fog.near = mix(a.fog.near, b.fog.near, t);
+  out.fog.far = mix(a.fog.far, b.fog.far, t);
+  out.background = mixColor(a.background, b.background, t);
+  out.exposure = mix(a.exposure, b.exposure, t);
+  out.ambient.color = mixColor(a.ambient.color, b.ambient.color, t);
+  out.ambient.intensity = mix(a.ambient.intensity, b.ambient.intensity, t);
+  if (out.sun && a.sun && b.sun) {
+    out.sun.color = mixColor(a.sun.color, b.sun.color, t);
+    out.sun.intensity = mix(a.sun.intensity, b.sun.intensity, t);
+  }
+  out.grain = mix(a.grain, b.grain, t);
+  out.vignette = mix(a.vignette, b.vignette, t);
+  return out;
 }
 
 // t = 0 -> a, t = 1 -> b. Missing pieces blend from/to nothing.

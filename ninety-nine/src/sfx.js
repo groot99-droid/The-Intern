@@ -64,6 +64,36 @@ function pitchSweep(ctx, bus, { from = 800, to = 80, durationMs = 400, gain = 0.
   osc.stop(ctx.currentTime + durationMs / 1000 + 0.05);
 }
 
+// A breath, not a click: low-passed noise that swells and falls away (an
+// exhale); with `inhale` a quieter, brighter draw comes first. Synthesized,
+// a labelled stand-in for one's own breathing -- never a voice.
+function breathe(ctx, bus, { durationMs = 300, filterHz = 800, gain = 0.08, inhale = false }) {
+  const one = (at, ms, hz, g) => {
+    const s = ms / 1000;
+    const n = Math.max(1, Math.floor(ctx.sampleRate * s));
+    const buffer = ctx.createBuffer(1, n, ctx.sampleRate);
+    const data = buffer.getChannelData(0);
+    for (let i = 0; i < n; i++) data[i] = Math.random() * 2 - 1;
+    const src = ctx.createBufferSource();
+    src.buffer = buffer;
+    const filter = ctx.createBiquadFilter();
+    filter.type = 'lowpass';
+    filter.frequency.value = hz;
+    const env = ctx.createGain();
+    env.gain.setValueAtTime(0.0001, at);
+    env.gain.exponentialRampToValueAtTime(Math.max(0.0002, g), at + s * 0.35);
+    env.gain.exponentialRampToValueAtTime(0.0001, at + s);
+    src.connect(filter).connect(env).connect(bus);
+    src.start(at);
+    src.stop(at + s + 0.05);
+  };
+  const t = ctx.currentTime;
+  if (inhale) {
+    one(t, durationMs * 0.7, filterHz * 1.7, gain * 0.4);
+    one(t + (durationMs * 0.85) / 1000, durationMs, filterHz, gain);
+  } else one(t, durationMs, filterHz, gain);
+}
+
 const CUES = {
   'speaker-click': (ctx, bus) => toneClick(ctx, bus, { freq: 1200, durationMs: 15, gain: 0.25, type: 'square' }),
   'speaker-hiss': (ctx, bus) => noiseBurst(ctx, bus, { durationMs: 250, filterHz: 4000, filterType: 'highpass', gain: 0.15 }),
@@ -103,12 +133,14 @@ const CUES = {
   'paper-handoff': (ctx, bus) => noiseBurst(ctx, bus, { durationMs: 300, filterHz: 2500, filterType: 'highpass', gain: 0.15 }),
   'keyboard-press': (ctx, bus) => toneClick(ctx, bus, { freq: 1800, durationMs: 12, gain: 0.15, type: 'square' }),
   // Walk mode (src/walk/): one soft footfall per stride, surface-tinted via
-  // opts.filterHz (marble rings higher than carpet). Always synthesized.
-  'footstep': (ctx, bus, opts = {}) => noiseBurst(ctx, bus, { durationMs: 70, filterHz: opts.filterHz || 700, filterType: 'bandpass', gain: opts.gain || 0.12 }),
-  // MG-05 H's breathing: a soft low-passed exhale that MG-05 lengthens and
-  // deepens (filterHz down, durationMs up) as stamina drains. Synthesized;
-  // the delivered S6_H bed is deliberately event-free (MANIFEST).
-  'breath': (ctx, bus, opts = {}) => noiseBurst(ctx, bus, { durationMs: opts.durationMs || 300, filterHz: opts.filterHz || 800, filterType: 'lowpass', gain: opts.gain || 0.08 }),
+  // opts.filterHz (marble rings higher than carpet); a `footfall` beat
+  // makes them heavier (gain up, filterHz down, durationMs longer).
+  // Always synthesized.
+  'footstep': (ctx, bus, opts = {}) => noiseBurst(ctx, bus, { durationMs: opts.durationMs || 70, filterHz: opts.filterHz || 700, filterType: 'bandpass', gain: opts.gain || 0.12 }),
+  // His breathing (S6 H's run: director.js `breath` layer, deeper and
+  // further apart down the run -- filterHz down, durationMs and gain up).
+  // Synthesized; the delivered S6_H bed is deliberately event-free (MANIFEST).
+  'breath': (ctx, bus, opts = {}) => breathe(ctx, bus, opts),
   // Deliberately silent with no real file: see the header comment. Exists
   // so branch.sfxCue entries can reference it without an "unknown cue" log.
   'receptionist-voice': () => {},

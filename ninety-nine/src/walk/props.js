@@ -1633,32 +1633,21 @@ const BUILDERS = {
       color: new THREE.Color(color), map, transparent: true, opacity,
       blending: THREE.AdditiveBlending, depthWrite: false, side: THREE.DoubleSide, fog: false
     }));
-    // The light pool (src/world/lights.js) hands the room's light specs to
-    // a fixed set of PointLights each frame. A lit prop that must pulse with
-    // its light (the ENTER sign with its green) finds the pool light of that
-    // colour nearest to it and follows its intensity, so the two can never
-    // drift apart; without one it runs the same cycle on its own clock.
-    const lightFollower = (mesh, { color, intensity, pattern }) => {
-      const want = new THREE.Color(color);
-      const here = new THREE.Vector3();
-      let light = null;
-      let frame = 0;
-      return (scene) => {
-        if (intensity && (frame++ % 30 === 0 || !light || !light.parent)) {
-          mesh.getWorldPosition(here);
-          light = null;
-          let best = 3.0;
-          for (const c of scene.children) {
-            if (!c.isPointLight || c.intensity <= 0) continue;
-            if (Math.abs(c.color.r - want.r) + Math.abs(c.color.g - want.g) + Math.abs(c.color.b - want.b) > 0.03) continue;
-            const d = c.position.distanceTo(here);
-            if (d < best) { best = d; light = c; }
-          }
-        }
-        if (light) return Math.min(1.2, light.intensity / intensity);
-        const p = pattern || { period: 2.3, duty: 0.86, low: 0.1 };
-        const u = ((performance.now() / 1000) % p.period) / p.period;
-        return u < p.duty ? 1 : p.low;
+    // A lit prop that must pulse with its light (the ENTER sign with its
+    // green, the dust in it) is named by that light's `sync` (rooms.json):
+    // the world then calls the group's `userData.lightSync(k)` every frame
+    // with the light's live level (src/world/world.js bindSyncs). Until it
+    // has been called -- no light names it -- the prop runs `pattern` on its
+    // own clock, or holds steady without one. The returned function is that
+    // fallback, for the prop's onBeforeRender.
+    const lightSynced = (g, show, pattern) => {
+      let synced = false;
+      g.userData.lightSync = (k) => { synced = true; show(Math.min(1.2, k)); };
+      return () => {
+        if (synced) return;
+        if (!pattern) { show(1); return; }
+        const u = ((performance.now() / 1000) % pattern.period) / pattern.period;
+        show(u < pattern.duty ? 1 : pattern.low);
       };
     };
     // vertical pile for the velvet: dark streaks on deep red
@@ -1788,9 +1777,9 @@ const BUILDERS = {
       // The ENTER sign (Doc 1 S3: "a hyper-real green ENTER sign on a
       // 2.3-second flicker cycle"; Doc 2: "blocky housing with a crisp
       // photoreal glow"). The housing is company signage, low-poly (C1); the
-      // letters and their glow are light. `sync: {color, intensity}` ties the
-      // face to the room's light of that colour (see lightFollower). `on:
-      // false` is the same sign, dead (S3 H). Text never says "you" (C4).
+      // letters and their glow are light. A light whose `sync` names the sign
+      // drives the face (see lightSynced). `on: false` is the same sign,
+      // dead (S3 H). Text never says "you" (C4).
       entersign(mats, o) {
         const g = new THREE.Group();
         const w = o.w || 1.0, h = o.h || 0.26, lit = o.on !== false;
@@ -1820,12 +1809,10 @@ const BUILDERS = {
         halo.position.set(0, 0.05 + h / 2, 0.075);
         halo.renderOrder = 3;
         g.add(halo);
-        const k = lightFollower(face, { color: (o.sync && o.sync.color) || '#33ff77', intensity: o.sync ? o.sync.intensity : 0, pattern: o.pattern });
-        face.onBeforeRender = (renderer, scene) => {
-          const v = k(scene);
+        face.onBeforeRender = lightSynced(g, (v) => {
           faceMat.color.setScalar(0.18 + 1.5 * v);
           haloMat.opacity = 0.34 * v;
-        };
+        }, o.pattern || { period: 2.3, duty: 0.86, low: 0.1 });
         return g;
       },
       // The badge reader beside the curtain: a low-poly box (C1) with a red
@@ -1933,7 +1920,7 @@ const BUILDERS = {
       // Dust hanging in a light (Doc 2 S3 C: "dust visible in the green
       // light"): a few hundred soft motes drifting slowly down and sideways
       // in a box `size` [x, y, z] above the origin, catching the light as
-      // glow; with `sync` they dim and brighten with that light.
+      // glow; named by a light's `sync`, they dim and brighten with it.
       dustmotes(mats, o) {
         const g = new THREE.Group();
         const [sx, sy, sz] = o.size || [3, 2.6, 1.6];
@@ -1951,9 +1938,9 @@ const BUILDERS = {
         }));
         const pts = new THREE.Points(geo, mat);
         pts.frustumCulled = false;
-        const k = o.sync ? lightFollower(pts, { color: o.sync.color, intensity: o.sync.intensity, pattern: o.pattern }) : null;
-        const step = (renderer, scene) => {
-          if (k && scene) mat.opacity = base * k(scene);
+        const own = lightSynced(g, (v) => { mat.opacity = base * v; }, o.pattern || null);
+        const step = () => {
+          own();
           const t = performance.now() / 1000;
           for (let i = 0; i < n; i++) {
             const a = seed[i * 3], b = seed[i * 3 + 1], c = seed[i * 3 + 2];

@@ -9,6 +9,7 @@ import { runCase, assert, assertEqual } from '../harness.js';
 import { REAL_SFX_FILES, createSfx } from '../../src/sfx.js';
 import { createState, commitChoice, renderFor, resolveEnding, seedRenderFromIntake } from '../../src/state.js';
 import { zonesOf } from '../../src/spine.js';
+import { ENV_BEAT_KEYS } from '../../src/world/env.js';
 
 async function headOk(url) {
   try {
@@ -67,11 +68,11 @@ export async function run() {
   });
 
   await runCase('Assertion 1b: the schema -- branch, threshold, beat zone and beat keys are ones the director reads (a typo is a silent no-op in the game)', () => {
-    const BRANCH = new Set(['room', 'next', 'ambience', 'ambienceSequence', 'music', 'captions', 'onEnter', 'thresholds', 'beatZones', 'sfxCue', 'friction', 'keepHeld', 'bumpCount', 'idle', 'stillness', 'start', 'out', 'report']);
+    const BRANCH = new Set(['room', 'next', 'ambience', 'ambienceSequence', 'music', 'captions', 'onEnter', 'thresholds', 'beatZones', 'sfxCue', 'friction', 'keepHeld', 'bumpCount', 'idle', 'stillness', 'start', 'out', 'report', 'hum', 'env']);
     const THRESHOLD = new Set(['label', 'zone', 'exit', 'via', 'viaDark', 'to', 'setFlag', 'sfxCue', 'beat', 'approach', 'fallShot']);
     const BEAT_ZONE = new Set(['zone', 'label', 'beat', 'once']);
     // director.js runBeats(), in its order
-    const BEAT = new Set(['sfxCue', 'sfxOpts', 'oneShot', 'music', 'musicRender', 'caption', 'holdMs', 'className', 'rattle', 'show', 'hide', 'light', 'screen', 'setFlag', 'hold', 'drop', 'actor', 'seal', 'open', 'close', 'seconds', 'await', 'lookAt', 'lookY', 'sit', 'moveTo', 'shot', 'ride', 'shake', 'together', 'waitMs']);
+    const BEAT = new Set(['sfxCue', 'sfxOpts', 'oneShot', 'music', 'musicRender', 'caption', 'holdMs', 'className', 'rattle', 'show', 'hide', 'light', 'env', 'breath', 'footfall', 'screen', 'setFlag', 'hold', 'drop', 'actor', 'seal', 'open', 'close', 'seconds', 'await', 'lookAt', 'lookY', 'sit', 'moveTo', 'shot', 'ride', 'shake', 'together', 'waitMs']);
     const bad = [];
     const keysOf = (o) => Object.keys(o || {}).filter((k) => !k.startsWith('_'));
     const beats = (list, where) => {
@@ -329,6 +330,87 @@ export async function run() {
     // the director's screen pages read these (director.js PAGES)
     for (const k of ['posting.title', 'posting.employer', 'posting.body', 'portal.confirm', 'portal.accept', 'harlowe.session', 'harlowe.draft', 'requisition.title']) if (!(k in systemText)) missing.push(`PAGES: ${k}`);
     assert(missing.length === 0, missing.join(', '));
+  });
+
+  await runCase('Assertion 2f: env / breath / footfall beats and hum settings are well-formed (keys the director reads, colours, numbers); every light `sync` names a named prop of its room', () => {
+    const bad = [];
+    const ENV = new Set(ENV_BEAT_KEYS);
+    const BREATH = new Set(['every', 'gain', 'filterHz', 'durationMs', 'inhale']);
+    const FOOTFALL = new Set(['gain', 'filterHz', 'durationMs']);
+    const HUM = new Set(['hz', 'gain', 'lowpassHz', 'followDrone', 'room']);
+    const colour = (c) => typeof c === 'string' && /^#[0-9a-f]{6}$/i.test(c);
+    const num = (v) => v === undefined || (typeof v === 'number' && Number.isFinite(v) && v >= 0);
+    const keysOf = (o) => Object.keys(o || {}).filter((k) => !k.startsWith('_'));
+    let envs = 0, layers = 0, hums = 0;
+    // an env beat, or a branch's `env` (the same pieces: its room's atmosphere for the scene)
+    const checkEnv = (e, w) => {
+      envs++;
+      for (const k of keysOf(e)) if (!ENV.has(k)) bad.push(`${w}.env: unknown key ${k}`);
+      if (e.fog) { if (e.fog.color !== undefined && !colour(e.fog.color)) bad.push(`${w}.env.fog.color`); if (!num(e.fog.near) || !num(e.fog.far) || (e.fog.near !== undefined && e.fog.far !== undefined && e.fog.far <= e.fog.near)) bad.push(`${w}.env.fog near/far`); }
+      if (e.background !== undefined && !colour(e.background)) bad.push(`${w}.env.background`);
+      for (const k of ['ambient', 'sun']) if (e[k] && ((e[k].color !== undefined && !colour(e[k].color)) || !num(e[k].intensity))) bad.push(`${w}.env.${k}`);
+      for (const k of ['exposure', 'grain', 'vignette', 'seconds']) if (!num(e[k])) bad.push(`${w}.env.${k}: a number >= 0`);
+      if (!keysOf(e).some((k) => k !== 'seconds')) bad.push(`${w}.env: moves nothing`);
+    };
+    const checkBeats = (list, where) => {
+      for (const [i, bt] of (list || []).entries()) {
+        const w = `${where}[${i}]`;
+        if (bt.env) checkEnv(bt.env, w);
+        for (const [k, set] of [['breath', BREATH], ['footfall', FOOTFALL]]) {
+          if (bt[k] === undefined) continue;
+          layers++;
+          if (bt[k] === false) continue;
+          if (!bt[k] || typeof bt[k] !== 'object') { bad.push(`${w}.${k}: an object, or false to stop it`); continue; }
+          for (const kk of keysOf(bt[k])) if (!set.has(kk)) bad.push(`${w}.${k}: unknown key ${kk}`);
+          for (const kk of ['every', 'gain', 'filterHz', 'durationMs']) if (!num(bt[k][kk])) bad.push(`${w}.${k}.${kk}: a number >= 0`);
+        }
+        if (bt.breath && !(bt.breath.every > 0.5)) bad.push(`${w}.breath.every: seconds between breaths (> 0.5)`);
+        if (bt.together) checkBeats(bt.together, `${w}.together`);
+        if (bt.ride && bt.ride.stops) checkBeats(bt.ride.stops, `${w}.ride.stops`);
+      }
+    };
+    const checkHum = (h, where) => {
+      hums++;
+      for (const k of keysOf(h)) if (!HUM.has(k)) bad.push(`${where}.hum: unknown key ${k}`);
+      for (const k of ['hz', 'gain', 'lowpassHz']) if (!num(h[k])) bad.push(`${where}.hum.${k}: a number >= 0`);
+      if (h.gain > 0.05) bad.push(`${where}.hum.gain ${h.gain}: a hum under the drone (<= 0.05)`);
+      if (h.room && !rooms.rooms[h.room]) bad.push(`${where}.hum.room ${h.room} is no room`);
+    };
+    for (const { sid, letter, b } of branches()) {
+      const where = `${sid}.${letter}`;
+      checkBeats(b.onEnter, `${where}.onEnter`);
+      for (const bz of b.beatZones || []) checkBeats(bz.beat, `${where}.beatZone.${bz.zone}`);
+      for (const [key, th] of Object.entries(b.thresholds || {})) { checkBeats(th.beat, `${where}.${key}.beat`); checkBeats(th.approach, `${where}.${key}.approach`); }
+      if (b.idle) checkBeats(b.idle.beat, `${where}.idle`);
+      if (b.stillness) checkBeats(b.stillness.beat, `${where}.stillness`);
+      if (b.hum) checkHum(b.hum, where);
+      if (b.env) checkEnv(b.env, where);
+    }
+    for (const [id, e] of Object.entries(endings)) {
+      if (id.startsWith('_')) continue;
+      checkBeats(e.beats, `ending.${id}`);
+      if (e.hum) checkHum(e.hum, `ending.${id}`);
+    }
+    // what the env group's data uses, so a lost edit fails here: S6 H's run
+    // (warm haze in, the pool's teal toward the edge, the breath layer that
+    // stops at the commit) and the store's hum (S8 H's store, EXPULSION)
+    assert(envs >= 2 && layers >= 6 && hums >= 2, `only ${envs} env beats, ${layers} breath/footfall beats, ${hums} hums`);
+    const s6 = manifest.scenes.S6.branches.H;
+    assert(s6.env && s6.env.fog, 'S6 H: the run takes the garage\'s sodium haze (branch `env`)');
+    assert((s6.beatZones || []).some((bz) => (bz.beat || []).some((bt) => bt.env && bt.env.base)), 'S6 H: no beat zone hands the run back to the room\'s own (pool) atmosphere');
+    assert(!(s6.beatZones || []).some((bz) => bz.label), 'S6 H: the run\'s beat zones are silent (no label)');
+    for (const th of Object.values(s6.thresholds)) assert((th.beat || []).some((bt) => bt.breath === false), 'S6 H: a threshold leaves the breath layer running');
+    const h8 = manifest.scenes.S8.branches.H.hum;
+    assert(h8 && baseOf(h8.room) === baseOf(endings.EXPULSION.room) && endings.EXPULSION.hum, 'S8 H / EXPULSION: the hum belongs to the store');
+    // light sync: the prop a light drives must exist (a typo is a sign that never flickers)
+    for (const [k, r] of Object.entries(rooms.rooms)) {
+      if (r.alias) continue;
+      const named = new Set((r.props || []).filter((p) => p.name).map((p) => p.name));
+      for (const l of r.lights || []) for (const n of [].concat(l.sync || [])) if (!named.has(n)) bad.push(`${k}: a light syncs ${n}, no named prop`);
+    }
+    const syncs = Object.values(rooms.rooms).flatMap((r) => (r.lights || []).flatMap((l) => [].concat(l.sync || [])));
+    assert(syncs.includes('entersign') && syncs.includes('dustmotes'), 'S3 C: the ENTER sign and its dust follow the green light (`sync`)');
+    assert(bad.length === 0, bad.join(' | '));
   });
 
   await runCase('Assertion 3: no video-era or mini-game keys anywhere in scenes.json / endings.json; src/minigames/ is gone', async () => {

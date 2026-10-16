@@ -19,6 +19,8 @@
 //   beams   {axis, every, w, h,  ceiling beams / soffits under the slab,
 //            mat, offset}         running along `axis` ('x' or 'z')
 //   lights[].flicker  0..1       a sodium/fluorescent buzz on that light
+//   lights[].sync     name|[names] named props whose glow follows that
+//                                light's live level (src/world/world.js)
 //   exposure, grain, vignette    read by the stage's composite pass
 //   doors   [{name, wall, x, y,  doorways cut out of the shell (doors.js builds
 //            w, h, kind, ...}]    the frame and leaf); each also yields an
@@ -282,7 +284,8 @@ export function buildRoom(mats, rec, ctx = null) {
     phase: hash01(i + 1) * 100,
     rate: 6 + hash01(i + 7) * 6,
     id: l.id || null,
-    off: !!l.off
+    off: !!l.off,
+    sync: l.sync || null // a named prop (or several) whose glow follows this light (world.js bindSyncs)
   }));
 
   const spawn = rec.spawn || [0, D / 2 - 1.5, 0];
