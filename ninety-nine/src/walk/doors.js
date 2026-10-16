@@ -168,9 +168,11 @@ export function buildDoor(mats, spec, { wallT = 0.3, wallMat = null, skirt = nul
       if (smooth) {
         // from 6 cm behind the jamb to 4 cm past the middle, so the halves
         // meet with an overlap (the right one a hair in front, or the two
-        // would fight over the same pixels there) and a drape round the
-        // doorway hides the jamb end
-        const m = pleat(mats.get(cm), s * 0.06, -s * (w / 2 + 0.04), 0, h + 0.2, 0.06, s > 0 ? 0.032 : 0.02, s * w / 2);
+        // would fight over the same pixels there), and hung 3 cm behind the
+        // plane a velvetdrape round the doorway hangs in (the same folds:
+        // where it overlaps the jamb ends it covers them instead of
+        // flickering through them)
+        const m = pleat(mats.get(cm), s * 0.06, -s * (w / 2 + 0.04), 0, h + 0.2, 0.06, s > 0 ? -0.018 : -0.03, s * w / 2);
         half.add(m);
         const pa = m.geometry.attributes.position;
         swayParts.push({ m, base: Float32Array.from(pa.array), ph: h + 0.2, x0: s * w / 2 });
