@@ -199,6 +199,9 @@ export function createWorld({ scene, mats, library, rooms, lightPool = {} }) {
         c.onBeforeCompile = m.onBeforeCompile;
         c.customProgramCacheKey = m.customProgramCacheKey;
         clones.push(c);
+        // a material the room owned is no longer on any of its meshes, so
+        // room.dispose() would miss it: freed with the clones instead
+        if (m.userData && m.userData.owned) clones.push(m);
         seen.set(m, c);
         parts.push({ mat: c, key: emissive ? 'emissiveIntensity' : 'opacity', base: emissive ? m.emissiveIntensity : m.opacity });
       }
@@ -244,7 +247,7 @@ export function createWorld({ scene, mats, library, rooms, lightPool = {} }) {
       envLive: null,   // an env beat's pieces (setEnv)
       envFx: null,     // its lerp, while it runs
       syncs: null,     // [{spec, fn}]: props following a light (bindSyncs)
-      syncClones: []   // materials cloned for them, freed in remove()
+      syncClones: []   // materials cloned for them (and owned ones they replace), freed in remove()
     };
     inst.syncs = bindSyncs(inst);
     derive(inst);

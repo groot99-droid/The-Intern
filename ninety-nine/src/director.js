@@ -729,7 +729,7 @@ export function createDirector({ manifest, endings, state, stage, audio = null, 
     captions.stop();
     labels.clear();
     if (hint) hint.remove();
-    breathing = null;
+    stopLayers();
     humAt = null; // fadeOutForEnding fades the hum with the beds
     if (audio) audio.fadeOutForEnding();
     fractureOverlay.destroy && fractureOverlay.destroy();
