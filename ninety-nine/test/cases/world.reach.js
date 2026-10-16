@@ -10,8 +10,9 @@
 // than 1.0 m (STEP_UP / STEP_DOWN). The grid is flood-filled from 1.8 m
 // inside the entry doorway (where every join and the dev ?start= put him;
 // the spawn for S0_X, which has no entry, and for SET_DIVE, which is
-// entered from above and swum in 3D -- there up and down are never
-// blocked, as in controls.js's swim). Then every threshold zone of the
+// entered from above and swum in 3D -- there down is never blocked and up
+// is never taken, as in controls.js's swim, which has no ascent, C3). Then
+// every threshold zone of the
 // branches played there, every beat zone, the ending zones and the inside
 // approach of every exit door must be reachable -- and the doorway itself
 // once that door is open. Unreachable ones are reported by name.
@@ -147,7 +148,7 @@ function nearestReached(g, seen, measure) {
   return bd;
 }
 
-// ---- the dive: swum in 3D; up and down are never blocked -----------------------
+// ---- the dive: swum in 3D; down is never blocked, up never taken (C3) -----------
 
 function swimReach(inst, walls, startWant) {
   const rec = inst.rec;
@@ -169,12 +170,12 @@ function swimReach(inst, walls, startWant) {
   while (q.length) {
     const [cx, cy, cz] = q.pop();
     const p = pos(cx, cy, cz);
-    for (const [dx, dy, dz] of [[1, 0, 0], [-1, 0, 0], [0, 0, 1], [0, 0, -1], [0, 1, 0], [0, -1, 0]]) {
+    for (const [dx, dy, dz] of [[1, 0, 0], [-1, 0, 0], [0, 0, 1], [0, 0, -1], [0, -1, 0]]) {
       const nx2 = cx + dx, ny2 = cy + dy, nz2 = cz + dz;
       if (nx2 < 0 || ny2 < 0 || nz2 < 0 || nx2 >= nx || ny2 >= ny || nz2 >= nz) continue;
       const k = idx(nx2, ny2, nz2);
       if (seen[k]) continue;
-      // controls.js swim: across is a ray at eye height; up and down are only clamped
+      // controls.js swim: across is a ray at eye height; down is only clamped (and there is no up)
       if (dy === 0 && rayHits(walls.near(p[0], p[2]), p[0], p[1], p[2], dx, 0, dz, SWIM_CELL + RADIUS)) continue;
       seen[k] = 1;
       q.push([nx2, ny2, nz2]);

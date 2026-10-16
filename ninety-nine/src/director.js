@@ -545,7 +545,7 @@ export function createDirector({ manifest, endings, state, stage, audio = null, 
   function startSwim(inst) {
     const sw = inst.rec.swim;
     const y0 = inst.matrix.elements[13];
-    if (sw) player.setSwim({ floorY: y0 + sw.floorY, ceilingY: y0 + sw.ceilingY });
+    if (sw) player.setSwim({ floorY: y0 + sw.floorY, ceilingY: y0 + sw.ceilingY, sink: sw.sink || 0 }); // controls.js: no ascent, `sink` m/s
     stage.releaseShot();
     player.enable();
     stage.setPlayerActive(true);
