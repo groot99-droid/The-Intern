@@ -138,6 +138,19 @@ html, body {
 }
 .threshold-label.stamped { color: #fff; }
 .threshold-label.stamped .threshold-label-rule { transform: scaleX(3.2); opacity: 1; }
+/* A room's own ink (rooms.json `labelInk`, src/labels.js). 'dark': dark
+   words on a pale halo, for walls blown out to white (S1 H). */
+.threshold-label[data-ink="dark"] {
+  color: #17130d;
+  text-shadow: 0 0 6px rgba(255, 253, 247, 0.95), 0 0 2px rgba(255, 253, 247, 0.9);
+  background: radial-gradient(ellipse closest-side, rgba(255, 252, 244, 0.62), rgba(255, 252, 244, 0.34) 60%, rgba(255, 252, 244, 0));
+}
+.threshold-label[data-ink="dark"].stamped { color: #000; }
+/* 'backed': the light words on a translucent dark plate (a bright, busy ground) */
+.threshold-label[data-ink="backed"] {
+  background: rgba(10, 9, 8, 0.58);
+  border-radius: 2px;
+}
 
 /* The first frames: how to walk. Fades on its own. */
 .walk-hint {

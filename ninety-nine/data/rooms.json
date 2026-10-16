@@ -2960,6 +2960,7 @@
     }
    ],
    "entry": "stoop",
+   "labelInk": "backed",
    "zones": [
     {
      "name": "report",
@@ -4318,6 +4319,7 @@
     "far": 28
    },
    "exposure": 1.5,
+   "labelInk": "dark",
    "vignette": 0.2,
    "spawn": [
     0,

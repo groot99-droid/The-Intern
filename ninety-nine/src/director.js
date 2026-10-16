@@ -841,7 +841,7 @@ export function createDirector({ manifest, endings, state, stage, audio = null, 
       if (!z) continue;
       if (z.armAfter && !(scene && scene.reached.has(z.armAfter))) continue;
       const st = zoneState(B.inst, z, pos, feet);
-      if (B.label) labels.set(`beat:${B.zone}`, B.label, st.label, 1 - smoothstep(z.r + 0.3, z.ring, st.dist));
+      if (B.label) labels.set(`beat:${B.zone}`, B.label, st.label, 1 - smoothstep(z.r + 0.3, z.ring, st.dist), B.inst.rec.labelInk);
       if (st.inside && player.isEnabled()) {
         if (scene) scene.reached.add(B.zone);
         if (B.once) B.done = true;
@@ -871,7 +871,7 @@ export function createDirector({ manifest, endings, state, stage, audio = null, 
             if (!best || st.dist < best.dist) best = { ...st, z };
           }
           if (!best) { labels.set(T.id, T.th.label, [0, -999, 0], 0); continue; }
-          labels.set(T.id, T.th.label, best.label, best.z.silent ? 0 : 1 - smoothstep(best.z.r + 0.3, best.z.ring, best.dist));
+          labels.set(T.id, T.th.label, best.label, best.z.silent ? 0 : 1 - smoothstep(best.z.r + 0.3, best.z.ring, best.dist), inst.rec.labelInk);
           if (best.inRing) {
             ringKey = T.key;
             if (!T.approached) { T.approached = true; if (T.th.approach) runBeats(T.th.approach, inst); }
@@ -889,7 +889,7 @@ export function createDirector({ manifest, endings, state, stage, audio = null, 
       const w = endingWatch;
       w.t += dt;
       const st = w.zone ? zoneState(w.inst, w.zone, pos, feet) : { inside: false, dist: Infinity };
-      if (w.zone && w.ending.label) labels.set('ending', w.ending.label, st.label, 1 - smoothstep(w.zone.r + 0.3, w.zone.ring, st.dist));
+      if (w.zone && w.ending.label) labels.set('ending', w.ending.label, st.label, 1 - smoothstep(w.zone.r + 0.3, w.zone.ring, st.dist), w.inst.rec.labelInk);
       if ((st.inside && player.isEnabled()) || w.t > (w.ending.autoSeconds || 90)) playEnding(w);
     }
   }

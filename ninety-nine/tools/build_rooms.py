@@ -461,6 +461,9 @@ def waiting_room(hostile, dark_front=None):
         "lights": lights,
         "fog": {"color": "#efe9dc" if hostile else "#121518", "near": 5 if hostile else 10, "far": 28 if hostile else 36},
         "exposure": 1.5 if hostile else 1.0,
+        # H: the threshold words dark on a pale halo (src/labels.js), or the
+        # blown-out walls take them
+        **({"labelInk": "dark"} if hostile else {}),
         "vignette": 0.2 if hostile else 0.55,
         "spawn": [0, 4.6, 0],
         "props": props,
@@ -1988,6 +1991,9 @@ def street():
     # behind (Doc 1: "He pushes through the glass doors")
     door(rec, "tower", "N", 0.0, w=2.6, h=2.9, kind="glass", y=0.3, locked=True, swing="out", frame="marble")
     rec["entry"] = "stoop"
+    # the address on a translucent dark plate (src/labels.js): light words
+    # alone went faint on the lit stone under the canopy
+    rec["labelInk"] = "backed"
     # the address fades in from the crossing (ring 8), over the doors
     zone(rec, "report", [0.0, -D / 2 + 1.6], r=1.2, ring=8.0, label_at=[0.0, 3.6, -D / 2 - 0.1])
     s = shots_for(rec, out_dist=6.0, leave_dist=D - 4.5, loop_seconds=16.0)

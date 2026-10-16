@@ -2,6 +2,15 @@
 // place you walk to. They fade in on approach and stamp when the zone is
 // stepped into. Company typeface; company text never says "you" (C4 --
 // test/cases/canon.text.js scans every label in scenes.json).
+//
+// Ink: the room a label stands in may ask for its own (rooms.json
+// `labelInk`, handed in by the director with each set()): 'dark' sets the
+// words dark on a pale halo, for a room whose walls blow out to white (S1 H);
+// 'backed' keeps the light words but on a translucent dark plate, for a
+// bright busy ground (the street's canopy). Absent: light words on a soft
+// dark halo (style.css .threshold-label).
+export const LABEL_INKS = ['dark', 'backed'];
+const INKS = new Set(LABEL_INKS);
 
 export function createLabels(container, stage) {
   const items = new Map(); // id -> { el, world, opacity }
@@ -17,7 +26,7 @@ export function createLabels(container, stage) {
       words.className = 'threshold-label-text';
       el.append(words, rule);
       container.appendChild(el);
-      it = { el, words, world: [0, 0, 0], opacity: 0, target: 0 };
+      it = { el, words, world: [0, 0, 0], opacity: 0, target: 0, ink: '' };
       items.set(id, it);
     }
     if (it.words.textContent !== text) it.words.textContent = text;
@@ -25,11 +34,16 @@ export function createLabels(container, stage) {
   }
 
   return {
-    // set(id, text, worldPoint, opacity 0..1)
-    set(id, text, world, opacity) {
+    // set(id, text, worldPoint, opacity 0..1, ink: the room's labelInk)
+    set(id, text, world, opacity, ink = '') {
       const it = ensure(id, text);
       it.world = world;
       it.target = opacity;
+      const k = INKS.has(ink) ? ink : '';
+      if (it.ink !== k) {
+        it.ink = k;
+        if (k) it.el.dataset.ink = k; else delete it.el.dataset.ink;
+      }
     },
     stamp(id) {
       const it = items.get(id);
@@ -55,6 +69,6 @@ export function createLabels(container, stage) {
         if (!off) it.el.style.transform = `translate(${(p.x * 100).toFixed(2)}vw, ${(p.y * 100).toFixed(2)}vh) translate(-50%, -100%)`;
       }
     },
-    _debug() { return [...items.entries()].map(([id, it]) => ({ id, text: it.words.textContent, opacity: +it.opacity.toFixed(2) })); }
+    _debug() { return [...items.entries()].map(([id, it]) => ({ id, text: it.words.textContent, opacity: +it.opacity.toFixed(2), ink: it.ink || null })); }
   };
 }
