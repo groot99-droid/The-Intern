@@ -1017,7 +1017,7 @@ export function createDirector({ manifest, endings, state, stage, audio = null, 
     const y0 = (inst.rec.floorY || 0) + 1.0;
     if (u.point) _sphere.center.set(u.point[0], y0, u.point[1]).applyMatrix4(inst.matrix);
     else {
-      const e = inst.anchorsWorld[inst.entryName];
+      const e = inst.anchorsWorld[inst.entryName || inst.rec.entry];
       if (!e) return false;
       _sphere.center.set(e.pos[0], e.pos[1] + 1.0, e.pos[2]);
     }
