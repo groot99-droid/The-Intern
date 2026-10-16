@@ -2322,6 +2322,7 @@ def check_room(k, r):
         if not dv:
             continue
         driven.add(n)
+        assert set(dv) <= {"by", "lead", "ratchet", "to", "footsteps"}, "%s: actor %s unknown drive key(s) %s" % (k, n, sorted(set(dv) - {"by", "lead", "ratchet", "to", "footsteps"}))
         assert dv.get("by") in ("x", "z"), "%s: actor %s drive.by must be 'x' or 'z'" % (k, n)
         i = 0 if dv["by"] == "x" else 1
         steps = [q[i] - p_[i] for p_, q in zip(a["path"], a["path"][1:])]

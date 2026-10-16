@@ -79,6 +79,8 @@ export async function run() {
       if (!Array.isArray(list)) { bad.push(`${where}: beats must be a list`); return; }
       list.forEach((bt, i) => {
         for (const k of keysOf(bt)) if (!BEAT.has(k)) bad.push(`${where}[${i}]: unknown beat key ${k}`);
+        // `amount` swings an `open` door part-way (doors.js open(seconds, to))
+        if (bt.amount !== undefined && !(bt.open && bt.amount > 0 && bt.amount <= 1)) bad.push(`${where}[${i}]: amount must be 0..1 on an open beat`);
         if (bt.ride && bt.ride.stops) {
           // a stop is a beat plus `at`: where along the ride (0..1) it runs
           bt.ride.stops.forEach((st, k) => { if (!(st.at >= 0 && st.at <= 1)) bad.push(`${where}[${i}].ride.stops[${k}]: at must be 0..1`); });
@@ -98,6 +100,7 @@ export async function run() {
         for (const k of keysOf(b.drive)) if (!['actor', 'footstep', 'end'].includes(k)) bad.push(`${where}: unknown drive key ${k}`);
         const a = ((resolve(b.room) || {}).actors || {})[b.drive.actor];
         if (!a || !a.drive) bad.push(`${where}: drive.actor ${b.drive.actor} is no driven actor of ${b.room}`);
+        else if (b.drive.footstep && !(a.drive.footsteps > 0)) bad.push(`${where}: drive.footstep never runs (${b.drive.actor}'s drive has no footsteps)`);
         beats(b.drive.footstep, `${where}.drive.footstep`);
         beats(b.drive.end, `${where}.drive.end`);
       }

@@ -198,6 +198,8 @@ export async function run() {
         const dv = a.drive;
         if (!dv) continue;
         n++;
+        // the keys director.js stepDrive reads (a typo is a silent no-op)
+        for (const k of Object.keys(dv)) assert(['by', 'lead', 'ratchet', 'to', 'footsteps'].includes(k), `${key}: ${name} unknown drive key ${k}`);
         assert(dv.by === 'x' || dv.by === 'z', `${key}: ${name} drive.by ${dv.by}`);
         const k = dv.by === 'x' ? 0 : 1;
         const steps = a.path.slice(1).map((p, i) => p[k] - a.path[i][k]);
