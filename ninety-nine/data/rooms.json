@@ -5281,7 +5281,11 @@
       "period": 2.3,
       "duty": 0.86,
       "low": 0.1
-     }
+     },
+     "sync": [
+      "entersign",
+      "dustmotes"
+     ]
     },
     {
      "type": "point",
@@ -5332,10 +5336,6 @@
      "w": 1.0,
      "h": 0.24,
      "text": "ENTER",
-     "sync": {
-      "color": "#33ff77",
-      "intensity": 9
-     },
      "name": "entersign"
     },
     {
@@ -5361,10 +5361,7 @@
       1.8
      ],
      "count": 150,
-     "sync": {
-      "color": "#33ff77",
-      "intensity": 9
-     }
+     "name": "dustmotes"
     },
     {
      "type": "curtainvoid",
@@ -18027,6 +18024,86 @@
       ]
      ],
      "armAfter": "edge_approach"
+    },
+    {
+     "name": "run_breath",
+     "pos": [
+      0.0,
+      12.0
+     ],
+     "r": 0.5,
+     "ring": 0.5,
+     "box": [
+      [
+       -15.7,
+       11.4
+      ],
+      [
+       15.7,
+       12.6
+      ]
+     ],
+     "silent": true
+    },
+    {
+     "name": "run_deeper",
+     "pos": [
+      0.0,
+      2.0
+     ],
+     "r": 0.5,
+     "ring": 0.5,
+     "box": [
+      [
+       -15.7,
+       1.4
+      ],
+      [
+       15.7,
+       2.6
+      ]
+     ],
+     "silent": true
+    },
+    {
+     "name": "run_haze",
+     "pos": [
+      0.0,
+      -6.0
+     ],
+     "r": 0.5,
+     "ring": 0.5,
+     "box": [
+      [
+       -15.7,
+       -6.6
+      ],
+      [
+       15.7,
+       -5.4
+      ]
+     ],
+     "silent": true
+    },
+    {
+     "name": "run_heavy",
+     "pos": [
+      0.0,
+      -12.0
+     ],
+     "r": 0.5,
+     "ring": 0.5,
+     "box": [
+      [
+       -15.7,
+       -12.6
+      ],
+      [
+       15.7,
+       -11.4
+      ]
+     ],
+     "silent": true
     }
    ],
    "anchors": {
@@ -22098,7 +22175,8 @@
       "period": 6.3,
       "duty": 0.93,
       "low": 0.08
-     }
+     },
+     "sync": "tube_flicker"
     },
     {
      "type": "point",
@@ -22375,7 +22453,8 @@
       2.5
      ],
      "w": 1.2,
-     "d": 0.3
+     "d": 0.3,
+     "name": "tube_flicker"
     },
     {
      "type": "fluoro",

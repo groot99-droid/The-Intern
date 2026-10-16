@@ -522,9 +522,9 @@ def threshold_corridor():
         # pelmet over it (the doorway's own curtain is dressed to match),
         # the sign above, the reader beside
         prop("velvetdrape", [0, 0, N], w=W, h=2.75, gap=1.75, pelmet=0.5, off=0.05, dress="curtain", name="velvet"),
-        prop("entersign", [0, 2.8, N + 0.07], w=1.0, h=0.24, text="ENTER", sync={"color": "#33ff77", "intensity": 9}, name="entersign"),
+        prop("entersign", [0, 2.8, N + 0.07], w=1.0, h=0.24, text="ENTER", name="entersign"),
         prop("badgescanner", [W / 2 - 0.02, 1.12, -6.05], rot=-90, name="badgereader"),
-        prop("dustmotes", [0, 0.2, N + 1.1], size=[3.8, 2.9, 1.8], count=150, sync={"color": "#33ff77", "intensity": 9}),  # dust in the green (Doc 2)
+        prop("dustmotes", [0, 0.2, N + 1.1], size=[3.8, 2.9, 1.8], count=150, name="dustmotes"),  # dust in the green (Doc 2)
         # behind the curtain, pure black (Doc 2): a one-sided black inside
         # the wall's depth, so the passage is not seen until he is through
         prop("curtainvoid", [0, 0, N - 0.1], w=3.0, h=3.2, name="curtain_void"),
@@ -542,8 +542,8 @@ def threshold_corridor():
         {"type": "point", "pos": [0, H - 0.35, 3.6], "color": "#ffdfb8", "intensity": 13, "distance": 11},
         {"type": "point", "pos": [0, H - 0.35, -1.4], "color": "#ffdfb8", "intensity": 9, "distance": 9},
         # the ENTER sign's green, on its 2.3 s cycle (Doc 1 S3); the sign's
-        # face follows this light (props.js entersign `sync`)
-        {"type": "point", "pos": [0, 2.55, N + 0.6], "color": "#33ff77", "intensity": 9, "distance": 6.5, "pattern": {"period": 2.3, "duty": 0.86, "low": 0.1}},
+        # face and the dust in the green follow this light (`sync`)
+        {"type": "point", "pos": [0, 2.55, N + 0.6], "color": "#33ff77", "intensity": 9, "distance": 6.5, "pattern": {"period": 2.3, "duty": 0.86, "low": 0.1}, "sync": ["entersign", "dustmotes"]},
         # the reader's laser slot, bleeding red onto the wall beside the curtain
         {"type": "point", "pos": [W / 2 - 0.3, 1.35, -6.05], "color": "#ff3020", "intensity": 1.6, "distance": 1.9},
     ]
@@ -1352,6 +1352,13 @@ def garage(depth=44.0, open_north=False):
     # short of it, and the navgrid's cells there must fall inside)
     zone(rec, "gap", [gx, edge + 0.4], r=0.5, ring=2.6, box=[[gap[0], edge + 0.02], [gap[1], edge + 0.8]], label_at=[gx, 1.45, edge - 0.6])
     zone(rec, "turnback", [0.0, edge + 5.0], r=0.5, ring=2.4, box=[[-W / 2 + 0.3, edge + 4.55], [W / 2 - 0.3, edge + 5.5]], armAfter="edge_approach", label_at=[0.0, 2.3, edge + 5.0])
+    # S6 H, down the run: silent strips wall to wall (scenes.json beatZones,
+    # no label), so he crosses each whichever aisle he takes. His breathing
+    # comes in and deepens and his footfalls grow heavier (`breath`,
+    # `footfall`), and two thirds of the way down the sodium haze gives way
+    # to the pool's dark teal (`env`: the room's own, as built here).
+    for nm, zz in (("run_breath", 12.0), ("run_deeper", 2.0), ("run_haze", -6.0), ("run_heavy", -12.0)):
+        zone(rec, nm, [0.0, zz], r=0.5, ring=0.5, box=[[-W / 2 + 0.3, zz - 0.6], [W / 2 - 0.3, zz + 0.6]], silent=True)
     anchor(rec, "drop", [gx, -4.3, edge - 6.0], 0, vertical=True)
     return rec
 
@@ -1683,11 +1690,14 @@ def convenience_store():
     lights = []
     for fx in (-1.6, 1.6):
         for fz in (-5.5, -1.5, 2.5, 6.5):
-            props.append(prop("fluoro", [fx, H - 0.06, fz], w=1.2, d=0.3))
+            bad = (fx, fz) == (1.6, 2.5)
+            props.append(prop("fluoro", [fx, H - 0.06, fz], w=1.2, d=0.3, **({"name": "tube_flicker"} if bad else {})))
             l = {"type": "point", "pos": [fx, H - 0.4, fz], "color": "#f0f4ff", "intensity": 8, "distance": 10}
-            if (fx, fz) == (1.6, 2.5):
+            if bad:
+                # the one that flickers: its tube goes dark with its light (`sync`)
                 l["flicker"] = 0.3
                 l["pattern"] = {"period": 6.3, "duty": 0.93, "low": 0.08}
+                l["sync"] = "tube_flicker"
             lights.append(l)
     rec = {
         "name": "THE STORE",
@@ -2381,6 +2391,10 @@ def check_room(k, r):
             assert any(o["name"] == z["armAfter"] for o in r["zones"]) or z["armAfter"] in driven, "%s: zone %s arms after a missing zone or driven actor" % (k, z["name"])
     for p in r.get("props", []):
         assert not p.get("reach"), "%s: hands that reach (removed from the pool scenes)" % k
+    named = set(p["name"] for p in r.get("props", []) if p.get("name"))
+    for li in r.get("lights", []):
+        for nm in ([li["sync"]] if isinstance(li.get("sync"), str) else li.get("sync", [])):
+            assert nm in named, "%s: a light syncs %s, no named prop" % (k, nm)
     hands = sum(1 for p in r.get("props", []) if p["type"] == "hands")
     assert hands == 0 or k in ("S0_X", "SE_PEND"), "%s: hands outside the apartment and the pending room" % k
 

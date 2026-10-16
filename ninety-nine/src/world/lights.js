@@ -35,6 +35,16 @@ function flickerOf(spec, t) {
   return k;
 }
 
+// A spec's live level (0..1): what its light shows now -- its flicker and
+// pattern, a light beat's switch and ramp (levelOf), times the room's light
+// level `scale` -- without a pool slot's hand-over fade, so it holds for a
+// spec that has no slot this frame. A prop whose glow follows a light
+// (rooms.json light `sync`, world.js bindSyncs) is set from it each frame.
+export function liveLevel(spec, t, scale = spec.scale === undefined ? 1 : spec.scale) {
+  const lvl = spec.lvl === undefined ? (spec.off ? 0 : 1) : spec.lvl;
+  return flickerOf(spec, t) * lvl * scale;
+}
+
 export function createLightRig(scene, { points = 16, spots = 4, shadowMap = 2048 } = {}) {
   const ambient = new THREE.AmbientLight(0xffffff, 0);
   const hemi = new THREE.HemisphereLight(0xffffff, 0x000000, 0);

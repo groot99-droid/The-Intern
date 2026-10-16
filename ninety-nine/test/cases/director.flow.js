@@ -141,4 +141,35 @@ export async function run() {
   } finally {
     frame.remove();
   }
+
+  // The dev score (director.startAt): ?conf=N&diss=N with ?start= set the
+  // score itself, the render comes from it (`render` only breaks a tie inside
+  // +/-2), and it is the state renderFor() and resolveEnding() read.
+  const frame2 = document.createElement('iframe');
+  frame2.style.cssText = frame.style.cssText;
+  frame2.src = '../index.html?start=S3&render=H&conf=2&diss=1';
+  document.body.appendChild(frame2);
+  try {
+    await runCase('director.flow: ?start=S3&render=H&conf=2&diss=1 -- the dev score is the state (conformance 2 gives S3 C whatever render asked; dissonance 1)', async () => {
+      const until2 = performance.now() + BUDGET_MS;
+      const wait2 = async (fn, what) => {
+        while (performance.now() < until2) {
+          let v = null;
+          try { v = fn(); } catch (e) { v = null; }
+          if (v) return v;
+          await sleep(100);
+        }
+        throw new Error(`the ${BUDGET_MS / 1000} s budget ran out waiting for ${what}`);
+      };
+      const G2 = await wait2(() => frame2.contentWindow && frame2.contentWindow.__NINETY_NINE__, 'window.__NINETY_NINE__');
+      const d = await wait2(() => { const x = G2.director._debug(); return x.scene === 'S3' && x.armed ? x : null; }, 'S3 to arm');
+      assertEqual(d.render, 'C', 'the score picks the render');
+      assertEqual(G2.state.conformance, 2, 'conformance');
+      assertEqual(G2.state.dissonance, 1, 'dissonance');
+      assertEqual(G2.state.lastPolarity, 1, 'lastPolarity follows the score');
+      assertEqual(G2.stage.world.current().key, 'S3_C', 'standing in S3_C');
+    });
+  } finally {
+    frame2.remove();
+  }
 }
