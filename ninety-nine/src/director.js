@@ -989,8 +989,8 @@ export function createDirector({ manifest, endings, state, stage, audio = null, 
     const e = inst.anchorsWorld[inst.entryName];
     if (inst.rec.swim) {
       const y0 = inst.matrix.elements[13];
+      startSwim(inst); // swimming first: a teleport on foot snaps to the pool floor, and he cannot rise from it (C3)
       player.teleport(0, y0 + inst.rec.size[1] - 3, 0, 0);
-      startSwim(inst);
     } else if (e && !inst.room.anchors[inst.entryName].vertical) {
       const y = (e.yaw + 180) * Math.PI / 180;
       player.teleport(e.pos[0] - Math.sin(y) * 1.8, e.pos[1], e.pos[2] - Math.cos(y) * 1.8, e.yaw + 180);
