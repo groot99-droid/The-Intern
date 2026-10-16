@@ -12,6 +12,7 @@
 
 import * as THREE from '../../vendor/three/three.module.js';
 import { applyWorldUV } from './materials.js';
+import { catalogPaint } from '../stage/library.js';
 
 function box(mats, slot, w, h, d, x = 0, y = 0, z = 0, opts = {}) {
   const geo = new THREE.BoxGeometry(w, h, d);
@@ -1013,8 +1014,9 @@ const BUILDERS = {
     return {
       // Paints the catalog props placed before it in the same room that ask
       // for it (`paint: true`) wholly in their palette slot (`mat`): the
-      // library only tints a model's light surfaces 80% of the way, which
-      // turned Doc 2's one flat maroon into pink. Place it after them.
+      // library multiplies the slot into the model's own paint (library.js),
+      // which keeps its wood frame and cushions, not Doc 2's one flat
+      // maroon. Place it after them.
       // `paint: '#rrggbb'` paints in that colour instead of the slot's own
       // (the same flat, vertex-snapped low-poly material, one per colour):
       // the slot's maroon reads as fire-engine red under the lobby's light.
@@ -1041,7 +1043,8 @@ const BUILDERS = {
             c.traverse((x) => {
               if (!x.isMesh || !x.visible || Array.isArray(x.material) || !x.material.color) return;
               const k = x.material.color;
-              if (0.2126 * k.r + 0.7152 * k.g + 0.0722 * k.b > 0.15) x.material = m; // its light (tinted) surfaces
+              // a catalog model (library.js tints all of it), or a box fallback's light surfaces
+              if (x.material.userData.catalog || 0.2126 * k.r + 0.7152 * k.g + 0.0722 * k.b > 0.15) x.material = m;
             });
           }
         });
@@ -2737,8 +2740,8 @@ const BUILDERS = {
   // the hinge at the group origin, the panel swung `angle` degrees out,
   // `len` long, its sill at `y`, tinted `mat` like the car. With `tint`
   // (the car's own palette slot) the panel takes the colour library.js
-  // gives the catalog car's light surfaces (white lerped 0.8 toward the
-  // slot), so door and body match; without the library it is the slot
+  // gives the catalog car's light paint (catalogPaint: the slot multiplied
+  // into it), so door and body match; without the library it is the slot
   // itself, like the box fallback car.
   cardoor(mats, o, ctx) {
     const g = new THREE.Group();
@@ -2751,7 +2754,7 @@ const BUILDERS = {
       const pm = base.clone();
       pm.onBeforeCompile = base.onBeforeCompile; // keep the PS1 vertex snap (clone() drops it)
       pm.customProgramCacheKey = base.customProgramCacheKey;
-      pm.color = new THREE.Color(1, 1, 1).lerp(base.color, 0.8);
+      pm.color = catalogPaint(base.color);
       pm.userData.owned = true;
       panel.material = pm;
     }
@@ -3967,9 +3970,10 @@ const BUILDERS = {
   // in, so a room never waits on the download to exist.
   glb(mats, o, ctx) {
     const lib = ctx && ctx.library;
-    // the prop's palette slot (a low-poly colour) tints the model's light surfaces
+    // the prop's palette slot (a low-poly colour) is multiplied into the
+    // model's colours; `tintMapped: true` recolours a palette texture too
     const tint = o.mat && mats.isLowPoly(o.mat) ? mats.get(o.mat).color : null;
-    const node = lib ? lib.instance(o.node, tint) : null;
+    const node = lib ? lib.instance(o.node, tint, { tintMapped: !!o.tintMapped }) : null;
     if (node) {
       node.userData.catalog = o.node;
       if (o.collide) {
