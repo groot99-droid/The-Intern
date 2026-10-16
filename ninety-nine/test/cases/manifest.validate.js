@@ -71,7 +71,9 @@ export async function run() {
     const THRESHOLD = new Set(['label', 'zone', 'exit', 'via', 'viaDark', 'to', 'setFlag', 'sfxCue', 'beat', 'approach', 'fallShot']);
     const BEAT_ZONE = new Set(['zone', 'label', 'beat', 'once']);
     // director.js runBeats(), in its order
-    const BEAT = new Set(['sfxCue', 'sfxOpts', 'oneShot', 'music', 'musicRender', 'caption', 'holdMs', 'className', 'rattle', 'show', 'hide', 'light', 'screen', 'setFlag', 'hold', 'drop', 'actor', 'seal', 'open', 'amount', 'close', 'seconds', 'await', 'lookAt', 'lookY', 'sit', 'moveTo', 'shot', 'ride', 'shake', 'together', 'waitMs']);
+    const BEAT = new Set(['sfxCue', 'sfxOpts', 'oneShot', 'music', 'musicRender', 'caption', 'holdMs', 'className', 'rattle', 'show', 'hide', 'light', 'screen', 'display', 'swing', 'setFlag', 'hold', 'drop', 'actor', 'seal', 'open', 'amount', 'close', 'seconds', 'await', 'lookAt', 'lookY', 'sit', 'moveTo', 'shot', 'ride', 'shake', 'together', 'waitMs']);
+    const DISPLAY = new Set(['prop', 'text']);
+    const SWING = new Set(['prop', 'amount', 'decay', 'axis', 'period']);
     const bad = [];
     const keysOf = (o) => Object.keys(o || {}).filter((k) => !k.startsWith('_'));
     const beats = (list, where) => {
@@ -81,6 +83,19 @@ export async function run() {
         for (const k of keysOf(bt)) if (!BEAT.has(k)) bad.push(`${where}[${i}]: unknown beat key ${k}`);
         // `amount` swings an `open` door part-way (doors.js open(seconds, to))
         if (bt.amount !== undefined && !(bt.open && bt.amount > 0 && bt.amount <= 1)) bad.push(`${where}[${i}]: amount must be 0..1 on an open beat`);
+        if (bt.display) {
+          for (const k of keysOf(bt.display)) if (!DISPLAY.has(k)) bad.push(`${where}[${i}].display: unknown key ${k}`);
+          if (typeof bt.display.prop !== 'string' || typeof bt.display.text !== 'string') bad.push(`${where}[${i}].display: {prop, text} strings`);
+        }
+        if (bt.swing) {
+          const sw = bt.swing;
+          for (const k of keysOf(sw)) if (!SWING.has(k)) bad.push(`${where}[${i}].swing: unknown key ${k}`);
+          if (typeof sw.prop !== 'string') bad.push(`${where}[${i}].swing: no prop`);
+          if (sw.amount !== undefined && !(sw.amount > 0 && sw.amount <= 0.3)) bad.push(`${where}[${i}].swing.amount: metres, 0..0.3`);
+          if (sw.decay !== undefined && !(sw.decay > 0)) bad.push(`${where}[${i}].swing.decay: per second, > 0`);
+          if (sw.period !== undefined && !(sw.period > 0)) bad.push(`${where}[${i}].swing.period: seconds, > 0`);
+          if (sw.axis !== undefined && !['x', 'z'].includes(sw.axis)) bad.push(`${where}[${i}].swing.axis: 'x' or 'z'`);
+        }
         if (bt.ride && bt.ride.stops) {
           // a stop is a beat plus `at`: where along the ride (0..1) it runs
           bt.ride.stops.forEach((st, k) => { if (!(st.at >= 0 && st.at <= 1)) bad.push(`${where}[${i}].ride.stops[${k}]: at must be 0..1`); });
@@ -263,6 +278,12 @@ export async function run() {
         for (const k of ['rattle', 'open', 'close']) if (bt[k] && !doors.has(bt[k])) bad.push(`${where}: ${k} ${bt[k]} is no door of ${room}`);
         for (const k of ['show', 'hide', 'lookAt']) if (bt[k] && !props.has(bt[k])) bad.push(`${where}: ${k} ${bt[k]} is no named prop of ${room}`);
         if (bt.screen && !props.has(bt.screen.prop)) bad.push(`${where}: screen ${bt.screen.prop} is no named prop of ${room}`);
+        if (bt.swing && !propNames(room).has(bt.swing.prop)) bad.push(`${where}: swing ${bt.swing.prop} is no named prop of ${room}`);
+        if (bt.display) {
+          // a reading needs a text-capable prop: props.js floorind
+          const dp = (rec.props || []).find((p) => p.name === bt.display.prop);
+          if (!dp || dp.type !== 'floorind') bad.push(`${where}: display ${bt.display.prop} is no floorind of ${room}`);
+        }
         if (bt.light && !lights.has(bt.light.id)) bad.push(`${where}: light ${bt.light.id} not in ${room}`);
         if (bt.actor) { const n = typeof bt.actor === 'string' ? bt.actor : bt.actor.name; if (!(rec.actors || {})[n]) bad.push(`${where}: actor ${n} not in ${room}`); }
         if (bt.shot && !(rec.shots || {})[bt.shot]) bad.push(`${where}: shot ${bt.shot} not in ${room}`);
@@ -358,6 +379,46 @@ export async function run() {
     }
     assert(bad.length === 0, bad.join(' | '));
     assert(n >= 1, 'no unseen change found (S4 C closes the aisle behind him)');
+  });
+
+  await runCase('Assertion 2c3: a ride reads the landings it passes -- every floor a `display` stop shows is a fixed landing of its room at the drop the ride has reached by then, and every fixed landing is read (S7 C: B1, B2, B7, B12, the glyph)', () => {
+    // director.js stepRide: one eased drop (in-out quad) of ride.drop metres
+    const dropAt = (ride, u) => (ride.drop === undefined ? 14 : ride.drop) * (u < 0.5 ? 2 * u * u : 1 - Math.pow(-2 * u + 2, 2) / 2);
+    const norm = (t) => String(t).replace(/\s+/g, '').toUpperCase();
+    const bad = [];
+    let rides = 0, reads = 0;
+    const walk = (beats, room, where) => {
+      for (const bt of beats || []) {
+        if (bt.together) walk(bt.together, room, `${where}.together`);
+        if (!bt.ride) continue;
+        const landings = ((resolve(room) || {}).props || []).filter((p) => p.fixed && p.type === 'landingdoors' && p.label !== undefined);
+        if (!landings.length) continue;
+        rides++;
+        const read = new Set();
+        for (const st of bt.ride.stops || []) {
+          if (!st.display) continue;
+          const t = norm(st.display.text);
+          const at = landings.filter((p) => norm(p.label) === t);
+          if (!at.length) { if (t && t !== '--') bad.push(`${where}: reads ${t}, no landing of ${room} is ${t}`); continue; }
+          const d = dropAt(bt.ride, st.at);
+          const near = at.some((p) => Math.abs(d + p.pos[1]) <= 0.5);
+          if (!near) bad.push(`${where}: reads ${t} at ${st.at} (${d.toFixed(2)} m down), the landing is ${at.map((p) => (-p.pos[1]).toFixed(2)).join('/')} m down`);
+          read.add(t);
+          reads++;
+        }
+        for (const p of landings) if (!read.has(norm(p.label))) bad.push(`${where}: passes landing ${norm(p.label)} without reading it`);
+        if (Math.max(...landings.map((p) => -p.pos[1])) > dropAt(bt.ride, 1) + 1e-6) bad.push(`${where}: a landing below where the ride stops`);
+      }
+    };
+    for (const { sid, letter, b } of branches()) {
+      walk(b.onEnter, b.room, `${sid}.${letter}.onEnter`);
+      if (b.idle) walk(b.idle.beat, b.room, `${sid}.${letter}.idle`);
+      if (b.stillness) walk(b.stillness.beat, b.room, `${sid}.${letter}.stillness`);
+      for (const bz of b.beatZones || []) walk(bz.beat, b.room, `${sid}.${letter}.beatZone.${bz.zone}`);
+      for (const [key, th] of Object.entries(b.thresholds || {})) { walk(th.beat, b.room, `${sid}.${letter}.${key}`); walk(th.approach, b.room, `${sid}.${letter}.${key}.approach`); }
+    }
+    assert(rides >= 2 && reads >= 10, `only ${rides} rides / ${reads} readings past landings found`);
+    assert(bad.length === 0, bad.join(' | '));
   });
 
   await runCase('Assertion 2d: every audio file referenced (beds, the street bed, ending beds, oneShot beats) exists in /assets/aud', async () => {

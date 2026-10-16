@@ -1211,7 +1211,7 @@
                 {
                   "together": [
                     {
-                      "lookAt": "ind_face",
+                      "lookAt": "ind",
                       "lookY": -0.62,
                       "seconds": 1.4
                     },
@@ -1230,10 +1230,17 @@
                     {
                       "sfxCue": "metal-tear-screech",
                       "seal": true,
-                      "waitMs": 1100
+                      "close": "cab",
+                      "seconds": 1.0,
+                      "await": true
                     },
                     {
                       "sfxCue": "door-thud",
+                      "swing": {
+                        "prop": "bulb",
+                        "amount": 0.035,
+                        "decay": 0.7
+                      },
                       "waitMs": 600
                     },
                     {
@@ -1243,37 +1250,66 @@
                         "shake": 0,
                         "stops": [
                           {
+                            "at": 0,
+                            "show": "landing_top",
+                            "open": "cab",
+                            "seconds": 0.02
+                          },
+                          {
                             "at": 0.05,
-                            "show": "ind_b1",
-                            "hide": "ind_dash"
+                            "display": {
+                              "prop": "ind",
+                              "text": " b1"
+                            }
                           },
                           {
-                            "at": 0.23,
-                            "show": "ind_b2",
-                            "hide": "ind_b1"
+                            "at": 0.324,
+                            "display": {
+                              "prop": "ind",
+                              "text": " b2"
+                            }
                           },
                           {
-                            "at": 0.47,
-                            "show": "ind_b7",
-                            "hide": "ind_b2"
+                            "at": 0.474,
+                            "display": {
+                              "prop": "ind",
+                              "text": " b7"
+                            }
                           },
                           {
-                            "at": 0.8,
-                            "show": "ind_b12",
-                            "hide": "ind_b7"
+                            "at": 0.594,
+                            "display": {
+                              "prop": "ind",
+                              "text": "b12"
+                            }
                           },
                           {
                             "at": 0.97,
-                            "show": "ind_glyph",
-                            "hide": "ind_b12"
+                            "display": {
+                              "prop": "ind",
+                              "text": " = "
+                            }
                           }
                         ]
                       }
+                    },
+                    {
+                      "close": "cab",
+                      "seconds": 0.02,
+                      "await": true
+                    },
+                    {
+                      "hide": "landing_low"
                     }
                   ]
                 },
                 {
                   "sfxCue": "door-thud",
+                  "swing": {
+                    "prop": "bulb",
+                    "amount": 0.02,
+                    "decay": 0.9
+                  },
                   "waitMs": 1200
                 },
                 {
@@ -1323,10 +1359,15 @@
                         "door-rattle"
                       ],
                       "show": "gate_2",
-                      "hide": "gate_0"
+                      "hide": "gate_0",
+                      "swing": {
+                        "prop": "bulb",
+                        "amount": 0.03,
+                        "decay": 0.7
+                      }
                     },
                     {
-                      "lookAt": "ind_face",
+                      "lookAt": "ind",
                       "lookY": -0.6,
                       "seconds": 0.9
                     },
@@ -1338,18 +1379,31 @@
                         "stops": [
                           {
                             "at": 0.05,
-                            "show": "ind_b1",
-                            "hide": "ind_dash"
+                            "display": {
+                              "prop": "ind",
+                              "text": " b1"
+                            }
                           },
                           {
-                            "at": 0.23,
-                            "show": "ind_b2",
-                            "hide": "ind_b1"
+                            "at": 0.324,
+                            "display": {
+                              "prop": "ind",
+                              "text": " b2"
+                            }
                           },
                           {
-                            "at": 0.47,
-                            "show": "ind_b7",
-                            "hide": "ind_b2"
+                            "at": 0.474,
+                            "display": {
+                              "prop": "ind",
+                              "text": " b7"
+                            }
+                          },
+                          {
+                            "at": 0.594,
+                            "display": {
+                              "prop": "ind",
+                              "text": "b12"
+                            }
                           },
                           {
                             "at": 0.66,
@@ -1358,22 +1412,36 @@
                             "seconds": 0.8
                           },
                           {
-                            "at": 0.8,
-                            "show": "ind_b12",
-                            "hide": "ind_b7"
+                            "at": 0.745,
+                            "sfxCue": "door-thud",
+                            "swing": {
+                              "prop": "bulb",
+                              "amount": 0.025,
+                              "decay": 0.8
+                            }
                           },
                           {
                             "at": 0.97,
-                            "show": "ind_glyph",
-                            "hide": "ind_b12"
+                            "display": {
+                              "prop": "ind",
+                              "text": " = "
+                            }
                           }
                         ]
                       }
+                    },
+                    {
+                      "hide": "landing_low"
                     }
                   ]
                 },
                 {
                   "sfxCue": "door-thud",
+                  "swing": {
+                    "prop": "bulb",
+                    "amount": 0.02,
+                    "decay": 0.9
+                  },
                   "waitMs": 1200
                 },
                 {

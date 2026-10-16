@@ -159,6 +159,15 @@ export function createWorld({ scene, mats, library, rooms, lightPool = {} }) {
     };
     derive(inst);
     scene.add(group);
+    if (room.fixed) {
+      // the room's fixed parts (room.js): placed with it, here, once --
+      // move() never touches them, so they keep this world position
+      room.fixed.matrixAutoUpdate = false;
+      room.fixed.matrix.copy(inst.matrix);
+      room.fixed.matrixWorld.copy(inst.matrix);
+      room.fixed.updateMatrixWorld(true);
+      scene.add(room.fixed);
+    }
     instances.push(inst);
     return inst;
   }
@@ -190,6 +199,8 @@ export function createWorld({ scene, mats, library, rooms, lightPool = {} }) {
     return room;
   }
 
+  // Moves an instance (the cab's ride). Its fixed parts stay where spawn()
+  // put them.
   function move(inst, matrix) {
     inst.matrix.copy(matrix);
     derive(inst);
@@ -200,6 +211,7 @@ export function createWorld({ scene, mats, library, rooms, lightPool = {} }) {
     if (i === -1) return;
     instances.splice(i, 1);
     scene.remove(inst.group);
+    if (inst.room.fixed) scene.remove(inst.room.fixed);
     inst.room.dispose();
     if (current === inst) current = null;
     for (const o of instances) if (o.link && (o.link.from === inst || o.link.to === inst)) {

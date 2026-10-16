@@ -20,6 +20,7 @@ const FOOTSTEP_BY_SURFACE = {
   concrete: { filterHz: 800, gain: 0.12 }, concrete_wet: { filterHz: 900, gain: 0.13 }, garage_floor: { filterHz: 760, gain: 0.12 },
   asphalt: { filterHz: 700, gain: 0.11 }, linoleum: { filterHz: 1200, gain: 0.11 }, pool_tile: { filterHz: 1900, gain: 0.12 },
   grate: { filterHz: 2400, gain: 0.16 }, rust: { filterHz: 2000, gain: 0.15 }, paint_green: { filterHz: 850, gain: 0.12 },
+  diamond_plate: { filterHz: 2200, gain: 0.15 }, // the freight cab's floor (S7 C)
   cardboard: { filterHz: 500, gain: 0.09 }, plaster: { filterHz: 800, gain: 0.11 }
 };
 

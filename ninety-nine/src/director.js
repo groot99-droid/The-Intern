@@ -120,6 +120,82 @@ export function createDirector({ manifest, endings, state, stage, audio = null, 
     for (const s of inst.lights) if (s.id === id) { s.off = !on; s.fadeS = seconds || 0; }
   }
 
+  // `display`: {prop, text} -- a new reading on a text-capable prop (the
+  // cab's floor indicator, props.js floorind: three 7-segment cells).
+  function displayProp(inst, { prop, text = '' }) {
+    const g = inst && inst.room.named.get(prop);
+    if (g && g.userData.display) g.userData.display(String(text));
+    else console.warn(`director: display: ${prop} is no text-capable prop of ${inst && inst.key}`);
+  }
+
+  // `swing`: {prop, amount, decay, axis, period} -- a damped swing of a
+  // named prop about its top (the top centre of its bounds), as if it hung
+  // there and was knocked: the cab's caged bulb when the doors hit and when
+  // the cab lands (S7 C). `amount`: how far its lowest point travels at the
+  // first peak, in metres (0.03); `decay`: per second (0.8); `axis`: the
+  // room axis it swings about, 'x' (it travels along z, toward and away
+  // from a door in the N/S wall) or 'z'; `period`: seconds (a pendulum's of
+  // the prop's height). It runs on its own after the beat; a knock while it
+  // still swings adds to the motion (no jump), and it comes back exactly to
+  // its resting pose.
+  let swings = [];
+  const _swQ = new THREE.Quaternion();
+  const _swE = new THREE.Euler();
+  const _swV = new THREE.Vector3();
+  function startSwing(inst, spec) {
+    const g = inst && inst.room.named.get(spec.prop);
+    if (!g) { console.warn(`director: swing: no prop ${spec.prop} in ${inst && inst.key}`); return; }
+    let s = swings.find((w) => w.g === g);
+    if (!s) {
+      // its bounds in its own frame, the pivot at their top centre, carried
+      // into its parent's frame by its resting transform
+      const box = new THREE.Box3(), part = new THREE.Box3(), m = new THREE.Matrix4(), inv = new THREE.Matrix4();
+      g.updateMatrixWorld(true);
+      inv.copy(g.matrixWorld).invert();
+      g.traverse((o) => {
+        if (!o.isMesh || !o.geometry) return;
+        if (!o.geometry.boundingBox) o.geometry.computeBoundingBox();
+        part.copy(o.geometry.boundingBox).applyMatrix4(m.multiplyMatrices(inv, o.matrixWorld));
+        box.union(part);
+      });
+      if (box.isEmpty()) return;
+      const pivot = new THREE.Vector3((box.min.x + box.max.x) / 2, box.max.y, (box.min.z + box.max.z) / 2).applyMatrix4(g.matrix);
+      const length = Math.max(0.05, (box.max.y - box.min.y) * g.scale.y);
+      s = { inst, g, pivot, length, pos0: g.position.clone(), quat0: g.quaternion.clone(), kicks: [] };
+      swings.push(s);
+    }
+    // each knock is its own decaying swing, with its own period (a knock
+    // with another `period` leaves the swings already running as they were);
+    // they add (a linear pendulum)
+    const w = 2 * Math.PI / (spec.period || 2 * Math.PI * Math.sqrt(s.length / 9.81));
+    s.kicks.push({ t: 0, w, amp: (spec.amount === undefined ? 0.03 : spec.amount) / s.length, decay: spec.decay === undefined ? 0.8 : spec.decay, z: spec.axis === 'z' });
+  }
+  function stepSwings(dt) {
+    for (let i = swings.length - 1; i >= 0; i--) {
+      const s = swings[i];
+      let ax = 0, az = 0;
+      for (let k = s.kicks.length - 1; k >= 0; k--) {
+        const kk = s.kicks[k];
+        kk.t += dt;
+        const env = kk.amp * Math.exp(-kk.decay * kk.t);
+        if (env * s.length < 0.0004) { s.kicks.splice(k, 1); continue; } // under half a millimetre: spent
+        const a = env * Math.sin(kk.w * kk.t);
+        if (kk.z) az += a; else ax += a;
+      }
+      if (!s.kicks.length) {
+        // at rest, exactly where it hung
+        s.g.quaternion.copy(s.quat0);
+        s.g.position.copy(s.pos0);
+        swings.splice(i, 1);
+        continue;
+      }
+      _swQ.setFromEuler(_swE.set(ax, 0, az));
+      s.g.quaternion.copy(_swQ).multiply(s.quat0);
+      _swV.copy(s.pos0).sub(s.pivot).applyQuaternion(_swQ);
+      s.g.position.copy(s.pivot).add(_swV);
+    }
+  }
+
   function holdProp(type, from = null) {
     dropHeld();
     const base = typeof type === 'string' ? { type } : { ...type };
@@ -213,6 +289,8 @@ export function createDirector({ manifest, endings, state, stage, audio = null, 
         if (b.screen.page) drawScreen(inst, b.screen.prop, PAGES[b.screen.page]());
         else screenPower(inst, b.screen.prop, b.screen.on !== false, stage.mats);
       }
+      if (b.display) displayProp(inst, b.display);
+      if (b.swing) startSwing(inst, b.swing);
       if (b.setFlag) state.flags.add(b.setFlag);
       if (b.hold) { const src = b.hide && inst.room.named.get(b.hide); holdProp(b.hold, src && src.userData ? src.userData.spec : null); }
       if (b.drop) dropHeld();
@@ -426,6 +504,7 @@ export function createDirector({ manifest, endings, state, stage, audio = null, 
     beatZones = beatZones.filter((b) => b.inst !== inst);
     actorRuns = actorRuns.filter((r) => r.inst !== inst);
     drives = drives.filter((D) => D.inst !== inst);
+    swings = swings.filter((w) => w.inst !== inst);
     for (const L of links.slice()) {
       if (L.from === inst && L.seal1) continue;
       if (L.from === inst) { world.remove(L.conn); world.remove(L.dest); links.splice(links.indexOf(L), 1); }
@@ -890,6 +969,7 @@ export function createDirector({ manifest, endings, state, stage, audio = null, 
   function tick(dt) {
     labels.update(dt);
     if (gone()) return;
+    if (swings.length) stepSwings(dt);
     const pos = player.position();
     const feet = pos[1] - player.eyeHeight;
     for (const r of actorRuns.slice()) {

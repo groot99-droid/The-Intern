@@ -18049,7 +18049,7 @@
     2.6,
     3.4
    ],
-   "floor": "grate",
+   "floor": "diamond_plate",
    "wall": "rust",
    "ceiling": "rust",
    "tile": {
@@ -18058,7 +18058,7 @@
     "ceiling": 2.0
    },
    "skirt": {
-    "mat": "grate",
+    "mat": "diamond_plate",
     "h": 0.3,
     "t": 0.02,
     "tile": 0.9
@@ -18163,7 +18163,8 @@
       2.18,
       0.0
      ],
-     "h": 0.42
+     "h": 0.42,
+     "name": "bulb"
     },
     {
      "type": "floorind",
@@ -18175,84 +18176,8 @@
      "rot": 180,
      "scale": 1.2,
      "ghost": true,
-     "name": "ind_face"
-    },
-    {
-     "type": "floorind",
-     "pos": [
-      0.0,
-      2.31,
-      1.7
-     ],
-     "rot": 180,
-     "scale": 1.2,
      "text": " --",
-     "name": "ind_dash"
-    },
-    {
-     "type": "floorind",
-     "pos": [
-      0.0,
-      2.31,
-      1.7
-     ],
-     "rot": 180,
-     "scale": 1.2,
-     "text": " b1",
-     "name": "ind_b1",
-     "hidden": true
-    },
-    {
-     "type": "floorind",
-     "pos": [
-      0.0,
-      2.31,
-      1.7
-     ],
-     "rot": 180,
-     "scale": 1.2,
-     "text": " b2",
-     "name": "ind_b2",
-     "hidden": true
-    },
-    {
-     "type": "floorind",
-     "pos": [
-      0.0,
-      2.31,
-      1.7
-     ],
-     "rot": 180,
-     "scale": 1.2,
-     "text": " b7",
-     "name": "ind_b7",
-     "hidden": true
-    },
-    {
-     "type": "floorind",
-     "pos": [
-      0.0,
-      2.31,
-      1.7
-     ],
-     "rot": 180,
-     "scale": 1.2,
-     "text": "b12",
-     "name": "ind_b12",
-     "hidden": true
-    },
-    {
-     "type": "floorind",
-     "pos": [
-      0.0,
-      2.31,
-      1.7
-     ],
-     "rot": 180,
-     "scale": 1.2,
-     "text": " = ",
-     "name": "ind_glyph",
-     "hidden": true
+     "name": "ind"
     },
     {
      "type": "scissorgate",
@@ -18297,6 +18222,146 @@
      "link": "lp_brass",
      "name": "gate_2",
      "hidden": true
+    },
+    {
+     "type": "landingdoors",
+     "pos": [
+      0,
+      0,
+      1.9
+     ],
+     "rot": 180,
+     "w": 1.6,
+     "h": 2.2,
+     "inset": 0.15,
+     "sill": true,
+     "label": "B1",
+     "name": "landing_top",
+     "hidden": true,
+     "fixed": true
+    },
+    {
+     "type": "shaftstencil",
+     "pos": [
+      0,
+      -0.44,
+      1.9
+     ],
+     "rot": 180,
+     "text": "B1",
+     "h": 0.32,
+     "fixed": true
+    },
+    {
+     "type": "landingdoors",
+     "pos": [
+      0,
+      -4.2,
+      1.9
+     ],
+     "rot": 180,
+     "w": 1.5,
+     "h": 2.1,
+     "inset": 0.03,
+     "frame": 0.07,
+     "sill": true,
+     "label": "B2",
+     "fixed": true
+    },
+    {
+     "type": "shaftstencil",
+     "pos": [
+      0,
+      -1.88,
+      1.9
+     ],
+     "rot": 180,
+     "text": "B2",
+     "h": 0.32,
+     "fixed": true
+    },
+    {
+     "type": "landingdoors",
+     "pos": [
+      0,
+      -9.0,
+      1.9
+     ],
+     "rot": 180,
+     "w": 1.5,
+     "h": 2.1,
+     "inset": 0.03,
+     "frame": 0.07,
+     "sill": true,
+     "label": "B7",
+     "fixed": true
+    },
+    {
+     "type": "shaftstencil",
+     "pos": [
+      0,
+      -6.68,
+      1.9
+     ],
+     "rot": 180,
+     "text": "B7",
+     "h": 0.32,
+     "fixed": true
+    },
+    {
+     "type": "landingdoors",
+     "pos": [
+      0,
+      -13.4,
+      1.9
+     ],
+     "rot": 180,
+     "w": 1.5,
+     "h": 2.1,
+     "inset": 0.03,
+     "frame": 0.07,
+     "sill": true,
+     "label": "B12",
+     "fixed": true
+    },
+    {
+     "type": "shaftstencil",
+     "pos": [
+      0,
+      -11.08,
+      1.9
+     ],
+     "rot": 180,
+     "text": "B12",
+     "h": 0.32,
+     "fixed": true
+    },
+    {
+     "type": "landingdoors",
+     "pos": [
+      0,
+      -20.0,
+      1.9
+     ],
+     "rot": 180,
+     "w": 1.6,
+     "h": 2.2,
+     "inset": 0.15,
+     "label": "=",
+     "name": "landing_low",
+     "fixed": true
+    },
+    {
+     "type": "shaftstencil",
+     "pos": [
+      0,
+      -17.58,
+      1.9
+     ],
+     "rot": 180,
+     "text": "=",
+     "h": 0.32,
+     "fixed": true
     }
    ],
    "boxes": [
@@ -18311,7 +18376,7 @@
       1.29,
       -1.644
      ],
-     "mat": "grate",
+     "mat": "quilted_steel",
      "tile": 0.5,
      "collide": false
     },
@@ -18326,7 +18391,7 @@
       2.28,
       -1.652
      ],
-     "mat": "grate",
+     "mat": "quilted_steel",
      "tile": 0.5,
      "collide": false
     },
@@ -18341,7 +18406,7 @@
       1.29,
       -1.654
      ],
-     "mat": "grate",
+     "mat": "quilted_steel",
      "tile": 0.5,
      "collide": false
     },
@@ -18356,7 +18421,7 @@
       2.28,
       -1.643
      ],
-     "mat": "grate",
+     "mat": "quilted_steel",
      "tile": 0.5,
      "collide": false
     },
@@ -18371,7 +18436,7 @@
       1.29,
       -1.656
      ],
-     "mat": "grate",
+     "mat": "quilted_steel",
      "tile": 0.5,
      "collide": false
     },
@@ -18386,7 +18451,7 @@
       2.28,
       -1.649
      ],
-     "mat": "grate",
+     "mat": "quilted_steel",
      "tile": 0.5,
      "collide": false,
      "pitch": 5.0
@@ -18402,7 +18467,7 @@
       1.29,
       -1.648
      ],
-     "mat": "grate",
+     "mat": "quilted_steel",
      "tile": 0.5,
      "collide": false
     },
@@ -18417,7 +18482,7 @@
       2.28,
       -1.647
      ],
-     "mat": "grate",
+     "mat": "quilted_steel",
      "tile": 0.5,
      "collide": false
     },
@@ -18432,7 +18497,7 @@
       1.29,
       -0.985
      ],
-     "mat": "grate",
+     "mat": "quilted_steel",
      "tile": 0.5,
      "collide": false
     },
@@ -18447,7 +18512,7 @@
       2.28,
       -0.985
      ],
-     "mat": "grate",
+     "mat": "quilted_steel",
      "tile": 0.5,
      "collide": false
     },
@@ -18462,7 +18527,7 @@
       1.29,
       -0.32
      ],
-     "mat": "grate",
+     "mat": "quilted_steel",
      "tile": 0.5,
      "collide": false
     },
@@ -18477,7 +18542,7 @@
       2.28,
       -0.32
      ],
-     "mat": "grate",
+     "mat": "quilted_steel",
      "tile": 0.5,
      "collide": false
     },
@@ -18492,7 +18557,7 @@
       1.29,
       0.345
      ],
-     "mat": "grate",
+     "mat": "quilted_steel",
      "tile": 0.5,
      "collide": false
     },
@@ -18507,7 +18572,7 @@
       2.28,
       0.345
      ],
-     "mat": "grate",
+     "mat": "quilted_steel",
      "tile": 0.5,
      "collide": false
     },
@@ -18522,7 +18587,7 @@
       1.29,
       1.01
      ],
-     "mat": "grate",
+     "mat": "quilted_steel",
      "tile": 0.5,
      "collide": false
     },
@@ -18537,7 +18602,7 @@
       2.28,
       1.01
      ],
-     "mat": "grate",
+     "mat": "quilted_steel",
      "tile": 0.5,
      "collide": false
     },
@@ -18552,7 +18617,7 @@
       1.29,
       1.675
      ],
-     "mat": "grate",
+     "mat": "quilted_steel",
      "tile": 0.5,
      "collide": false
     },
@@ -18567,7 +18632,7 @@
       2.28,
       1.675
      ],
-     "mat": "grate",
+     "mat": "quilted_steel",
      "tile": 0.5,
      "collide": false
     },
@@ -18582,7 +18647,7 @@
       1.29,
       -0.985
      ],
-     "mat": "grate",
+     "mat": "quilted_steel",
      "tile": 0.5,
      "collide": false
     },
@@ -18597,7 +18662,7 @@
       2.28,
       -0.985
      ],
-     "mat": "grate",
+     "mat": "quilted_steel",
      "tile": 0.5,
      "collide": false
     },
@@ -18612,7 +18677,7 @@
       1.29,
       0.345
      ],
-     "mat": "grate",
+     "mat": "quilted_steel",
      "tile": 0.5,
      "collide": false
     },
@@ -18627,7 +18692,7 @@
       2.28,
       0.345
      ],
-     "mat": "grate",
+     "mat": "quilted_steel",
      "tile": 0.5,
      "collide": false
     },
@@ -18642,7 +18707,7 @@
       1.29,
       1.01
      ],
-     "mat": "grate",
+     "mat": "quilted_steel",
      "tile": 0.5,
      "collide": false
     },
@@ -18657,7 +18722,7 @@
       2.28,
       1.01
      ],
-     "mat": "grate",
+     "mat": "quilted_steel",
      "tile": 0.5,
      "collide": false
     },
@@ -18672,7 +18737,7 @@
       1.29,
       1.675
      ],
-     "mat": "grate",
+     "mat": "quilted_steel",
      "tile": 0.5,
      "collide": false
     },
@@ -18687,7 +18752,7 @@
       2.28,
       1.675
      ],
-     "mat": "grate",
+     "mat": "quilted_steel",
      "tile": 0.5,
      "collide": false
     },
@@ -18702,7 +18767,7 @@
       1.29,
       1.7
      ],
-     "mat": "grate",
+     "mat": "quilted_steel",
      "tile": 0.5,
      "collide": false
     },
@@ -18717,7 +18782,7 @@
       2.28,
       1.7
      ],
-     "mat": "grate",
+     "mat": "quilted_steel",
      "tile": 0.5,
      "collide": false
     },
@@ -18732,7 +18797,7 @@
       1.29,
       1.7
      ],
-     "mat": "grate",
+     "mat": "quilted_steel",
      "tile": 0.5,
      "collide": false
     },
@@ -18747,7 +18812,7 @@
       2.28,
       1.7
      ],
-     "mat": "grate",
+     "mat": "quilted_steel",
      "tile": 0.5,
      "collide": false
     },
@@ -18838,7 +18903,7 @@
       2.0,
       -0.35000000000000003
      ],
-     "mat": "grate",
+     "mat": "quilted_steel",
      "tile": 0.9,
      "collide": false
     },
@@ -18889,6 +18954,22 @@
      "tile": 1.2,
      "collide": false,
      "shadow": false
+    },
+    {
+     "min": [
+      -1.2,
+      -17.72,
+      1.9
+     ],
+     "max": [
+      1.2,
+      -0.01,
+      2.0
+     ],
+     "mat": "shaft_block",
+     "tile": 0.8,
+     "collide": false,
+     "fixed": true
     }
    ],
    "footstep": {

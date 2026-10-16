@@ -28,6 +28,8 @@
 //   zones   [{name, pos, r,      threshold zones (src/director.js reads them)
 //            ring, label, ...}]
 //   floorY  number               the floor's height when it is not 0 (stairs)
+//   boxes[].fixed, props[].fixed  stays put in the world when the room is
+//                                moved (world.move: the cab's shaft)
 //
 // The room no longer creates THREE lights itself: it returns light SPECS
 // (positions in its own frame) and an `env` (ambient, hemisphere, sun, fog,
@@ -194,15 +196,24 @@ export function buildRoom(mats, rec, ctx = null) {
     }
   }
 
+  // Fixed parts (`fixed: true` on a box or a prop): built into a group of
+  // their own, which world.js places with the room and then leaves where it
+  // is when the room is moved -- S7 C's shaft stays put as the cab goes
+  // down it. Scenery only: a fixed box never collides and is never floor,
+  // and a fixed prop's colliders are not walls (the room moves away from
+  // them). Names, show/hide and dispose() cover them like the rest.
+  const fixedGroup = new THREE.Group();
+  fixedGroup.name = `${group.name}:fixed`;
+
   // Extra architecture (pillars, counters, water, ledges, barriers, treads).
   const boxesById = new Map();
   for (const b of rec.boxes || []) {
-    const m = archBox(mats, b.mat || 'concrete', b.min, b.max, b.tile || tile.box, { collide: b.collide !== false && !b.floor, castShadow: b.shadow !== false, pitch: b.pitch || 0 });
+    const m = archBox(mats, b.mat || 'concrete', b.min, b.max, b.tile || tile.box, { collide: b.collide !== false && !b.floor && !b.fixed, castShadow: b.shadow !== false, pitch: b.pitch || 0 });
     if (b.invisible) m.visible = false;
-    if (b.floor) { m.userData.surface = b.surface || b.mat || 'concrete'; floors.push(m); }
+    if (b.floor && !b.fixed) { m.userData.surface = b.surface || b.mat || 'concrete'; floors.push(m); }
     if (b.id) { m.name = b.id; boxesById.set(b.id, m); }
     if (b.hidden) m.visible = false;
-    group.add(m);
+    (b.fixed ? fixedGroup : group).add(m);
     if (m.userData.collide) walls.push(m);
   }
 
@@ -210,9 +221,9 @@ export function buildRoom(mats, rec, ctx = null) {
   for (const p of rec.props || []) {
     const g = buildProp(mats, p, ctx);
     if (!g) continue;
-    group.add(g);
+    (p.fixed ? fixedGroup : group).add(g);
     g.updateMatrixWorld(true);
-    g.traverse((o) => { if (o.userData && o.userData.collide) walls.push(o); });
+    if (!p.fixed) g.traverse((o) => { if (o.userData && o.userData.collide) walls.push(o); });
     if (p.name) named.set(p.name, g);
     if (p.hidden) g.visible = false;
     // a named prop's colliders block only while it is shown (blocking()):
@@ -311,6 +322,9 @@ export function buildRoom(mats, rec, ctx = null) {
     footstep: rec.footstep || null,
     named,
     actors,
+    // the fixed parts' group (null when the room has none): world.js adds
+    // it to the scene at the room's placement and leaves it there on move()
+    fixed: fixedGroup.children.length ? fixedGroup : null,
     // Per-frame: curtains sway, doors swing.
     update(dt, t) {
       for (const a of animated) {
@@ -324,6 +338,9 @@ export function buildRoom(mats, rec, ctx = null) {
       return walls.filter((m) => !(m.userData.doorBody && !doors.get(m.userData.doorBody).blocks()) && !(m.userData.shownWith && !m.userData.shownWith.visible));
     },
     dispose() {
+      // the fixed parts are freed with the rest (out of the scene first)
+      fixedGroup.removeFromParent();
+      group.add(fixedGroup);
       group.traverse((o) => {
         // catalog clones share their geometry with library.glb (library.js);
         // only what this room made is ours to free
@@ -333,6 +350,7 @@ export function buildRoom(mats, rec, ctx = null) {
           o.material.dispose();
         }
       });
+      fixedGroup.clear();
       group.clear();
     }
   };
