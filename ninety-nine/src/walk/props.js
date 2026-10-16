@@ -1685,12 +1685,9 @@ const BUILDERS = {
       // doorway (`gap`), a pelmet across the top hiding the doorway curtain's
       // rod, a brass trim. Photoreal (Doc 1 S3: "heavy red velvet curtain,
       // photoreal"), it sways a centimetre or two though there is no air.
-      // `dress` names the doorway (doors.js kind curtain) that opens in the
-      // middle: its two halves are hung with the same velvet (their stepped
-      // box folds hidden), so the part that parts is the part that matches;
-      // the halves still squash to the jambs when the door opens, and its
-      // blocking body is untouched. Origin: the wall's inner face, centred;
-      // +z into the room.
+      // The doorway in the middle that parts is a curtain doorway in the
+      // 'velvet' slot (doors.js), the same cloth. Origin: the wall's inner
+      // face, centred; +z into the room.
       velvetdrape(mats, o) {
         const g = new THREE.Group();
         const w = o.w || 4.0, h = o.h || 3.0, gap = o.gap || 0;
@@ -1705,7 +1702,7 @@ const BUILDERS = {
         }));
         const sways = [];
         // a pleated panel from x0 to x1 (folds `amp` deep, `z0` off its plane)
-        const panel = (x0, x1, y0, y1, amp, z0, sway, parent = g) => {
+        const panel = (x0, x1, y0, y1, amp, z0, sway) => {
           const pw = x1 - x0, ph = y1 - y0;
           const segX = Math.max(8, Math.round(Math.abs(pw) / fold * 6));
           const geo = new THREE.PlaneGeometry(Math.abs(pw), ph, segX, 8);
@@ -1724,7 +1721,7 @@ const BUILDERS = {
           const m = new THREE.Mesh(geo, mat);
           m.castShadow = true;
           m.receiveShadow = true;
-          parent.add(m);
+          g.add(m);
           if (sway) sways.push({ m, base: Float32Array.from(p.array), y0, ph });
           return m;
         };
@@ -1742,31 +1739,13 @@ const BUILDERS = {
         } else {
           g.add(box(mats, 'lp_brass', w + 0.1, 0.04, 0.04, 0, top, off + 0.04, { castShadow: false }));
         }
-        // hang the doorway's two halves with the velvet (once it is in the room)
-        const dress = () => {
-          const door = g.parent && g.parent.children.find((c) => c.name === `door:${o.dress}`);
-          if (!door) return;
-          const plain = mats.get(o.dressMat || 'lp_curtain');
-          for (const half of door.children) {
-            if (!half.isGroup) continue;
-            const folds = half.children.filter((c) => c.isMesh && c.material === plain);
-            if (!folds.length) continue;
-            const s = Math.sign(half.position.x) || 1; // which jamb this half hangs from
-            const hw = Math.abs(half.position.x);
-            const fh = folds[0].geometry.parameters ? folds[0].geometry.parameters.height : top;
-            for (const f of folds) f.visible = false;
-            panel(s * 0.06, -s * (hw + 0.04), 0, fh, depth, 0.02, true, half);
-          }
-        };
         const phase = (o.pos ? o.pos[0] * 1.3 : 0);
-        let dressed = !o.dress;
         const swayAmp = o.sway === undefined ? 0.014 : o.sway;
         let lastFrame = -1;
         const tick = (renderer) => {
           const f = renderer.info.render.frame;
           if (f === lastFrame) return; // once a frame, whichever panel is drawn first
           lastFrame = f;
-          if (!dressed && g.parent) { dressed = true; dress(); }
           if (!swayAmp) return;
           const t = performance.now() / 1000;
           for (const sw of sways) {
@@ -2103,10 +2082,8 @@ const BUILDERS = {
         // street may be seen from -- the lobby and its entry corridor. From
         // anywhere else (the lobby before this one, whose glass looks the
         // same way once this room is joined behind it) it is not drawn.
-        // `dressGlass` names the doorway it is seen through: its panes (the
-        // shared 'glass' slot, milky at 22 %) are given a clear pane of their
-        // own, so the street is seen and the glass is still there in its
-        // highlights. The panes keep casting shadow (no daylight patch).
+        // The doors it is seen through are glazed in 'glass_clear'
+        // (materials.js), so the street is seen and the glass is still there.
         const hookGeo = new THREE.BufferGeometry();
         hookGeo.setAttribute('position', new THREE.Float32BufferAttribute([0, 0, 0, 0, 0, 0, 0, 0, 0], 3));
         const hook = new THREE.Mesh(hookGeo, owned(new THREE.MeshBasicMaterial({ colorWrite: false, depthWrite: false, depthTest: false })));
@@ -2116,25 +2093,9 @@ const BUILDERS = {
         const rect = o.showFrom || null;
         const inv = new THREE.Matrix4();
         const eye = new THREE.Vector3();
-        let dressed = !o.dressGlass;
         hook.onBeforeRender = (renderer, scene, camera) => {
           const room = g.parent;
           if (!room) return;
-          if (!dressed) {
-            dressed = true;
-            const door = room.children.find((ch) => ch.name === `door:${o.dressGlass}`);
-            if (door) {
-              const milky = mats.get('glass');
-              // a faint tint lit by the lobby, with no highlights: the
-              // lobby's ceiling lamps made bright points (or, rougher, soft
-              // blobs) on the pane that read as lamps lit in the dead street
-              const clear = owned(new THREE.MeshLambertMaterial({
-                color: new THREE.Color('#c9d6da'),
-                transparent: true, opacity: o.glassOpacity || 0.08, depthWrite: false
-              }));
-              door.traverse((ch) => { if (ch.isMesh && ch.material === milky) ch.material = clear; });
-            }
-          }
           if (rect) {
             inv.copy(room.matrixWorld).invert();
             eye.setFromMatrixPosition(camera.matrixWorld).applyMatrix4(inv);
@@ -3251,7 +3212,7 @@ const BUILDERS = {
     const body = new THREE.Group();
     g.add(body);
     const w = 0.5, h = 0.32, d = 0.36;
-    const wet = 'wood'; // the photoreal dark-brown blotch of soaked cardboard
+    const wet = 'cardboard_wet'; // the photoreal dark-brown blotch of soaked cardboard (materials.js)
     if (!o.open) {
       body.add(box(mats, 'cardboard', w, h, d, 0, 0, 0));
       body.add(box(mats, 'lp_beige', w + 0.006, 0.004, 0.07, 0, h, 0, { castShadow: false })); // tape over the lid seam

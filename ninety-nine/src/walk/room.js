@@ -143,7 +143,7 @@ export function buildRoom(mats, rec, ctx = null) {
   const doors = new Map();
   const anchors = {};
   for (const d of doorSpecs) {
-    const door = buildDoor(mats, d, { wallT: WALL_T });
+    const door = buildDoor(mats, d, { wallT: WALL_T, wallMat, skirt: rec.skirt || null });
     const y = d.y === undefined ? Y0 : d.y;
     const x = d.x || 0;
     switch (d.wall) {
@@ -154,6 +154,7 @@ export function buildRoom(mats, rec, ctx = null) {
       default: throw new Error(`room ${rec.id}: door ${d.name} on unknown wall ${d.wall}`);
     }
     group.add(door.group);
+    door.alignToWall(tile); // a jib leaf (doors.js) tiles on from the wall round it
     walls.push(door.body);
     doors.set(d.name, door);
     anchors[d.name] = doorAnchor(rec.size, { ...d, y }, WALL_T);
