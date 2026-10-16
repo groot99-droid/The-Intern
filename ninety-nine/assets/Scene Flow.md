@@ -16,7 +16,8 @@ The game as it is walked, in play order: every room, threshold, doorway, connect
 - **There is no going back (C3).** The door seals behind him once he is 1.2 m into the connector, and the room he left is dropped. Until then the connector's own entry leaf is hidden, so only the room's door shows in that doorway. Crossing the connector's midpoint is the scene boundary: the drone detunes, and the ambience, music, captions and fracture move to the next scene. The next room's entry shuts once he is 1.6 m inside; a held-entry room (the cab, the store) holds it open from the moment he is in until the choice.
 - **The camera is taken from him only for carried moments**, named below: sitting, the call, the cab, the fall, the chute, the endings. Several carried beats can run as one move (`together`).
 - **Locked doors answer.** Walking into a locked door makes it shudder and rattle. S3 H counts the pushes.
-- **Waiting answers too.** A branch's `idle` runs when nothing has been chosen for a while: S2 repeats the call, and 25 s in the cab is REFUSE.
+- **Waiting answers too.** A branch's `idle` runs when nothing has been chosen for a while: S2 repeats the call, and 25 s in the cab is REFUSE. Standing still for 8 s in S4 H swings the ajar door wider (`stillness`).
+- **Some changes wait until he looks away** (`unseen`): S4 C's aisle closes up behind him only once it is out of his view.
 
 Connectors (`CN_*`, all level or downhill):
 
@@ -72,14 +73,14 @@ On entering: the speaker clicks ([[S2_C_SFX_SPEAKER.wav]]); in H it then hisses 
 
 ## S3 — THE THRESHOLD
 
-**C: `S3_C`**, a short red-carpeted corridor. He comes in by the side door: to his right a heavy velvet curtain under a green ENTER sign (on its 2.3 s cycle, dust drifting in its light) with the badge reader's red laser slot beside it, and pure black behind the curtain; to his left the lobby's glass, locked and smoked, a dead EXIT over it · amb [[S3_C_AMB.wav]]
+**C: `S3_C`**, a short red-carpeted corridor. He comes in by the side door: to his right the curtain doorway, hung in the same heavy velvet as the drapes round it, under a green ENTER sign (on its 2.3 s cycle; the sign's face and the dust drifting in its light follow the green light itself) with the badge reader's red laser slot beside it, and pure black behind the curtain; to his left the lobby's glass, locked and smoked, a dead EXIT over it · amb [[S3_C_AMB.wav]]
 
 | Choice | Zone | Beats | Way on |
 |---|---|---|---|
 | PART THE CURTAIN | `curtain` | on the approach: PRESENT CANDIDATE FOR READING.; on commit: a rustle ([[S3_C_SFX_CURTAIN.wav]]), the curtain parts, READING COMPLETE. THE CANDIDATE IS CONSISTENT. | `curtain` doorway (N) → `CN_CORRIDOR_OFFICE`, dark until he is in it → S4 |
-| TRY THE DOOR | `glass`, the glass's whole width | two rattles; a click and "That action violates the terms of the contracted agreement."; a buzz | `service` door (W, flush in the plaster beside the glass) → `CN_CORRIDOR_SERVICE` → S4 |
+| TRY THE DOOR | `glass`, the glass's whole width | two rattles; a click and "That action violates the terms of the contracted agreement."; a buzz | `service` door (W, a jib door flush in the plaster beside the glass, the marble wainscot carried across it: only hairline gaps show it) → `CN_CORRIDOR_SERVICE` → S4 |
 
-**H: `S3_H`**, the lobby doors: the waiting room again, entered by a side door. Through its clear front glass, the street from S0 with no sun and no shadows. The curtain hangs in the far corner under a dead ENTER sign · amb [[S3_H_AMB.wav]]
+**H: `S3_H`**, the lobby doors: the waiting room again, entered by a side door. Through its clear front glass (`glass_clear`: no lamp's highlight on it), the street from S0 with no sun and no shadows. The velvet curtain doorway hangs in the far corner under a dead ENTER sign · amb [[S3_H_AMB.wav]]
 
 | Choice | Zone | Beats | Way on |
 |---|---|---|---|
@@ -90,20 +91,24 @@ On entering: the speaker clicks ([[S2_C_SFX_SPEAKER.wav]]); in H it then hisses 
 
 ## S4 — THE FLOOR
 
-**C: `S4_C`**, the cubicle floor, entered at `front` into the rear aisle. The main aisle runs between two clean walls of identical workstations, broken once by the cross aisle, into light haze · amb [[S4_C_AMB.wav]]. On entering, the manager starts up the aisle toward him, the evidence held out, and stops past the cross aisle.
+**C: `S4_C`**, the cubicle floor, entered at `front` into the rear aisle. The main aisle runs between two clean walls of identical workstations, broken once by the cross aisle, into light haze · amb [[S4_C_AMB.wav]]. On entering, the manager starts up the aisle toward him, the evidence held out, and stops past the cross aisle. The troffers have a slight green cast, and the partitions and desks share one warped weave.
+
+Once he has stood past the cross aisle (`past_cross`, a silent zone in the main aisle) and the aisle behind him is out of his view, `aisle_fill` closes it (`unseen`): a workstation across the main aisle on each of the six rows behind the cross aisle, casting no shadow. When he turns round, the way he came is more cubicles. The cross aisle to the side door stays clear.
 
 | Choice | Zone | Beats | Way on |
 |---|---|---|---|
 | TAKE THE PAPERS | `manager`, just in front of him (the zone walks with him; its label shows only within 3.5 m) | on the approach: "You're early. That's already in the file."; on commit: [[S4_C_SFX_PAPERS.wav]], the evidence passes into his hands (the one photoreal paper), the troffer over them blinks and the manager is gone; a deadbolt | `back` door (N) → `CN_CORRIDOR_OFFICE` → S5 |
 | TAKE THE SIDE DOOR | `side_door`, at the dead end of the cross aisle: a grey fire door under a cold lamp | a deadbolt; a step back is taken for him, and the door opens | `side` door (E) → `CN_STAIRS_CONCRETE` → S5 |
 
-**H: `S4_H`**, the utility corridor: wet concrete, cinderblock, identical doors receding, caged bulbs, mop sinks, puddles and steam. The manager is far ahead, facing away · amb [[S4_H_AMB.wav]]
+**H: `S4_H`**, the utility corridor: wet concrete, beige cinderblock over a green skirt, identical doors receding, caged bulbs, mop sinks, puddles and steam. The manager is far ahead, facing away · amb [[S4_H_AMB.wav]]
 
-Nine silent bands across the corridor (`band_0`…`band_8`, beat zones) keep him 20 m ahead: each band crossed walks him a ninth further, with footsteps ([[S4_H_SFX_FOOTSTEPS.wav]]) at two of them. At the last band the evidence appears on the floor at the far door, the door opens, he goes through, it shuts, and the caged bulb at the end comes on.
+The manager is walked by the candidate's progress (`actors.manager.drive`). From the moment the scene begins, halfway down the corridor that leads in, he keeps 20 m ahead of the candidate, and he never comes back when the candidate does. Every 8 m he moves, footsteps play ([[S4_H_SFX_FOOTSTEPS.wav]]). At the far door the drive ends: the evidence appears on the floor at its foot, the door opens, he goes through, it shuts, and the caged bulb at the end comes on.
+
+Standing still for 8 s (`stillness`) swings the ajar door wider, still locked, and its cold light comes up: a second lamp and a wider spill on the wet floor.
 
 | Choice | Zone | Beats | Way on |
 |---|---|---|---|
-| TAKE THE PAPERS | `far_end`, the evidence at the far door (armed after the last band) | the papers sound; the evidence into his hands; a step back from the door as it opens | `far` door (N) → `CN_CORRIDOR_SERVICE` → S5 |
+| TAKE THE PAPERS | `far_end`, the evidence at the far door (armed once the drive's end has played) | the papers sound; the evidence into his hands; a step back from the door as it opens | `far` door (N) → `CN_CORRIDOR_SERVICE` → S5 |
 | TAKE THE SIDE DOOR | `ajar`, stepped into between two piers: the one door left open, cold light through its gap (Harlowe's) | a step back out of the recess as it opens | `ajar` door (W) → `CN_STAIRS_CONCRETE` → S5 |
 
 **Flip edge:** S5 may be either render.
@@ -133,23 +138,25 @@ Nine silent bands across the corridor (`band_0`…`band_8`, beat zones) keep him
 | ORDER | `tube`, the pneumatic tube station | he looks at it; the canister goes with a thud; two chimes; its lamp goes out | `freight` doors (N, rusted sliding doors behind the station) → `CN_CORRIDOR_DOWN` → S7 |
 | FLAG | `flagbox`, the call box | four reject beeps: INSUFFICIENT. / SEE POLICY 4.4. / THIS IS NOT A VALID CONCERN. / THE CANDIDATE HAS RAISED THIS BEFORE.; its lamp goes out; a deadbolt | `service` door (E, behind the call box) → `CN_CORRIDOR_SERVICE` → S7 |
 
-**H: `S6_H`**, the run, entered through its `front` shutter: the garage that does not end, the same pillar, cars and stain in every bay, and at its end the concrete stops above the pool, with rebar past the lip and a guard rail with one gap · amb [[S6_H_AMB.wav]] · music water. On entering, the pool lights go out (light id `pool`): the run ends in black.
+**H: `S6_H`**, the run, entered through its `front` shutter: the garage that does not end, the same pillar, cars and stain in every bay, and at its end the concrete stops above the pool, with rebar past the lip and a guard rail with one gap · amb [[S6_H_AMB.wav]] · music water. On entering, the pool lights go out (light id `pool`): the run ends in black. The run takes the garage's sodium haze (the branch's `env`), so the passage down into it from S5 H stays warm all the way.
+
+Four silent strips cross the run wall to wall (beat zones). At `run_breath` his breathing comes in. At `run_deeper` it deepens, further apart and with an inhale, and his footfalls grow heavier. At `run_haze`, about two thirds of the way down, the room turns over 7 s to the edge's own dark teal (`env` with `base`). At `run_heavy` the breathing and footfalls are heavier again. Both thresholds stop them first.
 
 | Choice | Zone | Beats | Way on |
 |---|---|---|---|
-| PUSH ON | `push`, the strip short of the lip east of the bench, running on into the dark | a jolt; a breath as he crouches; then the pool lights come on with a thud (the reveal) | see below |
-| STOP | `stopline`, the lit bench at the painted stop line, 1 m short of the lip | he is stepped to the line and looks down at it; the pool lights come on; he sits on the bench | see below |
+| PUSH ON | `push`, the strip short of the lip east of the bench, running on into the dark | his breathing and heavy footfalls stop; a jolt; a breath as he crouches; then the pool lights come on with a thud (the reveal) | see below |
+| STOP | `stopline`, the lit bench at the painted stop line, 1 m short of the lip | his breathing and heavy footfalls stop; he is stepped to the line and looks down at it; the pool lights come on; he sits on the bench | see below |
 
 **Flip edge.** If S7 is H, the scene changes where he stands (`S7_H` aliases `S6_H`). If the render flips to C, the `freight` doors (E, at the end of the run) open onto `CN_CORRIDOR_DOWN` → `S7_C`. From `S6_C`, a flip to H opens either corridor onto the run, entered at its `front` shutter.
 
 ## S7 — THE DESCENT
 
-**C: `S7_C`**, a damaged freight cab, 3.0 × 3.4 m: rust, quilted padding with one pad peeling, a caged bulb, a panel of 66 buttons with one lit, a scissor gate and a segmented floor indicator over the doors. It is entered through its sliding `cab` doors, which stay open behind him until he chooses · amb [[S7_C_AMB.wav]]
+**C: `S7_C`**, a damaged freight cab, 3.0 × 3.4 m: rust, quilted steel padding with one pad peeling, a corroded diamond plate floor, a caged bulb, a panel of 66 buttons with one lit, a scissor gate and one segmented floor indicator over the doors, stepped by `display` beats. Behind the doorway is a real shaft that stays put while the cab goes down it (`fixed` parts): a block wall, shut landing doors with their numbers painted over them at B2, B7 and B12, B1 painted under the top sill and the three-bar glyph over the bottom landing. It is entered through its sliding `cab` doors, which stay open behind him until he chooses · amb [[S7_C_AMB.wav]]
 
 | Choice | Zone | Beats | Way on |
 |---|---|---|---|
-| DESCEND | `panel`, the one lit button | a clunk; then as one carried move he looks up at the indicator, the gate is drawn, a screech and the doors close, and **the cab really descends**: 20 m in one eased 9.5 s ride with the candidate in it, the indicator stepping B1, B2, B7, B12 and a glyph at uneven intervals; a thud, and the gate folds back | the same `cab` doors open at the bottom → `CN_CORRIDOR_OFFICE` → S8 C |
-| REFUSE | `doorway`, jamb to jamb, armed only once he has been inside (`cab_inside`); 25 s inside without choosing is REFUSE too | a buzz on the approach; THE CAR IS ALREADY IN MOTION.; he is pulled back to the middle of the cab, the gate slams shut, and the same ride, with the doors open until they drag shut two thirds of the way down | the same `cab` doors open at the bottom → `CN_CORRIDOR_OFFICE` → S8 C |
+| DESCEND | `panel`, the one lit button | a clunk; then as one carried move he looks up at the indicator, the gate is drawn, a screech and the doors close, and their thud swings the caged bulb. **The cab really descends**: 20 m in one eased 9.5 s ride with the candidate in it. As it starts, the top landing's doors take the cab doors' place, so the shaft passes behind the gate as the indicator steps B1, B2, B7, B12 and the glyph, each as its landing goes by. At the bottom the cab's doors stand shut again; a thud swings the bulb, and the gate folds back | the same `cab` doors open at the bottom → `CN_CORRIDOR_OFFICE` → S8 C |
+| REFUSE | `doorway`, jamb to jamb, armed only once he has been inside (`cab_inside`); 25 s inside without choosing is REFUSE too | a buzz on the approach; THE CAR IS ALREADY IN MOTION.; he is pulled back to the middle of the cab, the gate slams shut and the bulb swings, and the same ride, with the doors open on the shaft: just after B12 they drag shut, meeting with a thud about three quarters of the way down; the landing thud swings the bulb again | the same `cab` doors open at the bottom → `CN_CORRIDOR_OFFICE` → S8 C |
 
 **H: `S7_H`**, the same edge (an alias of `S6_H`) · amb [[S7_H_AMB.wav]] · music water
 
@@ -169,14 +176,14 @@ Nine silent bands across the corridor (`band_0`…`band_8`, beat zones) keep him
 | DELIVER | `deliver`, at the deliveries door | sets `DELIVERED`; a buzz | `deliveries` door (N) → `CN_CORRIDOR_OFFICE` → the ending's room |
 | OPEN THE BOX | `sorting`, the sorting table with the box cutter | sets `OPENED_BOX`; he sets the package down, open; THE CANDIDATE'S APPLICATION. RECEIVED SIX MONTHS AGO.; he looks into it; a buzz | `deliveries` door (N) → `CN_CORRIDOR_OFFICE` → the ending's room |
 
-**H: `SET_DIVE`**, the pool, swimming (free vertical movement, no hands). Tiled pillars descend into blue-green, motes drift upward and caustics move overhead. Far below is a rusted grate with sick blue light behind it, and on the nearest pillar to the left a pool lamp, the one warm thing. He can only sink: the swim ceiling is where he went under · amb [[S8_H_AMB.wav]] · music water
+**H: `SET_DIVE`**, the pool, swimming (down or level, never up: C3; no hands). Tiled pillars descend into blue-green, motes drift upward and caustics move overhead. Far below is a rusted grate with sick blue light behind it, and on the nearest pillar to the left a pool lamp, the one warm thing. He can only sink: the swim ceiling is where he went under · amb [[S8_H_AMB.wav]] · music water
 
 | Choice | Zone | Beats | Way on |
 |---|---|---|---|
 | DIVE | `grate`, at the bottom (approaching it, a second light comes on under it) | a rattle and a jolt; the grate opens | **the chute** (below) |
 | SWIM FOR THE PILLARS | `pillar`, up beside the lamp on the pillar | the lamp dies; the grate opens and the pit lights; the current shakes him and takes him down anyway (C3) | **the chute** (below) |
 
-**The chute:** through the open grate (`grate`), the drone restored, a scrape, carried down `CN_CHUTE`, out of the low `hatch` at the head of the store's central aisle onto the linoleum of `S8_H` (`land`), looking down the aisle at the storefront glass. [[S8_H_AMB_STORE.wav]]. The store: low-poly gondolas, a chest cooler, the counter, his reflection in the glass a faceless cluster of polygons, the door standing open onto an empty street, and a staff door under a green lamp.
+**The chute:** through the open grate (`grate`), the drone restored, a scrape, carried down `CN_CHUTE`, out of the low `hatch` at the head of the store's central aisle onto the linoleum of `S8_H` (`land`), looking down the aisle at the storefront glass. [[S8_H_AMB_STORE.wav]]. The store: low-poly gondolas, a chest cooler, the counter, his reflection in the glass a faceless cluster of polygons, the door standing open onto an empty street, and a staff door under a green lamp. One of the eight tubes flickers, and goes dark with its light (`sync`). As he lands, the store's hum starts (`hum`): 48 Hz, detuned exactly as far as the drone.
 
 ## Endings
 
@@ -186,7 +193,7 @@ After S8, `resolveEnding()` picks the ending (Doc 1 §2.4). Its room is joined b
 |---|---|---|---|
 | ASSIMILATION | `SE_ASSIM`, the boardroom: a glass table on marble, twelve faceless seated figures, his chair pulled out at the head with the hundredth slip on it · amb [[S8_C_AMB_BOARDROOM.wav]] | `head`, at the head of the table | **`ending`**: the camera leaves him standing beside the chair (`self`, his face the blurred map) and pulls back down the table. With `DELIVERED` the package and its wet ring are hidden on arrival and stand at the table's centre once the camera leaves him. With `NEVER_SAT` there is no chair for him: `mychair` and its slip are hidden |
 | RETAINED | the same boardroom (`SE_RETAINED`) | `head` | **`retained`**, a shorter pull-back. The package is already on the glass, resealed (the one he opened is on the sorting table). The same `NEVER_SAT` rule |
-| EXPULSION | `SE_EXPUL`, the store · [[S8_H_AMB_STORE.wav]] | `door`, the open storefront door (an invisible threshold stops him in the doorway) | **`ending`**: the camera withdraws into the store without him |
-| PENDING REVIEW | `SE_PEND`, the waiting room, entered by its `inner` door (from the store: the `staff` door → `CN_CORRIDOR_SERVICE`). Two chairs face each other mid-room, one just vacated; a red curtain on the east wall still sways | `seat` (TAKE A SEAT again) | he sits (`sit`) with his hands in his lap holding a slip printed 99 (`slip99`); the speaker clicks: "One hundred."; then **`ending`** |
+| EXPULSION | `SE_EXPUL`, the store · [[S8_H_AMB_STORE.wav]] | `door`, the open storefront door (an invisible threshold stops him in the doorway) | **`ending`**: the camera withdraws into the store without him. The store's hum carries on (`hum`) and fades at the card |
+| PENDING REVIEW | `SE_PEND`, the waiting room, entered by its `inner` door (from the store: the `staff` door → `CN_CORRIDOR_SERVICE`, where the store's hum fades). Two chairs face each other mid-room, one just vacated; a red curtain on the east wall still sways | `seat` (TAKE A SEAT again) | he sits (`sit`) with his hands in his lap holding a slip printed 99 (`slip99`); the speaker clicks: "One hundred."; then **`ending`** |
 
 EXIT (the bail-out) skips the walk and goes straight to the PENDING REVIEW card. On touch it takes two taps (EXIT?, then EXIT within 3 s).

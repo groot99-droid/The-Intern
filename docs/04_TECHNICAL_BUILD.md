@@ -171,6 +171,8 @@ Add a CI check or a pre-push hook that fails if `DEBUG_RESUME` is true.
 
 ### 4.1 Schema
 
+> **Amendment, 2026-10-16.** The schema below is the video era's. `scenes.json` now names, per branch, the room the scene is played in and its two threshold zones, and runs **beats** from a small vocabulary listed in its own `_comment` (Doc 1 §4's amendment; `src/director.js`). Two beats came with S7 C's cab: `display` {prop, text} gives a text-capable prop a new reading (the floor indicator, stepped B1, B2, B7, B12 and the glyph by the ride's stops), and `swing` {prop, amount, decay, axis, period} knocks a named prop into a damped swing (the caged bulb, when the doors hit and when the cab lands). In `data/rooms.json`, a box or prop marked `fixed` stays where its room was placed when the room moves, so the cab goes down a real shaft that stays put.
+
 ```json
 {
   "id": "S3",
@@ -348,6 +350,8 @@ By S8 the detune is 32 cents and it beats audibly against the 48 Hz reference in
 Add a second oscillator at exactly 48 Hz, gain 0.0, starting from scene 5 and ramping to 0.02 by S8, so the beat is literal and physical rather than remembered. Test both versions. The remembered version is subtler. The literal version reliably works.
 
 ### 7.2 Bus
+
+> **Amendment, 2026-10-16.** The bus has one more voice beside the drone: the store's fluorescent hum (`audio.setHum()`; Doc 1 §6.4), a 48 Hz saw through a low-pass on the master bus. It copies the drone's detune and the ramps `advanceScene()` schedules, and never writes to the drone, so C7 holds: the drone is still one oscillator, never stopped or restarted. The hum starts when the candidate lands in S8 H's store, carries into EXPULSION and fades at the card, or fades when he leaves the store by the staff door. The bus diagram in `src/audio.js` shows it.
 
 ```
 drone ──────────────────┐

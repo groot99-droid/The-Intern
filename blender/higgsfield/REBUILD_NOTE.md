@@ -6,13 +6,13 @@ tags: [blender-pipeline]
 
 ← [[blender/higgsfield/README|Higgsfield projects]] · [[blender/Blender Pipeline|Blender Pipeline]]
 
-A note to rebuild the scene-builder projects later, with what is needed to make the changes. Written 2026-10-03, when the game became one continuous walk (commit `65184db`, compared against `c1d415e`), and re-checked at `e967424`. Updated 2026-10-10 at `58f762e`, after the seven per-scene polish passes (S0 + street, S1-S2, S3, S4, S5-S6, S7, S8 + endings), compared against `9684b87`.
+A note to rebuild the scene-builder projects later, with what is needed to make the changes. Written 2026-10-03, when the game became one continuous walk (commit `65184db`, compared against `c1d415e`), and re-checked at `e967424`. Updated 2026-10-10 at `58f762e`, after the seven per-scene polish passes (S0 + street, S1-S2, S3, S4, S5-S6, S7, S8 + endings), compared against `9684b87`. Updated 2026-10-16 at `0add444`, after the four engine follow-ups (s4, s7, env, look), compared against `20293e8`.
 
 ## Status
 
 **Stale until rebuilt.** Every project in `projects.json` (the 18 rooms; the library project is fine) was built from `data/rooms.json` as it stood at `c1d415e`, before the continuous building and before the polish. None has a doorway or any of the polish's props, and `S6_C` is still its own room. The proofs in each `<ROOM>/` folder show those older sets.
 
-**The polish has landed**, so the rooms have stopped moving for now. Since `58f762e` the integration review changed a few things the tables below do not show: the builder renames `crtdust` (S0_X), `lobbydust` (S1, S3_H, SE_PEND) and `cabbulb` (S7_C); SE_PEND's `swaycurtain` hung in the S3 velvet; the boardroom's `ring` photoreal; the connectors' collars; caustics' `web`; S5_C's desk-top things at 0.77; the chest cooler's open well; the gondola's inset kick. The rebuild can start once `higgsfield_scene.py` has the ports below. The game reads nothing from these projects, so nothing breaks while they are stale.
+**The polish has landed**, so the rooms have stopped moving for now. Since `58f762e` the integration review changed a few things the tables below do not show: the builder renames `crtdust` (S0_X), `lobbydust` (S1, S3_H, SE_PEND) and `cabbulb` (S7_C); SE_PEND's `swaycurtain` hung in the S3 velvet; the boardroom's `ring` photoreal; the connectors' collars; caustics' `web`; S5_C's desk-top things at 0.77; the chest cooler's open well; the gondola's inset kick. The follow-ups have landed since (`20293e8` → `0add444`): S3's doors, S4's materials and its two new mechanisms, S7 C's shaft and cab materials, and a few runtime-only keys. Their table follows the polish table. The rebuild can start once `higgsfield_scene.py` has the ports below. The game reads nothing from these projects, so nothing breaks while they are stale.
 
 When the time comes, redo the tables below against the commit the rebuild starts from. They came from throwaway scripts, not committed: load the older `ninety-nine/data/rooms.json` with `git show <commit>:…` and the current file, and for each room key compare props by type (catalog props by `node`), `doors`, `zones`, `anchors`, `entry`, `size`, `floorY`, `boxes` and `lights` (as multisets of their JSON), and the `shots` names. Run `python ninety-nine/tools/higgsfield_scene.py <KEY> build` for every key and collect its `# WARNING` lines for the prop types still missing.
 
@@ -21,7 +21,8 @@ When the time comes, redo the tables below against the commit the rebuild starts
 Some of what changed is only read by the running game ([[ninety-nine/src/world/World|src/world/]], `src/director.js`). The Blender copy never needs it, and `higgsfield_scene.py build` already strips it from the JSON it embeds (`RUNTIME_ONLY`):
 
 - `zones` (threshold zones, with any `seat` pose), `entry` (the doorway a connector arrives through), `anchors` (extra join points: the edge's `drop`, the dive's `surface` and `grate`, the chute's `top`), `holdEntry` (the cab and the store keep their entry open), `swim` (the dive's swim limits), `connector` and `drop` (connector metadata), `_note`.
-- Also runtime, already ignored by the template: `spawn`, `footstep`, `actors` paths and their `face`, a prop's `collide`, a door's `locked`, its invisible blocking body and its shadow plug, a light's `id`, boxes marked `invisible` (the kerb bounds, the barrier at the lip, the counter's spine), and a prop's `showFrom` (the dead street is drawn only while the eye is in the lobby or its corridor).
+- Also runtime, already ignored by the template: `spawn`, `footstep`, `actors` paths and their `face`, a prop's `collide`, a door's `locked`, its invisible blocking body and its shadow plug, a light's `id`, boxes marked `invisible` (the kerb bounds, the barrier at the lip, the counter's spine), and a prop's `showFrom` (the dead street is drawn only while the eye is in the lobby or its corridor). The follow-ups added more: an actor's `drive`, a light's `sync`, a record's `labelInk` and `swim.sink`, and a curtain doorway's `sway`.
+- S6 H's run has the garage's sodium haze from `scenes.json` (its branch `env`), not from its room. The `S6_H` record's own atmosphere is still the edge's dark teal, which is right for S7 H and for a proof of the edge.
 
 What the Blender copy **must** get:
 
@@ -29,19 +30,21 @@ What the Blender copy **must** get:
 2. **`floorY`**: a connector's floor sits below 0 (stairs, ramp, chute). The floor slab goes from `floorY - 0.2` to `floorY` and the walls run from `floorY` up to `H`.
 3. **Pitched boxes** (`pitch`, degrees): the ramp slab in `CN_RAMP_DOWN` (−14.036°) and the chute slab in `CN_CHUTE` (−33.69°), each tilted about X around its own centre.
 4. **`boxcutter`**, the one threshold-era prop the port still lacks (section 4). The other three threshold props (`bench`, `tubestation`, `flagbox`) are no longer placed.
-5. **Hidden props** (`hidden: true`), built but not rendered until a beat shows them. There are many now: the hands in `S0_X` and `SE_PEND` (with `slip99`); the receptionist's jaw, `front_dark` and the green door lamps in the waiting rooms; S3 H's six handprints; S4 H's `evidence_h` and `end_cage_on`; S5 C's `tube_lamp` and `flag_lamp`; S5 H's `fifth_car` (a catalog `glb`, so `place` must hide its copy too) and `boom_up`; S7 C's indicator readings `ind_b1`…`ind_glyph` and the gate's `gate_1` / `gate_2`; S8 C's lit work lamps and `openbox`; the dive's `poollamp_dead` and `grate_open`; the boardroom's `self`.
-6. **Lights that start off** (`off: true`): `inner_lamp` and `service_lamp` (waiting rooms, S3 H, SE_PEND), `end_bulb` (S4 H), `terminal_glow`, `harlowe_glow`, `tube_lamp` and `flag_lamp` (S5 C), `docklamp` and `sortlamp` (S8 C), `gratelight2` (the dive). They are dark when the room is entered.
+5. **Hidden props** (`hidden: true`), built but not rendered until a beat shows them. There are many now: the hands in `S0_X` and `SE_PEND` (with `slip99`); the receptionist's jaw, `front_dark` and the green door lamps in the waiting rooms; S3 H's six handprints; S4 C's `aisle_fill` (a `propgroup` of six workstations; `place` must hide its catalog copies too); S4 H's `evidence_h`, `end_cage_on` and `ajar_spill_wide`; S5 C's `tube_lamp` and `flag_lamp`; S5 H's `fifth_car` (a catalog `glb`, so `place` must hide its copy too) and `boom_up`; S7 C's `landing_top` (a fixed `landingdoors`) and the gate's `gate_1` / `gate_2`; S8 C's lit work lamps and `openbox`; the dive's `poollamp_dead` and `grate_open`; the boardroom's `self`.
+6. **Lights that start off** (`off: true`): `inner_lamp` and `service_lamp` (waiting rooms, S3 H, SE_PEND), `end_bulb` and `ajar_wide` (S4 H), `terminal_glow`, `harlowe_glow`, `tube_lamp` and `flag_lamp` (S5 C), `docklamp` and `sortlamp` (S8 C), `gratelight2` (the dive). They are dark when the room is entered.
 7. The per-room changes below: props and boxes added, removed or moved, sizes, and new shots. New shots need no work, because the template keys every shot it finds.
-8. **Material slots.** Any slot a room uses that is missing from the template's `RECIPES` / `LOWPOLY` silently falls back to plaster. Two rooms now use slots it lacks: `wood` (S0 X's desk) and `brick` (SET_STREET's end wall and facades). A door leaf's `mat` may now be a photoreal slot (`rust` on the freight doors, `plaster_dark` on S3 C's flush service door).
-9. **The polish's props.** `src/walk/props.js` has a marked `polish: <group> -- begin/end` block per scene group. Every builder in those blocks that a room places needs a `p_*` twin in the template: 81 types, listed in section 5. `build` names each missing one in a `# WARNING` line.
+8. **Material slots.** Any slot a room uses that is missing from the template's `RECIPES` / `LOWPOLY` / `GLOWS` silently falls back to plaster. The rooms now use these slots it lacks: `wood` (S0 X's desk, with a grain now), `brick` (SET_STREET's end wall and facades), `cinderblock_beige` (S4 H's walls and pier tops), `lp_cubicle` (S4 C's partitions and desks: a flat colour with one tiny warped texture of its own, nearest-filtered), `lp_fluoro_green` and `glow_fluoro_green` (S4 C's troffers), `diamond_plate` (S7 C's floor and kick band), `quilted_steel` (its padding and the panel's surround), `shaft_block` (its shaft), `glass_clear` (S3 H's front pane: 7 % tint, no specular highlight), `velvet` (S3's curtain doorways: a sheened cloth, both faces) and `cardboard_wet` (S8 C's soggy package's stain). A door leaf's `mat` may be a photoreal slot (`rust` on the freight doors, `velvet` on the S3 curtains), and S3 C's `jib` service door takes the wall's `plaster_dark`.
+9. **The polish's props.** `src/walk/props.js` has a marked `polish: <group> -- begin/end` block per scene group. Every builder in those blocks that a room places needs a `p_*` twin in the template: 89 types (90 with `boxcutter`), listed in section 5. `build` names each missing one in a `# WARNING` line.
 10. **`noFloor`** (SET_DIVE): no floor slab. The pool floor is boxes laid round the grate's hole, with the pit under it.
-11. **Door options**: `frame` (the frame's slot), `glass` (the pane's slot), `swing: 'out'`, and `panel` on more leaves (section 2).
-12. **Catalog props painted flat**: a `palette` prop placed after the catalog chairs paints those with `paint` in one flat colour (S1's maroon, the boardroom's chairs). Without it the chairs take the library's 80% tint.
+11. **Door options**: `frame` (the frame's slot), `glass` (the pane's slot), `swing: 'out'`, `panel` on more leaves, `jib: true` (a flush leaf with no frame: S3 C's service door) and a curtain in the photoreal `velvet` (smooth pleated halves, not box folds) (section 2).
+12. **Catalog colours**: the game keeps each catalog model's vertex colours and multiplies its prop's `mat` slot into them (a light body takes the slot's colour; windows, tyres and rust stay dark), so do the same to the copies `place` makes (a palette texture keeps its colours unless the prop has `tintMapped: true`, which no room sets yet). A `palette` prop placed after the catalog chairs paints every surface of those with `paint` in one flat colour (S1's maroon, the boardroom's chairs).
 13. **`pattern` lights**: S1 H's six lamps each pulse on their own `pattern`, like S3 C's ENTER light. Store `pattern` as a custom property, like `flicker`.
+14. **`fixed` parts** (S7 C's shaft): a box or prop marked `fixed` stays put in the game while the cab moves down past it. In a still, build it in place like the rest: one `shaft_block` box inside the door wall's slab behind the doorway, 5 `landingdoors` and 5 `shaftstencil`s, down to 20 m below the cab's floor (all of it below the floor; `landing_top` hidden). `build` passes the key through untouched: learn it, or strip it.
+15. **Catalog models inside other props**: `imports` and `place` read only `glb` props. S4 C's 78 desks are now `skinned_glb` (a catalog `lib_desk` whose light surfaces wear `lp_cubicle`), and `aisle_fill`'s parts hold 6 more desks, 6 CRTs and 6 chairs, so none of them is imported or placed until both read `skinned_glb` and a `propgroup`'s `parts`.
 
 ## What changed at the continuous building, per room (`c1d415e` → `65184db`)
 
-Read this table together with the polish table after it. Where the two disagree (a door moved, a prop replaced), the polish table and the current data win.
+Read this table together with the polish and follow-up tables after it. Where they disagree (a door moved, a prop replaced), the later table and the current data win.
 
 | Room | Project | Geometry to rebuild | Runtime-only (no Blender work) |
 |---|---|---|---|
@@ -73,7 +76,7 @@ Counts are of the room's own record. "Lights" is the number of light specs.
 | `S0_X` apartment | The box `desk` → `homedesk` (photoreal `wood`); the catalog table lamp → `desklamp`. Added `bed`, `doorglow`, `crtdust` and a second `papers`. Lights 2 → 3 (the CRT, the desk lamp, the line under the door). Darker, bluer atmosphere; wall and ceiling tile 2.6. `sit`, `stand` changed | the door is `locked` |
 | `SET_STREET` | **The catalog blocks are gone** (6 `lib_aptblock`, 5 `lib_brownstone`): 15 photoreal `facade`s line both sides. Boxes 65 → 89. Added 8 `lampglow`, 4 `streetsign`, a `newsbox`, a `clockpost` (its `clock` at `scale` 1.6), the `addressplate`, `kerbs`, 3 `roadmarks`, 2 fluoros, a wall plate and a fifth parked car (`lib_car_suv`). Lights 0 → 10. Sun moved from `[-6, 9, 60]` to `[0, 22.5, 64]` at intensity 3.2, hemisphere 0.95. `tower` door: `frame: marble`, `swing: out`. `in` changed | |
 | `S1_C`, `S1_H` (S2 aliases them) | The booth: a `reception` counter with its glass, the `receptionist` on a dais (and her hidden `receptionist_jaw`), 5 boxes round the booth, a `notice` placard, a `speaker` and the booth fluoro. The `queue` lane and `ticketpost` dispenser, `floorsheen`, `monogram`, `lobbydust`, two `doorlamp` pairs, `backing` behind the front glass, a `badgereader` by the inner door, a `palette`. Removed: `counter`, `dispenser`, `emblem`, `figure`, `placard`. H: 36 loose `slip`s → one `slippile`; two catalog chairs → `tipchair`s. Doors: `front` pane `glass_dark`; `inner` 1.1 → 1.2 wide with a panel; `service` 1.0 × 2.1 → 1.2 × 2.2. Lights 3 → 9 (six ceiling lamps, the booth, two door lamps off; H's lamps on `pattern`s). Wall tile 4.4; H exposure 1.5 | zones `seat_w` / `seat_e` → `seat0`…`seat7` (H: six) with `seat` poses; the counter's invisible spine |
-| `S3_C` corridor | `curtain` doorway 2.4 × 2.9 → 1.8 × 2.4; `side` moved z 4.6 → 1.2 (h 2.3); `service` moved z 4.0 → 5.4, 1.2 × 2.2, a flush `plaster_dark` leaf and frame. Added `velvetdrape`, two `entersign`s (ENTER lit, EXIT dead), `badgescanner` (replaces `badgereader`), `dustmotes`, `curtainvoid`, a `placard`, two downlight fluoros; the old `sign` is gone. Marble wainscot (skirt h 0.92). Lights 3 → 4 (two downlights, the green with its `pattern`, the laser's red). Shots changed | |
+| `S3_C` corridor | `curtain` doorway 2.4 × 2.9 → 1.8 × 2.4; `side` moved z 4.6 → 1.2 (h 2.3); `service` moved z 4.0 → 5.4, 1.2 × 2.2, a flush `plaster_dark` leaf and frame (a `jib` door since the follow-ups). Added `velvetdrape`, two `entersign`s (ENTER lit, EXIT dead), `badgescanner` (replaces `badgereader`), `dustmotes`, `curtainvoid`, a `placard`, two downlight fluoros; the old `sign` is gone. Marble wainscot (skirt h 0.92). Lights 3 → 4 (two downlights, the green with its `pattern`, the laser's red). Shots changed | |
 | `S3_H` lobby doors | Rebuilt from the new waiting room (the S1 booth, queue, sheen, monogram and lamps). Doors: `curtain` x −5.6 → −5.4, 1.8 × 2.6; `service` now on the W wall at 3.8 (was S, −4.6); `inner` as S1's. Added `velvetdrape`, a dead `entersign`, `curtainvoid`, six hidden `handprint`s on the front glass and the `deadstreet` beyond it (one unlit mesh outside the shell). Lights 4 → 9 | zones cut to `glass` (a box) and `curtain`; `bumpCount` |
 | `S4_C` cubicle floor | Size 26 × 36 → 24.6 × 38; walls `plaster_blown`. 26 partitions and 18 fluoros fewer. `side` door moved z 3.9 → 0.9, 1.2 wide with a panel, hinge L. `figure` + `papers` → `manager` + `evidence`. Added a `bulkhead` over the side door, a `lightspill`, 3 `dust`, a `placard`. Lights 12 → 14. Shots changed | manager path `[0, -12]` → `[0, -5]`, `face: false` |
 | `S4_H` labyrinth | `far` leaf `lp_beige` with a panel; `ajar` 0.22 → 0.3, hinge R, a panel; two piers (4 boxes) frame the ajar door. 7 fluoros → 9 `cagebulb`s (at the far end a dark one and a lit one, hidden). Added 5 `puddle`s, `steam`, 2 `mopsink`s, a `drain`, `mopbucket`, `handtruck`, `lightspill`; `figure` → `manager` (and the hidden `evidence_h`); one `lib_basin` fewer. Fog `#45423a`. Lights 7 → 9 | nine band zones; the manager actor; `armAfter` |
@@ -90,9 +93,25 @@ Counts are of the room's own record. "Lights" is the number of light specs.
 
 `S2_C`, `S2_H`, `S7_H`, `SE_RETAINED` and `SE_EXPUL` stay aliases. `build_rooms.py`'s `CATALOG` still lists nodes no room places any more, among them `lib_tower`, `lib_lift`, `lib_aptblock`, `lib_brownstone`, `lib_tablelamp`, `lib_guarddesk` and `lib_shelf`.
 
+## What the follow-ups changed, per room (`20293e8` → `0add444`)
+
+Rooms not listed are unchanged in `rooms.json`. Two changes are in `materials.js` only: S0 X's `wood` has a grain, and S8 C's soggy package stains in `cardboard_wet`.
+
+| Room | Geometry to rebuild | Runtime-only (no Blender work) |
+|---|---|---|
+| `SET_STREET` | none | `labelInk: backed` (the address on a dark plate) |
+| `S1_H` (S2_H aliases it) | none | `labelInk: dark` |
+| `S3_C` corridor | `curtain` doorway in `mat: velvet` (smooth halves, section 2). `service` is a `jib` door (no frame; the leaf in the wall's `plaster_dark`, the marble skirt band across it), no longer a `plaster_dark` leaf and frame. `velvetdrape` loses `dress`, the lit `entersign` its `sync` option; the dust is named `dustmotes` | the green light's `sync: [entersign, dustmotes]` |
+| `S3_H` lobby doors | `front` pane `glass_clear`; `curtain` doorway in `mat: velvet`. `velvetdrape` loses `dress`, `deadstreet` loses `dressGlass` | |
+| `S4_C` cubicle floor | 45 `fluoro`s → `troffer_green` (`hold_troffer` keeps its name). Every partition (130) in `lp_cubicle`. The 78 catalog desks → `skinned_glb` (`lib_desk`, skin `lp_cubicle`). Added the hidden `aisle_fill`, a `propgroup` (`shadow: false`) of six workstations across the main aisle behind the cross aisle: 6 partitions, 6 `skinned_glb` desks, 6 `lib_crt`, 6 `lib_chair_wood` | zone `past_cross` (silent); `scenes.json`'s `unseen` shows `aisle_fill` |
+| `S4_H` labyrinth | Walls and the two pier tops `cinderblock_beige`. A second `lightspill`, `ajar_spill_wide` (hidden), and a light `ajar_wide` (off) | the nine band zones are gone; the manager's path starts at z 1.3 and carries `drive`; `far_end` arms after `manager` |
+| `S6_H` edge (S7_H aliases it) | none | zones `run_breath`, `run_deeper`, `run_haze`, `run_heavy` (silent strips); the run's haze is `scenes.json`'s |
+| `S7_C` freight cab | Floor and skirt `grate` → `diamond_plate`; the 31 padding and panel-surround boxes `grate` → `quilted_steel`. `cabbulb` named `bulb`. The 7 `floorind` placements → one, `ind` (`ghost` and text ` --`). Added the fixed shaft: a `shaft_block` box from (−1.2, −17.72, 1.9) to (1.2, −0.01, 2.0), inside the door wall's slab behind the doorway; 5 `landingdoors` at z 1.9 (`landing_top`, hidden, at y 0; B2 at −4.2, B7 at −9.0, B12 at −13.4; `landing_low` at −20); 5 `shaftstencil`s (B1, B2, B7, B12, `=`) | the ride drops 20 m (since the polish; the first table's 14 m is out of date); `display` and `swing` beats |
+| `S8_H` store (SE_EXPUL aliases it) | the flickering fluoro is named `tube_flicker` | its light's `sync: tube_flicker`; the hum is `scenes.json`'s and `endings.json`'s |
+
 ## Doorways
 
-Every doorway in the built rooms, as of `58f762e`. Aliases share their base room's doorways. `x` is the offset along the wall: the x coordinate on N/S walls, z on E/W. The sill is at the room's floor unless a `y` is given. If there is no leaf slot, the leaf uses its kind's default.
+Every doorway in the built rooms, as of `0add444`. Aliases share their base room's doorways. `x` is the offset along the wall: the x coordinate on N/S walls, z on E/W. The sill is at the room's floor unless a `y` is given. If there is no leaf slot, the leaf uses its kind's default.
 
 | Room | Door | Wall | x | w × h | Kind | Leaf / extras |
 |---|---|---|---|---|---|---|
@@ -102,12 +121,13 @@ Every doorway in the built rooms, as of `58f762e`. Aliases share their base room
 | S1_C, S1_H | `front` | S | 0 | 2.6 × 2.9 | glass | pane `glass_dark` |
 | S1_C, S1_H, S3_H, SE_PEND | `inner` | N | 5.6 | 1.2 × 2.2 | door | `lp_beige`, panel `lp_grey`, hinge R |
 | S1_C, S1_H, SE_PEND | `service` | S | −4.6 | 1.2 × 2.2 | door | `lp_grey` |
-| S3_C | `curtain` | N | 0 | 1.8 × 2.4 | curtain |  |
+| S3_C | `curtain` | N | 0 | 1.8 × 2.4 | curtain | `velvet` (smooth halves) |
 | S3_C | `glass` | S | 0 | 2.4 × 2.8 | glass | pane `glass_dark` |
 | S3_C | `side` | E | 1.2 | 1.2 × 2.3 | door | `lp_beige`, hinge R |
-| S3_C | `service` | W | 5.4 | 1.2 × 2.2 | door | `plaster_dark`, frame `plaster_dark`, hinge R |
-| S3_H, SE_PEND | `front` | S | 0 | 2.6 × 2.9 | glass |  |
-| S3_H | `curtain` | N | −5.4 | 1.8 × 2.6 | curtain |  |
+| S3_C | `service` | W | 5.4 | 1.2 × 2.2 | door | `jib`: the wall's `plaster_dark`, the marble skirt across it, no frame, hinge R |
+| S3_H | `front` | S | 0 | 2.6 × 2.9 | glass | pane `glass_clear` |
+| SE_PEND | `front` | S | 0 | 2.6 × 2.9 | glass |  |
+| S3_H | `curtain` | N | −5.4 | 1.8 × 2.6 | curtain | `velvet` (smooth halves) |
 | S3_H | `side` | E | 3 | 1.2 × 2.3 | door | `lp_beige`, hinge R |
 | S3_H | `service` | W | 3.8 | 1.2 × 2.2 | door | `lp_grey`, hinge R |
 | S4_C | `front` | S | 0 | 1.4 × 2.3 | door | `lp_beige` |
@@ -135,7 +155,7 @@ For stills, build every leaf **shut**. There are three exceptions: a connector's
 
 ## What `higgsfield_scene.py` needs at rebuild time
 
-The tool runs for every current key, aliases and `CN_*` included, without failing, and its `build`, `place` and `proof` output parses (checked at `58f762e`). That is all it does so far. The ports below are what make the rebuilt projects match the game.
+The tool runs for every current key, aliases and `CN_*` included, without failing, and its `build`, `place` and `proof` output parses (checked again at `0add444`). That is all it does so far. The ports below are what make the rebuilt projects match the game.
 
 ### 1. Walls with holes: port `room.js`'s wall split into `build_room`
 
@@ -156,13 +176,14 @@ Today `build_room` lays each wall as one box. `src/walk/room.js` lays each wall 
 
 Put each doorway under an `empty()` at the opening's centre, on the wall's centre plane, at the sill: N `(x, y, -D/2 - T/2)` yaw 0; S `(x, y, D/2 + T/2)` yaw 180; E `(W/2 + T/2, y, x)` yaw −90; W `(-W/2 - T/2, y, x)` yaw 90. The yaw maps onto `empty()`'s Z rotation unchanged. In door-local axes, +x runs along the wall and **+z points into the room**. `doors.js` positions are **box centres**; the template's `box()` takes the base, so pass `y - h/2`.
 
-- **Frame** (every kind except `open` and `curtain`), in the door's `frame` slot or `lp_dark`, `depth = T + 0.04 = 0.34`. Two jambs, 0.08 × (h + 0.08) × depth, centred at x = ±(w/2 + 0.04), y = (h + 0.08)/2. A head, (w + 0.16) × 0.08 × depth, centred at y = h + 0.04.
+- **Frame** (every kind except `open`, `curtain` and a `jib` door), in the door's `frame` slot or `lp_dark`, `depth = T + 0.04 = 0.34`. Two jambs, 0.08 × (h + 0.08) × depth, centred at x = ±(w/2 + 0.04), y = (h + 0.08)/2. A head, (w + 0.16) × 0.08 × depth, centred at y = h + 0.04.
 - **door**: one leaf on a pivot at the hinge jamb (x = −w/2 for hinge L, the default; +w/2 for R), z = +0.11.
   - Leaf: (w − 0.02) × (h − 0.02) × 0.05, centred w/2 from the hinge, at y = h/2. It uses `mat` or `lp_beige`.
   - Optional `panel` (a window or panel, in its own slot: the street door's `glass`, the inner doors' `lp_grey`): w·0.45 × h·0.32 × 0.09 at y = 0.66h, standing 2 cm proud of both faces.
   - Kick panel: `lp_dark`, (w − 0.24) × 0.36h × 0.09, at y = 0.25h.
   - Handles: `lp_brass`, 0.04 × 0.04 × 0.12, at (w − 0.12) from the hinge, y = 0.47h, on both faces (z ±0.05).
   - Open angle: 95° into the room. The leaf turns by `EASE(u) · 95°`, where `EASE(u) = 2u²` for u < 0.5 and `1 − (2 − 2u)²/2` above. `ajar: 0.22` gives about 9°.
+- **door with `jib: true`** (S3 C's service door): no frame, kick panel or handles. One 0.05 m leaf, (w − 0.012) × (h − 0.006), in `mat` or the room's wall slot, its room face 1 mm behind the wall's inner face (z = T/2 − 0.001), so only 6 mm side gaps and a 4 mm gap over it show. It hangs from its room face when it swings in. The room's skirt band is carried across it, as proud as on the wall, and its UVs continue the wall's tiling in room space.
 - **glass**: two leaves hinged at x = ±w/2, z = +0.02, each `lw = w/2 − 0.02` wide.
   - Each leaf: `lp_dark` stiles 0.06 × h × 0.06 at both edges, a bottom rail lw × 0.1 × 0.06 (y 0.05) and a top rail lw × 0.08 × 0.06 (y h − 0.04).
   - Pane: (lw − 0.08) × (h − 0.2) × 0.02 in the door's `glass` slot (`glass_dark` for the smoked lobby doors) or the photoreal `glass`, since the building's glass is photoreal (C1).
@@ -173,6 +194,7 @@ Put each doorway under an `empty()` at the opening's centre, on the wall's centr
   - Each fold sits at x = s·w/2 − s·(i + 0.5)·(w/folds) and is (w/folds + 0.02) × (h + 0.2) × (0.08 + 0.05·(i mod 2)), set 0.03 further into the room on odd folds, in `mat` or `lp_curtain`.
   - A brass rod, (w + 0.4) × 0.05 × 0.05, at y = h + 0.25, z = +0.18.
   - Parted, each half is scaled to 0.28 in x about its jamb.
+  - In a photoreal `mat` (`velvet`, both S3 curtains) there are no box folds: each half is one smooth pleated sheet with `velvetdrape`'s fold profile (a fold every 0.22 m, up to 12 cm deep), from 6 cm past its jamb to 4 cm past the middle, 3 cm behind the plane the drapes hang in, the right half a hair in front where they overlap. UVs run in metres across the whole opening. In the game the hem sways a little (`sway`, default 0.014 m); a still takes it at rest.
 - **shutter**: ceil(h / 0.12) slats, w × 0.11 × 0.04, every 0.12 m from y 0.06, at z = +0.10, in `mat` or `lp_grey`. When open it rises h − 0.15 and compresses to 8%.
 - **slide**: two panels, w/2 × h × 0.05, at x = ±w/4, z = +0.10, in `mat` or `lp_rust`. Each has 4 `lp_dark` ribs, (w/2 − 0.04) × 0.03 × 0.06, at y = 0.3 + i·(h − 0.6)/3. When open, each slides out by w/2 − 0.05.
 - **open**: nothing. Just the hole and the sill strip.
@@ -186,7 +208,10 @@ Put each doorway under an `empty()` at the opening's centre, on the wall's centr
 - **`floorY` → shell from `floorY` to `H`**: the floor slab goes from `floorY − 0.2` to `floorY`; walls and bands start at `floorY`; the ceiling stays at `H`. A door with no `y` sits at `floorY` (every connector door gives its `y`).
 - **`noFloor` → no floor slab** (SET_DIVE); its floor is in its `boxes`.
 - **`off` lights → `hide_render`** (or energy 0), and store `id` as a custom property so a variant can still switch `terminal_glow` on for S6, or the lit lamps on for a later moment.
-- **`palette` → paint the flagged catalog copies**: after `place`, give every catalog copy whose prop has `paint` a flat material in that colour (or in its `mat` slot's colour when `paint` is `true`), on its light surfaces.
+- **`palette` → paint the flagged catalog copies**: after `place`, give every catalog copy whose prop has `paint` a flat material in that colour (or in its `mat` slot's colour when `paint` is `true`), on all its surfaces.
+- **`fixed` → build in place**: a fixed box is an ordinary box that does not collide, a fixed prop an ordinary prop (S7 C's shaft); strip the key.
+- **`propgroup` → its `parts`**: build each part spec in the group's frame under one empty, shown or hidden together; `shadow: false` turns off shadow casting on all of them (S4 C's `aisle_fill`).
+- **`skinned_glb` → a catalog copy in a slot**: import and place its `node` like a `glb`, then give its light surfaces (luminance over 0.45) the `skin` slot (`lp_cubicle`), box-projecting UVs where the model has none. Without the library it is its `fallback` box in that slot.
 - **`boxkit` → boxes**: its `boxes` are `[slot, [x0, y0, z0], [x1, y1, z1], tile]` in the prop's frame, built like the room's boxes, plus its `water` sheet (`y`, `from`, `to`).
 - **`tile`** (the texture repeat per surface and per box) does not need porting: the template uses its own procedural scale.
 
@@ -207,11 +232,11 @@ def p_boxcutter(g, o):
 
 - **C1 still decides the material.** The building's things (facades, kerbs, road paint, the velvet, puddles, oil, rebar, the glass table, caustics, light shafts and glows) are photoreal slots; the company's (signs, the counter's body, figures, the gate, the panel, gondolas) are `LOWPOLY` flat colours.
 - **Some draw their own textures** on a canvas: printed words (`notice`, `entersign`, `numslip`, `floorind`), blurred faces (`receptionist`, `manager`, `blurfigure`), the caustic web, the handprints. Bake them to image textures or stand in a flat colour; no legible text may say "you" (C4).
-- **Some move in the game** (from `onBeforeRender`): the dispenser's falling slips, the receptionist's jaw, motes and dust, steam, the velvet's sway, the ENTER sign's `sync`, the badge reader's fan, the package's throb and the ring's `spread`, the swinging curtain, caustics. A still takes one fixed pose.
-- **Some are stop-motion sets of placements** a beat swaps, sharing one position: `floorind` (one per reading), `scissorgate` (three `ext`s), the lit / dark pairs (`doorlamp`, `worklamp`, `poollamp`, `cagebulb`, `boom`, `floorgrate`). Port each; `hidden` decides which renders.
+- **Some move in the game** (from `onBeforeRender`): the dispenser's falling slips, the receptionist's jaw, motes and dust, steam, the velvet's sway, the ENTER sign, its dust and the store's flickering tube following their light (`sync`), the cab bulb knocked into a `swing` by a beat, the badge reader's fan, the package's throb and the ring's `spread`, the swinging curtain, caustics. A still takes one fixed pose.
+- **Some are stop-motion sets of placements** a beat swaps, sharing one position: `scissorgate` (three `ext`s), the lit / dark pairs (`doorlamp`, `worklamp`, `poollamp`, `cagebulb`, `boom`, `floorgrate`). Port each; `hidden` decides which renders. `floorind` is one placement now: a `display` beat redraws its reading, so a still shows its own `text` (` --`).
 - **Some read their parent's spec**: `receptionist_jaw` (the receptionist's), `canister` (the tube station's), `lampdot` (a parent's pos / rot plus its own `at`).
 
-Every type the port lacks at `58f762e`, by the block it comes from, with the rooms that place it (×count):
+Every type the port lacks at `0add444`, by the block it comes from, with the rooms that place it (×count):
 
 **the thresholds (pre-polish)**
 
@@ -264,8 +289,8 @@ Every type the port lacks at `58f762e`, by the block it comes from, with the roo
 | `badgescanner` | S3_C | the badge reader: low-poly box, red laser slot (light) |
 | `curtainvoid` | S3_C, S3_H | a one-sided matte black plane inside the curtain doorway's depth |
 | `deadstreet` | S3_H | the street seen through the lobby glass: one unlit, shadowless overcast mesh (`level`, `grey`) |
-| `dustmotes` | S3_C | dust in the ENTER sign's green, `size` box, `count` motes |
-| `entersign` | S3_C ×2, S3_H | the ENTER / EXIT sign: low-poly housing, lit letters (`text`, `on`, `sync` to a room light) |
+| `dustmotes` | S3_C | dust in the ENTER sign's green, `size` box, `count` motes; it follows the green light (`sync`) |
+| `entersign` | S3_C ×2, S3_H | the ENTER / EXIT sign: low-poly housing, lit letters (`text`, `on`); the lit one follows the green light (`sync`) |
 | `handprint` | S3_H ×6 | a smeared handprint on the glass (`flip`, `tilt`); all six start hidden |
 | `velvetdrape` | S3_C, S3_H | photoreal red velvet either side of the curtain doorway (`gap`), a pelmet and brass trim |
 
@@ -278,11 +303,14 @@ Every type the port lacks at `58f762e`, by the block it comes from, with the roo
 | `dust` | S4_C ×3 | warm motes drifting in a w × h × d box |
 | `evidence` | S4_C, S4_H | the evidence: photoreal paper stack, typed and signed, a clip (`tilt`) |
 | `handtruck` | S4_H | a hand truck on its nose plate with two cartons |
-| `lightspill` | S4_C, S4_H | a fan of light on the floor through a door (`w`, `w2`, `len`) |
+| `lightspill` | S4_C, S4_H ×2 | a fan of light on the floor through a door (`w`, `w2`, `len`) |
 | `manager` | S4_C, S4_H | the manager: blocky suit, blurred face, four-polygon tie, `offer` forearm out |
 | `mopbucket` | S4_H | the mop bucket on casters with its wringer and mop (low-poly yellow) |
+| `propgroup` | S4_C | several props shown and hidden as one (`parts`, in its frame; `shadow: false`): `aisle_fill` |
 | `puddle` | S4_H ×5 | standing water: an irregular dark glossy film `w` × `d` (building) |
+| `skinned_glb` | S4_C ×78 (and 6 in `aisle_fill`) | a catalog model (`node`) whose light surfaces wear one lp_ slot (`skin`: `lp_cubicle`), texture and all; a `fallback` box in the slot |
 | `steam` | S4_H | faint wisps off a floor drain (three crossed additive sheets) |
+| `troffer_green` | S4_C ×45 | a drop-ceiling troffer, `w` × `d`: an `lp_grey` rim, an `lp_fluoro_green` tube and a `glow_fluoro_green` plate |
 
 **S5-S6**
 
@@ -307,10 +335,12 @@ Every type the port lacks at `58f762e`, by the block it comes from, with the roo
 
 | Type | Rooms | What it is |
 |---|---|---|
-| `cabbulb` | S7_C | the cab's caged bulb: ceiling plate, stem, bare bulb and a rust wire guard, `h` up to the ceiling |
+| `cabbulb` | S7_C | the cab's caged bulb (`bulb`): ceiling plate, stem, bare bulb and a rust wire guard, `h` up to the ceiling |
 | `cabpanel` | S7_C | the 66-button panel with one lit (same layout and origin as `panel`) |
-| `floorind` | S7_C ×7 | the floor indicator: three 7-segment cells in a housing; one placement per reading (`text`), swapped by the ride's stops |
+| `floorind` | S7_C | the floor indicator (`ind`): three 7-segment cells in a housing, dark segments (`ghost`) and the lit reading (`text`), which the ride's `display` stops redraw |
+| `landingdoors` | S7_C ×5 | a shaft landing's shut doors: two ribbed leaves `inset` in front of the shaft wall, a frame, a steel `sill`, an unseen shadow plug; `label` is the floor the indicator reads there (fixed) |
 | `scissorgate` | S7_C ×3 | the scissor gate drawn to `ext` (three placements: folded, half, shut) |
+| `shaftstencil` | S7_C ×5 | a floor's number painted on the shaft wall in stencil blocks (`text`: B, 0-9, `-`, `=`; `h`), 4 mm proud, in `plaster_blown` (fixed) |
 
 **S8 + endings**
 
@@ -331,7 +361,7 @@ Every type the port lacks at `58f762e`, by the block it comes from, with the roo
 | `polycluster` | S8_H | his reflection in the glass: a faceless cluster of flat polygons |
 | `poollamp` | SET_DIVE ×2 | an underwater pool lamp in a tile face (`lit` pair) |
 | `shopglass` | S8_H | the dark storefront glass, drawn by the store, not the shell |
-| `soggypackage` | S8_C ×2, SE_ASSIM | the soggy package (and `openbox`, the same opened) |
+| `soggypackage` | S8_C ×2, SE_ASSIM | the soggy package (and `openbox`, the same opened); its wet stain is `cardboard_wet` |
 | `sortingtable` | S8_C | the steel sorting table: cutting mat, shelf of flattened cartons, tape |
 | `storedoor` | S8_H | the storefront door standing open outward (`leaves` angles) |
 | `swaycurtain` | SE_PEND | a red curtain still swinging from its rod |
@@ -356,7 +386,7 @@ Every connector has an entry doorway on its S wall and a bare opening on its N w
 
 ## Commands and order
 
-1. The per-scene polish has landed. If a set has changed since `58f762e`, re-run `python ninety-nine/tools/build_rooms.py`; its `check_room()` asserts must pass.
+1. The per-scene polish and the follow-ups have landed. If a set has changed since `0add444`, re-run `python ninety-nine/tools/build_rooms.py`; its `check_room()` asserts must pass.
 2. Port sections 1–5 above into `ninety-nine/tools/higgsfield_scene.py`. Then run `python ninety-nine/tools/higgsfield_scene.py <KEY> build` for every key in `rooms.json`, and check that no `# WARNING` line is left and the code parses.
 3. For each built room (not the aliases):
    1. `scene_builder_3d_create_project`: a fresh project, or revision 0 of the old one.
@@ -367,7 +397,7 @@ Every connector has an entry doorway on its S wall and a bare opening on its N w
    6. Record the new `id`, `url`, `revision` and `proof` in `projects.json`.
 4. Update `projects.json` and the README's project table:
    - `S6_C` moves to `aliases` (→ `S5_C`). Ask the author before deleting its old project or its `S6_C/` proof folder.
-   - The catalog props, as of `58f762e` (against the built projects): `S0_X` book stack and wooden chair (the table lamp is gone); `SET_STREET` 7 street lamps, traffic light, hydrant, trash bin and five cars (the brownstones, apartment blocks and tower are gone); `S1_C` 8 accent chairs, `S1_H` 6 (the two overturned are `tipchair`s), `S3_H` 8 and a payphone; `S3_C` the security camera; `S4_C` 78 desks, CRTs and wooden chairs; `S4_H` 3 wash basins and the breaker panel; `S5_C` 2 wooden chairs; `S5_H` five cars (one hidden) and a cage lamp; `S6_H` 20 cars; `S7_C` none (the cage lamp is the `cabbulb` prop); `S8_C` 22 pallet stacks, mail sacks and a crate (the guard desk is gone); `S8_H` none (the shelf racks are `gondola`s); `SET_DIVE` none (the lift is gone); `SE_ASSIM` 13 accent chairs; `SE_PEND` 2.
+   - The catalog props, as of `0add444` (against the built projects): `S0_X` book stack and wooden chair (the table lamp is gone); `SET_STREET` 7 street lamps, traffic light, hydrant, trash bin and five cars (the brownstones, apartment blocks and tower are gone); `S1_C` 8 accent chairs, `S1_H` 6 (the two overturned are `tipchair`s), `S3_H` 8 and a payphone; `S3_C` the security camera; `S4_C` 78 CRTs and wooden chairs, and 78 desks that are now `skinned_glb` (6 of each more, hidden, in `aisle_fill`); `S4_H` 3 wash basins and the breaker panel; `S5_C` 2 wooden chairs; `S5_H` five cars (one hidden) and a cage lamp; `S6_H` 20 cars; `S7_C` none (the cage lamp is the `cabbulb` prop); `S8_C` 22 pallet stacks, mail sacks and a crate (the guard desk is gone); `S8_H` none (the shelf racks are `gondola`s); `SET_DIVE` none (the lift is gone); `SE_ASSIM` 13 accent chairs; `SE_PEND` 2.
    - Decide whether the `CN_*` connectors get projects.
 
 **The proofs still render the `leave` / `arrive` moves.** `rooms.json` keeps those shots, and the `in` / `out` poses, even though the game no longer cuts between rooms, so the proofs stay comparable with the old ones. The carried shots (`sit`, `lean`, `stand`, `fall`, `sink`, `grate`, `land`) and the polish's previews (`desk`, `screen`, `harlowe`, `kerb`, `side`, `cruiser`, `bench`, `gap`, `edge`, `dock`, `entry`) are keyed on the ShotCam like every other shot. To proof one of them, add its name to the `("leave", "arrive")` tuple that the `proof` command builds `PROOF_SHOTS` from.

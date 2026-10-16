@@ -5,7 +5,10 @@
 Higgsfield 3D scene builder's "NINETY-NINE — Prop Library" project and exported
 as one GLB. Each model is a named node (`lib_chair`, `lib_car_sedan`, ...);
 `src/stage/library.js` clones them by name and gives every clone the company's
-low-poly treatment (flat shading, vertex snapping, palette colours only; canon C1).
+low-poly treatment (flat shading, vertex snapping, no photo textures; canon C1).
+The models are vertex-painted, and a clone keeps those colours: the prop's `mat`
+slot multiplies into them, so windows, tyres and rust still show. A palette
+texture is recoloured only when the prop asks (`tintMapped: true`).
 
 The file is optional: without it every `glb` prop in `data/rooms.json` builds
 its box `fallback` instead, so the game runs from a checkout with no binaries.
