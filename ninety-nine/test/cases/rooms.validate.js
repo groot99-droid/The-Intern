@@ -183,10 +183,37 @@ export async function run() {
           }
         }
         assert(z.ring >= z.r || z.silent, `${key}: zone ${z.name} ring inside its radius`);
-        if (z.armAfter) assert(names.has(z.armAfter), `${key}: zone ${z.name} arms after missing ${z.armAfter}`);
+        // a zone, or an actor whose drive arms it when it ends (director.js startDrives)
+        if (z.armAfter) assert(names.has(z.armAfter) || (rec.actors && rec.actors[z.armAfter] && rec.actors[z.armAfter].drive), `${key}: zone ${z.name} arms after missing ${z.armAfter}`);
         if (z.actor) assert(rec.actors && rec.actors[z.actor], `${key}: zone ${z.name} follows missing actor ${z.actor}`);
         if (z.box) assert(z.box[0][0] < z.box[1][0] && z.box[0][1] < z.box[1][1], `${key}: zone ${z.name} box`);
       }
+    }
+  });
+
+  await runCase('rooms.json: driven actors (actors.NAME.drive) -- by x or z, a path that runs one way along it, lead >= 0, 0 < to <= 1, and a name no zone has', () => {
+    let n = 0;
+    for (const [key, rec] of built) {
+      for (const [name, a] of Object.entries(rec.actors || {})) {
+        const dv = a.drive;
+        if (!dv) continue;
+        n++;
+        // the keys director.js stepDrive reads (a typo is a silent no-op)
+        for (const k of Object.keys(dv)) assert(['by', 'lead', 'ratchet', 'to', 'footsteps'].includes(k), `${key}: ${name} unknown drive key ${k}`);
+        assert(dv.by === 'x' || dv.by === 'z', `${key}: ${name} drive.by ${dv.by}`);
+        const k = dv.by === 'x' ? 0 : 1;
+        const steps = a.path.slice(1).map((p, i) => p[k] - a.path[i][k]);
+        assert(steps.every((d) => d > 0) || steps.every((d) => d < 0), `${key}: ${name}'s driven path doubles back along ${dv.by}`);
+        assert((dv.lead || 0) >= 0 && (dv.to === undefined || (dv.to > 0 && dv.to <= 1)) && (dv.footsteps || 0) >= 0, `${key}: ${name} drive lead/to/footsteps`);
+        assert(!(rec.zones || []).some((z) => z.name === name), `${key}: driven actor ${name} shares a zone's name (armAfter would be ambiguous)`);
+      }
+    }
+    assert(n >= 1, 'no driven actor (S4 H\'s manager is one)');
+  });
+
+  await runCase('rooms.json: a propgroup\'s parts all have builders', () => {
+    for (const [key, rec] of built) {
+      for (const p of rec.props || []) for (const q of p.parts || []) assert(types.has(q.type), `${key}: ${p.name || p.type} part "${q.type}" has no builder`);
     }
   });
 

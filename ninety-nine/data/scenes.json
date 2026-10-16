@@ -609,6 +609,20 @@
               }
             }
           ],
+          "unseen": {
+            "_note": "Doc 3 MG-03 C: look behind you and the floor already walked is just more cubicles. Once he is past the cross aisle and the aisle behind him (point, r: the workstations' footprint in rooms.json) is out of his view, it closes up.",
+            "after": "past_cross",
+            "point": [
+              0.0,
+              9.1
+            ],
+            "r": 7.0,
+            "beat": [
+              {
+                "show": "aisle_fill"
+              }
+            ]
+          },
           "thresholds": {
             "succumb": {
               "label": "TAKE THE PAPERS",
@@ -683,169 +697,80 @@
           "room": "S4_H",
           "next": "S5",
           "ambience": "S4_H_AMB.wav",
-          "beatZones": [
-            {
-              "zone": "band_0",
-              "label": "THE CORRIDOR",
-              "beat": [
-                {
-                  "actor": {
-                    "name": "manager",
-                    "from": 0.0,
-                    "to": 0.1111,
-                    "speed": 3.2
-                  }
+          "drive": {
+            "_note": "The manager (rooms.json actors.manager.drive) recedes as he walks, 20 m ahead, never back. footstep: every 8 m he moves. end: at the far door, as the last band used to: the evidence at its foot, the door, through it, shut, the end bulb; TAKE THE PAPERS arms when this has played.",
+            "actor": "manager",
+            "footstep": [
+              {
+                "oneShot": "S4_H_SFX_FOOTSTEPS.wav"
+              }
+            ],
+            "end": [
+              {
+                "show": "evidence_h"
+              },
+              {
+                "open": "far",
+                "seconds": 0.9
+              },
+              {
+                "waitMs": 500
+              },
+              {
+                "actor": {
+                  "name": "manager",
+                  "from": "here",
+                  "to": 1,
+                  "speed": 1.1
                 }
-              ]
-            },
-            {
-              "zone": "band_1",
-              "label": "THE CORRIDOR",
-              "beat": [
-                {
-                  "oneShot": "S4_H_SFX_FOOTSTEPS.wav",
-                  "actor": {
-                    "name": "manager",
-                    "from": 0.1111,
-                    "to": 0.2222,
-                    "speed": 3.2
-                  }
+              },
+              {
+                "waitMs": 1500
+              },
+              {
+                "hide": "manager"
+              },
+              {
+                "close": "far",
+                "seconds": 1.1
+              },
+              {
+                "waitMs": 700
+              },
+              {
+                "show": "end_cage_on",
+                "light": {
+                  "id": "end_bulb",
+                  "on": true
                 }
-              ]
-            },
-            {
-              "zone": "band_2",
-              "label": "THE CORRIDOR",
-              "beat": [
-                {
-                  "actor": {
-                    "name": "manager",
-                    "from": 0.2222,
-                    "to": 0.3333,
-                    "speed": 3.2
-                  }
+              },
+              {
+                "hide": "end_cage_off"
+              }
+            ]
+          },
+          "stillness": {
+            "_note": "Doc 3 MG-03 H: stand completely still for 8 seconds and a door opens -- the ajar door swings wider (still locked: it is stepped into, not through) and its cold light comes up.",
+            "seconds": 8,
+            "beat": [
+              {
+                "open": "ajar",
+                "amount": 0.46,
+                "seconds": 2.8,
+                "light": {
+                  "id": "ajar_wide",
+                  "on": true,
+                  "seconds": 2.4
                 }
-              ]
-            },
-            {
-              "zone": "band_3",
-              "label": "THE CORRIDOR",
-              "beat": [
-                {
-                  "actor": {
-                    "name": "manager",
-                    "from": 0.3333,
-                    "to": 0.4444,
-                    "speed": 3.2
-                  }
-                }
-              ]
-            },
-            {
-              "zone": "band_4",
-              "label": "THE CORRIDOR",
-              "beat": [
-                {
-                  "actor": {
-                    "name": "manager",
-                    "from": 0.4444,
-                    "to": 0.5556,
-                    "speed": 3.2
-                  }
-                }
-              ]
-            },
-            {
-              "zone": "band_5",
-              "label": "THE CORRIDOR",
-              "beat": [
-                {
-                  "oneShot": "S4_H_SFX_FOOTSTEPS.wav",
-                  "actor": {
-                    "name": "manager",
-                    "from": 0.5556,
-                    "to": 0.6667,
-                    "speed": 3.2
-                  }
-                }
-              ]
-            },
-            {
-              "zone": "band_6",
-              "label": "THE CORRIDOR",
-              "beat": [
-                {
-                  "actor": {
-                    "name": "manager",
-                    "from": 0.6667,
-                    "to": 0.7778,
-                    "speed": 3.2
-                  }
-                }
-              ]
-            },
-            {
-              "zone": "band_7",
-              "label": "THE CORRIDOR",
-              "beat": [
-                {
-                  "actor": {
-                    "name": "manager",
-                    "from": 0.7778,
-                    "to": 0.8889,
-                    "speed": 3.2
-                  }
-                }
-              ]
-            },
-            {
-              "zone": "band_8",
-              "label": "THE CORRIDOR",
-              "beat": [
-                {
-                  "show": "evidence_h"
-                },
-                {
-                  "open": "far",
-                  "seconds": 0.9
-                },
-                {
-                  "waitMs": 500
-                },
-                {
-                  "actor": {
-                    "name": "manager",
-                    "from": 0.8889,
-                    "to": 1,
-                    "speed": 1.1
-                  }
-                },
-                {
-                  "waitMs": 1500
-                },
-                {
-                  "hide": "manager"
-                },
-                {
-                  "close": "far",
-                  "seconds": 1.1
-                },
-                {
-                  "waitMs": 700
-                },
-                {
-                  "show": "end_cage_on",
-                  "light": {
-                    "id": "end_bulb",
-                    "on": true
-                  }
-                },
-                {
-                  "hide": "end_cage_off"
-                }
-              ]
-            }
-          ],
+              },
+              {
+                "waitMs": 900
+              },
+              {
+                "show": "ajar_spill_wide"
+              }
+            ]
+          },
           "thresholds": {
             "succumb": {
               "label": "TAKE THE PAPERS",

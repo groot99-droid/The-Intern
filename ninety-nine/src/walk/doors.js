@@ -174,11 +174,13 @@ export function buildDoor(mats, spec, { wallT = 0.3 } = {}) {
     isOpen() { return u >= 0.999; },
     isShut() { return u <= 0.001; },
     progress() { return u; },
-    open(seconds = 1.2) {
-      locked = false;
-      target = 1;
+    // `to` < 1 swings it only that far (never back), and a door left
+    // part-open stays locked: it still blocks (S4 H's ajar door, wider)
+    open(seconds = 1.2, to = 1) {
+      if (to >= 1) locked = false;
+      target = Math.max(u, Math.min(1, to));
       speed = 1 / Math.max(0.05, seconds);
-      if (u >= 1) return Promise.resolve();
+      if (u >= target) return Promise.resolve();
       return new Promise((r) => waiters.push(r));
     },
     close(seconds = 1.0, { lock = true } = {}) {

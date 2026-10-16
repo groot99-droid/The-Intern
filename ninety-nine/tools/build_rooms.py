@@ -718,6 +718,27 @@ def cubicle_floor():
     # centre sits inside.)
     Z0, PITCH, SLOTS, CROSS = -16.9, 2.4, 14, 7
     BX = (2.1, 6.65, 11.3)
+    # Doc 2 S4_C: "every cubicle partition, desk, chair and monitor,
+    # identical, blocky, one repeated warped texture" -- the partitions and
+    # desks wear lp_cubicle (materials.js: one tiny skewed fabric texture,
+    # still flat-shaded and vertex-snapped, C1).
+    CUBE = "lp_cubicle"
+
+    def workstation(bx, z, length=2.0, chair=None):
+        """A back partition at the row line `z`, a desk, a CRT and a chair
+        (all identical; `chair` (x, z, rot) moves the chair)."""
+        cx, cz, crot = chair or (bx, z + 1.35, 180)
+        # the catalog models come through white without their photo
+        # textures; the desks wear the partitions' one fabric (skinned_glb),
+        # the CRTs are beige and the seats dark, so nothing company-owned
+        # outshines the evidence (Doc 1 S4)
+        return [
+            prop("partition", [bx, 0, z], len=length, mat=CUBE),
+            prop("skinned_glb", [bx, 0, z + 0.55], node="lib_desk", fallback="desk", collide=True, skin=CUBE),
+            glb("lib_crt", [bx, 0.75, z + 0.5], fallback="monitor", mat="lp_beige"),
+            glb("lib_chair_wood", [cx, 0, cz], rot=crot, fallback="chair", mat="lp_suit"),
+        ]
+
     for s in range(SLOTS):
         if s == CROSS:
             continue
@@ -726,29 +747,22 @@ def cubicle_floor():
         for side in (-1, 1):
             for k, b in enumerate(BX):
                 bx = side * b
-                props.append(prop("partition", [bx, 0, z], len=2.0))
                 if k < 2:
                     sx = bx - side * 1.0 if k == 0 else bx + side * 1.0
-                    props.append(prop("partition", [sx, 0, z + slen / 2], rot=90, len=slen))
-                # the catalog models come through white without their photo
-                # textures; the palette gives them the floor's one dull
-                # laminate, beige CRTs and dark seats, so nothing company-owned
-                # outshines the evidence (Doc 1 S4)
-                props.append(glb("lib_desk", [bx, 0, z + 0.55], fallback="desk", collide=True, mat="lp_beige"))
-                props.append(glb("lib_crt", [bx, 0.75, z + 0.5], fallback="monitor", mat="lp_beige"))
-                cx, cz, crot = bx, z + 1.35, 180
+                    props.append(prop("partition", [sx, 0, z + slen / 2], rot=90, len=slen, mat=CUBE))
+                chair = None
                 if s == CROSS - 1 and side == 1 and k == 0:
                     # Harlowe's chair, pushed back from the desk and left (Track C
                     # motif 3), at the mouth of the cross aisle on the way to the side door
-                    cx, cz, crot = bx + 0.55, z + 1.75, 222
-                props.append(glb("lib_chair_wood", [cx, 0, cz], rot=crot, fallback="chair", mat="lp_suit"))
+                    chair = (bx + 0.55, z + 1.75, 222)
+                props.extend(workstation(bx, z, chair=chair))
     # Drop ceiling: 1.2 x 0.6 troffers on a grid over the aisles; every
     # point light below sits on one.
     for fx in (0.0, -4.4, 4.4, -9.0, 9.0):
         for fz in range(-17, 16, 4):
             name = "hold_troffer" if (fx, fz) == (0.0, -5) else None
             kw = {"name": name} if name else {}
-            props.append(prop("fluoro", [fx, H - 0.06, fz], w=1.2, d=0.6, **kw))
+            props.append(prop("troffer_green", [fx, H - 0.06, fz], w=1.2, d=0.6, **kw))
     # THE MANAGER: low-poly, the face blurred, the tie four flat polygons,
     # the evidence (photoreal) held out on his palm. He starts far down the
     # aisle facing the candidate and translates up it, no walk cycle,
@@ -771,6 +785,19 @@ def cubicle_floor():
     props.append(prop("dust", [W / 2 - 1.2, 0, SZ], w=2.2, h=2.6, d=2.6, n=120, seed=5))
     # C8: the clock, at the W end of the cross aisle, opposite the side door
     props.append(prop("clock", [-W / 2 + 0.03, 2.3, SZ], rot=90))
+    # Doc 3 MG-03 C, "look behind you: the floor you already walked is gone.
+    # Just more cubicles." Once he is past the cross aisle (zone past_cross)
+    # and the way he came is out of his view, scenes.json's `unseen` shows
+    # AISLE_FILL: a workstation in the main aisle on every row behind the
+    # cross aisle, so the aisle he walked down is more cubicles when he
+    # turns round. It stands clear of the cross aisle (the side door's way)
+    # and of everything in front of him; the side lanes still run back.
+    # Hidden, it does not collide (room.js); it casts no shadow, or one
+    # would fall down the aisle (C2: toward the core) into his view.
+    fill = []
+    for s in range(CROSS + 1, SLOTS):
+        fill.extend(workstation(0.0, Z0 + PITCH * s, length=2.2))
+    props.append(prop("propgroup", [0, 0, 0], parts=fill, shadow=False, name="aisle_fill", hidden=True))
     # Slight green cast (Doc 2: "the real quality of fluorescent light
     # including its slight green cast"); two independent irregular flickers
     # (KLING C): the troffer over the manager's stop, the lamp over the side door.
@@ -811,6 +838,9 @@ def cubicle_floor():
     zone(rec, "manager", [0.0, MZ0 + 0.9], r=0.8, ring=3.5, actor="manager", offset=[0.0, 0.9])
     # TAKE THE SIDE DOOR: at the dead end of the cross aisle, in front of the door
     zone(rec, "side_door", [W / 2 - 0.55, SZ], r=0.6, ring=3.0, label_at=[W / 2 - 0.3, 2.62, SZ])
+    # Past the cross aisle, in the main aisle toward the manager: once he has
+    # stood here the aisle behind him may close (scenes.json S4 C `unseen`).
+    zone(rec, "past_cross", [0.0, -1.6], r=0.5, ring=0.5, box=[[-1.1, -2.6], [1.1, -0.6]], silent=True)
     return rec
 
 
@@ -825,13 +855,22 @@ def utility_corridor():
     W, H, D = 3.2, 3.0, 36.0
     AZ = -6.0  # the ajar door
     # The manager is 20 m ahead and never closer (Doc 1 S4, Doc 2
-    # S4_H_IMG_OUT). He starts 21.5 m down the corridor; each band the
-    # candidate crosses (box zones across the corridor, walked by
-    # scenes.json's beatZones) moves him one leg further along H_PATH, so
-    # the gap only ever grows back to 20-21.5 m. Band k takes him to
-    # t=(k+1)/9; the last sends him through the far door.
-    H_PATH = [[0.0, -5.5], [0.0, -19.0]]
-    H_BANDS = [14.5 - 1.5 * k for k in range(9)]
+    # S4_H_IMG_OUT, Doc 3 MG-03 H). He is DRIVEN by the candidate's progress
+    # (actors.manager.drive; director.js startDrives): every frame his place
+    # on H_PATH is the candidate's z, LEAD metres further on, and it never
+    # comes back toward him (ratchet). The drive starts with the scene,
+    # halfway down the 6 m corridor that leads in (CN_CORRIDOR_*: 3 m
+    # behind the entry door's outer face), so he starts LEAD m ahead of
+    # there and recedes from the scene's first step. At DRIVE_END,
+    # in front of the far door, the drive hands him to scenes.json S4 H's
+    # drive.end (the evidence at the door's foot, the door, through it, the
+    # bulb), and TAKE THE PAPERS (far_end, armAfter: manager) arms once that
+    # has played. Every 8 m he moves, drive.footstep: footsteps that are not
+    # the candidate's (Doc 3 MG-03 H).
+    LEAD, DRIVE_END = 20.0, -17.5
+    H_PATH = [[0.0, round(D / 2 + WALL_T + 3.0 - LEAD, 3)], [0.0, -19.0]]
+    DRIVE = {"by": "z", "lead": LEAD, "ratchet": True, "footsteps": 8.0,
+             "to": round((H_PATH[0][1] - DRIVE_END) / (H_PATH[0][1] - H_PATH[1][1]), 4)}
     props = []
     z = -D / 2 + 3.0
     i = 0
@@ -881,10 +920,16 @@ def utility_corridor():
     # the ajar door: cold light through its gap, lying on the wet floor
     lights.append({"type": "point", "pos": [-1.35, 0.7, AZ + 0.35], "color": "#bccbda", "intensity": 4.2, "distance": 3.6, "id": "ajar_spill"})
     props.append(prop("lightspill", [-W / 2 + 0.02, 0, AZ + 0.3], rot=90, w=0.4, w2=1.3, len=1.5, color="#c4d2e0", strength=0.4))
+    # Doc 3 MG-03 H: "stand completely still for 8 seconds: a door opens"
+    # (scenes.json S4 H `stillness`): the ajar door swings wider and more
+    # cold light comes through -- a second lamp and a wider spill on the
+    # wet floor, dark until then
+    lights.append({"type": "point", "pos": [-1.25, 0.9, AZ + 0.15], "color": "#bccbda", "intensity": 5.5, "distance": 5.0, "id": "ajar_wide", "off": True})
+    props.append(prop("lightspill", [-W / 2 + 0.02, 0, AZ + 0.12], rot=90, w=0.7, w2=2.0, len=2.3, color="#c4d2e0", strength=0.3, name="ajar_spill_wide", hidden=True))
     rec = {
         "name": "THE FLOOR",
         "size": [W, H, D],
-        "floor": "concrete_wet", "wall": "cinderblock", "ceiling": "concrete",
+        "floor": "concrete_wet", "wall": "cinderblock_beige", "ceiling": "concrete",
         "tile": {"floor": 2.0, "wall": 1.6, "ceiling": 2.0},
         "skirt": {"mat": "paint_green", "h": 1.2, "t": 0.02, "tile": 1.6},
         "ambient": {"color": "#e2d9c6", "intensity": 0.12},
@@ -896,14 +941,14 @@ def utility_corridor():
         "props": props,
         "boxes": [],
         "footstep": {"filterHz": 900, "gain": 0.1},
-        "actors": {"manager": {"path": H_PATH, "face": False}},
+        "actors": {"manager": {"path": H_PATH, "face": False, "drive": DRIVE}},
     }
     # The ajar door is set back between two piers, so walking down the
     # corridor -- even along the wall -- never brushes its zone: it has to
     # be stepped into.
     for z0, z1 in ((AZ - 1.15, AZ - 0.58), (AZ + 0.58, AZ + 1.15)):
         rec["boxes"].append({"min": [-W / 2, 0, z0], "max": [-W / 2 + 0.62, 1.2, z1], "mat": "paint_green", "tile": 1.6})
-        rec["boxes"].append({"min": [-W / 2, 1.2, z0], "max": [-W / 2 + 0.62, H, z1], "mat": "cinderblock", "tile": 1.6})
+        rec["boxes"].append({"min": [-W / 2, 1.2, z0], "max": [-W / 2 + 0.62, H, z1], "mat": "cinderblock_beige", "tile": 1.6})
     rec["shots"] = shots_for(rec, out_dist=4.0, leave_dist=14.0, loop_seconds=26.0)
     door(rec, "front", "S", 0.0, w=1.2, h=2.2, kind="door", mat="lp_grey")
     door(rec, "far", "N", 0.0, w=1.2, h=2.2, kind="door", locked=True, mat="lp_beige", panel="lp_dark")
@@ -911,21 +956,10 @@ def utility_corridor():
     # leaf as the rest, left a hand's width open
     door(rec, "ajar", "W", AZ, w=0.9, h=2.1, kind="door", locked=True, ajar=0.3, mat="lp_beige", panel="lp_dark", hinge="R")
     rec["entry"] = "front"
-    # The bands that keep him 20 m ahead (scenes.json beatZones). A box
-    # zone fires on being stood in. The suite asks every beat zone to carry
-    # a label; the director fades a label in as 1 - smoothstep(r + 0.3,
-    # ring, distance), so r + 0.3 < ring <= 0 holds it at zero at every
-    # distance and nothing ever shows.
-    # Each band runs from its line to the far wall, so it cannot be stepped
-    # over: a long frame (a hitch, the dev autopilot at 3x) used to carry
-    # the candidate across a 0.6 m band unseen, and a missed band_8 left
-    # the manager standing at the end, let the candidate walk right up to
-    # him and never armed TAKE THE PAPERS. Bands crossed in one frame fire
-    # in order; the last actor run wins, so he still only moves away.
-    for k, bz in enumerate(H_BANDS):
-        zone(rec, "band_%d" % k, [0.0, bz], r=-0.8, ring=-0.1, box=[[-W / 2, -D / 2], [W / 2, bz + 0.3]], silent=True)
-    # TAKE THE PAPERS: the evidence on the floor at the far door, once he has gone through it
-    zone(rec, "far_end", [0.0, -16.35], r=0.7, ring=4.0, label_at=[0.0, 1.35, -16.8], armAfter="band_%d" % (len(H_BANDS) - 1))
+    # TAKE THE PAPERS: the evidence on the floor at the far door, once he
+    # has gone through it (armAfter names the driven actor: his drive has
+    # ended and its end beats have played)
+    zone(rec, "far_end", [0.0, -16.35], r=0.7, ring=4.0, label_at=[0.0, 1.35, -16.8], armAfter="manager")
     # TAKE THE SIDE DOOR: stepped into, between the piers
     zone(rec, "ajar", [-1.15, AZ], r=0.38, ring=2.6, label_at=[-1.35, 2.4, AZ])
     return rec
@@ -2279,6 +2313,26 @@ def check_room(k, r):
     else:
         assert k == "S0_X", "%s: no entry doorway" % k
     collide_boxes = [b for b in r.get("boxes", []) if b.get("collide", True) and not b.get("floor")]
+    # actors driven by his progress (director.js startDrives): a path that
+    # runs one way along `by`, a lead, an end `to` on the path, and a name no
+    # zone also has (a zone's armAfter may name either)
+    driven = set()
+    for n, a in (r.get("actors") or {}).items():
+        dv = a.get("drive")
+        if not dv:
+            continue
+        driven.add(n)
+        assert set(dv) <= {"by", "lead", "ratchet", "to", "footsteps"}, "%s: actor %s unknown drive key(s) %s" % (k, n, sorted(set(dv) - {"by", "lead", "ratchet", "to", "footsteps"}))
+        assert dv.get("by") in ("x", "z"), "%s: actor %s drive.by must be 'x' or 'z'" % (k, n)
+        i = 0 if dv["by"] == "x" else 1
+        steps = [q[i] - p_[i] for p_, q in zip(a["path"], a["path"][1:])]
+        assert all(d > 0 for d in steps) or all(d < 0 for d in steps), "%s: actor %s drive path must run one way along %s" % (k, n, dv["by"])
+        assert dv.get("lead", 0) >= 0 and 0 < dv.get("to", 1) <= 1 and dv.get("footsteps", 0) >= 0, "%s: actor %s drive lead/to/footsteps" % (k, n)
+        assert not any(z["name"] == n for z in r.get("zones", [])), "%s: driven actor %s shares a zone's name" % (k, n)
+    for p in r.get("props", []):
+        # a catalog node wherever a prop names one (glb, skinned_glb, a propgroup's parts)
+        for q in [p] + list(p.get("parts") or []):
+            assert not q.get("node") or q["node"] in CATALOG, "%s: unknown catalog node %s" % (k, q["node"])
     for z in r.get("zones", []):
         x, zz = (z["pos"][0], z["pos"][-1])
         assert -W / 2 <= x <= W / 2 and -D / 2 - 0.4 <= zz <= D / 2 + 0.4, "%s: zone %s outside the room" % (k, z["name"])
@@ -2288,7 +2342,8 @@ def check_room(k, r):
             assert not _point_in_box(x, zz, b, -0.05) or (len(z["pos"]) == 3 and not (b["min"][1] <= z["pos"][1] <= b["max"][1])), "%s: zone %s inside a solid box" % (k, z["name"])
         assert z["ring"] >= z["r"] or z.get("silent"), "%s: zone %s ring inside its radius" % (k, z["name"])
         if z.get("armAfter"):
-            assert any(o["name"] == z["armAfter"] for o in r["zones"]), "%s: zone %s arms after a missing zone" % (k, z["name"])
+            # a zone, or an actor whose drive arms it when it ends (director.js startDrives)
+            assert any(o["name"] == z["armAfter"] for o in r["zones"]) or z["armAfter"] in driven, "%s: zone %s arms after a missing zone or driven actor" % (k, z["name"])
     for p in r.get("props", []):
         assert not p.get("reach"), "%s: hands that reach (removed from the pool scenes)" % k
     hands = sum(1 for p in r.get("props", []) if p["type"] == "hands")
