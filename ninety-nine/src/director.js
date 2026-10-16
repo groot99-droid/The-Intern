@@ -143,12 +143,14 @@ export function createDirector({ manifest, endings, state, stage, audio = null, 
       if (box.isEmpty()) return;
       const pivot = new THREE.Vector3((box.min.x + box.max.x) / 2, box.max.y, (box.min.z + box.max.z) / 2).applyMatrix4(g.matrix);
       const length = Math.max(0.05, (box.max.y - box.min.y) * g.scale.y);
-      s = { inst, g, pivot, length, pos0: g.position.clone(), quat0: g.quaternion.clone(), w: 1, kicks: [] };
+      s = { inst, g, pivot, length, pos0: g.position.clone(), quat0: g.quaternion.clone(), kicks: [] };
       swings.push(s);
     }
-    s.w = 2 * Math.PI / (spec.period || 2 * Math.PI * Math.sqrt(s.length / 9.81));
-    // each knock is its own decaying swing; they add (a linear pendulum)
-    s.kicks.push({ t: 0, amp: (spec.amount === undefined ? 0.03 : spec.amount) / s.length, decay: spec.decay === undefined ? 0.8 : spec.decay, z: spec.axis === 'z' });
+    // each knock is its own decaying swing, with its own period (a knock
+    // with another `period` leaves the swings already running as they were);
+    // they add (a linear pendulum)
+    const w = 2 * Math.PI / (spec.period || 2 * Math.PI * Math.sqrt(s.length / 9.81));
+    s.kicks.push({ t: 0, w, amp: (spec.amount === undefined ? 0.03 : spec.amount) / s.length, decay: spec.decay === undefined ? 0.8 : spec.decay, z: spec.axis === 'z' });
   }
   function stepSwings(dt) {
     for (let i = swings.length - 1; i >= 0; i--) {
@@ -159,7 +161,7 @@ export function createDirector({ manifest, endings, state, stage, audio = null, 
         kk.t += dt;
         const env = kk.amp * Math.exp(-kk.decay * kk.t);
         if (env * s.length < 0.0004) { s.kicks.splice(k, 1); continue; } // under half a millimetre: spent
-        const a = env * Math.sin(s.w * kk.t);
+        const a = env * Math.sin(kk.w * kk.t);
         if (kk.z) az += a; else ax += a;
       }
       if (!s.kicks.length) {
