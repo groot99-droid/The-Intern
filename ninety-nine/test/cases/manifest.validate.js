@@ -340,7 +340,10 @@ export async function run() {
     };
     for (const { sid, letter, b } of branches()) {
       walk(b.onEnter, b.room, `${sid}.${letter}.onEnter`);
-      for (const [key, th] of Object.entries(b.thresholds || {})) walk(th.beat, b.room, `${sid}.${letter}.${key}`);
+      if (b.idle) walk(b.idle.beat, b.room, `${sid}.${letter}.idle`);
+      if (b.stillness) walk(b.stillness.beat, b.room, `${sid}.${letter}.stillness`);
+      for (const bz of b.beatZones || []) walk(bz.beat, b.room, `${sid}.${letter}.beatZone.${bz.zone}`);
+      for (const [key, th] of Object.entries(b.thresholds || {})) { walk(th.beat, b.room, `${sid}.${letter}.${key}`); walk(th.approach, b.room, `${sid}.${letter}.${key}.approach`); }
     }
     assert(rides >= 2 && reads >= 10, `only ${rides} rides / ${reads} readings past landings found`);
     assert(bad.length === 0, bad.join(' | '));
