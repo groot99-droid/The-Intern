@@ -324,7 +324,7 @@ export async function run() {
 
   // ---- the look follow-ups: material slots, doors, catalog tints, controls, labels ----
 
-  await runCase('rooms.json: the look keys name real things -- glass, curtain cloth, leaf and frame slots exist; `jib` only on a hinged door; `labelInk` is an ink labels.js draws; `swim.sink` a rate >= 0; `tintMapped` a flag; no runtime dressing (dress / dressGlass) left', async () => {
+  await runCase('rooms.json: the look keys name real things -- glass, curtain cloth, leaf and frame slots exist; `jib` only on a hinged door; `labelInk` is an ink labels.js draws; `swim.sink` a rate >= 0; `tintMapped` a flag; a cardoor\'s `paint` a hex colour beside its `tint`; no runtime dressing (dress / dressGlass) left', async () => {
     const [{ createMaterialLibrary }, { LABEL_INKS }] = await Promise.all([import('../../src/walk/materials.js'), import('../../src/labels.js')]);
     const slots = new Set(createMaterialLibrary().slots());
     const bad = [];
@@ -343,6 +343,7 @@ export async function run() {
       for (const p of rec.props || []) {
         if (p.dress !== undefined || p.dressGlass !== undefined) bad.push(`${key}: ${p.type} still dresses a doorway at runtime (use the door's own mat / glass)`);
         if (p.tintMapped !== undefined && typeof p.tintMapped !== 'boolean') bad.push(`${key}: ${p.type} tintMapped must be a flag`);
+        if (p.type === 'cardoor' && p.paint !== undefined && (!p.tint || !/^#[0-9a-f]{6}$/i.test(p.paint))) bad.push(`${key}: cardoor paint "${p.paint}" (the car's body paint, a hex colour beside its tint)`);
       }
     }
     assert(bad.length === 0, bad.join(' | '));
@@ -401,6 +402,32 @@ export async function run() {
     }
     const cp = catalogPaint(tint);
     assert(cp.r < tint.r && cp.r > tint.r * 0.3, 'catalogPaint: the slot multiplied into the catalog\'s light grey');
+    // the sedan is painted green, not light grey: its ajar door's `paint`
+    // (build_rooms.py CAR_PAINT) has to be the green its body faces carry,
+    // or the door is a pale panel on a near-black car
+    const doors = built.flatMap(([, r]) => (r.props || []).filter((p) => p.type === 'cardoor' && p.tint === 'lp_car'));
+    assert(doors.length && doors.every((d) => d.paint), 'the sedans\' ajar doors carry the sedan\'s paint');
+    const sum = [0, 0, 0];
+    let area = 0;
+    const a = new THREE.Vector3(), b = new THREE.Vector3(), c = new THREE.Vector3();
+    for (const m of plain) {
+      const pos = m.geometry.attributes.position, col = m.geometry.attributes.color, idx = m.geometry.index;
+      const n = idx ? idx.count : pos.count;
+      for (let t = 0; t < n; t += 3) {
+        const [i, j, k] = idx ? [idx.getX(t), idx.getX(t + 1), idx.getX(t + 2)] : [t, t + 1, t + 2];
+        const rgb = [0, 1, 2].map((ch) => (col.getComponent(i, ch) + col.getComponent(j, ch) + col.getComponent(k, ch)) / 3);
+        if (!(rgb[1] > rgb[0] * 1.3 && rgb[1] > rgb[2] * 1.1)) continue; // the green body faces only
+        a.fromBufferAttribute(pos, i); b.fromBufferAttribute(pos, j); c.fromBufferAttribute(pos, k);
+        const ar = b.sub(a).cross(c.sub(a)).length() / 2;
+        for (let ch = 0; ch < 3; ch++) sum[ch] += rgb[ch] * ar;
+        area += ar;
+      }
+    }
+    const body = new THREE.Color(sum[0] / area, sum[1] / area, sum[2] / area);
+    const paint = new THREE.Color(doors[0].paint);
+    assert(Math.abs(body.r - paint.r) < 0.02 && Math.abs(body.g - paint.g) < 0.03 && Math.abs(body.b - paint.b) < 0.02, `CAR_PAINT lib_car_sedan ${doors[0].paint} is not the sedan's body (#${body.getHexString()})`);
+    const dp = catalogPaint(tint, doors[0].paint);
+    assert(Math.abs(dp.g - paint.g * tint.g) < 1e-6, 'catalogPaint: the slot multiplied into the given paint');
   });
 
   await runCase('controls.js: a blocked step is clamped to the wall (a slow frame still reaches its face); swimming never rises (C3) and `sink` takes him down to the swim floor', async () => {

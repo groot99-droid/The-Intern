@@ -90,6 +90,14 @@ CATALOG = {
     "lib_lift":          {"name": "Lift Cage",           "assetId": "47f2ee3a-e99f-4adc-934c-42b24d514d69", "search": "bunker"},
 }
 
+# The body paint of a catalog car that is not painted the catalog's light grey
+# (sRGB; the area-weighted mean of its body faces in assets/glb/library.glb).
+# An ajar door beside it (props.js cardoor) multiplies its slot into this, as
+# library.js does into the body, so door and body match.
+CAR_PAINT = {
+    "lib_car_sedan": "#366b4c",  # green
+}
+
 
 def prop(type_, pos, rot=0, **kw):
     p = {"type": type_, "pos": [round(v, 3) for v in pos]}
@@ -1150,8 +1158,12 @@ def garage(depth=44.0, open_north=False):
             side = -1.0 if x > 0 else 1.0
             hx = x + side * 0.82 * math.cos(fwd) + 0.42 * math.sin(fwd)
             hz = zc - side * 0.82 * math.sin(fwd) + 0.42 * math.cos(fwd)
-            # `tint`: the panel takes the colour the catalog car's body gets from `mat`
-            props.append(prop("cardoor", [hx, 0, hz], rot=rot + 180, mat=ajar, tint=mat, len=1.1, h=0.46, y=0.3, angle=-42 * side, window=node != "lib_car_cruiser"))
+            # `tint`: the panel takes the colour the catalog car's body gets from `mat`;
+            # `paint`: the model's own body paint, where it is not the catalog's light grey
+            door = prop("cardoor", [hx, 0, hz], rot=rot + 180, mat=ajar, tint=mat, len=1.1, h=0.46, y=0.3, angle=-42 * side, window=node != "lib_car_cruiser")
+            if node in CAR_PAINT:
+                door["paint"] = CAR_PAINT[node]
+            props.append(door)
 
     def stain(x0, z0_, x1, z1):
         # a soft wet blotch (props.js oilstain), not a rectangle

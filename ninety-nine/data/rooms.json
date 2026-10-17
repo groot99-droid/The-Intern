@@ -14378,7 +14378,8 @@
      "h": 0.46,
      "y": 0.3,
      "angle": 42.0,
-     "window": true
+     "window": true,
+     "paint": "#366b4c"
     },
     {
      "type": "glb",
@@ -15817,7 +15818,8 @@
      "h": 0.46,
      "y": 0.3,
      "angle": 42.0,
-     "window": true
+     "window": true,
+     "paint": "#366b4c"
     },
     {
      "type": "oilstain",
@@ -15928,7 +15930,8 @@
      "h": 0.46,
      "y": 0.3,
      "angle": 42.0,
-     "window": true
+     "window": true,
+     "paint": "#366b4c"
     },
     {
      "type": "oilstain",
@@ -16040,7 +16043,8 @@
      "h": 0.46,
      "y": 0.3,
      "angle": 42.0,
-     "window": true
+     "window": true,
+     "paint": "#366b4c"
     },
     {
      "type": "oilstain",
@@ -16152,7 +16156,8 @@
      "h": 0.46,
      "y": 0.3,
      "angle": 42.0,
-     "window": true
+     "window": true,
+     "paint": "#366b4c"
     },
     {
      "type": "oilstain",
@@ -16264,7 +16269,8 @@
      "h": 0.46,
      "y": 0.3,
      "angle": 42.0,
-     "window": true
+     "window": true,
+     "paint": "#366b4c"
     },
     {
      "type": "oilstain",

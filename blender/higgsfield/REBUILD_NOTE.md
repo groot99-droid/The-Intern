@@ -320,7 +320,7 @@ Every type the port lacks at `0add444`, by the block it comes from, with the roo
 | `boxkit` | S6_H | building boxes shown and hidden as one prop (`boxes`): S6 H's pool kit |
 | `callbox` | S5_C | the red call box on a post (replaces `flagbox`) |
 | `canister` | S5_C | the canister in the station's tray (same pos / rot as the station) |
-| `cardoor` | S5_H ×2, S6_H ×10 | a car door hanging open beside a catalog car (`angle`, `len`, `tint`) |
+| `cardoor` | S5_H ×2, S6_H ×10 | a car door hanging open beside a catalog car (`angle`, `len`, `tint`, and `paint`: the car's body paint where it is not the catalog's light grey) |
 | `guardrail` | S6_H ×2 | a W-beam guard rail on posts, `len`, its last `bend` metres twisted over the drop |
 | `lampdot` | S5_C ×3 | a small lit lamp face (`mat`) at `at` inside a parent's pos / rot: the station's and call box's lamps, Harlowe's standby light |
 | `oilstain` | S5_H ×6, S6_H ×5 | a soft wet oil blotch on concrete, one of four shapes (`seed`) |

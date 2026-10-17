@@ -19,12 +19,15 @@ import { withVertexSnap } from '../walk/materials.js';
 const LIBRARY_URL = new URL('../../assets/glb/library.glb', import.meta.url).href;
 const LOAD_TIMEOUT_MS = 12000;
 
-// The light grey most catalog bodies are painted (the cruiser's, the pastel
-// car's): what a palette slot multiplied into a model turns its light paint
-// into. A part built beside a catalog model to match it (props.js cardoor)
-// takes catalogPaint(slot colour).
+// What a palette slot multiplied into a model turns its body paint into. A
+// part built beside a catalog model to match it (props.js cardoor) takes
+// catalogPaint(slot colour, that model's body paint): `paint` is an sRGB
+// hex (build_rooms.py CAR_PAINT, e.g. the sedan's green), and without it
+// the light grey the cruiser and the pastel car are painted.
 const LIGHT_PAINT = new THREE.Color('#bdc0c4');
-export function catalogPaint(tint) { return LIGHT_PAINT.clone().multiply(tint); }
+export function catalogPaint(tint, paint = null) {
+  return (paint ? new THREE.Color(paint) : LIGHT_PAINT.clone()).multiply(tint);
+}
 
 export function createLibrary({ url = LIBRARY_URL } = {}) {
   let scene = null;

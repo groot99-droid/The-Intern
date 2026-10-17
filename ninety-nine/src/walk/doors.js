@@ -164,15 +164,17 @@ export function buildDoor(mats, spec, { wallT = 0.3, wallMat = null, skirt = nul
     const swayParts = [];
     for (const s of [-1, 1]) {
       const half = new THREE.Group();
-      half.position.set(s * w / 2, 0, 0.18);
+      half.position.set(s * w / 2, 0, wallT / 2 + 0.03);
       if (smooth) {
         // from 6 cm behind the jamb to 4 cm past the middle, so the halves
         // meet with an overlap (the right one a hair in front, or the two
-        // would fight over the same pixels there), and hung 3 cm behind the
-        // plane a velvetdrape round the doorway hangs in (the same folds:
-        // where it overlaps the jamb ends it covers them instead of
-        // flickering through them)
-        const m = pleat(mats.get(cm), s * 0.06, -s * (w / 2 + 0.04), 0, h + 0.2, 0.06, s > 0 ? -0.018 : -0.03, s * w / 2);
+        // would fight over the same pixels there). The fold troughs sit 2.4
+        // and 1.8 cm proud of the wall face, clear of the plaster past the
+        // jambs and over the lintel (the sway only ever brings them
+        // forward), and about 3 cm behind the plane a velvetdrape round the
+        // doorway hangs in (the same folds: where it overlaps the jamb ends
+        // it covers them instead of flickering through them)
+        const m = pleat(mats.get(cm), s * 0.06, -s * (w / 2 + 0.04), 0, h + 0.2, 0.06, s > 0 ? -0.006 : -0.012, s * w / 2);
         half.add(m);
         const pa = m.geometry.attributes.position;
         swayParts.push({ m, base: Float32Array.from(pa.array), ph: h + 0.2, x0: s * w / 2 });
@@ -189,7 +191,8 @@ export function buildDoor(mats, spec, { wallT = 0.3, wallMat = null, skirt = nul
     const amp = spec.sway === undefined ? 0.014 : spec.sway;
     if (smooth && amp > 0) {
       // it moves slightly though there is no air (Doc 1 S3): the hem more
-      // than the top, two slow waves across the cloth
+      // than the top, two slow waves across the cloth, and only ever out
+      // from where it hangs, never back into the wall
       let t = 0;
       sway = (dt) => {
         t += dt;
@@ -199,7 +202,8 @@ export function buildDoor(mats, spec, { wallT = 0.3, wallMat = null, skirt = nul
             const v = Math.min(1, Math.max(0, b[i * 3 + 1] / sp.ph));
             const fall = (1 - v) * Math.sqrt(1 - v);
             const x = b[i * 3] + sp.x0;
-            a[i * 3 + 2] = b[i * 3 + 2] + amp * fall * (Math.sin(t * 0.83 + x * 1.9) * 0.7 + Math.sin(t * 0.37 - x * 0.7) * 0.3);
+            const wave = Math.sin(t * 0.83 + x * 1.9) * 0.7 + Math.sin(t * 0.37 - x * 0.7) * 0.3;
+            a[i * 3 + 2] = b[i * 3 + 2] + amp * fall * (0.5 + 0.5 * wave);
           }
           pa.needsUpdate = true;
         }

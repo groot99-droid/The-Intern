@@ -1721,6 +1721,16 @@ const BUILDERS = {
         if (gap > 0) {
           panel(-w / 2, -gap / 2, 0, top, depth, off, true);
           panel(gap / 2, w / 2, 0, top, depth, off, true);
+          // a dark lining just off the wall behind the side panels: where a
+          // renderer leaves a crack between steep fold triangles, it shows
+          // shade, not the pale plaster behind (S3 H's white walls)
+          const lining = owned(new THREE.MeshBasicMaterial({ color: new THREE.Color('#1e0408') }));
+          for (const s of [-1, 1]) {
+            const lw = (w - gap) / 2;
+            const lm = new THREE.Mesh(new THREE.PlaneGeometry(lw, top), lining);
+            lm.position.set(s * (gap / 2 + lw / 2), top / 2, Math.min(0.005, off / 4));
+            g.add(lm);
+          }
         } else panel(-w / 2, w / 2, 0, top, depth, off, true);
         if (pelH > 0) {
           // pelmet: shallower pleats, standing proud of the drapes
@@ -2773,9 +2783,10 @@ const BUILDERS = {
   // the hinge at the group origin, the panel swung `angle` degrees out,
   // `len` long, its sill at `y`, tinted `mat` like the car. With `tint`
   // (the car's own palette slot) the panel takes the colour library.js
-  // gives the catalog car's light paint (catalogPaint: the slot multiplied
-  // into it), so door and body match; without the library it is the slot
-  // itself, like the box fallback car.
+  // gives the catalog car's body (catalogPaint: the slot multiplied into
+  // `paint`, the model's own body paint, or the catalog's light grey), so
+  // door and body match; without the library it is the slot itself, like
+  // the box fallback car.
   cardoor(mats, o, ctx) {
     const g = new THREE.Group();
     const len = o.len || 1.0, h = o.h || 0.45, y = o.y === undefined ? 0.28 : o.y, m = o.mat || 'lp_car';
@@ -2787,7 +2798,7 @@ const BUILDERS = {
       const pm = base.clone();
       pm.onBeforeCompile = base.onBeforeCompile; // keep the PS1 vertex snap (clone() drops it)
       pm.customProgramCacheKey = base.customProgramCacheKey;
-      pm.color = catalogPaint(base.color);
+      pm.color = catalogPaint(base.color, o.paint);
       pm.userData.owned = true;
       panel.material = pm;
     }

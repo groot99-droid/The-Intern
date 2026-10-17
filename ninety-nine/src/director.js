@@ -218,8 +218,8 @@ export function createDirector({ manifest, endings, state, stage, audio = null, 
   // The store's fluorescent hum (scenes.json branch / endings.json `hum`:
   // {hz, gain, lowpassHz, followDrone, room}; Doc 1 §6.4: "48 Hz, detuned
   // exactly as far as the building's drone"). It plays while he is in
-  // `room` (default: the room it is set in) and fades once he has walked
-  // out of it, or at the card. audio.js carries the drone's detune onto it;
+  // `room` (default: the room it is set in) and fades once a door has shut
+  // behind him on the way out of it, or at the card. audio.js carries the drone's detune onto it;
   // the drone itself is never touched (C7).
   function humFor(spec, inst) {
     if (!audio || !spec || !inst) return;
@@ -237,10 +237,10 @@ export function createDirector({ manifest, endings, state, stage, audio = null, 
   }
 
   function stepHum() {
-    const cur = world.current();
-    // left: dropped (its group is out of the scene), or he is in a passage
-    // the room opened behind him
-    if (!humAt.group.parent || (cur && cur !== humAt && cur.link && cur.link.from === humAt)) {
+    // left: the door has thudded shut behind him (seal1), or the room is
+    // dropped (its group is out of the scene). A step into the passage and
+    // back is not leaving: the hum carries on, never restarted.
+    if (!humAt.group.parent || links.some((L) => L.from === humAt && L.seal1)) {
       humAt = null;
       if (audio) audio.setHum(null, { ms: 2500 });
     }
@@ -1238,11 +1238,12 @@ export function createDirector({ manifest, endings, state, stage, audio = null, 
   // is passed) set the score itself instead -- conformance -8..8,
   // dissonance 0..7 -- so the endings can be tried by starting late:
   // ?start=S8&conf=3 then DELIVER is ASSIMILATION, ?start=S8&conf=5 then
-  // OPEN THE BOX is RETAINED, ?start=S8&render=H&conf=-3 then either way
-  // down is EXPULSION, &diss=4 is PENDING REVIEW whatever he does. The render then
-  // comes from that score (renderFor; `render` only breaks a tie inside
-  // +/-2), and resolveEnding() reads the same state. A score no real game
-  // could have by that scene is allowed, with a console warning.
+  // OPEN THE BOX is RETAINED, ?start=S8&render=H&conf=-5 then either way
+  // down is EXPULSION (from -3, DIVE lands on -2: PENDING), &diss=4 is
+  // PENDING REVIEW whatever he does. The render then comes from that score
+  // (renderFor; `render` only breaks a tie inside +/-2), and
+  // resolveEnding() reads the same state. A score no real game could have
+  // by that scene is allowed, with a console warning.
   async function startAt(sceneId, letter = 'C', score = devScore()) {
     const sc = manifest.scenes[sceneId];
     if (!sc || sceneId === 'S0') return startS0();
