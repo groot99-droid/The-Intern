@@ -392,7 +392,7 @@ fade it in.
 
 ### S6: THE REQUISITION / THE RUN
 
-> **Amendment, 2026-10-16.** S6 H's breathing and footfalls are synthesized in the game, not generated. Silent zones down the run start a breath layer, make it deeper and further apart, and make his footfalls heavier (the `breath` and `footfall` beats; `src/sfx.js`'s breath is a stand-in, never a voice). Both thresholds stop them before the last breath and the hold. The footfalls get heavier, but not slower.
+> **Amendment, 2026-10-16.** S6 H's breathing and footfalls are synthesized in the game, not generated. Silent zones down the run start a breath layer, make it deeper and further apart, and make his footfalls heavier (the `breath` and `footfall` beats; `src/sfx.js`'s breath is a stand-in, never a voice). Both thresholds stop them first; PUSH ON then takes one last breath as he crouches. The footfalls get heavier, but not slower.
 
 **S6_C_IMG_IN / OUT**: Screen content is rendered live in-engine (Doc 3, MG-05). Generate only the surround: a photoreal monitor bezel and desk edge with a keyed green screen area for the live UI, plus a photoreal screen-glow pass to composite over the interface.
 

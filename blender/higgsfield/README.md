@@ -61,6 +61,6 @@ Open any project at `https://higgsfield.ai/3d-jutsu/<id>`; the ids and revisions
 
 ## Rebuilding after a set changes
 
-The next rebuild has more to do than usual: the tool has to learn doorways, `floorY`, pitched boxes, hidden props and four new prop types first. See [[blender/higgsfield/REBUILD_NOTE|REBUILD_NOTE]].
+The next rebuild has more to do than usual: the tool first has to learn doorways, `floorY`, pitched boxes, hidden props, `fixed` parts and the 90 prop types it cannot build yet. See [[blender/higgsfield/REBUILD_NOTE|REBUILD_NOTE]].
 
 Edit `ninety-nine/tools/build_rooms.py`, re-run it, then for the room: create a fresh project (or start from revision 0 of the old one), run `python ninety-nine/tools/higgsfield_scene.py <ROOM> build` and paste its code into `scene_builder_3d_run_python`, then `imports` (one `scene_builder_3d_import_asset` per line), `place` (one more `run_python`) and `proof` (a `scene_builder_3d_query_python`), and record the new id and revision in `projects.json`. A copied import must not carry the catalog entity's `hf_id`/`hf_asset` custom properties, which is why `place` strips them.

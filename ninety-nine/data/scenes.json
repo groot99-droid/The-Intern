@@ -698,7 +698,7 @@
           "next": "S5",
           "ambience": "S4_H_AMB.wav",
           "drive": {
-            "_note": "The manager (rooms.json actors.manager.drive) recedes as he walks, 20 m ahead, never back. footstep: every 8 m he moves. end: at the far door, as the last band used to: the evidence at its foot, the door, through it, shut, the end bulb; TAKE THE PAPERS arms when this has played.",
+            "_note": "The manager (rooms.json actors.manager.drive) recedes as he walks, 20 m ahead, never back. footstep: every 8 m he moves. end: at the far door: the evidence at its foot, the door, through it, shut, the end bulb; TAKE THE PAPERS arms when this has played.",
             "actor": "manager",
             "footstep": [
               {

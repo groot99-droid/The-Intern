@@ -104,7 +104,7 @@ Once he has stood past the cross aisle (`past_cross`, a silent zone in the main 
 
 The manager is walked by the candidate's progress (`actors.manager.drive`). From the moment the scene begins, halfway down the corridor that leads in, he keeps 20 m ahead of the candidate, and he never comes back when the candidate does. Every 8 m he moves, footsteps play ([[S4_H_SFX_FOOTSTEPS.wav]]). At the far door the drive ends: the evidence appears on the floor at its foot, the door opens, he goes through, it shuts, and the caged bulb at the end comes on.
 
-Standing still for 8 s (`stillness`) swings the ajar door wider, still locked, and its cold light comes up: a second lamp and a wider spill on the wet floor.
+Standing still for 8 s (`stillness`) swings the ajar door wider, still locked, and its cold light comes up: a second light at the gap and a wider spill on the wet floor.
 
 | Choice | Zone | Beats | Way on |
 |---|---|---|---|
