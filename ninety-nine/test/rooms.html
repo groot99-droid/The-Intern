@@ -22,7 +22,7 @@
     const select = document.getElementById('room');
     const shotSel = document.getElementById('shot');
     for (const key of Object.keys(rooms.rooms)) select.append(new Option(key, key));
-    const stage = createStage(document.getElementById('scene-layer'), { rooms });
+    const stage = createStage(document.getElementById('scene-layer'), { rooms, overlay: document.getElementById('walk-layer') });
     function fillShots() {
       const rec = stage.record(select.value);
       shotSel.replaceChildren();
@@ -32,13 +32,15 @@
     fillShots();
     async function play(key, shot) {
       select.value = key; fillShots(); if (shot) shotSel.value = shot;
+      stage.setPlayerActive(false);
+      await stage.preview(key);
+      stage.warm(); // compile the room's programs before its first frame
       await stage.playShot(key, shotSel.value);
     }
     async function walk(key) {
       select.value = key;
-      document.body.classList.add('walking');
-      await stage.walk(key, { overlay: document.getElementById('walk-layer') });
-      document.body.classList.remove('walking');
+      document.getElementById('walk-layer').hidden = false;
+      await stage.walk(key);
     }
     document.getElementById('go').addEventListener('click', () => play(select.value));
     document.getElementById('walkbtn').addEventListener('click', () => walk(select.value));

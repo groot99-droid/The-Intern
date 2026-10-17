@@ -2,7 +2,9 @@
 ## Document 3 of 4: Mini-Game UX Specification
 ### Seven components, eleven modes. Built by Claude Code as ES modules conforming to the contract in Doc 4, §6.
 
-← [[docs/Design Docs|Design Docs]] · implemented in [[ninety-nine/src/minigames/Minigames|ninety-nine/src/minigames/]]
+← [[docs/Design Docs|Design Docs]] · implemented in `ninety-nine/src/minigames/` (removed)
+
+> **Amendment, 2026-10-03: retired.** At the author's request, the mini-games have been removed from the game. The `ninety-nine/src/minigames/` modules are gone, and so are the choice buttons that followed them and Doc 4 §6's mini-game contract. Each scene's choice is now a pair of **threshold zones** in the room: the candidate walks to one, and stepping into it commits the choice. **Friction now comes from movement**: hesitation before committing, and doubling back between the two thresholds (`ninety-nine/src/friction.js`). As before, friction feeds only `fracture()` and never conformance. The specification below is kept unedited, as the record of what was built and then replaced. See [[ninety-nine/assets/Scene Flow|Scene Flow]] for the game as it is walked now.
 
 ---
 

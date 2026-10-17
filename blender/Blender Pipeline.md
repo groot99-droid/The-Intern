@@ -28,8 +28,11 @@ The `.blend` carries 3 Python Text datablocks that the pilot scenes were built w
 ## The scene-builder copies (Higgsfield)
 Every set in `ninety-nine/data/rooms.json` is also a Blender 5.2 scene in the Higgsfield 3D scene builder, built from the same data by [[ninety-nine/tools/higgsfield_scene.py|ninety-nine/tools/higgsfield_scene.py]]: architecture, box props, the catalog props, lights and the ShotCam keyed with every camera move. [[blender/higgsfield/README|blender/higgsfield/README.md]] lists the 18 projects, their revisions and the proof renders (`in`/`out` stills, `leave`/`arrive` move proofs) that live beside it; `projects.json` there is the id table. The game plays the same moves live, so those proofs are the shoot's record, not assets the game loads.
 
+**Stale until rebuilt (2026-10-03):** the projects predate the continuous building (doorways, connectors, threshold props, `S6_C` folded into `S5_C`). Rebuild after the per-scene polish lands.
+- [[blender/higgsfield/REBUILD_NOTE|blender/higgsfield/REBUILD_NOTE.md]]: the per-room changes, the `higgsfield_scene.py` ports (wall cutouts, door leaves, `floorY`, pitch, hidden props, new builders) and the commands in order
+
 ## The render bridge (Track B1/B3)
-[[blender/export_game_assets.py|export_game_assets.py]] maps each Blender scene+frame to a game asset slot in the Doc 2 §1 naming grammar and renders into a **staging** root, `renders/_game/{img,vid}/`. Nothing here writes into the game's `assets/` tree directly — [[ninety-nine/tools/stage_assets.py|ninety-nine/tools/stage_assets.py]] copies staged files in, verifies the byte size, rewrites the `MANIFEST.csv` row from the new file, and moves whatever it replaced into `assets/_retired_ai/` (the AI stills have no seeds and can't be regenerated). `--restore` puts them back.
+[[blender/export_game_assets.py|export_game_assets.py]] maps each Blender scene+frame to a game asset slot in the Doc 2 §1 naming grammar and renders into a **staging** root, `renders/_game/{img,vid}/`. Nothing here writes into the game's `assets/` tree directly — `ninety-nine/tools/stage_assets.py` (removed) copies staged files in, verifies the byte size, rewrites the `MANIFEST.csv` row from the new file, and moves whatever it replaced into `assets/_retired_ai/` (the AI stills have no seeds and can't be regenerated). `--restore` puts them back.
 
 This is the replacement for the `copy_assets.py` the plan assumed: that file went with the consolidated-away `FINAL_NINETY-NINE_*` delivery folders, so there was nothing left to extend.
 

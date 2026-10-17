@@ -16,5 +16,18 @@
   "elevator.refuse": "THE CAR IS ALREADY IN MOTION.",
   "call.compliant": "Ninety-nine.",
   "call.hostile": "Shaun.",
-  "manager.line": "You're early. That's already in the file."
+  "manager.line": "You're early. That's already in the file.",
+  "posting.title": "YOUNG INTERNS WANTED!",
+  "posting.employer": "VELLUM & ASHE, LLP",
+  "posting.body": "Entry-level placement. No experience required. Applications are reviewed in turn.",
+  "harlowe.session": "SESSION USER: S. HARLOWE",
+  "harlowe.draft": "I am writing to inform",
+  "requisition.title": "REQUISITION -- FLOOR SUPPLY",
+  "requisition.harlowe": "Replacement, one (1). See S. HARLOWE.",
+  "zone.apply": "APPLY",
+  "zone.report": "666 HALLAM ROW.",
+  "zone.package": "THE PACKAGE",
+  "call.hundred": "One hundred.",
+  "box.contents": "THE CANDIDATE'S APPLICATION. RECEIVED SIX MONTHS AGO.",
+  "edge.only": "THERE IS ONLY THE LEDGE."
 }

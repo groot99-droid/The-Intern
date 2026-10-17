@@ -171,6 +171,8 @@ Add a CI check or a pre-push hook that fails if `DEBUG_RESUME` is true.
 
 ### 4.1 Schema
 
+> **Amendment, 2026-10-16.** The schema below is the video era's. `scenes.json` now names, per branch, the room the scene is played in and its two threshold zones, and runs **beats** from a small vocabulary listed in its own `_comment` (Doc 1 §4's amendment; `src/director.js`). Two beats came with S7 C's cab: `display` {prop, text} gives a text-capable prop a new reading (the floor indicator, stepped B1, B2, B7, B12 and the glyph by the ride's stops), and `swing` {prop, amount, decay, axis, period} knocks a named prop into a damped swing (the caged bulb, when the doors hit and when the cab lands). In `data/rooms.json`, a box or prop marked `fixed` stays where its room was placed when the room moves, so the cab goes down a real shaft that stays put.
+
 ```json
 {
   "id": "S3",
@@ -266,6 +268,8 @@ If Kling cannot hold a hard four-step jaw (Doc 2, §5, S2), `flipbook.js` takes 
 
 ## 6. MINI-GAME CONTRACT
 
+> **Amendment, 2026-10-03: retired.** There are no mini-games (removed at the author's request; Doc 3 is retired), so this contract governs nothing. Nothing mounts over a scene, and the choice UI is the room itself: threshold zones the candidate walks to (§14's amendment). `state.js` keeps its single-writer rule, so only `commitChoice()` touches conformance. Friction is written by the director from movement (`src/friction.js`). The leak test and the MG-01 → MG-07 handoff went with the modules. The S0 form (`src/application.js`) still fills `state.formAnswers`, and OPEN THE BOX now shows the box's contents as a caption.
+
 ### 6.1 Lifecycle
 
 ```
@@ -347,6 +351,8 @@ Add a second oscillator at exactly 48 Hz, gain 0.0, starting from scene 5 and ra
 
 ### 7.2 Bus
 
+> **Amendment, 2026-10-16.** The bus has one more voice beside the drone: the store's fluorescent hum (`audio.setHum()`; Doc 1 §6.4), a 48 Hz saw through a low-pass on the master bus. It copies the drone's detune and the ramps `advanceScene()` schedules, and never writes to the drone, so C7 holds: the drone is still one oscillator, never stopped or restarted. The hum starts when the candidate lands in S8 H's store, carries into EXPULSION and fades at the card, or fades when he leaves the store by the staff door. The bus diagram in `src/audio.js` shows it.
+
 ```
 drone ──────────────────┐
 ambience (per scene) ───┼──> master ──> destination
@@ -367,6 +373,12 @@ audio.restoreDrone({ ms: 800 });
 Filtering is permitted. Stopping is not.
 
 ### 7.4 Autoplay policy
+
+> **Amendment, 2026-10-03.** There is no SUBMIT click to hang audio on any more: the game starts on foot in the apartment.
+> - The **first trusted gesture** (a click to look, a key, a touch) calls `audio.unlock()`. That starts the `AudioContext` and the music bus, so room tone and footsteps sound from the apartment on. **The drone does not start there.**
+> - `audio.startDrone()` runs once, when the lobby's front glass doors close behind the candidate (`src/director.js`). That is where C7 and §7.1 place it. The oscillator fades in over two seconds and is never stopped or restarted.
+>
+> There is still no "enable audio" prompt.
 
 Browsers block audio until a user gesture. S0's SUBMIT click is that gesture, and it is diegetic. Initialize the `AudioContext` on that click and nowhere else. If the context is suspended at any later point, resume it silently and log it. Never show an "enable audio" prompt. It would be the only non-diegetic UI in the game.
 
@@ -418,6 +430,8 @@ Stripping audio from every video file is not optional. It is what makes C7 possi
 ---
 
 ## 9. THE BAIL-OUT
+
+> **Amendment, 2026-10-03.** Keyboard `Escape` no longer bails. The candidate is always walking, and under pointer lock Escape is the browser's own "release the mouse" key. Two ways out remain, and both still route to PENDING REVIEW (`director.bail()`): the persistent **EXIT** button, a click away once the pointer is released, and the **3-finger, 1200 ms long-press** on touch (§13).
 
 A persistent, low-contrast `ESC` affordance in a fixed corner, present in every scene and every mini-game. Keyboard `Escape`, or a long-press anywhere on touch.
 
@@ -517,6 +531,8 @@ Mobile Safari is the constraint. Test on a four-year-old iPhone before anything 
 ---
 
 ## 14. WHAT NOT TO BUILD
+
+> **Amendment, 2026-10-03.** The rule against non-diegetic buttons now covers the choices too: there are no choice buttons. Each choice is a **diegetic zone** in the room, marked by its words standing over the place to walk to (`src/labels.js`); walking into it is the choice. The only non-diegetic controls left are EXIT and the sound toggle, plus a one-line walk hint that fades after a few seconds.
 
 Explicitly out of scope. Each of these has been considered and rejected.
 

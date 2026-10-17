@@ -6,13 +6,16 @@
 // button.
 //
 // Doc 4 §13: touch long-press requires 1200ms AND 3+ fingers specifically
-// so it never collides with the single-finger hold-to-act mechanics in
-// MG-02 mode C, MG-05 mode H, MG-06 mode H, and MG-07 mode H.
+// so it never collides with walking (one thumb) and looking (the other).
+//
+// Escape no longer bails: the candidate is always walking, and Escape is
+// the browser's own "release the mouse" key under pointer lock. Once the
+// pointer is released, EXIT is a click away.
 
 const LONG_PRESS_MS = 1200;
 const LONG_PRESS_MIN_TOUCHES = 3;
 
-export function initBail(router) {
+export function initBail(director) {
   const affordance = document.createElement('button');
   affordance.id = 'bail-affordance';
   affordance.type = 'button';
@@ -20,14 +23,22 @@ export function initBail(router) {
   affordance.textContent = 'EXIT';
   document.body.appendChild(affordance);
 
-  affordance.addEventListener('click', () => router.bail());
-
-  document.addEventListener('keydown', (e) => {
-    // While the 3D walk layer holds the pointer lock, Escape is the
-    // browser's own "release the mouse" key (and Chrome swallows it under
-    // lock anyway) -- it must not read as the fire exit. The walk layer's
-    // own LEAVE button is the way out of the room; EXIT stays clickable.
-    if (e.key === 'Escape' && !document.body.classList.contains('walking')) router.bail();
+  // A mouse click is deliberate (the pointer had to be released first). A
+  // touch is not: EXIT sits where the walking thumb lands, so on touch the
+  // first tap arms it (EXIT?) and only a second tap within 3 s leaves.
+  let lastPointer = 'mouse';
+  let armedUntil = 0;
+  let disarm = null;
+  affordance.addEventListener('pointerdown', (e) => { lastPointer = e.pointerType || 'mouse'; });
+  affordance.addEventListener('click', () => {
+    if (lastPointer === 'mouse') { director.bail(); return; }
+    const now = performance.now();
+    if (now < armedUntil) { director.bail(); return; }
+    armedUntil = now + 3000;
+    affordance.textContent = 'EXIT?';
+    affordance.classList.add('bail-armed');
+    clearTimeout(disarm);
+    disarm = setTimeout(() => { armedUntil = 0; affordance.textContent = 'EXIT'; affordance.classList.remove('bail-armed'); }, 3000);
   });
 
   let touchTimer = null;
@@ -41,7 +52,7 @@ export function initBail(router) {
   document.addEventListener('touchstart', (e) => {
     clearTouchTimer();
     if (e.touches.length >= LONG_PRESS_MIN_TOUCHES) {
-      touchTimer = setTimeout(() => router.bail(), LONG_PRESS_MS);
+      touchTimer = setTimeout(() => director.bail(), LONG_PRESS_MS);
     }
   }, { passive: true });
   document.addEventListener('touchend', clearTouchTimer, { passive: true });
