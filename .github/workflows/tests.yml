@@ -1,0 +1,80 @@
+# Runs Ninety-Nine's test suite on every push and pull request. Two jobs:
+#   - tests: tools/build_rooms.py first (its build-time checks, including that
+#     every zone, door and connector scenes.json and endings.json name exists,
+#     and that the committed data/rooms.json is what it writes); then test/index.html in headless Chromium (software WebGL) through
+#     tools/run_tests.cjs, which starts tools/dev_server.py itself. Every case:
+#     the spine and the 256-path sweep, the canon checks (C4, C7, C8), the data
+#     validator, the rooms, the world and the director's scene flows.
+#   - walkthrough: the autopilot plays whole games (tools/walkthrough.cjs) and
+#     checks each ending card. Pull requests only: each path takes minutes in a
+#     software renderer.
+# Doc 4 asks for these checks in CI (§3.7, §4.2, §11, §15).
+name: tests
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  tests:
+    name: test suite
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Build the rooms (checks the links from scenes.json and endings.json)
+        working-directory: ninety-nine
+        run: |
+          python tools/build_rooms.py
+          git diff --exit-code -- data/rooms.json || { echo "::error::data/rooms.json is stale: run python ninety-nine/tools/build_rooms.py and commit it"; exit 1; }
+      - name: Install Playwright and Chromium
+        run: |
+          npm install --no-save --no-package-lock playwright@1.63.0
+          npx playwright install --with-deps chromium
+      - name: Run the test page
+        working-directory: ninety-nine
+        run: node tools/run_tests.cjs
+
+  walkthrough:
+    name: walkthrough (${{ matrix.path.name }})
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    strategy:
+      fail-fast: false
+      matrix:
+        path:
+          - { name: assimilation, args: "SSSSSSSS --seed=C" }
+          - { name: expulsion, args: "RRRRRRRR --seed=H" }
+          - { name: pending, args: "SRSRSRSR --seed=C" }
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Install Playwright and Chromium
+        run: |
+          npm install --no-save --no-package-lock playwright@1.63.0
+          npx playwright install --with-deps chromium
+      - name: Play the game through
+        working-directory: ninety-nine
+        run: node tools/walkthrough.cjs ${{ matrix.path.args }}
+      - name: Keep the screenshots and the autopilot's log
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: walkthrough-${{ matrix.path.name }}
+          path: ninety-nine/tools/out/walkthrough/
+          if-no-files-found: ignore

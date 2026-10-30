@@ -12,3 +12,5 @@ desktop.ini
 .DS_Store
 # Dev-only Node runners write screenshots and logs here (tools/walkthrough.cjs)
 ninety-nine/tools/out/
+# Playwright, when the Node runners are installed into the checkout (CI does this)
+node_modules/
