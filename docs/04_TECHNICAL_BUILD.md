@@ -470,6 +470,8 @@ Do not build in scene order. Build in the order that surfaces failure cheapest.
 
 ## 11. ACCEPTANCE TESTS
 
+> **Amendment, 2026-10-30.** These tests now run in CI: `.github/workflows/tests.yml`, on every push and pull request. Its first job rebuilds the rooms with `tools/build_rooms.py`, whose `check_links()` fails on any zone, door, connector, shot or prop that `scenes.json` or `endings.json` names and the room lacks. It also fails if the committed `data/rooms.json` is stale. The job then runs the whole of `test/index.html` headless (`tools/run_tests.cjs`), which covers the 256-path sweep, the C4 grep, the manifest validator and `DEBUG_RESUME` (§3.7). On pull requests a second job plays three whole games with the autopilot (`tools/walkthrough.cjs`). The mini-game and video rows of §11.3 went with the mini-games and the clips.
+
 ### 11.1 Logic
 
 | Test | Expect |
