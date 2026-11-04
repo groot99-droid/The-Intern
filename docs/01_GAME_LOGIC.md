@@ -435,7 +435,7 @@ Across all 256 paths (choices weighted equally):
 | EXPULSION | conf ≤ -4, diss ≤ 3 | 27 | 10.5% |
 | PENDING REVIEW | everything else | 202 | 78.9% |
 
-*(Verified by exhaustive enumeration of all 256 paths, not estimated. Doc 4, §11.1 re-runs this sweep in CI.)*
+*(Verified by exhaustive enumeration of all 256 paths, not estimated. Doc 4, §11.1 re-runs this sweep in CI: `test/cases/logic.spine.js`, run by `.github/workflows/tests.yml` on every push.)*
 
 This is intentional and it is the whole design. **Commitment is rare.** Most people waver, and wavering is the most common way to end up filed and forgotten. A player must hold a line for six of eight choices with almost no reversals to earn either of the two "real" endings. Those two endings should feel like achievements of will, in opposite directions, and equally bad.
 

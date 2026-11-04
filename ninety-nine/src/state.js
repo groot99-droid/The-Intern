@@ -10,10 +10,9 @@ export const ADDRESS = '666 HALLAM ROW';
 export const DRONE_HZ = 48;
 export const DETUNE_PER_SCENE = 4; // cents
 
-// MUST be false in any deployed build (Doc 4 §3.7). No automated CI exists in
-// this environment (no Node) to enforce this -- test/cases/logic.spine.js
-// asserts it, but that only runs when someone opens /test/ by hand. Treat
-// this as a manual pre-deploy checklist item, documented again in Doc 4 §11.3.
+// MUST be false in any deployed build (Doc 4 §3.7). test/cases/logic.spine.js
+// asserts it, and CI (.github/workflows/tests.yml) runs that on every push and
+// pull request, so a true value fails the build (Doc 4 §11.3).
 export const DEBUG_RESUME = false;
 
 export function createState() {
