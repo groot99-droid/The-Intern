@@ -1,5 +1,7 @@
 # Plan: Remaining "Ninety-Nine" 3D Environments
 
+> **Status, 2026-11-19:** Historical record, kept as written (last changed 2026-09-30). Current state: the game no longer uses rendered stills or clips; every set is a live room in `ninety-nine/data/rooms.json` (built by `ninety-nine/tools/build_rooms.py`), walked as one continuous building. The Blender copies of the sets are the Higgsfield scene-builder projects, stale until rebuilt: see [[blender/higgsfield/REBUILD_NOTE|REBUILD_NOTE]].
+
 ## Status
 
 **Update (post-plan):** all 15 environments now have a final still rendered (see [[blender/renders/Scene Renders|blender/renders/Scene Renders.md]] for the per-folder inventory) — the 4 phases below were evidently carried out for stills. Only the original 3 pilots have a walkthrough animation. What's left is deciding which (if any) of the other 12 also get a walkthrough; the rest of this doc's phasing/sequencing rationale is still valid for that decision, it's just the "stills" half that's now done.
